@@ -137,6 +137,7 @@ def replay_taker_candidates(
             outcomes.append(1.0 if payout >= 0.999 else 0.0)
 
     fill_count = len(fills)
+    resolved_pnl_usdc = round(sum(pnl_values), 8) if pnl_values else None
     return {
         "schema_version": REPLAY_SCHEMA_VERSION,
         "paper_only": True,
@@ -148,9 +149,9 @@ def replay_taker_candidates(
         "missing_resolution_count": missing_resolution,
         "skipped_future_candidate_count": skipped_future_candidate,
         "no_visible_orderbook_count": no_visible_orderbook,
-        "resolved_pnl_usdc": round(sum(pnl_values), 8),
-        "resolved_pnl_cents": round(sum(pnl_values) * 100.0, 6),
-        "drawdown_usdc": _max_drawdown(pnl_values),
+        "resolved_pnl_usdc": resolved_pnl_usdc,
+        "resolved_pnl_cents": round(resolved_pnl_usdc * 100.0, 6) if resolved_pnl_usdc is not None else None,
+        "drawdown_usdc": _max_drawdown(pnl_values) if pnl_values else None,
         "brier_score": _brier(probabilities, outcomes),
         "log_loss": _log_loss(probabilities, outcomes),
         "markout_count": 0,

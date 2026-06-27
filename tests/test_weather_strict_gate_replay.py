@@ -110,6 +110,24 @@ def test_strict_gate_replay_reports_missing_orderbook_before_resolution():
     assert report["hard_conclusion"] == "strict_gate_replay_needs_orderbook_archive"
 
 
+def test_strict_gate_replay_unresolved_fills_do_not_report_zero_pnl():
+    report = build_strict_gate_replay_report(
+        queue_records=[_queue_record()],
+        orderbook_snapshots=[_orderbook()],
+        resolved_outcomes=[],
+        replay_time="2026-06-27T01:00:00Z",
+        size=1.0,
+    )
+
+    assert report["replay"]["fill_count"] == 1
+    assert report["resolved_fill_count"] == 0
+    assert report["replay"]["missing_resolution_count"] == 1
+    assert report["replay"]["resolved_pnl_usdc"] is None
+    assert report["replay"]["resolved_pnl_cents"] is None
+    assert report["ev_audit_summary"]["resolved_pnl_cents"] is None
+    assert report["hard_conclusion"] == "strict_gate_replay_needs_resolved_outcomes"
+
+
 def test_strict_gate_replay_reaches_ev_audit_when_orderbook_and_resolution_exist():
     report = build_strict_gate_replay_report(
         queue_records=[_queue_record()],
