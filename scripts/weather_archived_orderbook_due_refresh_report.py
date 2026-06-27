@@ -112,8 +112,19 @@ def build_due_refresh_report(
         "due_market_query_count": market_query_count,
         "loaded_market_query_count": len(market_queries),
         "status": "dry_run",
+        "before_token_overlap": {
+            "matched_closed_archived_token_count": plan_report.get("matched_closed_archived_token_count"),
+            "pending_closed_backfill_due_token_count": plan_report.get("pending_closed_backfill_due_token_count"),
+            "pending_closed_backfill_await_market_end_token_count": plan_report.get(
+                "pending_closed_backfill_await_market_end_token_count"
+            ),
+            "pending_closed_backfill_missing_end_time_token_count": plan_report.get(
+                "pending_closed_backfill_missing_end_time_token_count"
+            ),
+        },
     }
     replay_report = None
+    after_plan_report = None
 
     if execute:
         if confirm != CONFIRM_TOKEN:
@@ -127,6 +138,12 @@ def build_due_refresh_report(
                 market_slugs=market_queries,
                 backfill_dir=backfill_root,
             )
+            after_plan_report = _build_plan_report(
+                backfill_dir=backfill_root,
+                orderbook_archive_dir=orderbook_root,
+                generated_at=generated_at,
+                max_samples=max_samples,
+            )
             replay_report = build_preresolution_orderbook_replay_report_from_dirs(
                 backfill_dir=backfill_root,
                 orderbook_archive_dir=orderbook_root,
@@ -137,6 +154,20 @@ def build_due_refresh_report(
                 {
                     "status": "executed",
                     "targeted_backfill_result": backfill_result,
+                    "after_token_overlap": {
+                        "matched_closed_archived_token_count": after_plan_report.get(
+                            "matched_closed_archived_token_count"
+                        ),
+                        "pending_closed_backfill_due_token_count": after_plan_report.get(
+                            "pending_closed_backfill_due_token_count"
+                        ),
+                        "pending_closed_backfill_await_market_end_token_count": after_plan_report.get(
+                            "pending_closed_backfill_await_market_end_token_count"
+                        ),
+                        "pending_closed_backfill_missing_end_time_token_count": after_plan_report.get(
+                            "pending_closed_backfill_missing_end_time_token_count"
+                        ),
+                    },
                     "preresolution_replay_summary": _summary_preresolution_replay(replay_report),
                 }
             )
@@ -150,6 +181,7 @@ def build_due_refresh_report(
         "orderbook_archive_dir": str(orderbook_root),
         "generated_at": plan_report.get("generated_at"),
         "plan_report": plan_report,
+        "after_plan_report": after_plan_report,
         "execution": execution,
         "preresolution_replay_report": replay_report,
         "hard_conclusion": (
@@ -174,6 +206,19 @@ def _summary_only(report: Dict[str, Any]) -> Dict[str, Any]:
     followup.pop("next_await_market_queries", None)
     plan["closed_backfill_followup_plan"] = followup
     trimmed["plan_report"] = plan
+    if isinstance(trimmed.get("after_plan_report"), dict):
+        after_plan = dict(trimmed["after_plan_report"])
+        after_plan.pop("matched_samples", None)
+        after_plan.pop("closed_markets_missing_archive_samples", None)
+        after_plan.pop("archived_markets_pending_closed_backfill_samples", None)
+        after_plan.pop("closed_missing_token_samples", None)
+        after_followup = dict(after_plan.get("closed_backfill_followup_plan") or {})
+        after_followup.pop("requests", None)
+        after_followup.pop("await_market_end_samples", None)
+        after_followup.pop("missing_end_time_samples", None)
+        after_followup.pop("next_await_market_queries", None)
+        after_plan["closed_backfill_followup_plan"] = after_followup
+        trimmed["after_plan_report"] = after_plan
     if trimmed.get("preresolution_replay_report"):
         trimmed["preresolution_replay_report"] = _summary_preresolution_replay(
             trimmed["preresolution_replay_report"]

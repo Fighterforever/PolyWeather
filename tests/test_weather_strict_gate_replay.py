@@ -47,6 +47,47 @@ def _orderbook(**overrides):
     return row
 
 
+def test_strict_gate_replay_negative_resolved_pnl_fails_ev_audit():
+    queue_records = [
+        _queue_record(
+            queue_record_id=f"queue-{index}",
+            token_id=f"yes-token-{index}",
+            market_slug=f"market-{index}",
+            ev_safe=0.04,
+            model_probability=0.70,
+        )
+        for index in range(30)
+    ]
+    orderbooks = [
+        _orderbook(
+            snapshot_id=f"book-{index}",
+            token_id=f"yes-token-{index}",
+            ask_ladder=[{"price": 0.60, "size": 2.0}],
+        )
+        for index in range(30)
+    ]
+    outcomes = [
+        {"token_id": f"yes-token-{index}", "payout": 0.0}
+        for index in range(30)
+    ]
+
+    report = build_strict_gate_replay_report(
+        queue_records=queue_records,
+        orderbook_snapshots=orderbooks,
+        resolved_outcomes=outcomes,
+        replay_time="2026-06-27T01:00:00Z",
+        size=1.0,
+    )
+
+    assert report["replay"]["fill_count"] == 30
+    assert report["resolved_fill_count"] == 30
+    assert report["resolved_fill_coverage"] == 1.0
+    assert report["positive_ev_safe_but_negative_pnl_count"] == 30
+    assert report["replay"]["resolved_pnl_cents"] == -1800.0
+    assert report["hard_conclusion"] == "strict_gate_replay_negative_resolved_pnl"
+    assert report["by_strategy_bucket"][0]["strategy_bucket"] == "tail_threshold|ge"
+
+
 def test_strict_gate_replay_reports_missing_orderbook_before_resolution():
     report = build_strict_gate_replay_report(
         queue_records=[_queue_record(), _queue_record(queue_record_id="queue-2", token_id="missing-token")],
@@ -81,6 +122,9 @@ def test_strict_gate_replay_reaches_ev_audit_when_orderbook_and_resolution_exist
     assert report["hard_conclusion"] == "strict_gate_replay_ready_for_ev_audit"
     assert report["replay"]["resolved_pnl_usdc"] == 0.59
     assert report["replay"]["brier_score"] == 0.25
+    assert report["resolved_fill_count"] == 1
+    assert report["resolved_fill_coverage"] == 1.0
+    assert report["positive_ev_safe_but_negative_pnl_count"] == 0
     assert report["execution_summary"]["by_queue"] == [
         {"queue_name": "execution_depth_price", "count": 1}
     ]
@@ -240,6 +284,7 @@ def test_strict_gate_replay_from_dirs_uses_backfill_and_prefers_audit(tmp_path):
         {"resolution_record_source": "resolved_audit", "count": 1},
     ]
     assert report["replay"]["resolved_pnl_usdc"] == -0.41
+    assert report["hard_conclusion"] == "strict_gate_replay_negative_resolved_pnl"
 
 
 def test_strict_gate_replay_from_dirs_supplements_backfill_tokens_from_snapshots(tmp_path):
@@ -410,7 +455,7 @@ def test_strict_gate_replay_cli_reads_queue_orderbook_audit_and_backfill_dirs(tm
     )
 
     output = json.loads(capsys.readouterr().out)
-    assert output["hard_conclusion"] == "strict_gate_replay_ready_for_ev_audit"
+    assert output["hard_conclusion"] == "strict_gate_replay_negative_resolved_pnl"
     assert output["resolved_outcome_count"] == 2
     assert output["replay"]["resolved_pnl_usdc"] == -0.41
 

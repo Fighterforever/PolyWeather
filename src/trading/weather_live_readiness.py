@@ -939,6 +939,12 @@ def _compact_strict_gate_replay_report(report: Optional[Dict[str, Any]]) -> Opti
         "resolved_outcome_official_final_value_count": report.get(
             "resolved_outcome_official_final_value_count"
         ),
+        "resolved_fill_count": report.get("resolved_fill_count"),
+        "resolved_fill_coverage": report.get("resolved_fill_coverage"),
+        "positive_ev_safe_but_negative_pnl_count": report.get(
+            "positive_ev_safe_but_negative_pnl_count"
+        ),
+        "by_strategy_bucket": (report.get("by_strategy_bucket") or [])[:10],
         "fill_count": replay.get("fill_count"),
         "missed_fill_count": replay.get("missed_fill_count"),
         "missing_resolution_count": replay.get("missing_resolution_count"),
@@ -946,6 +952,7 @@ def _compact_strict_gate_replay_report(report: Optional[Dict[str, Any]]) -> Opti
         "resolved_pnl_cents": replay.get("resolved_pnl_cents"),
         "brier_score": replay.get("brier_score"),
         "log_loss": replay.get("log_loss"),
+        "ev_audit_summary": report.get("ev_audit_summary") if isinstance(report.get("ev_audit_summary"), dict) else None,
         "execution_summary": {
             "fill_count": execution.get("fill_count"),
             "fully_filled_count": execution.get("fully_filled_count"),
@@ -1182,7 +1189,14 @@ def _build_hard_gate_summary(
         missing_resolution_count = int(strict_gate_replay_summary.get("missing_resolution_count") or 0)
         missed_fill_count = int(strict_gate_replay_summary.get("missed_fill_count") or 0)
         no_visible_orderbook_count = int(strict_gate_replay_summary.get("no_visible_orderbook_count") or 0)
-        resolved_fill_count = max(0, fill_count - missing_resolution_count)
+        resolved_fill_count = int(
+            strict_gate_replay_summary.get("resolved_fill_count")
+            if strict_gate_replay_summary.get("resolved_fill_count") is not None
+            else max(0, fill_count - missing_resolution_count)
+        )
+        positive_ev_negative_count = int(
+            strict_gate_replay_summary.get("positive_ev_safe_but_negative_pnl_count") or 0
+        )
         replay_pnl_cents = _safe_float(strict_gate_replay_summary.get("resolved_pnl_cents"))
         if replay_conclusion != "strict_gate_replay_ready_for_ev_audit":
             replay_blockers.append(replay_conclusion or "strict_gate_replay_not_ready")
@@ -1202,6 +1216,8 @@ def _build_hard_gate_summary(
             replay_blockers.append("strict_gate_replay_resolved_pnl_missing")
         elif replay_pnl_cents < MIN_REPLAY_RESOLVED_PNL_CENTS:
             replay_blockers.append("strict_gate_replay_resolved_pnl_negative")
+        if positive_ev_negative_count > 0:
+            replay_blockers.append("strict_gate_replay_positive_ev_safe_negative_pnl")
         if strict_gate_replay_summary.get("brier_score") is None:
             replay_blockers.append("strict_gate_replay_brier_score_missing")
         if strict_gate_replay_summary.get("log_loss") is None:
@@ -1214,6 +1230,8 @@ def _build_hard_gate_summary(
             "missing_resolution_count": missing_resolution_count,
             "no_visible_orderbook_count": no_visible_orderbook_count,
             "resolved_pnl_cents": replay_pnl_cents,
+            "resolved_fill_coverage": strict_gate_replay_summary.get("resolved_fill_coverage"),
+            "positive_ev_safe_but_negative_pnl_count": positive_ev_negative_count,
             "brier_score": strict_gate_replay_summary.get("brier_score"),
             "log_loss": strict_gate_replay_summary.get("log_loss"),
         }
@@ -1711,6 +1729,9 @@ def build_live_readiness_report(
         "generated_at": generated_at or utc_now_iso(),
         "journal_dir": str(journal_root),
         "paper_fill_schema_version": PAPER_FILL_SCHEMA_VERSION,
+        "evidence_gate_passed": bool(hard_gate_summary.get("evidence_gate_passed") is True),
+        "legacy_readiness_pct": readiness_pct,
+        "live_gate_deprecated": True,
         "targets": {
             "min_paper_fills": MIN_PAPER_FILLS,
             "min_markouts": MIN_MARKOUTS,

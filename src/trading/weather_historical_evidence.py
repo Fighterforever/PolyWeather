@@ -106,6 +106,7 @@ def historical_evidence_from_replay_fills(
         "diagnostic_only": True,
         "counts_for_live_gate": False,
         "source": source,
+        "historical_evidence_no_lookahead": True,
         "input_fill_count": len(rows),
         "supplement_count": len(supplements),
         "gap_count": len(gaps),

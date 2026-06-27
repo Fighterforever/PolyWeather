@@ -176,6 +176,76 @@ def test_assess_weather_market_row_rejects_temperature_without_positive_ev_safe(
     assert "ev_safe_below_min" in assessment["blockers"]
 
 
+def test_signal_ranking_uses_ev_safe_before_legacy_raw_edge():
+    payload = {
+        "rows": [
+            {
+                "id": "high-raw-edge-negative-ev",
+                "city": "seoul",
+                "market_slug": "highest-temperature-in-seoul-on-june-27-2026-35c-or-above",
+                "side": "yes",
+                "bucket_label": ">= 35°C",
+                "active": True,
+                "closed": False,
+                "tradable": True,
+                "accepting_orders": True,
+                "price": 0.20,
+                "spread": 0.01,
+                "execution_liquidity": 2000,
+                "bid_depth_usdc_3c": 80,
+                "ask_depth_usdc_3c": 80,
+                "edge_percent": 80.0,
+                "final_score": 999.0,
+                "model_probability": 0.90,
+                **_settlement(bucket_type="ge", threshold=35.0),
+                "p_lcb": 0.19,
+                "q_effective": 0.20,
+                "cost": 0.01,
+                "ev_safe": -0.02,
+            },
+            {
+                "id": "lower-raw-edge-positive-ev",
+                "city": "seoul",
+                "market_slug": "highest-temperature-in-seoul-on-june-27-2026-31c-or-above",
+                "side": "yes",
+                "bucket_label": ">= 31°C",
+                "active": True,
+                "closed": False,
+                "tradable": True,
+                "accepting_orders": True,
+                "price": 0.40,
+                "spread": 0.01,
+                "execution_liquidity": 1000,
+                "bid_depth_usdc_3c": 40,
+                "ask_depth_usdc_3c": 40,
+                "edge_percent": 6.0,
+                "final_score": 1.0,
+                "model_probability": 0.48,
+                **_settlement(bucket_type="ge", threshold=31.0),
+                "p_lcb": 0.45,
+                "q_effective": 0.40,
+                "cost": 0.01,
+                "ev_safe": 0.04,
+            },
+        ]
+    }
+
+    report = build_weather_market_signal_report(
+        payload,
+        config=WeatherMarketSignalConfig(
+            min_liquidity=10,
+            min_edge_percent=0,
+            require_ev_safe=False,
+        ),
+    )
+
+    assert report["summary"]["candidate_count"] == 2
+    assert report["candidates"][0]["row_id"] == "lower-raw-edge-positive-ev"
+    assert report["candidates"][0]["ev_safe"] == 0.04
+    assert report["candidates"][1]["row_id"] == "high-raw-edge-negative-ev"
+    assert report["candidates"][1]["edge_percent"] == 80.0
+
+
 def test_assess_weather_market_row_can_require_quality_surface():
     row = {
         "id": "seoul-eq-yes",

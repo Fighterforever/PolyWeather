@@ -300,6 +300,15 @@ def test_archived_orderbook_due_refresh_cli_executes_with_explicit_confirmation(
 
     def fake_backfill(**kwargs):
         calls["backfill"] = kwargs
+        _append_jsonl(
+            kwargs["backfill_dir"] / "closed_markets.jsonl",
+            [
+                _closed_record(
+                    token_id_by_outcome={"Yes": "ended-token", "No": "no-token"},
+                    winning_token_id="ended-token",
+                )
+            ],
+        )
         return {
             "schema_version": "polyweather_weather_closed_backfill.v1",
             "targeted": True,
@@ -349,6 +358,11 @@ def test_archived_orderbook_due_refresh_cli_executes_with_explicit_confirmation(
 
     report = json.loads(capsys.readouterr().out)
     assert report["execution"]["status"] == "executed"
+    assert report["execution"]["before_token_overlap"]["matched_closed_archived_token_count"] == 0
+    assert report["execution"]["before_token_overlap"]["pending_closed_backfill_due_token_count"] == 1
+    assert report["execution"]["after_token_overlap"]["matched_closed_archived_token_count"] == 1
+    assert report["execution"]["after_token_overlap"]["pending_closed_backfill_due_token_count"] == 0
+    assert report["after_plan_report"]["matched_closed_archived_token_count"] == 1
     assert calls["backfill"]["market_slugs"] == [
         "highest-temperature-in-seoul-on-june-28-2026-30c-or-above"
     ]

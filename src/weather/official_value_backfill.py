@@ -451,6 +451,7 @@ def build_official_value_supplement(
     collector: Optional[Any] = None,
     fetch_external: bool = False,
     allow_wunderground_proxy: bool = False,
+    local_value_cache: Optional[Dict[tuple[str, str, str, str], Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
     if not isinstance(record.get("parsed_temperature_spec"), dict):
         return _gap_supplement(record, "unsupported_non_temperature_market")
@@ -468,13 +469,24 @@ def build_official_value_supplement(
             method="existing_record",
         )
 
-    local = load_official_temperature_value(
-        city=_record_city(record),
-        target_date=_record_target_date(record),
-        station_code=_record_station_code(record),
-        settlement_source=_record_source(record),
-        repository=repository,
+    local_cache_key = (
+        _record_city(record),
+        _record_target_date(record),
+        _record_station_code(record),
+        _record_source(record),
     )
+    if local_value_cache is not None and local_cache_key in local_value_cache:
+        local = dict(local_value_cache[local_cache_key])
+    else:
+        local = load_official_temperature_value(
+            city=_record_city(record),
+            target_date=_record_target_date(record),
+            station_code=_record_station_code(record),
+            settlement_source=_record_source(record),
+            repository=repository,
+        )
+        if local_value_cache is not None:
+            local_value_cache[local_cache_key] = dict(local)
     if local.get("status") == "ready" and local.get("official_final_value") is not None:
         return _ready_supplement(record, source=local, method="official_observation_store")
     if fetch_external:
@@ -520,6 +532,7 @@ def build_official_value_backfill_report(
     supplements: List[Dict[str, Any]] = []
     seen = 0
     shared_collector = collector
+    local_value_cache: Dict[tuple[str, str, str, str], Dict[str, Any]] = {}
     if fetch_external and shared_collector is None:
         shared_collector = _default_weather_collector()
     for record in records:
@@ -535,6 +548,7 @@ def build_official_value_backfill_report(
                 collector=shared_collector,
                 fetch_external=fetch_external,
                 allow_wunderground_proxy=allow_wunderground_proxy,
+                local_value_cache=local_value_cache,
             )
         )
 

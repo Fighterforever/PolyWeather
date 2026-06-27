@@ -278,6 +278,16 @@ def test_readiness_uses_strict_live_eligible_signal_count_when_available(tmp_pat
     assert report["signal"]["source"] == "strict_current_signal_report"
     assert report["signal"]["current_candidate_count"] == 0
     assert report["score_components"]["signal_availability"] == 0.0
+    assert report["evidence_gate_passed"] is False
+    assert report["legacy_readiness_pct"] == report["readiness_pct"]
+    assert report["live_gate_deprecated"] is True
+    current_signal_gate = {
+        row["gate_id"]: row
+        for row in report["hard_gate_summary"]["gates"]
+    }["current_signal"]
+    assert current_signal_gate["passed"] is False
+    assert current_signal_gate["observed"]["current_candidate_count"] == 0
+    assert current_signal_gate["blockers"] == ["no_current_weather_signal"]
     assert "no_current_weather_signal" in report["blockers"]
 
 

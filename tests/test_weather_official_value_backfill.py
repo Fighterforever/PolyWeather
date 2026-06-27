@@ -53,6 +53,22 @@ class EmptyRepository:
         return []
 
 
+class CountingRepository:
+    def __init__(self, points):
+        self.points = points
+        self.calls = []
+
+    def load_points(self, *, source_code, station_code, target_date):
+        self.calls.append(
+            {
+                "source_code": source_code,
+                "station_code": station_code,
+                "target_date": target_date,
+            }
+        )
+        return list(self.points)
+
+
 class FakeWundergroundCollector:
     def __init__(self):
         self.calls = []
@@ -369,6 +385,50 @@ def test_official_value_backfill_plan_dedupes_station_date_requests():
     assert plan["requests"][0]["market_slug_samples"] == [
         "highest-temperature-in-busan-on-june-26-2026-25c",
         "highest-temperature-in-busan-on-june-26-2026-26c",
+    ]
+
+
+def test_official_value_backfill_reuses_station_date_source_lookup_for_multiple_buckets():
+    repository = CountingRepository(
+        [
+            {"time": "2026-06-26T01:00:00Z", "temp": 28.0},
+            {"time": "2026-06-26T05:00:00Z", "temp": 31.2},
+        ]
+    )
+    records = [
+        _record(
+            market_id="market-25",
+            market_slug="highest-temperature-in-busan-on-june-26-2026-25c",
+            parsed_temperature_spec={
+                "city": "busan",
+                "target_date": "2026-06-26",
+                "threshold": 25,
+                "comparator": "eq",
+                "unit": "C",
+            },
+        ),
+        _record(
+            market_id="market-26",
+            market_slug="highest-temperature-in-busan-on-june-26-2026-26c",
+            parsed_temperature_spec={
+                "city": "busan",
+                "target_date": "2026-06-26",
+                "threshold": 26,
+                "comparator": "eq",
+                "unit": "C",
+            },
+        ),
+    ]
+
+    report = build_official_value_backfill_report(records, repository=repository)
+
+    assert report["ready_count"] == 2
+    assert repository.calls == [
+        {
+            "source_code": "wunderground",
+            "station_code": "RKPK",
+            "target_date": "2026-06-26",
+        }
     ]
 
 

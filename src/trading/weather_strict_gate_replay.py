@@ -314,6 +314,54 @@ def _performance_summary(replay: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def _ev_audit_summary(replay: Dict[str, Any]) -> Dict[str, Any]:
+    fills = [row for row in replay.get("fills") or [] if isinstance(row, dict)]
+    resolved = [
+        row
+        for row in fills
+        if _safe_float(row.get("pnl_cents")) is not None
+        and _safe_float(row.get("payout")) is not None
+    ]
+    positive_ev_negative_pnl = [
+        row
+        for row in resolved
+        if (_safe_float(row.get("ev_safe")) or 0.0) > 0.0
+        and (_safe_float(row.get("pnl_cents")) or 0.0) < 0.0
+    ]
+    fill_count = len(fills)
+    resolved_fill_count = len(resolved)
+    return {
+        "schema_version": "polyweather_weather_strict_gate_replay_ev_audit.v1",
+        "paper_only": True,
+        "diagnostic_only": True,
+        "counts_for_live_gate": False,
+        "fill_count": fill_count,
+        "resolved_fill_count": resolved_fill_count,
+        "resolved_fill_coverage": (
+            round(resolved_fill_count / fill_count, 6)
+            if fill_count
+            else None
+        ),
+        "resolved_pnl_cents": replay.get("resolved_pnl_cents"),
+        "brier_score": replay.get("brier_score"),
+        "log_loss": replay.get("log_loss"),
+        "positive_ev_safe_but_negative_pnl_count": len(positive_ev_negative_pnl),
+        "positive_ev_safe_but_negative_pnl_samples": [
+            {
+                "market_slug": row.get("market_slug"),
+                "token_id": row.get("token_id"),
+                "strategy_id": row.get("strategy_id"),
+                "bucket_type": row.get("bucket_type"),
+                "entry_price": row.get("entry_price"),
+                "payout": row.get("payout"),
+                "pnl_cents": row.get("pnl_cents"),
+                "ev_safe": row.get("ev_safe"),
+            }
+            for row in positive_ev_negative_pnl[:10]
+        ],
+    }
+
+
 def _resolution_source_counts(records: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return _count_by(records, "resolution_record_source", key_name="resolution_record_source")
 
@@ -357,6 +405,11 @@ def _hard_conclusion(report: Dict[str, Any]) -> str:
         return "strict_gate_replay_execution_depth_insufficient"
     if int(replay.get("missing_resolution_count") or 0) > 0:
         return "strict_gate_replay_needs_resolved_outcomes"
+    replay_pnl_cents = _safe_float(replay.get("resolved_pnl_cents"))
+    if replay_pnl_cents is None:
+        return "strict_gate_replay_needs_resolved_pnl"
+    if replay_pnl_cents < 0.0:
+        return "strict_gate_replay_negative_resolved_pnl"
     return "strict_gate_replay_ready_for_ev_audit"
 
 
@@ -384,6 +437,8 @@ def build_strict_gate_replay_report(
         replay_time=replay_time,
         size=size,
     )
+    performance_summary = _performance_summary(replay)
+    ev_audit_summary = _ev_audit_summary(replay)
     report = {
         "schema_version": STRICT_GATE_REPLAY_SCHEMA_VERSION,
         "paper_only": True,
@@ -401,7 +456,14 @@ def build_strict_gate_replay_report(
         "resolved_outcome_official_final_value_samples": _official_final_value_samples(resolved_rows),
         "queue_summary": _queue_summary(queue_rows),
         "execution_summary": _execution_summary(replay),
-        "performance_summary": _performance_summary(replay),
+        "performance_summary": performance_summary,
+        "ev_audit_summary": ev_audit_summary,
+        "resolved_fill_count": ev_audit_summary.get("resolved_fill_count"),
+        "resolved_fill_coverage": ev_audit_summary.get("resolved_fill_coverage"),
+        "positive_ev_safe_but_negative_pnl_count": ev_audit_summary.get(
+            "positive_ev_safe_but_negative_pnl_count"
+        ),
+        "by_strategy_bucket": performance_summary.get("by_strategy_bucket") or [],
         "replay": replay,
     }
     report["hard_conclusion"] = _hard_conclusion(report)

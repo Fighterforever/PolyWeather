@@ -10,6 +10,33 @@ This round moved the paper-only Polymarket weather stack toward the requested pr
 
 It did not make the system live-ready. Real order paths remain hard-disabled and the latest local readiness report still has `live_gate=false`.
 
+## Follow-up Evidence-Gate Tightening
+
+This follow-up did not raise readiness thresholds or enable live trading. It tightened the semantics around evidence:
+
+- `weather_live_readiness.py` now exposes `evidence_gate_passed`, `legacy_readiness_pct`, and `live_gate_deprecated` so downstream reviewers do not treat the legacy percent score as live authorization.
+- Current signal availability continues to prefer `strict_gate_diagnostics.live_eligible_candidate_count`; a raw `summary.candidate_count` no longer helps the hard gate when strict live-eligible count is zero.
+- `weather_strict_gate_replay.py` now emits an explicit EV audit summary:
+  - `resolved_fill_count`
+  - `resolved_fill_coverage`
+  - `positive_ev_safe_but_negative_pnl_count`
+  - `by_strategy_bucket`
+- Strict replay now fails with `strict_gate_replay_negative_resolved_pnl` whenever resolved replay PnL is negative, even if orderbook coverage, fills, and token outcomes are present.
+- `weather_archived_orderbook_due_refresh_report.py` now reports before/after closed/archive token overlap for targeted archived-orderbook closed-backfill refreshes.
+- `weather_live_evidence_bundle.py` only runs official-value backfill for closed records that overlap archived Yes-side orderbook tokens. This prevents broad closed-market truth backfill from masquerading as executable replay evidence.
+- Official value backfill now caches local station/date/source lookups, so multiple buckets sharing the same settlement station/date/source reuse one observation-store request.
+- Strict replay historical evidence and settlement calibration now expose no-lookahead status; future evidence remains rejected.
+- Weather signal ranking now prioritizes `ev_safe`, then executable depth/spread/liquidity. `edge_percent` and source `final_score` remain diagnostic/display fields and no longer drive candidate ranking.
+
+Validation:
+
+```text
+PYTHONPATH=src .venv/bin/python -m pytest -q
+926 passed, 26 warnings
+```
+
+Remaining hard blockers are unchanged in substance: resolved strict replay PnL, settlement calibration probability score, and official station truth coverage must all be present and non-negative before the system can move beyond paper-only review.
+
 ## Completed Gates
 
 ### P0 paper-only boundary

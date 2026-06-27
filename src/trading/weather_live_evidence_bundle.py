@@ -43,6 +43,48 @@ def _count_by(records: Iterable[Dict[str, Any]], field: str, *, key_name: str) -
     ]
 
 
+def _text(value: Any) -> str:
+    return str(value or "").strip()
+
+
+def _yes_token_id(record: Dict[str, Any]) -> str:
+    token_map = record.get("token_id_by_outcome") if isinstance(record.get("token_id_by_outcome"), dict) else {}
+    token_id = _text(token_map.get("Yes") or token_map.get("yes"))
+    if token_id:
+        return token_id
+    if _text(record.get("winning_outcome")).lower() == "yes":
+        return _text(record.get("winning_token_id"))
+    return ""
+
+
+def _archived_yes_token_ids(orderbook_snapshots: Iterable[Dict[str, Any]]) -> set[str]:
+    token_ids: set[str] = set()
+    for row in orderbook_snapshots:
+        if not isinstance(row, dict):
+            continue
+        side = _text(row.get("side") or row.get("outcome")).lower()
+        if side not in {"", "yes", "y"}:
+            continue
+        token_id = _text(row.get("token_id"))
+        if token_id:
+            token_ids.add(token_id)
+    return token_ids
+
+
+def _closed_records_with_archived_overlap(
+    records: Iterable[Dict[str, Any]],
+    orderbook_snapshots: Iterable[Dict[str, Any]],
+) -> list[Dict[str, Any]]:
+    archived_tokens = _archived_yes_token_ids(orderbook_snapshots)
+    if not archived_tokens:
+        return []
+    return [
+        row
+        for row in records
+        if isinstance(row, dict) and _yes_token_id(row) in archived_tokens
+    ]
+
+
 def _unresolved_replay_summary(strict_gate_replay_report: Dict[str, Any]) -> Dict[str, Any]:
     replay = (
         strict_gate_replay_report.get("replay")
@@ -476,6 +518,12 @@ def build_live_evidence_bundle_report(
     max_sample_rows: int = 20,
 ) -> Dict[str, Any]:
     generated_at = generated_at or utc_now_iso()
+    queue_rows = [row for row in queue_records if isinstance(row, dict)]
+    orderbook_rows = [row for row in orderbook_snapshots if isinstance(row, dict)]
+    audit_rows = [row for row in (audit_records or []) if isinstance(row, dict)]
+    closed_snapshot_row_list = [
+        row for row in (closed_snapshot_rows or []) if isinstance(row, dict)
+    ]
     backfill_rows = [row for row in closed_backfill_records if isinstance(row, dict)]
     explicit_official_supplements = [
         row for row in (official_value_supplements or []) if isinstance(row, dict)
@@ -485,14 +533,24 @@ def build_live_evidence_bundle_report(
             backfill_rows,
             supplements=explicit_official_supplements,
         )
-    official_value_backfill_report = build_official_value_backfill_report(
+    official_value_target_rows = _closed_records_with_archived_overlap(
         backfill_rows,
+        orderbook_rows,
+    )
+    official_value_backfill_report = build_official_value_backfill_report(
+        official_value_target_rows,
         repository=official_value_repository,
         fetch_external=fetch_external_official_values,
         allow_wunderground_proxy=allow_wunderground_proxy,
         max_gap_samples=max_official_value_gap_samples,
         max_backfill_plan_requests=max_official_value_backfill_plan_requests,
     )
+    official_value_backfill_report["target_scope"] = {
+        "scope": "closed_archive_overlap",
+        "target_record_count": len(official_value_target_rows),
+        "closed_backfill_record_count": len(backfill_rows),
+        "archived_yes_token_count": len(_archived_yes_token_ids(orderbook_rows)),
+    }
     generated_official_supplements = [
         row
         for row in official_value_backfill_report.get("supplements") or []
@@ -504,10 +562,10 @@ def build_live_evidence_bundle_report(
             supplements=generated_official_supplements,
         )
     strict_gate_replay_report = build_strict_gate_replay_report(
-        queue_records=queue_records,
-        orderbook_snapshots=orderbook_snapshots,
+        queue_records=queue_rows,
+        orderbook_snapshots=orderbook_rows,
         resolved_outcomes=resolved_outcomes_from_audits_and_backfill(
-            audit_records=audit_records or [],
+            audit_records=audit_rows,
             backfill_records=backfill_rows,
         ),
         replay_time=replay_time,
@@ -520,7 +578,7 @@ def build_live_evidence_bundle_report(
     )
     closed_historical_replay_report = build_closed_historical_replay_report(
         closed_records=backfill_rows,
-        snapshot_rows=closed_snapshot_rows or [],
+        snapshot_rows=closed_snapshot_row_list,
         replay_time=replay_time,
         size=size,
     )
@@ -535,13 +593,13 @@ def build_live_evidence_bundle_report(
         closed_historical_evidence_report["replay_hard_conclusion"] = closed_historical_replay_report.get("hard_conclusion")
     preresolution_orderbook_replay_report = build_preresolution_orderbook_replay_report(
         closed_records=backfill_rows,
-        orderbook_snapshots=orderbook_snapshots,
+        orderbook_snapshots=orderbook_rows,
         replay_time=replay_time,
         size=size,
     )
     orderbook_closed_token_coverage_report = build_orderbook_closed_token_coverage_report(
         closed_records=backfill_rows,
-        orderbook_snapshots=orderbook_snapshots,
+        orderbook_snapshots=orderbook_rows,
         generated_at=generated_at,
         max_samples=max_sample_rows,
     )

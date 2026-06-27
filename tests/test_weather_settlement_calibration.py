@@ -121,6 +121,7 @@ def test_settlement_calibration_applies_visible_historical_evidence_supplements(
 
     assert report["hard_conclusion"] == "settlement_calibration_ready_diagnostic_only"
     assert report["historical_evidence_supplement_summary"]["applied_record_count"] == 1
+    assert report["historical_evidence_no_lookahead"] is True
     assert report["global_calibration"]["brier_score"] == 0.04
     assert report["global_calibration"]["mean_resolved_pnl_per_share"] == 0.4
     row = report["calibration_rows"][0]
@@ -152,6 +153,7 @@ def test_settlement_calibration_rejects_future_historical_evidence():
     summary = report["historical_evidence_supplement_summary"]
     assert summary["applied_record_count"] == 0
     assert summary["future_evidence_count"] == 1
+    assert report["historical_evidence_no_lookahead"] is False
     assert report["probability_score_sample_count"] == 0
     assert report["resolved_pnl_sample_count"] == 0
     assert report["hard_conclusion"] == "insufficient_probability_score_samples_0_of_1"

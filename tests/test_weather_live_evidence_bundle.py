@@ -202,6 +202,12 @@ def test_live_evidence_bundle_generates_and_applies_local_official_value_supplem
 
     assert report["official_value_backfill_report"]["ready_count"] == 1
     assert report["official_value_backfill_report"]["gap_count"] == 0
+    assert report["official_value_backfill_report"]["target_scope"] == {
+        "scope": "closed_archive_overlap",
+        "target_record_count": 1,
+        "closed_backfill_record_count": 1,
+        "archived_yes_token_count": 1,
+    }
     assert report["official_value_backfill_report"]["supplements"][0]["official_final_value"] == 30.2
     assert report["settlement_calibration_report"]["official_truth_sample_count"] == 1
     assert report["settlement_calibration_report"]["probability_score_sample_count"] == 1
@@ -292,6 +298,8 @@ def test_live_evidence_bundle_surfaces_archived_tokens_pending_closed_backfill()
     assert coverage["unmatched_closed_token_count"] == 1
     assert coverage["pending_closed_backfill_due_token_count"] == 1
     assert coverage["closed_backfill_followup_plan"]["request_count"] == 1
+    assert report["official_value_backfill_report"]["target_scope"]["target_record_count"] == 0
+    assert report["official_value_backfill_report"]["input_record_count"] == 0
     assert report["gap_summary"]["coverage"]["archived_pending_closed_backfill_token_count"] == 1
     assert report["gap_summary"]["coverage"]["archived_pending_closed_backfill_due_token_count"] == 1
     assert report["gap_summary"]["coverage"]["closed_missing_archive_token_count"] == 1

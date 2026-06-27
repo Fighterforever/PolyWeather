@@ -319,9 +319,12 @@ def assess_weather_market_row(
     computed_score = _candidate_score(
         score=score,
         edge_percent=edge_percent,
+        ev_safe=ev_safe,
         liquidity=liquidity,
         price=price,
         spread=spread,
+        bid_depth=bid_depth,
+        ask_depth=ask_depth,
     )
     decision = "candidate" if not blockers else "reject"
     if decision == "candidate" and warnings:
@@ -395,16 +398,40 @@ def _candidate_score(
     *,
     score: Optional[float],
     edge_percent: Optional[float],
+    ev_safe: Optional[float],
     liquidity: Optional[float],
     price: Optional[float],
     spread: Optional[float],
+    bid_depth: Optional[float],
+    ask_depth: Optional[float],
 ) -> float:
-    base = float(score or 0.0)
-    edge_component = max(0.0, float(edge_percent or 0.0)) * 3.0
-    liquidity_component = min(30.0, max(0.0, float(liquidity or 0.0)) / 500.0)
+    # Legacy raw edge and source final_score are kept on the row as diagnostics,
+    # but ranking must be driven by executable, cost-adjusted EV.
+    ev_component = float(ev_safe) * 1000.0 if ev_safe is not None else -1000.0
+    depth_component = min(
+        40.0,
+        max(0.0, float(bid_depth or 0.0)) / 25.0
+        + max(0.0, float(ask_depth or 0.0)) / 25.0,
+    )
+    liquidity_component = min(10.0, max(0.0, float(liquidity or 0.0)) / 1000.0)
     price_penalty = abs(float(price or 0.0) - 0.35) * 10.0 if price is not None else 5.0
-    spread_penalty = float(spread or 0.0) * 250.0 if spread is not None else 10.0
-    return base + edge_component + liquidity_component - price_penalty - spread_penalty
+    spread_penalty = float(spread or 0.0) * 500.0 if spread is not None else 10.0
+    return ev_component + depth_component + liquidity_component - price_penalty - spread_penalty
+
+
+def _candidate_rank_key(item: Dict[str, Any]) -> Tuple[float, float, float, float, float]:
+    ev_safe = _safe_float(item.get("ev_safe"))
+    ask_depth = _safe_float(item.get("ask_depth_usdc_3c"))
+    bid_depth = _safe_float(item.get("bid_depth_usdc_3c"))
+    spread = _safe_float(item.get("spread"))
+    liquidity = _safe_float(item.get("liquidity"))
+    return (
+        float(ev_safe) if ev_safe is not None else -999.0,
+        float(ask_depth) if ask_depth is not None else -1.0,
+        float(bid_depth) if bid_depth is not None else -1.0,
+        -(float(spread) if spread is not None else 999.0),
+        float(liquidity) if liquidity is not None else -1.0,
+    )
 
 
 def _reason_counts(items: Iterable[Dict[str, Any]], key: str) -> List[Dict[str, Any]]:
@@ -1351,17 +1378,17 @@ def build_weather_market_signal_report(
     )
     ranked_candidates = sorted(
         candidates,
-        key=lambda item: float(item.get("score") or 0.0),
+        key=_candidate_rank_key,
         reverse=True,
     )[: max(0, int(config.max_candidates))]
     ranked_watch = sorted(
         watch,
-        key=lambda item: float(item.get("score") or 0.0),
+        key=_candidate_rank_key,
         reverse=True,
     )[: max(0, int(config.max_candidates))]
     ranked_quarantine = sorted(
         quarantine,
-        key=lambda item: float(item.get("score") or 0.0),
+        key=_candidate_rank_key,
         reverse=True,
     )[: max(0, int(config.max_quarantine))]
     risk_diagnostics = _risk_filter_diagnostics(assessments)

@@ -571,6 +571,14 @@ def build_settlement_calibration_report(
         "counts_for_live_gate": False,
         "hard_conclusion": hard_conclusion,
         "blockers": blockers,
+        "historical_evidence_no_lookahead": (
+            None
+            if historical_evidence_summary is None
+            else (
+                int(historical_evidence_summary.get("future_evidence_count") or 0) == 0
+                and int(historical_evidence_summary.get("missing_time_count") or 0) == 0
+            )
+        ),
         "record_count": record_count,
         "official_truth_sample_count": pass_count,
         "official_truth_coverage": _rounded(official_truth_coverage),
