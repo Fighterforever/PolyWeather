@@ -29,7 +29,10 @@
   ],
   "by_station_source_date": [
     {
+      "calibration_excluded_reason": null,
+      "counts_for_live_gate": true,
       "gap_reason": null,
+      "group_state": "official_source_supported",
       "market_count": 11,
       "settlement_source": "metar",
       "station_code": "EGLC",
@@ -37,7 +40,10 @@
       "target_date": "2026-06-27"
     },
     {
+      "calibration_excluded_reason": null,
+      "counts_for_live_gate": true,
       "gap_reason": null,
+      "group_state": "official_source_supported",
       "market_count": 11,
       "settlement_source": "metar",
       "station_code": "LTAC",
@@ -45,7 +51,10 @@
       "target_date": "2026-06-27"
     },
     {
+      "calibration_excluded_reason": null,
+      "counts_for_live_gate": true,
       "gap_reason": null,
+      "group_state": "official_source_supported",
       "market_count": 11,
       "settlement_source": "metar",
       "station_code": "UUWW",
@@ -53,7 +62,10 @@
       "target_date": "2026-06-27"
     },
     {
+      "calibration_excluded_reason": "unsupported_official_source_adapter",
+      "counts_for_live_gate": false,
       "gap_reason": "unsupported_source_adapter",
+      "group_state": "official_source_unsupported",
       "market_count": 11,
       "settlement_source": "noaa",
       "station_code": "LTFM",
@@ -75,10 +87,13 @@
   "request_count": 4,
   "requests": [
     {
+      "calibration_excluded_reason": null,
       "cities": [
         "london"
       ],
+      "counts_for_live_gate": true,
       "gap_reason": null,
+      "group_state": "official_source_supported",
       "market_count": 11,
       "market_slug_samples": [
         "highest-temperature-in-london-on-june-27-2026-32c",
@@ -97,10 +112,13 @@
       "unit": "C"
     },
     {
+      "calibration_excluded_reason": null,
       "cities": [
         "ankara"
       ],
+      "counts_for_live_gate": true,
       "gap_reason": null,
+      "group_state": "official_source_supported",
       "market_count": 11,
       "market_slug_samples": [
         "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
@@ -119,10 +137,13 @@
       "unit": "C"
     },
     {
+      "calibration_excluded_reason": null,
       "cities": [
         "moscow"
       ],
+      "counts_for_live_gate": true,
       "gap_reason": null,
+      "group_state": "official_source_supported",
       "market_count": 11,
       "market_slug_samples": [
         "highest-temperature-in-moscow-on-june-27-2026-22c",
@@ -141,10 +162,13 @@
       "unit": "C"
     },
     {
+      "calibration_excluded_reason": "unsupported_official_source_adapter",
       "cities": [
         "istanbul"
       ],
+      "counts_for_live_gate": false,
       "gap_reason": "unsupported_source_adapter",
+      "group_state": "official_source_unsupported",
       "market_count": 11,
       "market_slug_samples": [
         "highest-temperature-in-istanbul-on-june-27-2026-23corbelow",
@@ -168,7 +192,7 @@
   "skipped_record_count": 0,
   "source_coverage": {
     "closed_backfill_due_token_count": 0,
-    "generated_at": "2026-06-27T12:05:00Z",
+    "generated_at": "2026-06-27T16:13:23Z",
     "pending_awaiting_observation_window_end_token_count": 44,
     "pending_awaiting_settlement_due_time_token_count": 0,
     "wrong_due_prevented_count": 44

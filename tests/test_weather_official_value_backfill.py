@@ -475,12 +475,21 @@ def test_official_observation_request_plan_dedupes_archive_pending_markets_and_f
     assert by_key[("LTAC", "metar", "2026-06-27")]["market_count"] == 11
     assert by_key[("LTFM", "noaa", "2026-06-27")]["supported"] is False
     assert by_key[("LTFM", "noaa", "2026-06-27")]["gap_reason"] == "unsupported_source_adapter"
+    assert by_key[("LTFM", "noaa", "2026-06-27")]["group_state"] == "official_source_unsupported"
+    assert by_key[("LTFM", "noaa", "2026-06-27")]["counts_for_live_gate"] is False
+    assert (
+        by_key[("LTFM", "noaa", "2026-06-27")]["calibration_excluded_reason"]
+        == "unsupported_official_source_adapter"
+    )
     requests = {
         (row["station_code"], row["settlement_source"]): row
         for row in plan["requests"]
     }
     assert requests[("LTAC", "metar")]["supported_external_method"] == "aviationweather_metar_recent_72h"
     assert requests[("LTFM", "noaa")]["gap_reason"] == "unsupported_source_adapter"
+    assert requests[("LTFM", "noaa")]["group_state"] == "official_source_unsupported"
+    assert requests[("LTFM", "noaa")]["counts_for_live_gate"] is False
+    assert requests[("LTFM", "noaa")]["calibration_excluded_reason"] == "unsupported_official_source_adapter"
 
 
 def test_official_value_supplement_can_make_closed_replay_seed_settlement_truth_complete():

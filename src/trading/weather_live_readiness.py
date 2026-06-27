@@ -945,6 +945,7 @@ def _compact_strict_gate_replay_report(report: Optional[Dict[str, Any]]) -> Opti
             "positive_ev_safe_but_negative_pnl_count"
         ),
         "by_strategy_bucket": (report.get("by_strategy_bucket") or [])[:10],
+        "by_price_bucket": (report.get("by_price_bucket") or [])[:10],
         "fill_count": replay.get("fill_count"),
         "missed_fill_count": replay.get("missed_fill_count"),
         "missing_resolution_count": replay.get("missing_resolution_count"),
@@ -974,6 +975,7 @@ def _compact_strict_gate_replay_report(report: Optional[Dict[str, Any]]) -> Opti
             "by_bucket_type": (performance.get("by_bucket_type") or [])[:10],
             "by_city": (performance.get("by_city") or [])[:10],
             "by_strategy_bucket": (performance.get("by_strategy_bucket") or [])[:10],
+            "by_price_bucket": (performance.get("by_price_bucket") or [])[:10],
         },
         "queue_summary": (report.get("queue_summary") or [])[:10],
         "resolved_outcome_source_counts": report.get("resolved_outcome_source_counts") or [],
@@ -1135,12 +1137,52 @@ def _build_hard_gate_summary(
         blockers=resolved_blockers,
     )
 
+    replay_price_buckets_for_live = [
+        row
+        for row in (
+            (strict_gate_replay_summary or {}).get("by_price_bucket")
+            or ((strict_gate_replay_summary or {}).get("performance_summary") or {}).get("by_price_bucket")
+            or []
+        )
+        if isinstance(row, dict)
+    ]
+    replay_pnl_for_live = (
+        _safe_float((strict_gate_replay_summary or {}).get("resolved_pnl_cents"))
+        if isinstance(strict_gate_replay_summary, dict)
+        else None
+    )
+    non_dust_positive_pnl_for_live = [
+        row
+        for row in replay_price_buckets_for_live
+        if row.get("price_bucket") != "price_lt_0_005"
+        and (_safe_float(row.get("resolved_pnl_cents")) or 0.0) > 0.0
+        and int(row.get("resolved_count") or 0) > 0
+    ]
+    dust_positive_pnl_for_live = [
+        row
+        for row in replay_price_buckets_for_live
+        if row.get("price_bucket") == "price_lt_0_005"
+        and (_safe_float(row.get("resolved_pnl_cents")) or 0.0) > 0.0
+        and int(row.get("resolved_count") or 0) > 0
+    ]
+    dust_only_positive_replay_pnl = bool(
+        replay_pnl_for_live is not None
+        and replay_pnl_for_live > 0.0
+        and dust_positive_pnl_for_live
+        and not non_dust_positive_pnl_for_live
+    )
+
     ledger_groups = evidence_ledger.get("groups") if isinstance(evidence_ledger.get("groups"), list) else []
     tiny_live_groups = [
         row
         for row in ledger_groups
         if isinstance(row, dict) and row.get("state") == "tiny-live-eligible"
     ]
+    if dust_only_positive_replay_pnl:
+        tiny_live_groups = []
+    strategy_ledger_blockers = [] if tiny_live_groups else ["no_tiny_live_eligible_strategy_group"]
+    if dust_only_positive_replay_pnl:
+        strategy_ledger_blockers.append("tiny_live_excluded_positive_pnl_only_from_dust_price_bucket")
     add_gate(
         "strategy_evidence_ledger",
         gate_type="evidence",
@@ -1151,7 +1193,7 @@ def _build_hard_gate_summary(
             "tiny_live_eligible_group_count": len(tiny_live_groups),
             "state_counts": evidence_ledger.get("state_counts") or [],
         },
-        blockers=[] if tiny_live_groups else ["no_tiny_live_eligible_strategy_group"],
+        blockers=strategy_ledger_blockers,
     )
 
     if isinstance(orderbook_archive_coverage_report, dict):
@@ -1222,6 +1264,9 @@ def _build_hard_gate_summary(
             replay_blockers.append("strict_gate_replay_brier_score_missing")
         if strict_gate_replay_summary.get("log_loss") is None:
             replay_blockers.append("strict_gate_replay_log_loss_missing")
+        price_buckets = replay_price_buckets_for_live
+        if dust_only_positive_replay_pnl:
+            replay_blockers.append("strict_gate_replay_positive_pnl_only_from_dust_price_bucket")
         replay_observed = {
             "hard_conclusion": replay_conclusion,
             "fill_count": fill_count,
@@ -1234,6 +1279,7 @@ def _build_hard_gate_summary(
             "positive_ev_safe_but_negative_pnl_count": positive_ev_negative_count,
             "brier_score": strict_gate_replay_summary.get("brier_score"),
             "log_loss": strict_gate_replay_summary.get("log_loss"),
+            "by_price_bucket": price_buckets,
         }
     add_gate(
         "no_lookahead_replay",

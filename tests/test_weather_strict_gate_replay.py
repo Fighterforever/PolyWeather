@@ -254,8 +254,12 @@ def test_strict_gate_replay_reports_price_buckets_for_cheap_tail_diagnostic():
     assert by_price["price_lt_0_005"]["fill_count"] == 1
     assert by_price["price_lt_0_005"]["resolved_count"] == 1
     assert by_price["price_lt_0_005"]["resolved_pnl_cents"] == -0.2
+    assert by_price["price_lt_0_005"]["live_gate_excluded"] is True
+    assert by_price["price_lt_0_005"]["live_gate_excluded_reason"] == "dust_price_bucket_diagnostic_only"
     assert by_price["price_0_005_to_0_03"]["resolved_pnl_cents"] == 98.0
+    assert by_price["price_0_005_to_0_03"]["live_gate_excluded"] is False
     assert by_price["price_ge_0_03"]["resolved_pnl_cents"] == 60.0
+    assert by_price["price_ge_0_03"]["live_gate_excluded"] is False
     assert report["by_price_bucket"] == report["performance_summary"]["by_price_bucket"]
 
 

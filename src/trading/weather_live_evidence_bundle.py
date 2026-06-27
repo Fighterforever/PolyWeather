@@ -47,6 +47,82 @@ def _text(value: Any) -> str:
     return str(value or "").strip()
 
 
+def settlement_station_code(record: Dict[str, Any]) -> str:
+    spec = record.get("settlement_spec") if isinstance(record.get("settlement_spec"), dict) else {}
+    return _text(record.get("settlement_station_code") or spec.get("station_code")).upper()
+
+
+def settlement_source(record: Dict[str, Any]) -> str:
+    spec = record.get("settlement_spec") if isinstance(record.get("settlement_spec"), dict) else {}
+    return _text(record.get("settlement_source") or spec.get("settlement_source")).lower()
+
+
+def settlement_scope_matches(
+    record: Dict[str, Any],
+    *,
+    include_settlement_sources: Optional[Iterable[str]] = None,
+    exclude_settlement_sources: Optional[Iterable[str]] = None,
+    include_station_codes: Optional[Iterable[str]] = None,
+    exclude_station_codes: Optional[Iterable[str]] = None,
+) -> bool:
+    source = settlement_source(record)
+    station = settlement_station_code(record)
+    include_sources = {str(value).strip().lower() for value in (include_settlement_sources or []) if str(value).strip()}
+    exclude_sources = {str(value).strip().lower() for value in (exclude_settlement_sources or []) if str(value).strip()}
+    include_stations = {str(value).strip().upper() for value in (include_station_codes or []) if str(value).strip()}
+    exclude_stations = {str(value).strip().upper() for value in (exclude_station_codes or []) if str(value).strip()}
+    if include_sources and source not in include_sources:
+        return False
+    if exclude_sources and source in exclude_sources:
+        return False
+    if include_stations and station not in include_stations:
+        return False
+    if exclude_stations and station in exclude_stations:
+        return False
+    return True
+
+
+def filter_records_by_settlement_scope(
+    records: Iterable[Dict[str, Any]],
+    *,
+    include_settlement_sources: Optional[Iterable[str]] = None,
+    exclude_settlement_sources: Optional[Iterable[str]] = None,
+    include_station_codes: Optional[Iterable[str]] = None,
+    exclude_station_codes: Optional[Iterable[str]] = None,
+) -> list[Dict[str, Any]]:
+    return [
+        row
+        for row in records
+        if isinstance(row, dict)
+        and settlement_scope_matches(
+            row,
+            include_settlement_sources=include_settlement_sources,
+            exclude_settlement_sources=exclude_settlement_sources,
+            include_station_codes=include_station_codes,
+            exclude_station_codes=exclude_station_codes,
+        )
+    ]
+
+
+def _has_settlement_scope_filters(
+    *,
+    include_settlement_sources: Optional[Iterable[str]] = None,
+    exclude_settlement_sources: Optional[Iterable[str]] = None,
+    include_station_codes: Optional[Iterable[str]] = None,
+    exclude_station_codes: Optional[Iterable[str]] = None,
+) -> bool:
+    return any(
+        str(value or "").strip()
+        for values in (
+            include_settlement_sources,
+            exclude_settlement_sources,
+            include_station_codes,
+            exclude_station_codes,
+        )
+        for value in (values or [])
+    )
+
+
 def _yes_token_id(record: Dict[str, Any]) -> str:
     token_map = record.get("token_id_by_outcome") if isinstance(record.get("token_id_by_outcome"), dict) else {}
     token_id = _text(token_map.get("Yes") or token_map.get("yes"))
@@ -516,6 +592,10 @@ def build_live_evidence_bundle_report(
     min_resolved_pnl_samples: int = 10,
     min_official_truth_coverage: float = 0.80,
     max_sample_rows: int = 20,
+    include_settlement_sources: Optional[Iterable[str]] = None,
+    exclude_settlement_sources: Optional[Iterable[str]] = None,
+    include_station_codes: Optional[Iterable[str]] = None,
+    exclude_station_codes: Optional[Iterable[str]] = None,
 ) -> Dict[str, Any]:
     generated_at = generated_at or utc_now_iso()
     queue_rows = [row for row in queue_records if isinstance(row, dict)]
@@ -525,6 +605,42 @@ def build_live_evidence_bundle_report(
         row for row in (closed_snapshot_rows or []) if isinstance(row, dict)
     ]
     backfill_rows = [row for row in closed_backfill_records if isinstance(row, dict)]
+    orderbook_rows = filter_records_by_settlement_scope(
+        orderbook_rows,
+        include_settlement_sources=include_settlement_sources,
+        exclude_settlement_sources=exclude_settlement_sources,
+        include_station_codes=include_station_codes,
+        exclude_station_codes=exclude_station_codes,
+    )
+    backfill_rows = filter_records_by_settlement_scope(
+        backfill_rows,
+        include_settlement_sources=include_settlement_sources,
+        exclude_settlement_sources=exclude_settlement_sources,
+        include_station_codes=include_station_codes,
+        exclude_station_codes=exclude_station_codes,
+    )
+    scope_filter_active = _has_settlement_scope_filters(
+        include_settlement_sources=include_settlement_sources,
+        exclude_settlement_sources=exclude_settlement_sources,
+        include_station_codes=include_station_codes,
+        exclude_station_codes=exclude_station_codes,
+    )
+    scoped_token_ids = {
+        _text(row.get("token_id"))
+        for row in orderbook_rows
+        if _text(row.get("token_id"))
+    }
+    if scope_filter_active and scoped_token_ids:
+        queue_rows = [
+            row
+            for row in queue_rows
+            if not _text(row.get("token_id")) or _text(row.get("token_id")) in scoped_token_ids
+        ]
+        audit_rows = [
+            row
+            for row in audit_rows
+            if not _text(row.get("token_id")) or _text(row.get("token_id")) in scoped_token_ids
+        ]
     explicit_official_supplements = [
         row for row in (official_value_supplements or []) if isinstance(row, dict)
     ]
@@ -695,6 +811,10 @@ def build_live_evidence_bundle_report_from_dirs(
     min_resolved_pnl_samples: int = 10,
     min_official_truth_coverage: float = 0.80,
     max_sample_rows: int = 20,
+    include_settlement_sources: Optional[Iterable[str]] = None,
+    exclude_settlement_sources: Optional[Iterable[str]] = None,
+    include_station_codes: Optional[Iterable[str]] = None,
+    exclude_station_codes: Optional[Iterable[str]] = None,
 ) -> Dict[str, Any]:
     journal_root = Path(paper_journal_dir)
     queue_root = (
@@ -728,4 +848,8 @@ def build_live_evidence_bundle_report_from_dirs(
         min_resolved_pnl_samples=min_resolved_pnl_samples,
         min_official_truth_coverage=min_official_truth_coverage,
         max_sample_rows=max_sample_rows,
+        include_settlement_sources=include_settlement_sources,
+        exclude_settlement_sources=exclude_settlement_sources,
+        include_station_codes=include_station_codes,
+        exclude_station_codes=exclude_station_codes,
     )

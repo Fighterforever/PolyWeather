@@ -306,6 +306,18 @@ def _performance_by_field(fills: Iterable[Dict[str, Any]], field: str, *, key_na
 
 def _performance_summary(replay: Dict[str, Any]) -> Dict[str, Any]:
     fills = [row for row in replay.get("fills") or [] if isinstance(row, dict)]
+    by_price_bucket = _performance_by_field(
+        fills,
+        "price_bucket",
+        key_name="price_bucket",
+    )
+    for row in by_price_bucket:
+        row["live_gate_excluded"] = row.get("price_bucket") == "price_lt_0_005"
+        row["live_gate_excluded_reason"] = (
+            "dust_price_bucket_diagnostic_only"
+            if row.get("live_gate_excluded")
+            else None
+        )
     return {
         "schema_version": "polyweather_weather_strict_gate_replay_performance.v1",
         "paper_only": True,
@@ -320,11 +332,7 @@ def _performance_summary(replay: Dict[str, Any]) -> Dict[str, Any]:
             "strategy_bucket",
             key_name="strategy_bucket",
         ),
-        "by_price_bucket": _performance_by_field(
-            fills,
-            "price_bucket",
-            key_name="price_bucket",
-        ),
+        "by_price_bucket": by_price_bucket,
     }
 
 

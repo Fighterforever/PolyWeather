@@ -1,0 +1,91 @@
+{
+  "after": {
+    "archived_unique_token_count": 328,
+    "by_settlement_due_time": {
+      "2026-06-28T20:59:59Z": 40,
+      "2026-06-29T02:59:59Z": 132,
+      "2026-06-29T04:59:59Z": 44,
+      "2026-06-29T05:59:59Z": 44,
+      "2026-06-30T02:59:59Z": 132,
+      "2026-06-30T04:59:59Z": 44,
+      "2026-06-30T05:59:59Z": 44,
+      "unknown": 240
+    },
+    "by_settlement_source": {
+      "aeroweb": 88,
+      "metar": 478,
+      "noaa": 154
+    },
+    "by_station": {
+      "EGLC": 130,
+      "LFPB": 88,
+      "LTAC": 154,
+      "LTFM": 154,
+      "RKSI": 40,
+      "UUWW": 154
+    },
+    "row_count": 720
+  },
+  "archive_path": "evidence/orderbook_archive/orderbook_snapshots.jsonl",
+  "before": {
+    "archived_unique_token_count": 328,
+    "by_settlement_due_time": {
+      "2026-06-28T20:59:59Z": 20,
+      "2026-06-29T02:59:59Z": 66,
+      "2026-06-29T04:59:59Z": 22,
+      "2026-06-29T05:59:59Z": 22,
+      "2026-06-30T02:59:59Z": 66,
+      "2026-06-30T04:59:59Z": 22,
+      "2026-06-30T05:59:59Z": 22,
+      "unknown": 240
+    },
+    "by_settlement_source": {
+      "aeroweb": 44,
+      "metar": 326,
+      "noaa": 110
+    },
+    "by_station": {
+      "EGLC": 86,
+      "LFPB": 44,
+      "LTAC": 110,
+      "LTFM": 110,
+      "RKSI": 20,
+      "UUWW": 110
+    },
+    "row_count": 480
+  },
+  "counts_for_live_gate": false,
+  "cycle_artifact": "evidence/paper_cycle_extra_pre_due_or_post_due.json",
+  "delta": {
+    "archived_unique_token_count": 0,
+    "row_count": 240,
+    "written_count": 240
+  },
+  "diagnostic_only": true,
+  "generated_at": "2026-06-27T16:18:52Z",
+  "growth_conclusion": "archive_snapshots_added_existing_market_universe",
+  "no_new_token_reason": "same_market_universe_existing_tokens",
+  "orderbook_archive_coverage": {
+    "active_yes_token_count": 120,
+    "archive_row_count": 720,
+    "coverage_rate": 1.0,
+    "covered_preresolution_count": 120,
+    "eligible_preresolution_count": 120,
+    "gap_count": 0,
+    "hard_conclusion": "orderbook_archive_coverage_ready"
+  },
+  "orderbook_archive_report": {
+    "archive_dir": "evidence/orderbook_archive",
+    "counts_for_live_gate": false,
+    "paper_only": true,
+    "recorded_at": "2026-06-27T16:18:52Z",
+    "rows_seen": 240,
+    "schema_version": "polyweather_polymarket_orderbook_archive.v1",
+    "snapshot_count": 240,
+    "source": "polymarket_readonly",
+    "source_snapshot_id": "polymarket-readonly-2026-06-27T16:18:52Z",
+    "written_count": 240
+  },
+  "paper_only": true,
+  "schema_version": "polyweather_orderbook_archive_growth_report.v1"
+}

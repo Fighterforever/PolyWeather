@@ -364,6 +364,18 @@ def _external_method_for_source(source: str) -> Optional[str]:
     return None
 
 
+def _unsupported_source_group_fields(source: str) -> Dict[str, Any]:
+    if _external_method_for_source(source) is not None:
+        return {
+            "group_state": "official_source_supported",
+            "calibration_excluded_reason": None,
+        }
+    return {
+        "group_state": "official_source_unsupported",
+        "calibration_excluded_reason": "unsupported_official_source_adapter",
+    }
+
+
 def _official_observation_backfill_plan(
     supplements: Iterable[Dict[str, Any]],
     *,
@@ -395,6 +407,8 @@ def _official_observation_backfill_plan(
                 "gap_reasons": {},
                 "market_slug_samples": [],
                 "supported_external_method": _external_method_for_source(settlement_source),
+                "supported": _external_method_for_source(settlement_source) is not None,
+                **_unsupported_source_group_fields(settlement_source),
             },
         )
         if city and city not in request["cities"]:
@@ -414,6 +428,7 @@ def _official_observation_backfill_plan(
             by_gap_reason[reason] = by_gap_reason.get(reason, 0) + int(count)
         request["cities"] = sorted(request["cities"])
         request["gap_reasons"] = _count_rows(request["gap_reasons"], "reason")
+        request["counts_for_live_gate"] = False if request.get("supported") is False else True
         request["next_action"] = (
             "Fetch the supported external official source, then persist the station/date observations into the official observation store."
             if request.get("supported_external_method")
@@ -481,6 +496,7 @@ def build_official_observation_request_plan(
                 "supported_external_method": method,
                 "supported": method is not None,
                 "gap_reason": None if method is not None else "unsupported_source_adapter",
+                **_unsupported_source_group_fields(settlement_source),
             },
         )
         if city and city not in request["cities"]:
@@ -494,6 +510,7 @@ def build_official_observation_request_plan(
     requests = list(grouped.values())
     for request in requests:
         request["cities"] = sorted(request["cities"])
+        request["counts_for_live_gate"] = False if request.get("supported") is False else True
         request["next_action"] = (
             "Fetch this supported external official source, then persist the station/date observation before settlement calibration."
             if request.get("supported")
@@ -515,6 +532,9 @@ def build_official_observation_request_plan(
             "market_count": row.get("market_count"),
             "supported": row.get("supported"),
             "gap_reason": row.get("gap_reason"),
+            "group_state": row.get("group_state"),
+            "counts_for_live_gate": False if row.get("supported") is False else True,
+            "calibration_excluded_reason": row.get("calibration_excluded_reason"),
         }
         for row in requests
     ]
@@ -562,7 +582,7 @@ def build_official_value_supplement(
     allow_wunderground_proxy: bool = False,
     local_value_cache: Optional[Dict[tuple[str, str, str, str], Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
-    if not isinstance(record.get("parsed_temperature_spec"), dict):
+    if not isinstance(record.get("parsed_temperature_spec"), dict) and not _record_settlement_spec(record):
         return _gap_supplement(record, "unsupported_non_temperature_market")
     if record.get("official_final_value") is not None:
         return _ready_supplement(
@@ -606,6 +626,17 @@ def build_official_value_supplement(
             detail = dict(external.get("gap_detail") or {})
             detail["local_store_status"] = local.get("status")
             return _gap_supplement(record, str(external.get("gap_reason") or "metar_recent_gap"), detail=detail)
+        if _external_method_for_source(_record_source(record)) is None:
+            return _gap_supplement(
+                record,
+                "unsupported_official_source_adapter",
+                detail={
+                    "settlement_source": _record_source(record) or None,
+                    "local_store_status": local.get("status"),
+                    "group_state": "official_source_unsupported",
+                    "calibration_excluded_reason": "unsupported_official_source_adapter",
+                },
+            )
         external = _fetch_wunderground_value(
             record,
             collector=collector,

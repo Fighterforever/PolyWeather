@@ -420,6 +420,60 @@ def test_readiness_hard_gates_keep_authorization_separate_from_evidence(tmp_path
     assert replay_summary["performance_summary"]["by_strategy"][0]["resolved_pnl_cents"] == 25.0
 
 
+def test_readiness_blocks_positive_replay_pnl_only_from_dust_price_bucket(tmp_path):
+    _append_jsonl(
+        tmp_path / "paper_fills.jsonl",
+        [
+            _fill(
+                index,
+                city="seoul",
+                bucket_type="ge",
+                strategy_id="tail_threshold",
+                execution_style="taker_depth_checked",
+                strategy_live_eligible=True,
+                counts_for_live_gate=True,
+            )
+            for index in range(30)
+        ],
+    )
+    _append_jsonl(tmp_path / "markouts.jsonl", [_markout(index, markout_cents=1.0) for index in range(30)])
+    _append_jsonl(tmp_path / "resolved_audits.jsonl", [_resolved(index) for index in range(10)])
+
+    replay = _ready_strict_gate_replay()
+    replay["performance_summary"]["by_price_bucket"] = [
+        {
+            "price_bucket": "price_lt_0_005",
+            "fill_count": 30,
+            "resolved_count": 30,
+            "resolved_pnl_cents": 25.0,
+            "brier_score": 0.19,
+            "log_loss": 0.58,
+            "live_gate_excluded": True,
+            "live_gate_excluded_reason": "dust_price_bucket_diagnostic_only",
+        }
+    ]
+
+    report = build_live_readiness_report(
+        journal_dir=tmp_path,
+        signal_report=_signal_report(candidate_count=1),
+        orderbook_archive_coverage_report=_ready_orderbook_coverage(),
+        strict_gate_replay_report=replay,
+        settlement_calibration_report=_ready_settlement_calibration(),
+        live_permission=False,
+        live_order_path_available=False,
+    )
+
+    hard_gates = report["hard_gate_summary"]
+    replay_gate = {
+        row["gate_id"]: row
+        for row in hard_gates["gates"]
+    }["no_lookahead_replay"]
+    assert replay_gate["passed"] is False
+    assert "strict_gate_replay_positive_pnl_only_from_dust_price_bucket" in replay_gate["blockers"]
+    assert hard_gates["tiny_live_eligible_group_count"] == 0
+    assert "no_lookahead_replay" in hard_gates["failed_gate_ids"]
+
+
 def test_readiness_report_attaches_signal_risk_filter_diagnostics(tmp_path):
     signal = _signal_report(candidate_count=0)
     signal["summary"].update(

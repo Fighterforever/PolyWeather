@@ -1,0 +1,52 @@
+{
+  "profile": "paper-cycle-targeted-shadow",
+  "recorded_at": "2026-06-27T16:18:52Z",
+  "report": {
+    "candidates": [],
+    "counts_for_live_gate": false,
+    "generated_at": "2026-06-27T16:18:52Z",
+    "live_authorization_pct": 0,
+    "live_gate": false,
+    "paper_only": true,
+    "quarantine": [],
+    "schema_version": "polyweather_weather_targeted_shadow.v1",
+    "source": "polymarket_readonly",
+    "source_snapshot_id": "polymarket-readonly-2026-06-27T16:18:52Z",
+    "source_status": "ready",
+    "summary": {
+      "candidate_count": 0,
+      "live_authorization_pct": 0,
+      "live_blockers": [
+        "targeted_shadow_paper_only",
+        "live_permission_false"
+      ],
+      "live_gate": false,
+      "quarantine_count": 0,
+      "targeted_shadow_count": 0,
+      "targeted_shadow_suppressed_count": 0,
+      "watch_count": 0
+    },
+    "suppressed": [],
+    "target_config": {
+      "bucket_types": [
+        "le"
+      ],
+      "cooldown_reasons": [],
+      "max_items": 10,
+      "min_edge_percent": 5.0,
+      "near_miss_categories": [
+        "depth",
+        "price"
+      ],
+      "positive_edge_only": true,
+      "quarantine_reasons": [
+        "risk_rule_only_reject"
+      ],
+      "require_edge_floor_for_direct_reasons": false
+    },
+    "targeted_shadow_id": "98936870bf02316e534b",
+    "watch": []
+  },
+  "run_id": "a6d3e47ba919946898ca",
+  "schema_version": "polyweather_weather_paper_journal.v1"
+}
