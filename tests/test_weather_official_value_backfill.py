@@ -3,6 +3,7 @@ from __future__ import annotations
 from src.trading.weather_closed_replay_seed import build_closed_replay_seed_report
 from src.weather.official_value_backfill import (
     apply_official_value_supplements,
+    build_official_observation_request_plan,
     build_official_value_backfill_report,
     build_official_value_supplement,
     load_official_value_supplements,
@@ -430,6 +431,56 @@ def test_official_value_backfill_reuses_station_date_source_lookup_for_multiple_
             "target_date": "2026-06-26",
         }
     ]
+
+
+def test_official_observation_request_plan_dedupes_archive_pending_markets_and_flags_unsupported_sources():
+    records = []
+    for station_code, source, city in (
+        ("LTAC", "metar", "ankara"),
+        ("LTFM", "noaa", "istanbul"),
+        ("UUWW", "metar", "moscow"),
+        ("EGLC", "metar", "london"),
+    ):
+        for index in range(11):
+            records.append(
+                {
+                    "market_slug": f"highest-temperature-in-{city}-on-june-27-2026-{index}",
+                    "city": city,
+                    "target_date": "2026-06-27",
+                    "settlement_station_code": station_code,
+                    "settlement_source": source,
+                    "settlement_spec": {
+                        "station_code": station_code,
+                        "settlement_source": source,
+                        "target_date": "2026-06-27",
+                        "unit": "C",
+                    },
+                }
+            )
+
+    plan = build_official_observation_request_plan(
+        records,
+        expected_reuse_market_count=44,
+        max_requests=10,
+    )
+
+    assert plan["request_count"] == 4
+    assert plan["supported_request_count"] == 3
+    assert plan["unsupported_request_count"] == 1
+    assert plan["expected_reuse_market_count"] == 44
+    by_key = {
+        (row["station_code"], row["settlement_source"], row["target_date"]): row
+        for row in plan["by_station_source_date"]
+    }
+    assert by_key[("LTAC", "metar", "2026-06-27")]["market_count"] == 11
+    assert by_key[("LTFM", "noaa", "2026-06-27")]["supported"] is False
+    assert by_key[("LTFM", "noaa", "2026-06-27")]["gap_reason"] == "unsupported_source_adapter"
+    requests = {
+        (row["station_code"], row["settlement_source"]): row
+        for row in plan["requests"]
+    }
+    assert requests[("LTAC", "metar")]["supported_external_method"] == "aviationweather_metar_recent_72h"
+    assert requests[("LTFM", "noaa")]["gap_reason"] == "unsupported_source_adapter"
 
 
 def test_official_value_supplement_can_make_closed_replay_seed_settlement_truth_complete():

@@ -383,6 +383,77 @@ def _wrong_due_prevented(records: Iterable[Dict[str, Any]], *, now: datetime) ->
     return prevented
 
 
+def _earliest_future_settlement_due(records: Iterable[Dict[str, Any]], *, now: datetime) -> Optional[datetime]:
+    values = [
+        parsed
+        for record in records
+        for parsed in [_parse_utc(record.get("settlement_due_time"))]
+        if parsed is not None and parsed > now
+    ]
+    if not values:
+        return None
+    return min(values)
+
+
+def _due_schedule_by_station_date_source(records: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    grouped: Dict[tuple[str, str, str], Dict[str, Any]] = {}
+    for record in records:
+        station_code = _text(record.get("settlement_station_code")).upper() or "unknown"
+        target_date = _text(record.get("target_date")) or "unknown"
+        settlement_source = _text(record.get("settlement_source")).lower() or "unknown"
+        key = (station_code, target_date, settlement_source)
+        row = grouped.setdefault(
+            key,
+            {
+                "station_code": station_code,
+                "target_date": target_date,
+                "settlement_source": settlement_source,
+                "settlement_timezone": record.get("settlement_timezone"),
+                "observation_window_end_time": record.get("observation_window_end_time"),
+                "settlement_due_time": record.get("settlement_due_time"),
+                "market_count": 0,
+                "token_count": 0,
+                "pending_status_counts": {},
+                "cities": [],
+                "market_slug_samples": [],
+            },
+        )
+        row["market_count"] += 1
+        row["token_count"] += 1
+        status = _text(record.get("pending_closed_backfill_status")) or "unknown"
+        row["pending_status_counts"][status] = int(row["pending_status_counts"].get(status) or 0) + 1
+        city = _text(record.get("city")).lower()
+        if city and city not in row["cities"]:
+            row["cities"].append(city)
+        slug = _text(record.get("market_slug"))
+        if slug and len(row["market_slug_samples"]) < 5:
+            row["market_slug_samples"].append(slug)
+        for field in ("settlement_timezone", "observation_window_end_time", "settlement_due_time"):
+            if row.get(field) is None and record.get(field) is not None:
+                row[field] = record.get(field)
+
+    rows: List[Dict[str, Any]] = []
+    for row in grouped.values():
+        row["cities"] = sorted(row["cities"])
+        row["pending_status_counts"] = [
+            {"status": status, "count": count}
+            for status, count in sorted(
+                row["pending_status_counts"].items(),
+                key=lambda pair: (-pair[1], pair[0]),
+            )
+        ]
+        rows.append(row)
+    rows.sort(
+        key=lambda row: (
+            str(row.get("settlement_due_time") or ""),
+            str(row.get("settlement_source") or ""),
+            str(row.get("station_code") or ""),
+            str(row.get("target_date") or ""),
+        )
+    )
+    return rows
+
+
 def build_orderbook_closed_token_coverage_report(
     *,
     closed_records: Iterable[Dict[str, Any]],
@@ -458,6 +529,14 @@ def build_orderbook_closed_token_coverage_report(
     next_market_close = _earliest_time(awaiting_market_close, "market_close_time")
     next_observation_end = _earliest_time(awaiting_observation_end, "observation_window_end_time")
     next_settlement_due = _earliest_time(awaiting_settlement_due, "settlement_due_time")
+    earliest_future_due = _earliest_future_settlement_due(
+        [
+            *awaiting_market_close,
+            *awaiting_observation_end,
+            *awaiting_settlement_due,
+        ],
+        now=now,
+    )
     next_market_close_records = _records_at_time(awaiting_market_close, "market_close_time", next_market_close)
     next_observation_end_records = _records_at_time(
         awaiting_observation_end,
@@ -474,6 +553,12 @@ def build_orderbook_closed_token_coverage_report(
         if value is not None
     ]
     next_refresh_check_after = _iso(now) if refresh_due else (_iso(min(next_wait_candidates)) if next_wait_candidates else None)
+    due_schedule_records = [
+        *refresh_due,
+        *awaiting_observation_end,
+        *awaiting_settlement_due,
+    ]
+    due_schedule = _due_schedule_by_station_date_source(due_schedule_records)
     return {
         "schema_version": ORDERBOOK_CLOSED_TOKEN_COVERAGE_SCHEMA_VERSION,
         "paper_only": True,
@@ -519,7 +604,12 @@ def build_orderbook_closed_token_coverage_report(
             "next_await_market_end": _iso(next_market_close) if next_market_close else None,
             "next_market_close_check_after": _iso(next_market_close) if next_market_close else None,
             "next_observation_window_end_after": _iso(next_observation_end) if next_observation_end else None,
-            "next_settlement_due_check_after": _iso(next_settlement_due) if next_settlement_due else None,
+            "next_settlement_due_check_after": (
+                _iso(next_settlement_due or earliest_future_due)
+                if (next_settlement_due or earliest_future_due)
+                else None
+            ),
+            "earliest_settlement_due_time": _iso(earliest_future_due) if earliest_future_due else None,
             "next_refresh_check_after": next_refresh_check_after,
             "next_await_market_end_token_count": len(next_market_close_records),
             "next_await_market_query_count": len(next_market_close_queries),
@@ -547,6 +637,7 @@ def build_orderbook_closed_token_coverage_report(
             "next_observation_window_end_queries": next_observation_end_queries[:sample_count],
             "next_settlement_due_queries": next_settlement_due_queries[:sample_count],
             "recommended_command": _closed_backfill_command(due_queries),
+            "due_schedule_by_station_date_source": due_schedule,
             "requests": refresh_due[:sample_count],
             "await_market_end_samples": awaiting_market_close[:sample_count],
             "awaiting_market_close_samples": awaiting_market_close[:sample_count],

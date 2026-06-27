@@ -55,6 +55,27 @@ def _token_overlap_summary(report: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def _settlement_due_block(plan_report: Dict[str, Any]) -> Dict[str, Any]:
+    followup = (
+        plan_report.get("closed_backfill_followup_plan")
+        if isinstance(plan_report.get("closed_backfill_followup_plan"), dict)
+        else {}
+    )
+    awaiting_observation = int(plan_report.get("pending_awaiting_observation_window_end_token_count") or 0)
+    awaiting_settlement = int(plan_report.get("pending_awaiting_settlement_due_time_token_count") or 0)
+    due_schedule = followup.get("due_schedule_by_station_date_source")
+    if not isinstance(due_schedule, list):
+        due_schedule = []
+    return {
+        "status": "blocked_until_settlement_due_time",
+        "earliest_settlement_due_time": followup.get("earliest_settlement_due_time")
+        or followup.get("next_settlement_due_check_after"),
+        "awaiting_observation_window_end_token_count": awaiting_observation,
+        "awaiting_settlement_due_time_token_count": awaiting_settlement,
+        "station_date_source_schedule": due_schedule,
+    }
+
+
 def diagnose_targeted_backfill_attempt(
     *,
     attempted_report: Dict[str, Any],
@@ -187,7 +208,12 @@ def build_due_refresh_report(
         if confirm != CONFIRM_TOKEN:
             execution["status"] = "confirm_missing"
         elif market_query_count <= 0:
-            execution["status"] = "no_due_markets"
+            awaiting_observation = int(plan_report.get("pending_awaiting_observation_window_end_token_count") or 0)
+            awaiting_settlement = int(plan_report.get("pending_awaiting_settlement_due_time_token_count") or 0)
+            if awaiting_observation > 0 or awaiting_settlement > 0:
+                execution.update(_settlement_due_block(plan_report))
+            else:
+                execution["status"] = "no_due_markets"
         elif len(market_queries) < market_query_count:
             execution["status"] = "due_market_query_list_truncated"
         else:

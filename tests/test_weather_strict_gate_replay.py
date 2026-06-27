@@ -86,6 +86,7 @@ def test_strict_gate_replay_negative_resolved_pnl_fails_ev_audit():
     assert report["replay"]["resolved_pnl_cents"] == -1800.0
     assert report["hard_conclusion"] == "strict_gate_replay_negative_resolved_pnl"
     assert report["by_strategy_bucket"][0]["strategy_bucket"] == "tail_threshold|ge"
+    assert report["by_price_bucket"][0]["price_bucket"] == "price_ge_0_03"
 
 
 def test_strict_gate_replay_reports_missing_orderbook_before_resolution():
@@ -226,6 +227,36 @@ def test_strict_gate_replay_reports_stratified_performance_by_strategy_queue_buc
     }
     assert by_strategy_bucket["tail_threshold|ge"]["resolved_count"] == 1
     assert by_strategy_bucket["near_lock|le"]["resolved_count"] == 1
+
+
+def test_strict_gate_replay_reports_price_buckets_for_cheap_tail_diagnostic():
+    report = build_strict_gate_replay_report(
+        queue_records=[
+            _queue_record(queue_record_id="dust", token_id="dust-token", ev_safe=0.01),
+            _queue_record(queue_record_id="cheap", token_id="cheap-token", ev_safe=0.02),
+            _queue_record(queue_record_id="normal", token_id="normal-token", ev_safe=0.03),
+        ],
+        orderbook_snapshots=[
+            _orderbook(snapshot_id="dust-book", token_id="dust-token", ask_ladder=[{"price": 0.002, "size": 2.0}]),
+            _orderbook(snapshot_id="cheap-book", token_id="cheap-token", ask_ladder=[{"price": 0.02, "size": 2.0}]),
+            _orderbook(snapshot_id="normal-book", token_id="normal-token", ask_ladder=[{"price": 0.40, "size": 2.0}]),
+        ],
+        resolved_outcomes=[
+            {"token_id": "dust-token", "payout": 0.0},
+            {"token_id": "cheap-token", "payout": 1.0},
+            {"token_id": "normal-token", "payout": 1.0},
+        ],
+        replay_time="2026-06-27T01:00:00Z",
+        size=1.0,
+    )
+
+    by_price = {row["price_bucket"]: row for row in report["performance_summary"]["by_price_bucket"]}
+    assert by_price["price_lt_0_005"]["fill_count"] == 1
+    assert by_price["price_lt_0_005"]["resolved_count"] == 1
+    assert by_price["price_lt_0_005"]["resolved_pnl_cents"] == -0.2
+    assert by_price["price_0_005_to_0_03"]["resolved_pnl_cents"] == 98.0
+    assert by_price["price_ge_0_03"]["resolved_pnl_cents"] == 60.0
+    assert report["by_price_bucket"] == report["performance_summary"]["by_price_bucket"]
 
 
 def test_resolved_outcomes_from_backfill_reconstructs_token_payouts():

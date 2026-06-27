@@ -1,0 +1,58 @@
+{
+  "profile": "paper-cycle-maker-focus",
+  "recorded_at": "2026-06-27T15:35:32Z",
+  "report": {
+    "candidates": [],
+    "counts_for_live_gate": false,
+    "eligible_group_count": 0,
+    "eligible_groups": [],
+    "generated_at": "2026-06-27T15:35:32Z",
+    "hard_conclusion": "maker_focus_no_positive_historical_stratum",
+    "live_authorization_pct": 0,
+    "live_gate": false,
+    "maker_focus_id": "a8f32545b10ffa33c475",
+    "paper_only": true,
+    "quarantine": [],
+    "report_type": "maker_focus_signal",
+    "schema_version": "polyweather_weather_execution_calibration.v1",
+    "selection_config": {
+      "group_fields": [
+        "entry_spread_bucket"
+      ],
+      "max_items": 10,
+      "min_edge_percent": 5.0,
+      "min_group_count": 3,
+      "min_group_mean_markout_cents": 0.0,
+      "min_group_win_rate": 0.55,
+      "respect_maker_quote_risk_rules": true,
+      "source_sections": [
+        "quarantine"
+      ]
+    },
+    "source": "polymarket_readonly",
+    "source_snapshot_id": "polymarket-readonly-2026-06-27T15:35:32Z",
+    "source_status": "ready",
+    "summary": {
+      "candidate_count": 0,
+      "live_authorization_pct": 0,
+      "live_blockers": [
+        "maker_focus_paper_only",
+        "maker_bid_fill_probability_unproven",
+        "live_permission_false"
+      ],
+      "live_gate": false,
+      "maker_focus_count": 0,
+      "maker_focus_suppressed_count": 0,
+      "maker_quote_broad_only_risk_suppressed_count": 0,
+      "maker_quote_medium_only_risk_suppressed_count": 0,
+      "maker_quote_risk_suppressed_count": 0,
+      "maker_quote_specific_risk_suppressed_count": 0,
+      "quarantine_count": 0,
+      "watch_count": 0
+    },
+    "suppressed": [],
+    "watch": []
+  },
+  "run_id": "d2e70977aad4c24d6b12",
+  "schema_version": "polyweather_weather_paper_journal.v1"
+}

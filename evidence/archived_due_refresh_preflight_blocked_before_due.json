@@ -1,0 +1,422 @@
+{
+  "after_plan_report": null,
+  "backfill_dir": "evidence/weather_backfill",
+  "counts_for_live_gate": false,
+  "diagnostic_only": true,
+  "execution": {
+    "awaiting_observation_window_end_token_count": 44,
+    "awaiting_settlement_due_time_token_count": 0,
+    "before_token_overlap": {
+      "closed_backfill_attempted_but_market_open_token_count": 0,
+      "closed_backfill_due_token_count": 0,
+      "matched_closed_archived_token_count": 0,
+      "missing_settlement_due_time_metadata_token_count": 0,
+      "pending_awaiting_market_close_token_count": 120,
+      "pending_awaiting_observation_window_end_token_count": 44,
+      "pending_awaiting_settlement_due_time_token_count": 0,
+      "pending_closed_backfill_await_market_end_token_count": 120,
+      "pending_closed_backfill_due_token_count": 0,
+      "pending_closed_backfill_missing_end_time_token_count": 0,
+      "wrong_due_prevented_count": 44
+    },
+    "confirm_required": "PAPER_ONLY_ARCHIVED_ORDERBOOK_REFRESH",
+    "counts_for_live_gate": false,
+    "due_market_query_count": 0,
+    "earliest_settlement_due_time": "2026-06-28T02:59:59Z",
+    "execute_requested": true,
+    "loaded_market_query_count": 0,
+    "paper_only": true,
+    "station_date_source_schedule": [
+      {
+        "cities": [
+          "ankara"
+        ],
+        "market_count": 11,
+        "market_slug_samples": [
+          "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+          "highest-temperature-in-ankara-on-june-27-2026-28c",
+          "highest-temperature-in-ankara-on-june-27-2026-34corhigher",
+          "highest-temperature-in-ankara-on-june-27-2026-31c",
+          "highest-temperature-in-ankara-on-june-27-2026-33c"
+        ],
+        "observation_window_end_time": "2026-06-27T20:59:59Z",
+        "pending_status_counts": [
+          {
+            "count": 11,
+            "status": "awaiting_observation_window_end"
+          }
+        ],
+        "settlement_due_time": "2026-06-28T02:59:59Z",
+        "settlement_source": "metar",
+        "settlement_timezone": "UTC+03:00",
+        "station_code": "LTAC",
+        "target_date": "2026-06-27",
+        "token_count": 11
+      },
+      {
+        "cities": [
+          "moscow"
+        ],
+        "market_count": 11,
+        "market_slug_samples": [
+          "highest-temperature-in-moscow-on-june-27-2026-22c",
+          "highest-temperature-in-moscow-on-june-27-2026-23c",
+          "highest-temperature-in-moscow-on-june-27-2026-20c",
+          "highest-temperature-in-moscow-on-june-27-2026-26c",
+          "highest-temperature-in-moscow-on-june-27-2026-18c"
+        ],
+        "observation_window_end_time": "2026-06-27T20:59:59Z",
+        "pending_status_counts": [
+          {
+            "count": 11,
+            "status": "awaiting_observation_window_end"
+          }
+        ],
+        "settlement_due_time": "2026-06-28T02:59:59Z",
+        "settlement_source": "metar",
+        "settlement_timezone": "UTC+03:00",
+        "station_code": "UUWW",
+        "target_date": "2026-06-27",
+        "token_count": 11
+      },
+      {
+        "cities": [
+          "istanbul"
+        ],
+        "market_count": 11,
+        "market_slug_samples": [
+          "highest-temperature-in-istanbul-on-june-27-2026-23corbelow",
+          "highest-temperature-in-istanbul-on-june-27-2026-25c",
+          "highest-temperature-in-istanbul-on-june-27-2026-24c",
+          "highest-temperature-in-istanbul-on-june-27-2026-33corhigher",
+          "highest-temperature-in-istanbul-on-june-27-2026-29c"
+        ],
+        "observation_window_end_time": "2026-06-27T20:59:59Z",
+        "pending_status_counts": [
+          {
+            "count": 11,
+            "status": "awaiting_observation_window_end"
+          }
+        ],
+        "settlement_due_time": "2026-06-28T02:59:59Z",
+        "settlement_source": "noaa",
+        "settlement_timezone": "UTC+03:00",
+        "station_code": "LTFM",
+        "target_date": "2026-06-27",
+        "token_count": 11
+      },
+      {
+        "cities": [
+          "london"
+        ],
+        "market_count": 11,
+        "market_slug_samples": [
+          "highest-temperature-in-london-on-june-27-2026-32c",
+          "highest-temperature-in-london-on-june-27-2026-35corhigher",
+          "highest-temperature-in-london-on-june-27-2026-27c",
+          "highest-temperature-in-london-on-june-27-2026-29c",
+          "highest-temperature-in-london-on-june-27-2026-28c"
+        ],
+        "observation_window_end_time": "2026-06-27T23:59:59Z",
+        "pending_status_counts": [
+          {
+            "count": 11,
+            "status": "awaiting_observation_window_end"
+          }
+        ],
+        "settlement_due_time": "2026-06-28T05:59:59Z",
+        "settlement_source": "metar",
+        "settlement_timezone": "UTC+00:00",
+        "station_code": "EGLC",
+        "target_date": "2026-06-27",
+        "token_count": 11
+      }
+    ],
+    "status": "blocked_until_settlement_due_time"
+  },
+  "generated_at": "2026-06-27T15:35:32Z",
+  "hard_conclusion": "archived_orderbook_due_refresh_not_executed",
+  "orderbook_archive_dir": "evidence/orderbook_archive",
+  "paper_only": true,
+  "plan_report": {
+    "archived_unique_token_count": 164,
+    "closed_backfill_attempted_but_market_open_token_count": 0,
+    "closed_backfill_due_token_count": 0,
+    "closed_backfill_followup_plan": {
+      "await_market_end_count": 120,
+      "awaiting_market_close_count": 120,
+      "awaiting_observation_window_end_count": 44,
+      "awaiting_settlement_due_time_count": 0,
+      "closed_backfill_attempted_but_market_open_count": 0,
+      "closed_backfill_due_count": 0,
+      "counts_for_live_gate": false,
+      "diagnostic_only": true,
+      "due_schedule_by_station_date_source": [
+        {
+          "cities": [
+            "ankara"
+          ],
+          "market_count": 11,
+          "market_slug_samples": [
+            "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+            "highest-temperature-in-ankara-on-june-27-2026-28c",
+            "highest-temperature-in-ankara-on-june-27-2026-34corhigher",
+            "highest-temperature-in-ankara-on-june-27-2026-31c",
+            "highest-temperature-in-ankara-on-june-27-2026-33c"
+          ],
+          "observation_window_end_time": "2026-06-27T20:59:59Z",
+          "pending_status_counts": [
+            {
+              "count": 11,
+              "status": "awaiting_observation_window_end"
+            }
+          ],
+          "settlement_due_time": "2026-06-28T02:59:59Z",
+          "settlement_source": "metar",
+          "settlement_timezone": "UTC+03:00",
+          "station_code": "LTAC",
+          "target_date": "2026-06-27",
+          "token_count": 11
+        },
+        {
+          "cities": [
+            "moscow"
+          ],
+          "market_count": 11,
+          "market_slug_samples": [
+            "highest-temperature-in-moscow-on-june-27-2026-22c",
+            "highest-temperature-in-moscow-on-june-27-2026-23c",
+            "highest-temperature-in-moscow-on-june-27-2026-20c",
+            "highest-temperature-in-moscow-on-june-27-2026-26c",
+            "highest-temperature-in-moscow-on-june-27-2026-18c"
+          ],
+          "observation_window_end_time": "2026-06-27T20:59:59Z",
+          "pending_status_counts": [
+            {
+              "count": 11,
+              "status": "awaiting_observation_window_end"
+            }
+          ],
+          "settlement_due_time": "2026-06-28T02:59:59Z",
+          "settlement_source": "metar",
+          "settlement_timezone": "UTC+03:00",
+          "station_code": "UUWW",
+          "target_date": "2026-06-27",
+          "token_count": 11
+        },
+        {
+          "cities": [
+            "istanbul"
+          ],
+          "market_count": 11,
+          "market_slug_samples": [
+            "highest-temperature-in-istanbul-on-june-27-2026-23corbelow",
+            "highest-temperature-in-istanbul-on-june-27-2026-25c",
+            "highest-temperature-in-istanbul-on-june-27-2026-24c",
+            "highest-temperature-in-istanbul-on-june-27-2026-33corhigher",
+            "highest-temperature-in-istanbul-on-june-27-2026-29c"
+          ],
+          "observation_window_end_time": "2026-06-27T20:59:59Z",
+          "pending_status_counts": [
+            {
+              "count": 11,
+              "status": "awaiting_observation_window_end"
+            }
+          ],
+          "settlement_due_time": "2026-06-28T02:59:59Z",
+          "settlement_source": "noaa",
+          "settlement_timezone": "UTC+03:00",
+          "station_code": "LTFM",
+          "target_date": "2026-06-27",
+          "token_count": 11
+        },
+        {
+          "cities": [
+            "london"
+          ],
+          "market_count": 11,
+          "market_slug_samples": [
+            "highest-temperature-in-london-on-june-27-2026-32c",
+            "highest-temperature-in-london-on-june-27-2026-35corhigher",
+            "highest-temperature-in-london-on-june-27-2026-27c",
+            "highest-temperature-in-london-on-june-27-2026-29c",
+            "highest-temperature-in-london-on-june-27-2026-28c"
+          ],
+          "observation_window_end_time": "2026-06-27T23:59:59Z",
+          "pending_status_counts": [
+            {
+              "count": 11,
+              "status": "awaiting_observation_window_end"
+            }
+          ],
+          "settlement_due_time": "2026-06-28T05:59:59Z",
+          "settlement_source": "metar",
+          "settlement_timezone": "UTC+00:00",
+          "station_code": "EGLC",
+          "target_date": "2026-06-27",
+          "token_count": 11
+        }
+      ],
+      "earliest_settlement_due_time": "2026-06-28T02:59:59Z",
+      "generated_at": "2026-06-27T15:35:32Z",
+      "market_queries": [],
+      "market_query_count": 0,
+      "missing_end_time_count": 0,
+      "missing_settlement_due_time_metadata_count": 0,
+      "next_action": "wait_for_archived_markets_to_reach_market_close",
+      "next_await_market_end": "2026-06-28T12:00:00Z",
+      "next_await_market_end_token_count": 65,
+      "next_await_market_query_count": 65,
+      "next_due_market_queries": [],
+      "next_market_close_check_after": "2026-06-28T12:00:00Z",
+      "next_market_close_queries": [
+        "highest-temperature-in-paris-on-june-28-2026-29c",
+        "highest-temperature-in-moscow-on-june-28-2026-28c",
+        "highest-temperature-in-ankara-on-june-28-2026-27c",
+        "highest-temperature-in-london-on-june-28-2026-31c",
+        "highest-temperature-in-london-on-june-28-2026-23c",
+        "highest-temperature-in-paris-on-june-28-2026-31c",
+        "highest-temperature-in-london-on-june-28-2026-27c",
+        "highest-temperature-in-moscow-on-june-28-2026-22c",
+        "highest-temperature-in-paris-on-june-28-2026-32c",
+        "highest-temperature-in-ankara-on-june-28-2026-25c",
+        "highest-temperature-in-paris-on-june-28-2026-33c",
+        "highest-temperature-in-ankara-on-june-28-2026-32c",
+        "highest-temperature-in-moscow-on-june-28-2026-20c",
+        "highest-temperature-in-istanbul-on-june-28-2026-27c",
+        "highest-temperature-in-london-on-june-28-2026-30c",
+        "highest-temperature-in-seoul-on-june-28-2026-23c",
+        "highest-temperature-in-istanbul-on-june-28-2026-23c",
+        "highest-temperature-in-moscow-on-june-28-2026-29corhigher",
+        "highest-temperature-in-seoul-on-june-28-2026-30c",
+        "highest-temperature-in-paris-on-june-28-2026-30c",
+        "highest-temperature-in-ankara-on-june-28-2026-28c",
+        "highest-temperature-in-london-on-june-28-2026-32corhigher",
+        "highest-temperature-in-moscow-on-june-28-2026-23c",
+        "highest-temperature-in-paris-on-june-28-2026-27corbelow",
+        "highest-temperature-in-moscow-on-june-28-2026-19corbelow",
+        "highest-temperature-in-paris-on-june-28-2026-28c",
+        "highest-temperature-in-seoul-on-june-28-2026-22c",
+        "highest-temperature-in-istanbul-on-june-28-2026-31c",
+        "highest-temperature-in-seoul-on-june-28-2026-27c",
+        "highest-temperature-in-ankara-on-june-28-2026-33corhigher",
+        "highest-temperature-in-moscow-on-june-28-2026-24c",
+        "highest-temperature-in-moscow-on-june-28-2026-27c",
+        "highest-temperature-in-london-on-june-28-2026-25c",
+        "highest-temperature-in-london-on-june-28-2026-29c",
+        "highest-temperature-in-london-on-june-28-2026-28c",
+        "highest-temperature-in-london-on-june-28-2026-22corbelow",
+        "highest-temperature-in-ankara-on-june-28-2026-24c",
+        "highest-temperature-in-istanbul-on-june-28-2026-26c",
+        "highest-temperature-in-istanbul-on-june-28-2026-32corhigher",
+        "highest-temperature-in-moscow-on-june-28-2026-25c",
+        "highest-temperature-in-seoul-on-june-28-2026-26c",
+        "highest-temperature-in-london-on-june-28-2026-26c",
+        "highest-temperature-in-seoul-on-june-28-2026-28c",
+        "highest-temperature-in-seoul-on-june-28-2026-24c",
+        "highest-temperature-in-ankara-on-june-28-2026-31c",
+        "highest-temperature-in-istanbul-on-june-28-2026-30c",
+        "highest-temperature-in-paris-on-june-28-2026-35c",
+        "highest-temperature-in-ankara-on-june-28-2026-29c",
+        "highest-temperature-in-istanbul-on-june-28-2026-25c",
+        "highest-temperature-in-ankara-on-june-28-2026-30c",
+        "highest-temperature-in-paris-on-june-28-2026-36c",
+        "highest-temperature-in-istanbul-on-june-28-2026-29c",
+        "highest-temperature-in-seoul-on-june-28-2026-21corbelow",
+        "highest-temperature-in-seoul-on-june-28-2026-29c",
+        "highest-temperature-in-istanbul-on-june-28-2026-24c",
+        "highest-temperature-in-london-on-june-28-2026-24c",
+        "highest-temperature-in-moscow-on-june-28-2026-26c",
+        "highest-temperature-in-moscow-on-june-28-2026-21c",
+        "highest-temperature-in-istanbul-on-june-28-2026-28c",
+        "highest-temperature-in-paris-on-june-28-2026-34c",
+        "highest-temperature-in-ankara-on-june-28-2026-23corbelow",
+        "highest-temperature-in-ankara-on-june-28-2026-26c",
+        "highest-temperature-in-paris-on-june-28-2026-37corhigher",
+        "highest-temperature-in-seoul-on-june-28-2026-25c",
+        "highest-temperature-in-istanbul-on-june-28-2026-22corbelow"
+      ],
+      "next_observation_window_end_after": "2026-06-27T20:59:59Z",
+      "next_observation_window_end_queries": [
+        "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+        "highest-temperature-in-istanbul-on-june-27-2026-23corbelow",
+        "highest-temperature-in-moscow-on-june-27-2026-22c",
+        "highest-temperature-in-moscow-on-june-27-2026-23c",
+        "highest-temperature-in-ankara-on-june-27-2026-28c",
+        "highest-temperature-in-ankara-on-june-27-2026-34corhigher",
+        "highest-temperature-in-istanbul-on-june-27-2026-25c",
+        "highest-temperature-in-moscow-on-june-27-2026-20c",
+        "highest-temperature-in-ankara-on-june-27-2026-31c",
+        "highest-temperature-in-istanbul-on-june-27-2026-24c",
+        "highest-temperature-in-istanbul-on-june-27-2026-33corhigher",
+        "highest-temperature-in-ankara-on-june-27-2026-33c",
+        "highest-temperature-in-moscow-on-june-27-2026-26c",
+        "highest-temperature-in-moscow-on-june-27-2026-18c",
+        "highest-temperature-in-moscow-on-june-27-2026-17corbelow",
+        "highest-temperature-in-moscow-on-june-27-2026-24c",
+        "highest-temperature-in-moscow-on-june-27-2026-19c",
+        "highest-temperature-in-ankara-on-june-27-2026-27c",
+        "highest-temperature-in-istanbul-on-june-27-2026-29c",
+        "highest-temperature-in-ankara-on-june-27-2026-30c",
+        "highest-temperature-in-istanbul-on-june-27-2026-26c",
+        "highest-temperature-in-istanbul-on-june-27-2026-32c",
+        "highest-temperature-in-istanbul-on-june-27-2026-27c",
+        "highest-temperature-in-ankara-on-june-27-2026-26c",
+        "highest-temperature-in-moscow-on-june-27-2026-21c",
+        "highest-temperature-in-ankara-on-june-27-2026-32c",
+        "highest-temperature-in-ankara-on-june-27-2026-25c",
+        "highest-temperature-in-istanbul-on-june-27-2026-31c",
+        "highest-temperature-in-moscow-on-june-27-2026-25c",
+        "highest-temperature-in-istanbul-on-june-27-2026-28c",
+        "highest-temperature-in-ankara-on-june-27-2026-29c",
+        "highest-temperature-in-istanbul-on-june-27-2026-30c",
+        "highest-temperature-in-moscow-on-june-27-2026-27corhigher"
+      ],
+      "next_refresh_check_after": "2026-06-27T20:59:59Z",
+      "next_settlement_due_check_after": "2026-06-28T02:59:59Z",
+      "next_settlement_due_queries": [],
+      "paper_only": true,
+      "recommended_command": [],
+      "refresh_due_count": 0,
+      "request_count": 0,
+      "schema_version": "polyweather_weather_closed_backfill_followup_plan.v1",
+      "wrong_due_prevented_count": 44
+    },
+    "closed_missing_yes_token_count": 0,
+    "closed_yes_token_count": 257,
+    "counts_for_live_gate": false,
+    "diagnostic_only": true,
+    "gap_count": 421,
+    "gaps_by_reason": [
+      {
+        "count": 257,
+        "reason": "closed_market_missing_archived_orderbook"
+      },
+      {
+        "count": 120,
+        "reason": "archived_orderbook_waiting_for_market_close"
+      },
+      {
+        "count": 44,
+        "reason": "archived_orderbook_waiting_for_observation_window_end"
+      }
+    ],
+    "generated_at": "2026-06-27T15:35:32Z",
+    "hard_conclusion": "orderbook_closed_token_coverage_no_overlap",
+    "matched_closed_archived_token_count": 0,
+    "missing_settlement_due_time_metadata_token_count": 0,
+    "paper_only": true,
+    "pending_awaiting_market_close_token_count": 120,
+    "pending_awaiting_observation_window_end_token_count": 44,
+    "pending_awaiting_settlement_due_time_token_count": 0,
+    "pending_closed_backfill_await_market_end_token_count": 120,
+    "pending_closed_backfill_due_token_count": 0,
+    "pending_closed_backfill_missing_end_time_token_count": 0,
+    "schema_version": "polyweather_weather_orderbook_closed_token_coverage.v1",
+    "unmatched_archived_token_count": 164,
+    "unmatched_closed_token_count": 257,
+    "wrong_due_prevented_count": 44
+  },
+  "preresolution_replay_report": null,
+  "schema_version": "polyweather_archived_orderbook_due_refresh_report.v1"
+}

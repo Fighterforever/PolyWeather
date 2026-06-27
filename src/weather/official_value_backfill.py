@@ -444,6 +444,115 @@ def _official_observation_backfill_plan(
     }
 
 
+def build_official_observation_request_plan(
+    records: Iterable[Dict[str, Any]],
+    *,
+    expected_reuse_market_count: Optional[int] = None,
+    max_requests: int = 20,
+) -> Dict[str, Any]:
+    grouped: Dict[str, Dict[str, Any]] = {}
+    input_count = 0
+    skipped_record_count = 0
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        input_count += 1
+        city = _record_city(record)
+        target_date = _record_target_date(record)
+        station_code = _record_station_code(record)
+        settlement_source = _record_source(record)
+        unit = _record_unit(record)
+        if not target_date or not station_code or not settlement_source:
+            skipped_record_count += 1
+            continue
+        key = "|".join([settlement_source, station_code, target_date, unit])
+        method = _external_method_for_source(settlement_source)
+        request = grouped.setdefault(
+            key,
+            {
+                "settlement_source": settlement_source,
+                "station_code": station_code,
+                "target_date": target_date,
+                "unit": unit,
+                "cities": [],
+                "market_count": 0,
+                "token_count": 0,
+                "market_slug_samples": [],
+                "supported_external_method": method,
+                "supported": method is not None,
+                "gap_reason": None if method is not None else "unsupported_source_adapter",
+            },
+        )
+        if city and city not in request["cities"]:
+            request["cities"].append(city)
+        request["market_count"] += 1
+        request["token_count"] += 1
+        market_slug = _text(record.get("market_slug"))
+        if market_slug and len(request["market_slug_samples"]) < 5:
+            request["market_slug_samples"].append(market_slug)
+
+    requests = list(grouped.values())
+    for request in requests:
+        request["cities"] = sorted(request["cities"])
+        request["next_action"] = (
+            "Fetch this supported external official source, then persist the station/date observation before settlement calibration."
+            if request.get("supported")
+            else "Add or populate this official source adapter/store before using these markets for settlement calibration."
+        )
+    requests.sort(
+        key=lambda row: (
+            not bool(row.get("supported")),
+            str(row.get("settlement_source") or ""),
+            str(row.get("station_code") or ""),
+            str(row.get("target_date") or ""),
+        )
+    )
+    by_station_source_date = [
+        {
+            "station_code": row.get("station_code"),
+            "settlement_source": row.get("settlement_source"),
+            "target_date": row.get("target_date"),
+            "market_count": row.get("market_count"),
+            "supported": row.get("supported"),
+            "gap_reason": row.get("gap_reason"),
+        }
+        for row in requests
+    ]
+    by_source: Dict[str, int] = {}
+    by_station: Dict[str, int] = {}
+    by_date: Dict[str, int] = {}
+    for row in requests:
+        _add_count(by_source, row.get("settlement_source"))
+        _add_count(by_station, row.get("station_code"))
+        _add_count(by_date, row.get("target_date"))
+    supported_request_count = len([row for row in requests if row.get("supported")])
+    unsupported_request_count = len(requests) - supported_request_count
+    reuse_count = (
+        int(expected_reuse_market_count)
+        if expected_reuse_market_count is not None
+        else sum(int(row.get("market_count") or 0) for row in requests)
+    )
+    return {
+        "schema_version": "polyweather_official_observation_request_plan.v1",
+        "paper_only": True,
+        "diagnostic_only": True,
+        "counts_for_live_gate": False,
+        "input_record_count": input_count,
+        "request_count": len(requests),
+        "returned_request_count": min(len(requests), max(0, int(max_requests))),
+        "truncated": len(requests) > max(0, int(max_requests)),
+        "supported_request_count": supported_request_count,
+        "unsupported_request_count": unsupported_request_count,
+        "expected_reuse_market_count": reuse_count,
+        "skipped_record_count": skipped_record_count,
+        "by_station_source_date": by_station_source_date,
+        "by_settlement_source": _count_rows(by_source, "settlement_source"),
+        "by_station": _count_rows(by_station, "station_code"),
+        "by_target_date": _count_rows(by_date, "target_date"),
+        "requests": requests[: max(0, int(max_requests))],
+    }
+
+
 def build_official_value_supplement(
     record: Dict[str, Any],
     *,

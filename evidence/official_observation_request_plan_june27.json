@@ -1,0 +1,179 @@
+{
+  "by_settlement_source": [
+    {
+      "count": 3,
+      "settlement_source": "metar"
+    },
+    {
+      "count": 1,
+      "settlement_source": "noaa"
+    }
+  ],
+  "by_station": [
+    {
+      "count": 1,
+      "station_code": "EGLC"
+    },
+    {
+      "count": 1,
+      "station_code": "LTAC"
+    },
+    {
+      "count": 1,
+      "station_code": "LTFM"
+    },
+    {
+      "count": 1,
+      "station_code": "UUWW"
+    }
+  ],
+  "by_station_source_date": [
+    {
+      "gap_reason": null,
+      "market_count": 11,
+      "settlement_source": "metar",
+      "station_code": "EGLC",
+      "supported": true,
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": null,
+      "market_count": 11,
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "supported": true,
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": null,
+      "market_count": 11,
+      "settlement_source": "metar",
+      "station_code": "UUWW",
+      "supported": true,
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "unsupported_source_adapter",
+      "market_count": 11,
+      "settlement_source": "noaa",
+      "station_code": "LTFM",
+      "supported": false,
+      "target_date": "2026-06-27"
+    }
+  ],
+  "by_target_date": [
+    {
+      "count": 4,
+      "target_date": "2026-06-27"
+    }
+  ],
+  "counts_for_live_gate": false,
+  "diagnostic_only": true,
+  "expected_reuse_market_count": 44,
+  "input_record_count": 44,
+  "paper_only": true,
+  "request_count": 4,
+  "requests": [
+    {
+      "cities": [
+        "london"
+      ],
+      "gap_reason": null,
+      "market_count": 11,
+      "market_slug_samples": [
+        "highest-temperature-in-london-on-june-27-2026-32c",
+        "highest-temperature-in-london-on-june-27-2026-35corhigher",
+        "highest-temperature-in-london-on-june-27-2026-27c",
+        "highest-temperature-in-london-on-june-27-2026-29c",
+        "highest-temperature-in-london-on-june-27-2026-28c"
+      ],
+      "next_action": "Fetch this supported external official source, then persist the station/date observation before settlement calibration.",
+      "settlement_source": "metar",
+      "station_code": "EGLC",
+      "supported": true,
+      "supported_external_method": "aviationweather_metar_recent_72h",
+      "target_date": "2026-06-27",
+      "token_count": 11,
+      "unit": "C"
+    },
+    {
+      "cities": [
+        "ankara"
+      ],
+      "gap_reason": null,
+      "market_count": 11,
+      "market_slug_samples": [
+        "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+        "highest-temperature-in-ankara-on-june-27-2026-28c",
+        "highest-temperature-in-ankara-on-june-27-2026-34corhigher",
+        "highest-temperature-in-ankara-on-june-27-2026-31c",
+        "highest-temperature-in-ankara-on-june-27-2026-33c"
+      ],
+      "next_action": "Fetch this supported external official source, then persist the station/date observation before settlement calibration.",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "supported": true,
+      "supported_external_method": "aviationweather_metar_recent_72h",
+      "target_date": "2026-06-27",
+      "token_count": 11,
+      "unit": "C"
+    },
+    {
+      "cities": [
+        "moscow"
+      ],
+      "gap_reason": null,
+      "market_count": 11,
+      "market_slug_samples": [
+        "highest-temperature-in-moscow-on-june-27-2026-22c",
+        "highest-temperature-in-moscow-on-june-27-2026-23c",
+        "highest-temperature-in-moscow-on-june-27-2026-20c",
+        "highest-temperature-in-moscow-on-june-27-2026-26c",
+        "highest-temperature-in-moscow-on-june-27-2026-18c"
+      ],
+      "next_action": "Fetch this supported external official source, then persist the station/date observation before settlement calibration.",
+      "settlement_source": "metar",
+      "station_code": "UUWW",
+      "supported": true,
+      "supported_external_method": "aviationweather_metar_recent_72h",
+      "target_date": "2026-06-27",
+      "token_count": 11,
+      "unit": "C"
+    },
+    {
+      "cities": [
+        "istanbul"
+      ],
+      "gap_reason": "unsupported_source_adapter",
+      "market_count": 11,
+      "market_slug_samples": [
+        "highest-temperature-in-istanbul-on-june-27-2026-23corbelow",
+        "highest-temperature-in-istanbul-on-june-27-2026-25c",
+        "highest-temperature-in-istanbul-on-june-27-2026-24c",
+        "highest-temperature-in-istanbul-on-june-27-2026-33corhigher",
+        "highest-temperature-in-istanbul-on-june-27-2026-29c"
+      ],
+      "next_action": "Add or populate this official source adapter/store before using these markets for settlement calibration.",
+      "settlement_source": "noaa",
+      "station_code": "LTFM",
+      "supported": false,
+      "supported_external_method": null,
+      "target_date": "2026-06-27",
+      "token_count": 11,
+      "unit": "C"
+    }
+  ],
+  "returned_request_count": 4,
+  "schema_version": "polyweather_official_observation_request_plan.v1",
+  "skipped_record_count": 0,
+  "source_coverage": {
+    "closed_backfill_due_token_count": 0,
+    "generated_at": "2026-06-27T12:05:00Z",
+    "pending_awaiting_observation_window_end_token_count": 44,
+    "pending_awaiting_settlement_due_time_token_count": 0,
+    "wrong_due_prevented_count": 44
+  },
+  "supported_request_count": 3,
+  "truncated": false,
+  "unsupported_request_count": 1
+}

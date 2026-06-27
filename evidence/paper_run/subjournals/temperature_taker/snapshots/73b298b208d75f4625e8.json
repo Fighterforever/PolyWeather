@@ -1,0 +1,69 @@
+{
+  "profile": "temperature-taker-paper",
+  "recorded_at": "2026-06-27T15:35:32Z",
+  "report": {
+    "candidates": [],
+    "counts_for_live_gate": false,
+    "generated_at": "2026-06-27T15:35:32Z",
+    "hard_conclusion": "temperature_taker_paper_no_execution_quotes",
+    "live_authorization_pct": 0,
+    "live_gate": false,
+    "paper_only": true,
+    "quarantine": [],
+    "run_seed_id": "41ff8ba7f18e74216334",
+    "schema_version": "polyweather_weather_temperature_taker_paper.v1",
+    "source": "temperature_execution_shadow_validation",
+    "source_execution_journal_dir": "evidence/paper_run/subjournals/temperature_execution",
+    "source_snapshot_id": "7b10cc12544534c25ee3",
+    "source_validation": {
+      "blockers": [
+        "insufficient_quote_markouts_0_of_5"
+      ],
+      "config": {
+        "min_fill_inference_rate": 0.05,
+        "min_inferred_fills": 3,
+        "min_maker_win_rate": 0.55,
+        "min_mean_maker_markout_cents": 0.0,
+        "min_missed_taker_markout_cents": 0.0,
+        "min_quote_markouts": 5
+      },
+      "counts_for_live_gate": false,
+      "generated_at": "2026-06-27T15:35:32Z",
+      "hard_conclusion": "temperature_execution_shadow_collect_more",
+      "journal_dir": "evidence/paper_run/subjournals/temperature_execution",
+      "live_gate": false,
+      "next_action": "collect_more_shadow_markouts",
+      "paper_only": true,
+      "schema_version": "polyweather_weather_temperature_execution_shadow_validation.v1",
+      "strategy_strata": [],
+      "strategy_time_spread_strata": [],
+      "summary": {
+        "fill_inference_rate": null,
+        "inferred_fill_count": 0,
+        "maker_markout_win_rate": null,
+        "mean_maker_markout_cents": null,
+        "mean_missed_taker_markout_cents": null,
+        "quote_count": 0,
+        "quote_markout_count": 0,
+        "resting_unfilled_count": 0
+      },
+      "validation_id": "7b10cc12544534c25ee3"
+    },
+    "summary": {
+      "candidate_count": 0,
+      "formal_taker_paper_count": 0,
+      "live_authorization_pct": 0,
+      "live_blockers": [
+        "formal_taker_paper_only",
+        "taker_execution_forward_evidence_unproven",
+        "live_permission_false"
+      ],
+      "live_gate": false,
+      "quarantine_count": 0,
+      "watch_count": 0
+    },
+    "watch": []
+  },
+  "run_id": "73b298b208d75f4625e8",
+  "schema_version": "polyweather_weather_paper_journal.v1"
+}

@@ -1,0 +1,88 @@
+{
+  "after_token_overlap": {
+    "closed_backfill_due_token_count": 0,
+    "matched_closed_archived_token_count": 0,
+    "pending_awaiting_observation_window_end_token_count": 44,
+    "pending_awaiting_settlement_due_time_token_count": 0,
+    "pending_closed_backfill_due_token_count": 0,
+    "wrong_due_prevented_count": 44
+  },
+  "alpha_conclusion": "inconclusive_waiting_for_resolution_or_backfill",
+  "artifact_paths": {},
+  "backfill_dir": "evidence/weather_backfill",
+  "before_token_overlap": {
+    "closed_backfill_due_token_count": 0,
+    "matched_closed_archived_token_count": 0,
+    "pending_awaiting_observation_window_end_token_count": 44,
+    "pending_awaiting_settlement_due_time_token_count": 0,
+    "pending_closed_backfill_due_token_count": 0,
+    "wrong_due_prevented_count": 44
+  },
+  "closed_backfill_executed": false,
+  "counts_for_live_gate": false,
+  "diagnostic_only": true,
+  "due_status": "blocked_until_settlement_due_time",
+  "generated_at": "2026-06-27T15:35:32Z",
+  "hard_conclusion": "paper_only_inconclusive_waiting_for_resolution_or_backfill",
+  "live_order_path": false,
+  "next_execution_time_utc": "2026-06-28T02:59:59Z",
+  "official_truth": {
+    "archived_yes_token_count": 164,
+    "gap_count": 0,
+    "overlap_record_count": 0,
+    "ready_count": 0,
+    "request_plan": {
+      "by_gap_reason": [],
+      "by_settlement_source": [],
+      "counts_for_live_gate": false,
+      "diagnostic_only": true,
+      "paper_only": true,
+      "records_covered_count": 0,
+      "request_count": 0,
+      "requests": [],
+      "returned_request_count": 0,
+      "schema_version": "polyweather_official_observation_backfill_plan.v1",
+      "skipped_gap_count": 0,
+      "truncated": false
+    },
+    "target_scope": "closed_archive_overlap"
+  },
+  "orderbook_archive_dir": "evidence/orderbook_archive",
+  "paper_journal_dir": "evidence/paper_run",
+  "paper_only": true,
+  "readiness_report_compact": {
+    "evidence_gate_passed": false,
+    "hard_conclusion": "只能继续 paper",
+    "hard_gate_failures": null,
+    "live_gate": false,
+    "live_order_path_available": false,
+    "paper_only": null,
+    "schema_version": "polyweather_weather_live_readiness.v1"
+  },
+  "replay_time": "2026-06-27T15:35:32Z",
+  "schema_version": "polyweather_weather_due_evidence_pipeline.v1",
+  "settlement_calibration": {
+    "hard_conclusion": "insufficient_official_truth_samples_0_of_30",
+    "historical_evidence_no_lookahead": true,
+    "official_truth_sample_count": 0,
+    "probability_score_sample_count": 0,
+    "resolved_pnl_sample_count": 0
+  },
+  "settlement_truth_audit": {
+    "audited_with_official_count": 0,
+    "gap_count": 257,
+    "hard_conclusion": "settlement_truth_audit_has_gaps",
+    "mismatch_count": 0
+  },
+  "strict_replay": {
+    "brier_score": null,
+    "by_price_bucket": [],
+    "by_strategy_bucket": [],
+    "fill_count": 0,
+    "log_loss": null,
+    "missed_fill_count": 0,
+    "missing_resolution_count": 0,
+    "resolved_fill_count": 0,
+    "resolved_pnl_cents": null
+  }
+}

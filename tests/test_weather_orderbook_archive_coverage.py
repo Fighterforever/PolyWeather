@@ -178,7 +178,7 @@ def test_orderbook_closed_token_coverage_reports_archived_tokens_waiting_for_clo
     assert report["closed_backfill_followup_plan"]["next_await_market_end"] == "2026-06-28T12:00:00Z"
     assert report["closed_backfill_followup_plan"]["next_market_close_check_after"] == "2026-06-28T12:00:00Z"
     assert report["closed_backfill_followup_plan"]["next_observation_window_end_after"] is None
-    assert report["closed_backfill_followup_plan"]["next_settlement_due_check_after"] is None
+    assert report["closed_backfill_followup_plan"]["next_settlement_due_check_after"] == "2026-06-28T20:59:59Z"
     assert report["closed_backfill_followup_plan"]["next_refresh_check_after"] == "2026-06-28T12:00:00Z"
     assert report["closed_backfill_followup_plan"]["next_await_market_end_token_count"] == 1
     assert report["closed_backfill_followup_plan"]["next_await_market_query_count"] == 1
@@ -207,7 +207,8 @@ def test_orderbook_closed_token_coverage_does_not_refresh_before_observation_win
     assert report["closed_backfill_followup_plan"]["market_query_count"] == 0
     assert report["closed_backfill_followup_plan"]["next_action"] == "wait_for_observation_window_end"
     assert report["closed_backfill_followup_plan"]["next_observation_window_end_after"] == "2026-06-28T14:59:59Z"
-    assert report["closed_backfill_followup_plan"]["next_settlement_due_check_after"] is None
+    assert report["closed_backfill_followup_plan"]["next_settlement_due_check_after"] == "2026-06-28T20:59:59Z"
+    assert report["closed_backfill_followup_plan"]["earliest_settlement_due_time"] == "2026-06-28T20:59:59Z"
     assert report["gaps_by_reason"] == [
         {"reason": "archived_orderbook_waiting_for_observation_window_end", "count": 1}
     ]
@@ -252,7 +253,27 @@ def test_orderbook_closed_token_coverage_does_not_treat_ankara_market_close_as_s
     assert sample["settlement_due_time"] == "2026-06-28T02:59:59Z"
     assert sample["pending_closed_backfill_status"] == "awaiting_observation_window_end"
     assert report["closed_backfill_followup_plan"]["next_observation_window_end_after"] == "2026-06-27T20:59:59Z"
-    assert report["closed_backfill_followup_plan"]["next_settlement_due_check_after"] is None
+    assert report["closed_backfill_followup_plan"]["next_settlement_due_check_after"] == "2026-06-28T02:59:59Z"
+    assert report["closed_backfill_followup_plan"]["earliest_settlement_due_time"] == "2026-06-28T02:59:59Z"
+    assert report["closed_backfill_followup_plan"]["due_schedule_by_station_date_source"] == [
+        {
+            "station_code": "LTAC",
+            "target_date": "2026-06-27",
+            "settlement_source": "metar",
+            "settlement_timezone": "UTC+03:00",
+            "observation_window_end_time": "2026-06-27T20:59:59Z",
+            "settlement_due_time": "2026-06-28T02:59:59Z",
+            "market_count": 1,
+            "token_count": 1,
+            "pending_status_counts": [
+                {"status": "awaiting_observation_window_end", "count": 1}
+            ],
+            "cities": ["ankara"],
+            "market_slug_samples": [
+                "highest-temperature-in-ankara-on-june-27-2026-24corbelow"
+            ],
+        }
+    ]
 
 
 def test_orderbook_closed_token_coverage_reports_due_closed_backfill_refresh_after_settlement_due():
@@ -527,4 +548,64 @@ def test_archived_orderbook_due_refresh_blocks_execute_without_confirmation(tmp_
 
     report = json.loads(capsys.readouterr().out)
     assert report["execution"]["status"] == "confirm_missing"
+    assert called["backfill"] is False
+
+
+def test_archived_orderbook_due_refresh_blocks_execute_before_settlement_due(tmp_path, monkeypatch, capsys):
+    archive_dir = tmp_path / "orderbooks"
+    backfill_dir = tmp_path / "backfill"
+    _append_jsonl(
+        archive_dir / "orderbook_snapshots.jsonl",
+        [
+            _archive_row(
+                token_id="ankara-token",
+                market_slug="highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+                city="ankara",
+                target_date="2026-06-27",
+                end_time="2026-06-27T12:00:00Z",
+                market_close_time="2026-06-27T12:00:00Z",
+                observation_window_end_time=None,
+                settlement_due_time=None,
+                settlement_station_code="LTAC",
+                settlement_source="metar",
+                settlement_timezone="UTC+03:00",
+                settlement_spec={
+                    "target_date": "2026-06-27",
+                    "timezone": "UTC+03:00",
+                    "market_close_time": "2026-06-27T12:00:00Z",
+                    "end_time": "2026-06-27T12:00:00Z",
+                    "station_code": "LTAC",
+                    "settlement_source": "metar",
+                },
+            )
+        ],
+    )
+    called = {"backfill": False}
+
+    def fake_backfill(**kwargs):
+        called["backfill"] = True
+        return {}
+
+    monkeypatch.setattr(refresh_cli, "run_targeted_closed_weather_backfill_from_market_slugs", fake_backfill)
+
+    refresh_cli.main(
+        [
+            "--backfill-dir",
+            str(backfill_dir),
+            "--orderbook-archive-dir",
+            str(archive_dir),
+            "--generated-at",
+            "2026-06-27T12:05:00Z",
+            "--execute",
+            "--confirm",
+            "PAPER_ONLY_ARCHIVED_ORDERBOOK_REFRESH",
+            "--summary-only",
+        ]
+    )
+
+    report = json.loads(capsys.readouterr().out)
+    assert report["execution"]["status"] == "blocked_until_settlement_due_time"
+    assert report["execution"]["earliest_settlement_due_time"] == "2026-06-28T02:59:59Z"
+    assert report["execution"]["awaiting_observation_window_end_token_count"] == 1
+    assert report["execution"]["station_date_source_schedule"][0]["station_code"] == "LTAC"
     assert called["backfill"] is False

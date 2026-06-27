@@ -212,6 +212,15 @@ def _log_loss_value(probability: float, payout: float) -> float:
 def _fill_group_key(fill: Dict[str, Any], field: str) -> str:
     if field == "strategy_bucket":
         return f"{fill.get('strategy_id') or 'unknown'}|{fill.get('bucket_type') or 'unknown'}"
+    if field == "price_bucket":
+        entry_price = _safe_float(fill.get("entry_price"))
+        if entry_price is None:
+            return "price_unknown"
+        if float(entry_price) < 0.005:
+            return "price_lt_0_005"
+        if float(entry_price) < 0.03:
+            return "price_0_005_to_0_03"
+        return "price_ge_0_03"
     return str(fill.get(field) or "unknown")
 
 
@@ -310,6 +319,11 @@ def _performance_summary(replay: Dict[str, Any]) -> Dict[str, Any]:
             fills,
             "strategy_bucket",
             key_name="strategy_bucket",
+        ),
+        "by_price_bucket": _performance_by_field(
+            fills,
+            "price_bucket",
+            key_name="price_bucket",
         ),
     }
 
@@ -464,6 +478,7 @@ def build_strict_gate_replay_report(
             "positive_ev_safe_but_negative_pnl_count"
         ),
         "by_strategy_bucket": performance_summary.get("by_strategy_bucket") or [],
+        "by_price_bucket": performance_summary.get("by_price_bucket") or [],
         "replay": replay,
     }
     report["hard_conclusion"] = _hard_conclusion(report)
