@@ -39,6 +39,12 @@ def _sample_report():
                 "side": "yes",
                 "outcome": "Yes",
                 "bucket_label": ">= 31°C",
+                "bucket_type": "ge",
+                "strategy_id": "tail_threshold",
+                "execution_style": "taker_depth_checked",
+                "why_now": "threshold bucket can be compared against calibrated station CDF",
+                "strategy_live_eligible": True,
+                "risk_caps": {"max_position_usdc": 7.0},
                 "price": 0.029,
                 "bid": 0.023,
                 "ask": 0.029,
@@ -47,10 +53,39 @@ def _sample_report():
                 "bid_depth_usdc_3c": 12.0,
                 "ask_depth_usdc_3c": 8.0,
                 "edge_percent": 7.8892,
+                "p_lcb": 0.078,
+                "q_effective": 0.029,
+                "cost": 0.005,
+                "ev_safe": 0.044,
                 "model_probability": 0.107892,
                 "market_probability": 0.02,
+                "market_implied_cdf": 0.98,
+                "market_implied_cdf_raw": 0.98,
+                "market_implied_bucket_family": "threshold_cdf",
                 "score": 97.85,
+                "target_date": "2026-06-27",
+                "end_time": "2026-06-27T12:00:00Z",
                 "end_date": "2026-06-27T12:00:00Z",
+                "settlement_spec_status": "supported",
+                "settlement_rule_hash": "rule-seoul-ge-31",
+                "settlement_station_code": "RKSI",
+                "settlement_station_label": "Incheon International Airport",
+                "settlement_source": "metar",
+                "settlement_timezone": "UTC+09:00",
+                "settlement_metric": "daily_high_temperature",
+                "settlement_unit": "C",
+                "settlement_spec": {
+                    "schema_version": "polyweather_weather_settlement_spec.v1",
+                    "status": "supported",
+                    "city": "seoul",
+                    "station_code": "RKSI",
+                    "settlement_source": "metar",
+                    "target_date": "2026-06-27",
+                    "end_time": "2026-06-27T12:00:00Z",
+                    "bucket_type": "ge",
+                    "threshold": 31.0,
+                    "rule_hash": "rule-seoul-ge-31",
+                },
                 "blockers": [],
                 "warnings": [],
             }
@@ -110,6 +145,18 @@ def test_build_paper_fill_records_defaults_to_candidates_only():
     assert records[0]["entry_price"] == 0.029
     assert records[0]["entry_bid_depth_usdc_3c"] == 12.0
     assert records[0]["entry_ask_depth_usdc_3c"] == 8.0
+    assert records[0]["strategy_id"] == "tail_threshold"
+    assert records[0]["strategy_live_eligible"] is True
+    assert records[0]["risk_caps"] == {"max_position_usdc": 7.0}
+    assert records[0]["ev_safe"] == 0.044
+    assert records[0]["q_effective"] == 0.029
+    assert records[0]["market_implied_cdf"] == 0.98
+    assert records[0]["target_date"] == "2026-06-27"
+    assert records[0]["end_time"] == "2026-06-27T12:00:00Z"
+    assert records[0]["settlement_station_code"] == "RKSI"
+    assert records[0]["settlement_source"] == "metar"
+    assert records[0]["settlement_rule_hash"] == "rule-seoul-ge-31"
+    assert records[0]["settlement_spec"]["end_time"] == "2026-06-27T12:00:00Z"
     assert records[0]["live_gate_at_record"] is False
     assert records[0]["live_authorization_pct_at_record"] == 0
 
@@ -283,6 +330,13 @@ def test_markout_open_paper_fills_appends_conservative_exit_marks(tmp_path):
     assert markouts[0]["city"] == "seoul"
     assert markouts[0]["market_family"] == "temperature"
     assert markouts[0]["bucket_type"] == "ge"
+    assert markouts[0]["strategy_id"] == "tail_threshold"
+    assert markouts[0]["target_date"] == "2026-06-27"
+    assert markouts[0]["end_time"] == "2026-06-27T12:00:00Z"
+    assert markouts[0]["settlement_station_code"] == "RKSI"
+    assert markouts[0]["settlement_source"] == "metar"
+    assert markouts[0]["settlement_rule_hash"] == "rule-seoul-ge-31"
+    assert markouts[0]["settlement_spec"]["end_time"] == "2026-06-27T12:00:00Z"
     assert markouts[0]["markout_age_seconds"] == 600
     assert markouts[0]["markout_horizon"] == "5-15m"
     assert markouts[0]["entry_price_bucket"] == "<0.03"
@@ -345,7 +399,46 @@ def test_summarize_markout_strata_groups_latest_marks_with_fill_context(tmp_path
     assert summary["by_market_family"][0]["market_family"] == "temperature"
     assert summary["by_bucket_type"][0]["bucket_type"] == "ge"
     assert summary["by_side"][0]["side"] == "yes"
+    assert summary["by_strategy"][0]["strategy_id"] == "tail_threshold"
+    assert summary["by_station"][0]["settlement_station_code"] == "RKSI"
+    assert summary["by_strategy_and_horizon"][0]["strategy_id"] == "tail_threshold"
+    assert summary["by_strategy_and_horizon"][0]["markout_horizon"] == "5-15m"
+    assert summary["by_station_and_horizon"][0]["settlement_station_code"] == "RKSI"
+    assert summary["by_station_and_horizon"][0]["markout_horizon"] == "5-15m"
     assert summary["by_entry_spread_bucket"][0]["entry_spread_bucket"] == "0.005-0.015"
+
+
+def test_summarize_markout_strata_all_horizons_keeps_path_diagnostics(tmp_path):
+    write_paper_journal(
+        _sample_report(),
+        journal_dir=tmp_path,
+        profile="tail-paper",
+        recorded_at="2026-06-26T19:21:00Z",
+    )
+    markout_open_paper_fills(
+        journal_dir=tmp_path,
+        client=FakeClient(),
+        recorded_at="2026-06-26T19:23:00Z",
+    )
+    markout_open_paper_fills(
+        journal_dir=tmp_path,
+        client=FakeClient(),
+        recorded_at="2026-06-26T19:31:00Z",
+    )
+
+    latest_summary = summarize_markout_strata(tmp_path, latest_only=True)
+    path_summary = summarize_markout_strata(tmp_path, latest_only=False)
+
+    assert latest_summary["selected_markout_count"] == 1
+    assert path_summary["selected_markout_count"] == 2
+    horizons = {
+        row["markout_horizon"]: row
+        for row in path_summary["by_strategy_and_horizon"]
+        if row["strategy_id"] == "tail_threshold"
+    }
+    assert set(horizons) == {"0-5m", "5-15m"}
+    assert horizons["0-5m"]["count"] == 1
+    assert horizons["5-15m"]["count"] == 1
 
 
 def test_summarize_markout_strata_can_filter_near_miss_quarantine_reason(tmp_path):

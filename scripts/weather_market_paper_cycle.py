@@ -21,6 +21,10 @@ from src.trading.polyweather_model_rows import (  # noqa: E402
     merge_scan_model_payloads,
 )
 from src.trading.weather_closed_backfill import DEFAULT_BACKFILL_DIR  # noqa: E402
+from src.trading.weather_current_signal import (  # noqa: E402
+    default_current_signal_report_dir,
+    write_current_signal_report,
+)
 from src.trading.weather_execution_calibration import (  # noqa: E402
     DEFAULT_MAKER_FOCUS_JOURNAL_DIR,
     build_maker_focus_signal_report,
@@ -38,6 +42,13 @@ from src.trading.weather_maker_quote_blocker_calibration import (  # noqa: E402
 from src.trading.weather_market_enrichment import (  # noqa: E402
     enrich_polymarket_payload_with_scan_models,
     temperature_model_targets_from_payload,
+)
+from src.trading.polymarket_orderbook_archive import (  # noqa: E402
+    DEFAULT_ORDERBOOK_ARCHIVE_DIR,
+    write_orderbook_archive_from_payload,
+)
+from src.trading.weather_orderbook_archive_coverage import (  # noqa: E402
+    build_orderbook_archive_coverage_report_from_dir,
 )
 from src.trading.weather_market_signal import (  # noqa: E402
     WeatherMarketSignalConfig,
@@ -61,6 +72,10 @@ from src.trading.weather_resolved_audit import (  # noqa: E402
     build_resolved_gap_report,
 )
 from src.trading.weather_signal_risk_filter import build_risk_rules_from_journal  # noqa: E402
+from src.trading.weather_strict_gate_queue import (  # noqa: E402
+    default_strict_gate_queue_dir,
+    write_strict_gate_queue_journal,
+)
 from src.trading.weather_targeted_shadow import (  # noqa: E402
     DEFAULT_CURRENT_SIGNAL_TAKER_JOURNAL_DIR,
     DEFAULT_TARGETED_SHADOW_JOURNAL_DIR,
@@ -83,6 +98,26 @@ from src.trading.weather_temperature_opportunity import build_temperature_opport
 SCHEMA_VERSION = "polyweather_weather_paper_cycle.v1"
 DEFAULT_QUARANTINE_JOURNAL_DIR = Path("data/trading/weather_quarantine_paper")
 DEFAULT_EQ_SHADOW_JOURNAL_DIR = Path("data/trading/weather_eq_shadow_paper")
+DEFAULT_POLYMARKET_ACTIVE_SCAN_LIMIT = 500
+
+
+def _subjournal_dir(paper_journal_dir: str | Path, name: str) -> str:
+    return str(Path(paper_journal_dir) / "subjournals" / name)
+
+
+def _resolve_default_subjournal_dirs(args: argparse.Namespace) -> None:
+    defaults = {
+        "quarantine_journal_dir": "quarantine",
+        "targeted_shadow_journal_dir": "targeted_shadow",
+        "current_signal_taker_journal_dir": "current_signal_taker",
+        "eq_shadow_journal_dir": "eq_shadow",
+        "maker_focus_journal_dir": "maker_focus",
+        "temperature_execution_journal_dir": "temperature_execution",
+        "temperature_taker_journal_dir": "temperature_taker",
+    }
+    for field, dirname in defaults.items():
+        if getattr(args, field, None) is None:
+            setattr(args, field, _subjournal_dir(args.paper_journal_dir, dirname))
 
 
 def _json_arg(value: str) -> Dict[str, Any]:
@@ -96,6 +131,40 @@ def _json_arg(value: str) -> Dict[str, Any]:
     if not isinstance(parsed, dict):
         raise argparse.ArgumentTypeError("JSON value must be an object")
     return parsed
+
+
+def _live_evidence_bundle_hint(
+    *,
+    paper_journal_dir: str | Path,
+    backfill_dir: str | Path,
+    strict_gate_queue_dir: str | Path,
+    orderbook_archive_dir: str | Path,
+) -> Dict[str, Any]:
+    command = [
+        "PYTHONPATH=src",
+        ".venv/bin/python",
+        "scripts/weather_live_evidence_bundle_report.py",
+        "--paper-journal-dir",
+        str(paper_journal_dir),
+        "--backfill-dir",
+        str(backfill_dir),
+        "--strict-gate-queue-dir",
+        str(strict_gate_queue_dir),
+        "--orderbook-archive-dir",
+        str(orderbook_archive_dir),
+        "--summary-only",
+    ]
+    return {
+        "schema_version": "polyweather_weather_live_evidence_bundle_hint.v1",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "next_step": "run_live_evidence_bundle_after_collection",
+        "paper_journal_dir": str(paper_journal_dir),
+        "backfill_dir": str(backfill_dir),
+        "strict_gate_queue_dir": str(strict_gate_queue_dir),
+        "orderbook_archive_dir": str(orderbook_archive_dir),
+        "recommended_command": command,
+    }
 
 
 @contextmanager
@@ -121,6 +190,37 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--paper-journal-dir", default=str(DEFAULT_PAPER_JOURNAL_DIR))
     parser.add_argument("--backfill-dir", default=str(DEFAULT_BACKFILL_DIR))
+    parser.add_argument(
+        "--current-signal-report-dir",
+        default=None,
+        help="Directory for paper-only current signal snapshots. Defaults to <paper-journal-dir>/current_signal_reports.",
+    )
+    parser.add_argument(
+        "--write-current-signal-report",
+        action="store_true",
+        help="Persist the current signal report to latest_signal_report.json and manifest.jsonl.",
+    )
+    parser.add_argument(
+        "--no-current-signal-report",
+        action="store_true",
+        help="With --production-profile, do not persist the current signal report snapshot.",
+    )
+    parser.add_argument(
+        "--strict-gate-queue-dir",
+        default=None,
+        help="Directory for paper-only strict-gate targeted queue records. Defaults to <paper-journal-dir>/strict_gate_queues.",
+    )
+    parser.add_argument(
+        "--write-strict-gate-queue",
+        action="store_true",
+        help="Persist strict-gate rejected rows as paper-only targeted queue inputs.",
+    )
+    parser.add_argument(
+        "--no-strict-gate-queue",
+        action="store_true",
+        help="With --production-profile, do not persist strict-gate targeted queue records.",
+    )
+    parser.add_argument("--strict-gate-queue-max-records-per-queue", type=int, default=10)
     parser.add_argument("--paper-journal-profile", default="paper-cycle")
     parser.add_argument("--paper-max-fills", type=int, default=10)
     parser.add_argument("--paper-include-watch", action="store_true")
@@ -134,7 +234,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="With --production-profile, do not persist quarantine near-miss paper diagnostics.",
     )
-    parser.add_argument("--quarantine-journal-dir", default=str(DEFAULT_QUARANTINE_JOURNAL_DIR))
+    parser.add_argument("--quarantine-journal-dir", default=None)
     parser.add_argument("--quarantine-max-fills", type=int, default=30)
     parser.add_argument("--markout-max-fills", type=int, default=100)
     parser.add_argument("--markout-min-interval-seconds", type=float, default=0.0)
@@ -161,7 +261,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="With --production-profile, do not add quarantine surface cooldown risk rules.",
     )
-    parser.add_argument("--targeted-shadow-journal-dir", default=str(DEFAULT_TARGETED_SHADOW_JOURNAL_DIR))
+    parser.add_argument("--targeted-shadow-journal-dir", default=None)
     parser.add_argument("--write-targeted-shadow-journal", action="store_true")
     parser.add_argument("--no-targeted-shadow-journal", action="store_true")
     parser.add_argument("--targeted-shadow-max-fills", type=int, default=10)
@@ -176,7 +276,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--targeted-shadow-cooldown-min-mean-markout-cents", type=float, default=0.0)
     parser.add_argument("--targeted-shadow-cooldown-max-win-rate", type=float, default=0.5)
     parser.add_argument("--targeted-shadow-include-negative-edge", action="store_true")
-    parser.add_argument("--current-signal-taker-journal-dir", default=str(DEFAULT_CURRENT_SIGNAL_TAKER_JOURNAL_DIR))
+    parser.add_argument("--current-signal-taker-journal-dir", default=None)
     parser.add_argument("--write-current-signal-taker-paper", action="store_true")
     parser.add_argument("--no-current-signal-taker-paper", action="store_true")
     parser.add_argument("--current-signal-taker-max-fills", type=int, default=20)
@@ -204,7 +304,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--current-signal-taker-validation-min-horizon-count", type=int, default=3)
     parser.add_argument("--current-signal-taker-validation-min-resolved-count", type=int, default=1)
-    parser.add_argument("--eq-shadow-journal-dir", default=str(DEFAULT_EQ_SHADOW_JOURNAL_DIR))
+    parser.add_argument("--eq-shadow-journal-dir", default=None)
     parser.add_argument("--write-eq-shadow-journal", action="store_true")
     parser.add_argument("--no-eq-shadow-journal", action="store_true")
     parser.add_argument("--eq-shadow-max-fills", type=int, default=10)
@@ -231,7 +331,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--maker-max-quotes", type=int, default=100)
     parser.add_argument("--maker-markout-max-quotes", type=int, default=100)
-    parser.add_argument("--maker-focus-journal-dir", default=str(DEFAULT_MAKER_FOCUS_JOURNAL_DIR))
+    parser.add_argument("--maker-focus-journal-dir", default=None)
     parser.add_argument("--write-maker-focus-journal", action="store_true")
     parser.add_argument("--no-maker-focus-journal", action="store_true")
     parser.add_argument("--maker-focus-max-fills", type=int, default=10)
@@ -261,13 +361,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--temperature-execution-min-expected-markout-cents", type=float, default=0.0)
     parser.add_argument("--temperature-execution-min-win-rate", type=float, default=0.55)
     parser.add_argument("--temperature-execution-max-items", type=int, default=20)
-    parser.add_argument("--temperature-execution-journal-dir", default=str(DEFAULT_TEMPERATURE_EXECUTION_JOURNAL_DIR))
+    parser.add_argument("--temperature-execution-journal-dir", default=None)
     parser.add_argument("--write-temperature-execution-quotes", action="store_true")
     parser.add_argument("--no-temperature-execution-quotes", action="store_true")
     parser.add_argument("--temperature-execution-quote-size", type=float, default=1.0)
     parser.add_argument("--temperature-execution-max-quotes", type=int, default=50)
     parser.add_argument("--temperature-execution-markout-max-quotes", type=int, default=50)
-    parser.add_argument("--temperature-taker-journal-dir", default=str(DEFAULT_TEMPERATURE_TAKER_JOURNAL_DIR))
+    parser.add_argument("--temperature-taker-journal-dir", default=None)
     parser.add_argument("--write-temperature-taker-paper", action="store_true")
     parser.add_argument("--no-temperature-taker-paper", action="store_true")
     parser.add_argument("--temperature-taker-max-items", type=int, default=20)
@@ -303,9 +403,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--polymarket-search-limit", type=int, default=25)
     parser.add_argument("--polymarket-city-search-limit", type=int, default=5)
     parser.add_argument("--max-city-temperature-queries", type=int, default=None)
-    parser.add_argument("--polymarket-active-scan-limit", type=int, default=1)
+    parser.add_argument("--polymarket-active-scan-limit", type=int, default=DEFAULT_POLYMARKET_ACTIVE_SCAN_LIMIT)
     parser.add_argument("--no-city-temperature-queries", action="store_true")
     parser.add_argument("--no-polymarket-order-books", action="store_true")
+    parser.add_argument("--orderbook-archive-dir", default=str(DEFAULT_ORDERBOOK_ARCHIVE_DIR))
+    parser.add_argument("--no-orderbook-archive", action="store_true")
+    parser.add_argument("--orderbook-archive-taker-probe-size", type=float, default=1.0)
     parser.add_argument(
         "--enable-collector-patch",
         action="store_true",
@@ -408,6 +511,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
     generated_at = utc_now_iso()
+    _resolve_default_subjournal_dirs(args)
     production_profile = bool(args.production_profile)
     targeted_shadow_enabled = (
         bool(args.write_targeted_shadow_journal)
@@ -444,6 +548,12 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
     temperature_taker_paper_enabled = bool(args.write_temperature_taker_paper) or (
         production_profile and not bool(args.no_temperature_taker_paper)
     )
+    current_signal_report_enabled = bool(args.write_current_signal_report) or (
+        production_profile and not bool(args.no_current_signal_report)
+    )
+    strict_gate_queue_enabled = bool(args.write_strict_gate_queue) or (
+        production_profile and not bool(args.no_strict_gate_queue)
+    )
     suppress_saturated_broad_risk_rules = bool(args.suppress_saturated_broad_risk_rules) or (
         production_profile and not bool(args.no_suppress_saturated_broad_risk_rules)
     )
@@ -467,6 +577,7 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
     polymarket_row_limit = max(1, int(args.polymarket_row_limit))
     if production_profile:
         polymarket_row_limit = max(polymarket_row_limit, 240)
+    polymarket_active_scan_limit = max(1, int(args.polymarket_active_scan_limit))
     payload = build_polymarket_weather_payload(
         queries=polymarket_queries,
         row_limit=polymarket_row_limit,
@@ -474,7 +585,7 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
         include_city_temperature_queries=not bool(args.no_city_temperature_queries),
         city_search_limit_per_query=max(1, int(args.polymarket_city_search_limit)),
         max_city_temperature_queries=max_city_temperature_queries,
-        active_scan_limit=max(1, int(args.polymarket_active_scan_limit)),
+        active_scan_limit=polymarket_active_scan_limit,
         include_order_books=not bool(args.no_polymarket_order_books),
         exclude_expired_markets=not bool(args.include_expired_polymarket_markets),
         exclude_not_accepting_orders=not bool(args.include_not_accepting_polymarket_orders),
@@ -493,6 +604,19 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
             )
             scan_payload = merge_scan_model_payloads(scan_payload, fallback_payload)
         payload = enrich_polymarket_payload_with_scan_models(payload, scan_payload)
+    orderbook_archive = None
+    if not bool(args.no_orderbook_archive) and not bool(args.no_polymarket_order_books):
+        orderbook_archive = write_orderbook_archive_from_payload(
+            payload,
+            archive_dir=args.orderbook_archive_dir,
+            recorded_at=generated_at,
+            taker_probe_size=float(args.orderbook_archive_taker_probe_size),
+        )
+    orderbook_archive_coverage = build_orderbook_archive_coverage_report_from_dir(
+        payload,
+        archive_dir=args.orderbook_archive_dir,
+        generated_at=generated_at,
+    )
 
     risk_rules_payload = (
         build_risk_rules_from_journal(
@@ -589,6 +713,29 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
         risk_rule_mode=args.risk_rule_mode,
         generated_at=generated_at,
     )
+    current_signal_report_dir = args.current_signal_report_dir or str(
+        default_current_signal_report_dir(args.paper_journal_dir)
+    )
+    current_signal_snapshot = None
+    if current_signal_report_enabled:
+        current_signal_snapshot = write_current_signal_report(
+            signal_report,
+            report_dir=current_signal_report_dir,
+            generated_at=generated_at,
+            source="weather_market_paper_cycle",
+        )
+    strict_gate_queue_dir = args.strict_gate_queue_dir or str(
+        default_strict_gate_queue_dir(args.paper_journal_dir)
+    )
+    strict_gate_queue_journal = None
+    if strict_gate_queue_enabled:
+        strict_gate_queue_journal = write_strict_gate_queue_journal(
+            signal_report,
+            queue_dir=strict_gate_queue_dir,
+            generated_at=generated_at,
+            source="weather_market_paper_cycle",
+            max_records_per_queue=max(0, int(args.strict_gate_queue_max_records_per_queue)),
+        )
     paper_journal = write_paper_journal(
         signal_report,
         journal_dir=args.paper_journal_dir,
@@ -1060,14 +1207,22 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
         quarantine_surface_report=quarantine_surface,
         maker_quote_blocker_calibration_report=maker_quote_blocker_calibration,
         model_coverage_report=model_coverage,
+        orderbook_archive_coverage_report=orderbook_archive_coverage,
         temperature_opportunity_report=temperature_opportunity,
         temperature_execution_experiment_report=temperature_execution_experiment,
         current_signal_taker_validation_report=current_signal_taker_validation,
         temperature_taker_validation_report=(temperature_taker_paper or {}).get("taker_validation"),
         temperature_taker_journal_dir=args.temperature_taker_journal_dir,
+        strict_gate_queue_dir=strict_gate_queue_dir,
         include_temperature_taker_validation=bool(temperature_taker_paper_enabled),
         live_permission=bool(args.live_permission),
         generated_at=generated_at,
+    )
+    live_evidence_bundle_hint = _live_evidence_bundle_hint(
+        paper_journal_dir=args.paper_journal_dir,
+        backfill_dir=args.backfill_dir,
+        strict_gate_queue_dir=strict_gate_queue_dir,
+        orderbook_archive_dir=args.orderbook_archive_dir,
     )
     return {
         "schema_version": SCHEMA_VERSION,
@@ -1078,7 +1233,11 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
         "effective_profile": {
             "polymarket_queries": list(polymarket_queries),
             "backfill_dir": args.backfill_dir,
+            "orderbook_archive_enabled": orderbook_archive is not None,
+            "orderbook_archive_dir": args.orderbook_archive_dir,
+            "orderbook_archive_taker_probe_size": float(args.orderbook_archive_taker_probe_size),
             "polymarket_row_limit": polymarket_row_limit,
+            "polymarket_active_scan_limit": polymarket_active_scan_limit,
             "max_city_temperature_queries": max_city_temperature_queries,
             "quality_surface_profile": bool(args.quality_surface_profile) or production_profile,
             "expanded_weather_profile": bool(args.expanded_weather_profile),
@@ -1184,6 +1343,15 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
             "temperature_execution_markout_max_quotes": int(args.temperature_execution_markout_max_quotes),
             "temperature_taker_paper_enabled": bool(temperature_taker_paper_enabled),
             "temperature_taker_journal_dir": args.temperature_taker_journal_dir,
+            "current_signal_report_enabled": bool(current_signal_report_enabled),
+            "current_signal_report_dir": current_signal_report_dir,
+            "strict_gate_queue_enabled": bool(strict_gate_queue_enabled),
+            "strict_gate_queue_dir": strict_gate_queue_dir,
+            "strict_gate_queue_max_records_per_queue": max(
+                0,
+                int(args.strict_gate_queue_max_records_per_queue),
+            ),
+            "live_evidence_bundle_hint": live_evidence_bundle_hint,
             "temperature_taker_max_items": int(args.temperature_taker_max_items),
             "temperature_taker_max_fills": int(args.temperature_taker_max_fills),
             "temperature_taker_markout_max_fills": int(args.temperature_taker_markout_max_fills),
@@ -1215,6 +1383,11 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
             if key != "rules"
         },
         "source_diagnostics": signal_report.get("source_diagnostics"),
+        "orderbook_archive": orderbook_archive,
+        "orderbook_archive_coverage": orderbook_archive_coverage,
+        "current_signal_snapshot": current_signal_snapshot,
+        "strict_gate_queue_journal": strict_gate_queue_journal,
+        "live_evidence_bundle_hint": live_evidence_bundle_hint,
         "model_coverage": model_coverage,
         "temperature_opportunity": temperature_opportunity,
         "temperature_execution_experiment": temperature_execution_experiment,

@@ -1,16 +1,19 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from src.trading.polymarket_readonly import (
     DEFAULT_WEATHER_QUERIES,
     PolymarketReadonlyClient,
     _parse_json_list,
     build_polymarket_closed_weather_payload,
+    is_weather_like_market,
 )
 from src.trading.weather_market_enrichment import parse_temperature_outcome_spec
+from src.trading.weather_market_implied import enrich_payload_with_market_implied
 from src.trading.weather_paper_journal import (
     _append_jsonl,
     _safe_float,
@@ -23,6 +26,18 @@ from src.trading.weather_paper_journal import (
 
 BACKFILL_SCHEMA_VERSION = "polyweather_weather_closed_backfill.v1"
 DEFAULT_BACKFILL_DIR = Path("data/trading/weather_backfill")
+
+
+def _dedupe_text(values: Iterable[Any]) -> List[str]:
+    rows: List[str] = []
+    seen = set()
+    for value in values:
+        text = str(value or "").strip()
+        if not text or text in seen:
+            continue
+        rows.append(text)
+        seen.add(text)
+    return rows
 
 
 def _group_rows_by_market(rows: Iterable[Dict[str, Any]]) -> List[List[Dict[str, Any]]]:
@@ -57,6 +72,15 @@ def _settled_probability_by_outcome(rows: Iterable[Dict[str, Any]]) -> Dict[str,
     for row in rows:
         outcome = str(row.get("outcome") or row.get("side") or "").strip() or "unknown"
         values[outcome] = _row_payout(row)
+    return values
+
+
+def _token_id_by_outcome(rows: Iterable[Dict[str, Any]]) -> Dict[str, Optional[str]]:
+    values: Dict[str, Optional[str]] = {}
+    for row in rows:
+        outcome = str(row.get("outcome") or row.get("side") or "").strip() or "unknown"
+        token_id = str(row.get("token_id") or "").strip()
+        values[outcome] = token_id or None
     return values
 
 
@@ -118,9 +142,11 @@ def build_closed_backfill_records(
                 "unit": spec.unit,
                 "market_type": spec.market_type,
             }
+        settlement_spec = first.get("settlement_spec") if isinstance(first.get("settlement_spec"), dict) else {}
         status = _resolution_status(group)
         winning_rows = [row for row in group if (_row_payout(row) or 0.0) >= 0.999]
         winning_row = winning_rows[0] if len(winning_rows) == 1 else None
+        token_id_by_outcome = _token_id_by_outcome(group)
         record_id = stable_json_hash(
             {
                 "source_snapshot_id": payload.get("snapshot_id"),
@@ -167,6 +193,16 @@ def build_closed_backfill_records(
                 "winning_side": (winning_row or {}).get("side"),
                 "winning_token_id": (winning_row or {}).get("token_id"),
                 "winning_payout": _row_payout(winning_row) if winning_row else None,
+                "token_id_by_outcome": token_id_by_outcome,
+                "resolution_source": (
+                    first.get("resolution_source")
+                    or settlement_spec.get("settlement_source")
+                    or payload.get("source")
+                ),
+                "rule_text": settlement_spec.get("rule_text"),
+                "rule_hash": settlement_spec.get("rule_hash"),
+                "settlement_spec": settlement_spec or None,
+                "official_final_value": first.get("official_final_value"),
                 "market_closed": any(row.get("closed") is True for row in group),
                 "row_count": len(group),
             }
@@ -237,6 +273,119 @@ def write_closed_backfill_journal(
         "backfill_only": True,
         "counts_for_live_gate": False,
         **summary,
+    }
+
+
+def build_targeted_closed_weather_payload_from_market_slugs(
+    *,
+    market_slugs: Iterable[str],
+    client: Optional[PolymarketReadonlyClient] = None,
+    search_limit_per_slug: int = 5,
+) -> Dict[str, Any]:
+    client = client or PolymarketReadonlyClient()
+    slugs = _dedupe_text(market_slugs)
+    generated_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    rows: List[Dict[str, Any]] = []
+    diagnostics: Dict[str, Any] = {
+        "requested_market_slug_count": len(slugs),
+        "matched_market_slug_count": 0,
+        "closed_market_slug_count": 0,
+        "open_market_slug_count": 0,
+        "missing_market_slug_count": 0,
+        "non_weather_market_slug_count": 0,
+        "errors": [],
+        "matched_market_slugs": [],
+        "open_market_slugs": [],
+        "missing_market_slugs": [],
+        "non_weather_market_slugs": [],
+    }
+
+    for slug in slugs:
+        try:
+            events = client.public_search_events(slug, limit=max(1, int(search_limit_per_slug)))
+        except Exception as exc:  # pragma: no cover - exact client exception type is not required for fake clients.
+            diagnostics["errors"].append(f"{slug}: {exc}")
+            continue
+        exact_market: Optional[Dict[str, Any]] = None
+        exact_event: Optional[Dict[str, Any]] = None
+        for event in events:
+            if not isinstance(event, dict):
+                continue
+            for market in event.get("markets") or []:
+                if not isinstance(market, dict):
+                    continue
+                if str(market.get("slug") or "").strip() == slug:
+                    exact_event = event
+                    exact_market = market
+                    break
+            if exact_market is not None:
+                break
+        if exact_market is None or exact_event is None:
+            diagnostics["missing_market_slug_count"] += 1
+            diagnostics["missing_market_slugs"].append(slug)
+            continue
+        diagnostics["matched_market_slug_count"] += 1
+        diagnostics["matched_market_slugs"].append(slug)
+        if not is_weather_like_market(exact_event, exact_market):
+            diagnostics["non_weather_market_slug_count"] += 1
+            diagnostics["non_weather_market_slugs"].append(slug)
+            continue
+        if exact_market.get("closed") is not True and exact_event.get("closed") is not True:
+            diagnostics["open_market_slug_count"] += 1
+            diagnostics["open_market_slugs"].append(slug)
+            continue
+        diagnostics["closed_market_slug_count"] += 1
+        rows.extend(
+            client.market_to_signal_rows(
+                exact_event,
+                exact_market,
+                include_order_books=False,
+            )
+        )
+
+    diagnostics["rows"] = len(rows)
+    status = "ready" if rows else "no_targeted_closed_weather_markets"
+    if diagnostics.get("errors") and not rows:
+        status = "partial_error"
+    return enrich_payload_with_market_implied(
+        {
+            "schema_version": "polyweather_polymarket_readonly_payload.v1",
+            "snapshot_id": f"polymarket-closed-targeted-readonly-{generated_at}",
+            "generated_at": generated_at,
+            "status": status,
+            "source": "polymarket_closed_targeted_readonly",
+            "rows": rows,
+            "diagnostics": diagnostics,
+        }
+    )
+
+
+def run_targeted_closed_weather_backfill_from_market_slugs(
+    *,
+    market_slugs: Iterable[str],
+    backfill_dir: str | Path = DEFAULT_BACKFILL_DIR,
+    max_records: Optional[int] = None,
+    search_limit_per_slug: int = 5,
+    client: Optional[PolymarketReadonlyClient] = None,
+) -> Dict[str, Any]:
+    payload = build_targeted_closed_weather_payload_from_market_slugs(
+        market_slugs=market_slugs,
+        client=client,
+        search_limit_per_slug=search_limit_per_slug,
+    )
+    journal = write_closed_backfill_journal(
+        payload,
+        backfill_dir=backfill_dir,
+        max_records=max_records,
+    )
+    return {
+        "schema_version": BACKFILL_SCHEMA_VERSION,
+        "targeted": True,
+        "payload_status": payload.get("status"),
+        "payload_snapshot_id": payload.get("snapshot_id"),
+        "payload_diagnostics": payload.get("diagnostics"),
+        "backfill_journal": journal,
+        "backfill_summary": summarize_closed_backfill_journal(backfill_dir),
     }
 
 

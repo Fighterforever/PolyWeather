@@ -2,11 +2,34 @@ from __future__ import annotations
 
 import json
 import os
+from pathlib import Path
+
+import pytest
 
 from scripts import weather_market_paper_cycle as cycle_cli
 
 
-def test_weather_market_paper_cycle_runs_paper_only_cycle(monkeypatch, capsys):
+def _subjournal(root: str, name: str) -> str:
+    return str(Path(root) / "subjournals" / name)
+
+
+@pytest.fixture(autouse=True)
+def _paper_cycle_orderbook_archive_is_paper_only(monkeypatch):
+    def fake_archive(payload, **kwargs):
+        return {
+            "schema_version": "polyweather_polymarket_orderbook_archive.v1",
+            "paper_only": True,
+            "counts_for_live_gate": False,
+            "rows_seen": len(payload.get("rows") or []),
+            "snapshot_count": 0,
+            "written_count": 0,
+            "archive_dir": str(kwargs.get("archive_dir")),
+        }
+
+    monkeypatch.setattr(cycle_cli, "write_orderbook_archive_from_payload", fake_archive)
+
+
+def test_weather_market_paper_cycle_runs_paper_only_cycle(monkeypatch, tmp_path, capsys):
     calls = {}
 
     def fake_polymarket(**kwargs):
@@ -109,12 +132,21 @@ def test_weather_market_paper_cycle_runs_paper_only_cycle(monkeypatch, capsys):
             "--quality-surface-profile",
             "--allowed-side",
             "no",
+            "--write-current-signal-report",
+            "--current-signal-report-dir",
+            str(tmp_path / "signals"),
         ]
     )
 
     output = json.loads(capsys.readouterr().out)
     assert output["paper_only"] is True
     assert output["live_order_path"] is False
+    assert output["orderbook_archive"]["paper_only"] is True
+    assert output["orderbook_archive"]["counts_for_live_gate"] is False
+    assert output["orderbook_archive_coverage"]["schema_version"] == (
+        "polyweather_weather_orderbook_archive_coverage.v1"
+    )
+    assert output["orderbook_archive_coverage"]["counts_for_live_gate"] is False
     assert output["signal_summary"]["candidate_count"] == 1
     assert output["markout"] == {"marked_count": 1}
     assert output["resolved_audit"] == {"resolved_count": 0}
@@ -135,6 +167,10 @@ def test_weather_market_paper_cycle_runs_paper_only_cycle(monkeypatch, capsys):
         "polyweather_weather_temperature_execution_experiment.v1"
     )
     assert output["temperature_execution_experiment"]["counts_for_live_gate"] is False
+    assert output["current_signal_snapshot"]["paper_only"] is True
+    assert output["current_signal_snapshot"]["candidate_count"] == 1
+    assert output["effective_profile"]["current_signal_report_enabled"] is True
+    assert output["effective_profile"]["current_signal_report_dir"] == str(tmp_path / "signals")
     assert output["effective_profile"]["model_coverage_max_horizon_days"] == 14.0
     assert output["effective_profile"]["model_coverage_thresholds"]["min_price"] == 0.03
     assert output["effective_profile"]["temperature_opportunity_max_horizon_hours"] == 48.0
@@ -155,12 +191,13 @@ def test_weather_market_paper_cycle_runs_paper_only_cycle(monkeypatch, capsys):
     assert calls["gap"]["journal_dir"] == "/tmp/weather-paper"
     assert calls["gap"]["backfill_dir"] == "/tmp/weather-backfill"
     assert calls["calibration"]["paper_journal_dir"] == "/tmp/weather-paper"
-    assert calls["calibration"]["quarantine_journal_dir"] == str(cycle_cli.DEFAULT_QUARANTINE_JOURNAL_DIR)
+    assert calls["calibration"]["quarantine_journal_dir"] == _subjournal("/tmp/weather-paper", "quarantine")
     assert calls["promotion"]["paper_journal_dir"] == "/tmp/weather-paper"
     assert calls["promotion"]["signal_report"]["summary"]["candidate_count"] == 1
     assert calls["readiness"]["live_permission"] is False
     assert calls["readiness"]["temperature_opportunity_report"]["counts_for_live_gate"] is False
     assert calls["readiness"]["temperature_execution_experiment_report"]["counts_for_live_gate"] is False
+    assert calls["readiness"]["orderbook_archive_coverage_report"]["counts_for_live_gate"] is False
     assert calls["readiness"]["backfill_dir"] == "/tmp/weather-backfill"
     assert calls["signal_config"].min_price == 0.03
     assert calls["signal_config"].min_liquidity == 10.0
@@ -172,6 +209,52 @@ def test_weather_market_paper_cycle_runs_paper_only_cycle(monkeypatch, capsys):
     assert calls["signal_config"].min_ask_depth_usdc_3c == 10.0
     assert calls["signal_config"].suppress_saturated_broad_risk_rules is False
     assert calls["signal_config"].suppress_saturated_partition_risk_rules is False
+
+
+def test_weather_market_paper_cycle_live_permission_keeps_order_path_disabled(monkeypatch, capsys):
+    calls = {}
+
+    monkeypatch.setattr(cycle_cli, "build_polymarket_weather_payload", lambda **kwargs: {"rows": []})
+    monkeypatch.setattr(cycle_cli, "build_scan_terminal_payload", lambda filters, force_refresh=False: {"rows": []})
+    monkeypatch.setattr(cycle_cli, "temperature_model_targets_from_payload", lambda payload: {})
+    monkeypatch.setattr(cycle_cli, "enrich_polymarket_payload_with_scan_models", lambda payload, scan_payload: payload)
+    monkeypatch.setattr(
+        cycle_cli,
+        "build_weather_market_signal_report",
+        lambda payload, config, risk_rules=None, risk_rule_mode="live", generated_at=None: {
+            "summary": {"candidate_count": 0, "live_gate": False}
+        },
+    )
+    monkeypatch.setattr(cycle_cli, "build_risk_rules_from_journal", lambda **kwargs: {"rule_count": 0, "rules": []})
+    monkeypatch.setattr(cycle_cli, "write_paper_journal", lambda *args, **kwargs: {"fill_count": 0})
+    monkeypatch.setattr(cycle_cli, "markout_open_paper_fills", lambda **kwargs: {"marked_count": 0})
+    monkeypatch.setattr(cycle_cli, "audit_paper_fills_resolution", lambda **kwargs: {"resolved_count": 0})
+    monkeypatch.setattr(cycle_cli, "build_resolved_gap_report", lambda **kwargs: {"hard_conclusion": "no_open_fills"})
+    monkeypatch.setattr(
+        cycle_cli,
+        "build_quality_threshold_calibration_report",
+        lambda **kwargs: {"hard_conclusion": "no_threshold_profile_passed_evidence_gate"},
+    )
+    monkeypatch.setattr(
+        cycle_cli,
+        "build_quarantine_promotion_report",
+        lambda **kwargs: {"hard_conclusion": "no_quarantine_group_ready_for_formal_paper"},
+    )
+
+    def fake_readiness(**kwargs):
+        calls["readiness"] = kwargs
+        return {"readiness_pct": 100.0, "live_gate": True, "live_authorization_pct": 100}
+
+    monkeypatch.setattr(cycle_cli, "build_live_readiness_report", fake_readiness)
+
+    cycle_cli.main(["--live-permission"])
+
+    output = json.loads(capsys.readouterr().out)
+    assert calls["readiness"]["live_permission"] is True
+    assert output["paper_only"] is True
+    assert output["live_order_path"] is False
+    assert output["live_readiness_progress"]["live_gate"] is True
+    assert output["live_readiness_progress"]["live_authorization_pct"] == 100
 
 
 def test_weather_market_paper_cycle_can_write_separate_quarantine_journal(monkeypatch, capsys):
@@ -311,7 +394,7 @@ def test_weather_market_paper_cycle_can_write_separate_quarantine_journal(monkey
     assert output["effective_profile"]["maker_quote_offset_cents"] == [0.0, 1.0]
 
 
-def test_weather_market_paper_cycle_production_profile_sets_live_like_defaults(monkeypatch, capsys):
+def test_weather_market_paper_cycle_production_profile_sets_live_like_defaults(monkeypatch, tmp_path, capsys):
     calls = {
         "journals": [],
         "markouts": [],
@@ -461,12 +544,21 @@ def test_weather_market_paper_cycle_production_profile_sets_live_like_defaults(m
 
     monkeypatch.setattr(cycle_cli, "build_live_readiness_report", fake_readiness)
 
-    cycle_cli.main(["--production-profile", "--paper-journal-dir", "/tmp/weather-paper"])
+    cycle_cli.main(
+        [
+            "--production-profile",
+            "--paper-journal-dir",
+            "/tmp/weather-paper",
+            "--current-signal-report-dir",
+            str(tmp_path / "production-signals"),
+        ]
+    )
 
     output = json.loads(capsys.readouterr().out)
     assert output["production_profile"] is True
     assert output["effective_profile"]["polymarket_queries"] == ["temperature"]
     assert output["effective_profile"]["polymarket_row_limit"] == 240
+    assert output["effective_profile"]["polymarket_active_scan_limit"] == 500
     assert output["effective_profile"]["max_city_temperature_queries"] == 6
     assert output["effective_profile"]["quality_surface_profile"] is True
     assert output["effective_profile"]["apply_markout_risk_rules"] is True
@@ -476,6 +568,23 @@ def test_weather_market_paper_cycle_production_profile_sets_live_like_defaults(m
     assert output["effective_profile"]["saturated_risk_rule_min_coverage"] == 0.8
     assert output["effective_profile"]["partition_saturated_risk_rule_min_coverage"] == 0.8
     assert output["effective_profile"]["collector_patch_enabled"] is False
+    assert output["effective_profile"]["current_signal_report_enabled"] is True
+    assert output["current_signal_snapshot"]["paper_only"] is True
+    assert output["current_signal_snapshot"]["candidate_count"] == 0
+    assert output["effective_profile"]["strict_gate_queue_enabled"] is True
+    assert output["effective_profile"]["strict_gate_queue_dir"] == "/tmp/weather-paper/strict_gate_queues"
+    assert output["live_evidence_bundle_hint"]["schema_version"] == (
+        "polyweather_weather_live_evidence_bundle_hint.v1"
+    )
+    assert output["live_evidence_bundle_hint"]["paper_journal_dir"] == "/tmp/weather-paper"
+    assert output["live_evidence_bundle_hint"]["strict_gate_queue_dir"] == (
+        "/tmp/weather-paper/strict_gate_queues"
+    )
+    assert output["live_evidence_bundle_hint"]["orderbook_archive_dir"] == (
+        "data/trading/polymarket_orderbooks"
+    )
+    assert "--strict-gate-queue-dir" in output["live_evidence_bundle_hint"]["recommended_command"]
+    assert output["effective_profile"]["live_evidence_bundle_hint"] == output["live_evidence_bundle_hint"]
     assert output["effective_profile"]["targeted_shadow_enabled"] is True
     assert output["effective_profile"]["targeted_shadow_quarantine_reasons"] == ["risk_rule_only_reject"]
     assert output["effective_profile"]["targeted_shadow_bucket_types"] == ["le"]
@@ -484,8 +593,8 @@ def test_weather_market_paper_cycle_production_profile_sets_live_like_defaults(m
     assert output["effective_profile"]["targeted_shadow_cooldown_enabled"] is True
     assert output["effective_profile"]["targeted_shadow_cooldown_min_marked_count"] == 2
     assert output["effective_profile"]["current_signal_taker_enabled"] is True
-    assert output["effective_profile"]["current_signal_taker_journal_dir"] == str(
-        cycle_cli.DEFAULT_CURRENT_SIGNAL_TAKER_JOURNAL_DIR
+    assert output["effective_profile"]["current_signal_taker_journal_dir"] == _subjournal(
+        "/tmp/weather-paper", "current_signal_taker"
     )
     assert output["effective_profile"]["current_signal_taker_min_edge_percent"] == 5.0
     assert output["effective_profile"]["current_signal_taker_max_spread"] == 0.03
@@ -496,23 +605,24 @@ def test_weather_market_paper_cycle_production_profile_sets_live_like_defaults(m
         "15-30m",
     ]
     assert output["effective_profile"]["eq_shadow_enabled"] is True
-    assert output["effective_profile"]["eq_shadow_journal_dir"] == str(cycle_cli.DEFAULT_EQ_SHADOW_JOURNAL_DIR)
+    assert output["effective_profile"]["eq_shadow_journal_dir"] == _subjournal("/tmp/weather-paper", "eq_shadow")
     assert output["effective_profile"]["eq_shadow_bucket_types"] == ["eq"]
     assert output["effective_profile"]["eq_shadow_near_miss_categories"] == ["bucket_type"]
     assert output["effective_profile"]["eq_shadow_min_edge_percent"] == 5.0
     assert output["effective_profile"]["eq_shadow_require_edge_floor_for_direct_reasons"] is True
     assert output["effective_profile"]["eq_shadow_cooldown_enabled"] is True
     assert output["effective_profile"]["maker_focus_enabled"] is True
+    assert output["effective_profile"]["maker_focus_journal_dir"] == _subjournal("/tmp/weather-paper", "maker_focus")
     assert output["effective_profile"]["maker_focus_group_fields"] == ["entry_spread_bucket"]
     assert output["effective_profile"]["maker_focus_min_group_count"] == 3
     assert output["effective_profile"]["maker_focus_respect_maker_quote_risk_rules"] is True
     assert output["effective_profile"]["temperature_execution_quotes_enabled"] is True
-    assert output["effective_profile"]["temperature_execution_journal_dir"] == str(
-        cycle_cli.DEFAULT_TEMPERATURE_EXECUTION_JOURNAL_DIR
+    assert output["effective_profile"]["temperature_execution_journal_dir"] == _subjournal(
+        "/tmp/weather-paper", "temperature_execution"
     )
     assert output["effective_profile"]["temperature_taker_paper_enabled"] is True
-    assert output["effective_profile"]["temperature_taker_journal_dir"] == str(
-        cycle_cli.DEFAULT_TEMPERATURE_TAKER_JOURNAL_DIR
+    assert output["effective_profile"]["temperature_taker_journal_dir"] == _subjournal(
+        "/tmp/weather-paper", "temperature_taker"
     )
     assert output["effective_profile"]["temperature_taker_validation_required_horizons"] == [
         "0-5m",
@@ -520,17 +630,19 @@ def test_weather_market_paper_cycle_production_profile_sets_live_like_defaults(m
         "15-30m",
     ]
     assert output["effective_profile"]["quarantine_journal_enabled"] is True
-    assert output["effective_profile"]["quarantine_journal_dir"] == str(cycle_cli.DEFAULT_QUARANTINE_JOURNAL_DIR)
+    assert output["effective_profile"]["quarantine_journal_dir"] == _subjournal("/tmp/weather-paper", "quarantine")
     assert output["effective_profile"]["quarantine_surface_min_decision_count"] == 5
     assert output["effective_profile"]["quarantine_surface_min_promote_count"] == 5
     assert output["effective_profile"]["quarantine_surface_risk_rules_enabled"] is True
     assert output["targeted_shadow"]["selection_cooldown"]["hard_conclusion"] == "targeted_shadow_no_cooldown"
     assert output["targeted_shadow"]["counts_for_live_gate"] is False
-    assert output["targeted_shadow"]["journal"]["journal_dir"] == str(cycle_cli.DEFAULT_TARGETED_SHADOW_JOURNAL_DIR)
+    assert output["targeted_shadow"]["journal"]["journal_dir"] == _subjournal(
+        "/tmp/weather-paper", "targeted_shadow"
+    )
     assert output["targeted_shadow"]["validation"]["hard_conclusion"] == "targeted_shadow_collect_more_or_reject"
     assert output["current_signal_taker"]["counts_for_live_gate"] is False
-    assert output["current_signal_taker"]["journal"]["journal_dir"] == str(
-        cycle_cli.DEFAULT_CURRENT_SIGNAL_TAKER_JOURNAL_DIR
+    assert output["current_signal_taker"]["journal"]["journal_dir"] == _subjournal(
+        "/tmp/weather-paper", "current_signal_taker"
     )
     assert output["current_signal_taker"]["validation"]["hard_conclusion"] == (
         "current_signal_taker_validation_collect_more_markouts"
@@ -538,23 +650,23 @@ def test_weather_market_paper_cycle_production_profile_sets_live_like_defaults(m
     assert output["eq_shadow"]["selection_cooldown"]["hard_conclusion"] == "targeted_shadow_no_cooldown"
     assert output["eq_shadow"]["target_config"]["bucket_types"] == ["eq"]
     assert output["eq_shadow"]["target_config"]["require_edge_floor_for_direct_reasons"] is True
-    assert output["eq_shadow"]["journal"]["journal_dir"] == str(cycle_cli.DEFAULT_EQ_SHADOW_JOURNAL_DIR)
+    assert output["eq_shadow"]["journal"]["journal_dir"] == _subjournal("/tmp/weather-paper", "eq_shadow")
     assert output["eq_shadow"]["counts_for_live_gate"] is False
     assert output["eq_shadow"]["paper_only"] is True
     assert output["maker_focus"]["hard_conclusion"] == "maker_focus_no_positive_historical_stratum"
-    assert output["maker_focus"]["journal"]["journal_dir"] == str(cycle_cli.DEFAULT_MAKER_FOCUS_JOURNAL_DIR)
+    assert output["maker_focus"]["journal"]["journal_dir"] == _subjournal("/tmp/weather-paper", "maker_focus")
     assert output["maker_focus"]["counts_for_live_gate"] is False
     assert output["maker_quote_blocker_calibration"]["hard_conclusion"] == "maker_quote_no_current_blockers"
     assert output["maker_quote_blocker_calibration"]["counts_for_live_gate"] is False
     assert output["temperature_execution_shadow"]["paper_only"] is True
-    assert output["temperature_execution_shadow"]["journal"]["journal_dir"] == str(
-        cycle_cli.DEFAULT_TEMPERATURE_EXECUTION_JOURNAL_DIR
+    assert output["temperature_execution_shadow"]["journal"]["journal_dir"] == _subjournal(
+        "/tmp/weather-paper", "temperature_execution"
     )
     assert output["temperature_execution_shadow"]["summary"]["quote_count"] == 0
     assert output["temperature_taker_paper"]["taker_validation"]["hard_conclusion"] == (
         "temperature_taker_validation_collect_more_markouts"
     )
-    assert output["quarantine_journal"]["journal_dir"] == str(cycle_cli.DEFAULT_QUARANTINE_JOURNAL_DIR)
+    assert output["quarantine_journal"]["journal_dir"] == _subjournal("/tmp/weather-paper", "quarantine")
     assert output["quarantine_surface"] == {"hard_conclusion": "quarantine_surface_currently_negative"}
     assert output["effective_profile"]["max_quarantine"] == 30
     assert output["effective_profile"]["quarantine_near_miss_categories"] == [
@@ -567,6 +679,7 @@ def test_weather_market_paper_cycle_production_profile_sets_live_like_defaults(m
     ]
     assert calls["polymarket"]["queries"] == ("temperature",)
     assert calls["polymarket"]["row_limit"] == 240
+    assert calls["polymarket"]["active_scan_limit"] == 500
     assert calls["polymarket"]["max_city_temperature_queries"] == 6
     assert calls["collector_patch_endpoint_during_fallback"] == ""
     assert os.environ["POLYWEATHER_COLLECTOR_PATCH_ENDPOINT"] == "http://example.test/api/internal/collector-patch"
@@ -590,58 +703,56 @@ def test_weather_market_paper_cycle_production_profile_sets_live_like_defaults(m
     )
     assert calls["risk_rules"] == [{"action": "do_not_live_until_positive_markout"}]
     assert calls["risk_rules_build"]["include_quarantine_surface_rules"] is True
-    assert calls["risk_rules_build"]["quarantine_journal_dir"] == str(cycle_cli.DEFAULT_QUARANTINE_JOURNAL_DIR)
+    assert calls["risk_rules_build"]["quarantine_journal_dir"] == _subjournal("/tmp/weather-paper", "quarantine")
     assert len(calls["journals"]) == 6
-    assert calls["journals"][1]["journal_dir"] == str(cycle_cli.DEFAULT_QUARANTINE_JOURNAL_DIR)
+    assert calls["journals"][1]["journal_dir"] == _subjournal("/tmp/weather-paper", "quarantine")
     assert calls["journals"][1]["include_quarantine"] is True
-    assert calls["journals"][2]["journal_dir"] == str(cycle_cli.DEFAULT_TARGETED_SHADOW_JOURNAL_DIR)
+    assert calls["journals"][2]["journal_dir"] == _subjournal("/tmp/weather-paper", "targeted_shadow")
     assert calls["journals"][2]["include_quarantine"] is True
-    assert calls["journals"][3]["journal_dir"] == str(cycle_cli.DEFAULT_CURRENT_SIGNAL_TAKER_JOURNAL_DIR)
+    assert calls["journals"][3]["journal_dir"] == _subjournal("/tmp/weather-paper", "current_signal_taker")
     assert calls["journals"][3]["include_quarantine"] is True
-    assert calls["journals"][4]["journal_dir"] == str(cycle_cli.DEFAULT_EQ_SHADOW_JOURNAL_DIR)
+    assert calls["journals"][4]["journal_dir"] == _subjournal("/tmp/weather-paper", "eq_shadow")
     assert calls["journals"][4]["include_quarantine"] is True
-    assert calls["journals"][5]["journal_dir"] == str(cycle_cli.DEFAULT_MAKER_FOCUS_JOURNAL_DIR)
+    assert calls["journals"][5]["journal_dir"] == _subjournal("/tmp/weather-paper", "maker_focus")
     assert calls["journals"][5]["include_quarantine"] is True
     assert len(calls["markouts"]) == 6
     assert {call["journal_dir"] for call in calls["markouts"]} == {
         "/tmp/weather-paper",
-        str(cycle_cli.DEFAULT_QUARANTINE_JOURNAL_DIR),
-        str(cycle_cli.DEFAULT_TARGETED_SHADOW_JOURNAL_DIR),
-        str(cycle_cli.DEFAULT_CURRENT_SIGNAL_TAKER_JOURNAL_DIR),
-        str(cycle_cli.DEFAULT_EQ_SHADOW_JOURNAL_DIR),
-        str(cycle_cli.DEFAULT_MAKER_FOCUS_JOURNAL_DIR),
+        _subjournal("/tmp/weather-paper", "quarantine"),
+        _subjournal("/tmp/weather-paper", "targeted_shadow"),
+        _subjournal("/tmp/weather-paper", "current_signal_taker"),
+        _subjournal("/tmp/weather-paper", "eq_shadow"),
+        _subjournal("/tmp/weather-paper", "maker_focus"),
     }
     assert len(calls["audits"]) == 6
     assert {call["journal_dir"] for call in calls["audits"]} == {
         "/tmp/weather-paper",
-        str(cycle_cli.DEFAULT_QUARANTINE_JOURNAL_DIR),
-        str(cycle_cli.DEFAULT_TARGETED_SHADOW_JOURNAL_DIR),
-        str(cycle_cli.DEFAULT_CURRENT_SIGNAL_TAKER_JOURNAL_DIR),
-        str(cycle_cli.DEFAULT_EQ_SHADOW_JOURNAL_DIR),
-        str(cycle_cli.DEFAULT_MAKER_FOCUS_JOURNAL_DIR),
+        _subjournal("/tmp/weather-paper", "quarantine"),
+        _subjournal("/tmp/weather-paper", "targeted_shadow"),
+        _subjournal("/tmp/weather-paper", "current_signal_taker"),
+        _subjournal("/tmp/weather-paper", "eq_shadow"),
+        _subjournal("/tmp/weather-paper", "maker_focus"),
     }
     assert len(calls["temperature_execution_writes"]) == 1
-    assert calls["temperature_execution_writes"][0]["journal_dir"] == str(
-        cycle_cli.DEFAULT_TEMPERATURE_EXECUTION_JOURNAL_DIR
+    assert calls["temperature_execution_writes"][0]["journal_dir"] == _subjournal(
+        "/tmp/weather-paper", "temperature_execution"
     )
     assert len(calls["maker_markouts"]) == 1
-    assert calls["maker_markouts"][0]["journal_dir"] == str(
-        cycle_cli.DEFAULT_TEMPERATURE_EXECUTION_JOURNAL_DIR
-    )
+    assert calls["maker_markouts"][0]["journal_dir"] == _subjournal("/tmp/weather-paper", "temperature_execution")
     assert calls["maker_markouts"][0]["min_markout_interval_seconds"] == 0.0
     assert len(calls["temperature_taker_runs"]) == 1
-    assert calls["temperature_taker_runs"][0]["execution_journal_dir"] == str(
-        cycle_cli.DEFAULT_TEMPERATURE_EXECUTION_JOURNAL_DIR
+    assert calls["temperature_taker_runs"][0]["execution_journal_dir"] == _subjournal(
+        "/tmp/weather-paper", "temperature_execution"
     )
-    assert calls["temperature_taker_runs"][0]["taker_journal_dir"] == str(
-        cycle_cli.DEFAULT_TEMPERATURE_TAKER_JOURNAL_DIR
+    assert calls["temperature_taker_runs"][0]["taker_journal_dir"] == _subjournal(
+        "/tmp/weather-paper", "temperature_taker"
     )
     assert calls["temperature_taker_runs"][0]["min_markout_interval_seconds"] == 600.0
     assert calls["readiness"]["temperature_taker_validation_report"]["hard_conclusion"] == (
         "temperature_taker_validation_collect_more_markouts"
     )
-    assert calls["readiness"]["temperature_taker_journal_dir"] == str(
-        cycle_cli.DEFAULT_TEMPERATURE_TAKER_JOURNAL_DIR
+    assert calls["readiness"]["temperature_taker_journal_dir"] == _subjournal(
+        "/tmp/weather-paper", "temperature_taker"
     )
     assert calls["readiness"]["include_temperature_taker_validation"] is True
     assert calls["readiness"]["current_signal_taker_validation_report"]["hard_conclusion"] == (
@@ -705,7 +816,7 @@ def test_weather_market_paper_cycle_expanded_weather_profile_scans_all_weather_f
     )
     monkeypatch.setattr(cycle_cli, "build_live_readiness_report", lambda **kwargs: {"readiness_pct": 20.33, "live_gate": False})
 
-    cycle_cli.main(["--production-profile", "--expanded-weather-profile"])
+    cycle_cli.main(["--production-profile", "--expanded-weather-profile", "--no-current-signal-report"])
 
     output = json.loads(capsys.readouterr().out)
     assert calls["polymarket"]["queries"] == ("temperature", "rain", "hurricane", "air quality")

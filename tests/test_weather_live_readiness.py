@@ -4,6 +4,7 @@ import json
 
 from src.trading.weather_live_readiness import build_live_readiness_report, load_signal_report
 from src.trading.weather_paper_journal import _append_jsonl
+from src.trading.weather_strict_gate_queue import write_strict_gate_queue_journal
 
 
 def _signal_report(candidate_count=1):
@@ -41,6 +42,17 @@ def _markout(index: int, *, markout_cents: float = 2.0):
     }
 
 
+def _markout_with_horizon(index: int, *, horizon: str, markout_cents: float, recorded_at: str):
+    row = _markout(index, markout_cents=markout_cents)
+    row.update(
+        {
+            "recorded_at": recorded_at,
+            "markout_horizon": horizon,
+        }
+    )
+    return row
+
+
 def _resolved(index: int, *, winning: bool = True, pnl_cents: float = 75.0):
     return {
         "schema_version": "polyweather_weather_resolved_audit.v1",
@@ -48,6 +60,93 @@ def _resolved(index: int, *, winning: bool = True, pnl_cents: float = 75.0):
         "status": "resolved",
         "winning": winning,
         "pnl_cents": pnl_cents,
+    }
+
+
+def _ready_orderbook_coverage():
+    return {
+        "schema_version": "polyweather_weather_orderbook_archive_coverage.v1",
+        "paper_only": True,
+        "diagnostic_only": True,
+        "counts_for_live_gate": False,
+        "hard_conclusion": "orderbook_archive_coverage_ready",
+        "eligible_preresolution_count": 3,
+        "covered_preresolution_count": 3,
+        "coverage_rate": 1.0,
+    }
+
+
+def _ready_strict_gate_replay():
+    return {
+        "schema_version": "polyweather_weather_strict_gate_replay.v1",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "hard_conclusion": "strict_gate_replay_ready_for_ev_audit",
+        "queue_record_count": 30,
+        "replay_candidate_count": 30,
+        "orderbook_snapshot_count": 30,
+        "resolved_outcome_count": 30,
+        "execution_summary": {
+            "fill_count": 30,
+            "fully_filled_count": 30,
+            "missed_fill_count": 0,
+            "mean_entry_minus_q_effective_cents": 0.0,
+            "mean_ev_after_depth_cost_cents": 1.2,
+        },
+        "performance_summary": {
+            "schema_version": "polyweather_weather_strict_gate_replay_performance.v1",
+            "fill_count": 30,
+            "by_strategy": [
+                {
+                    "strategy_id": "tail_threshold",
+                    "fill_count": 30,
+                    "resolved_count": 30,
+                    "resolved_pnl_cents": 25.0,
+                    "brier_score": 0.19,
+                    "log_loss": 0.58,
+                }
+            ],
+            "by_queue": [],
+            "by_bucket_type": [],
+            "by_city": [],
+            "by_strategy_bucket": [],
+        },
+        "replay": {
+            "fill_count": 30,
+            "missed_fill_count": 0,
+            "missing_resolution_count": 0,
+            "no_visible_orderbook_count": 0,
+            "resolved_pnl_cents": 25.0,
+            "brier_score": 0.19,
+            "log_loss": 0.58,
+        },
+    }
+
+
+def _ready_settlement_calibration():
+    return {
+        "schema_version": "polyweather_weather_settlement_calibration.v1",
+        "paper_only": True,
+        "diagnostic_only": True,
+        "counts_for_live_gate": False,
+        "hard_conclusion": "settlement_calibration_ready_diagnostic_only",
+        "blockers": [],
+        "record_count": 40,
+        "official_truth_sample_count": 40,
+        "official_truth_coverage": 1.0,
+        "mismatch_count": 0,
+        "gap_count": 0,
+        "probability_score_sample_count": 35,
+        "resolved_pnl_sample_count": 12,
+        "global_calibration": {
+            "sample_count": 40,
+            "yes_rate": 0.55,
+            "probability_score_count": 35,
+            "brier_score": 0.18,
+            "log_loss": 0.55,
+            "resolved_pnl_count": 12,
+            "mean_resolved_pnl_per_share": 0.02,
+        },
     }
 
 
@@ -85,6 +184,42 @@ def test_readiness_report_surfaces_negative_markout_and_missing_resolution(tmp_p
     assert report["live_gate"] is False
     assert "negative_mean_markout_cents" in report["blockers"]
     assert "insufficient_resolved_audits_0_of_10" in report["blockers"]
+
+
+def test_readiness_keeps_all_horizon_markout_path_diagnostic_separate_from_gate(tmp_path):
+    _append_jsonl(
+        tmp_path / "paper_fills.jsonl",
+        [
+            _fill(
+                1,
+                strategy_id="tail_threshold",
+                settlement_station_code="UUWW",
+            )
+        ],
+    )
+    _append_jsonl(
+        tmp_path / "markouts.jsonl",
+        [
+            _markout_with_horizon(1, horizon="0-5m", markout_cents=-2.0, recorded_at="2026-06-27T09:45:00Z"),
+            _markout_with_horizon(1, horizon="5-15m", markout_cents=-2.0, recorded_at="2026-06-27T09:50:00Z"),
+        ],
+    )
+
+    report = build_live_readiness_report(
+        journal_dir=tmp_path,
+        signal_report=_signal_report(candidate_count=1),
+    )
+
+    assert report["evidence"]["marked_count"] == 1
+    assert report["evidence"]["markout_strata_summary"]["latest_only"] is True
+    assert report["evidence"]["markout_strata_summary"]["selected_markout_count"] == 1
+    path = report["evidence"]["forward_markout_path_summary"]
+    assert path["latest_only"] is False
+    assert path["selected_markout_count"] == 2
+    by_horizon = {row["markout_horizon"]: row for row in path["by_strategy_and_horizon"]}
+    assert set(by_horizon) == {"0-5m", "5-15m"}
+    assert by_horizon["0-5m"]["strategy_id"] == "tail_threshold"
+    assert by_horizon["5-15m"]["mean_markout_cents"] == -2.0
 
 
 def test_readiness_report_surfaces_resolution_wait_state(tmp_path):
@@ -126,6 +261,153 @@ def test_current_signal_report_overrides_historical_candidate_availability(tmp_p
 
     assert report["score_components"]["signal_availability"] == 0.0
     assert "no_current_weather_signal" in report["blockers"]
+
+
+def test_readiness_uses_strict_live_eligible_signal_count_when_available(tmp_path):
+    signal = _signal_report(candidate_count=2)
+    signal["strict_gate_diagnostics"] = {
+        "schema_version": "polyweather_weather_strict_gate_diagnostics.v1",
+        "live_eligible_candidate_count": 0,
+        "live_eligible_watch_count": 0,
+        "paper_only_row_count": 2,
+        "live_eligible_row_count": 0,
+    }
+
+    report = build_live_readiness_report(journal_dir=tmp_path, signal_report=signal)
+
+    assert report["signal"]["source"] == "strict_current_signal_report"
+    assert report["signal"]["current_candidate_count"] == 0
+    assert report["score_components"]["signal_availability"] == 0.0
+    assert "no_current_weather_signal" in report["blockers"]
+
+
+def test_readiness_attaches_strict_gate_queue_summary_without_unlocking_live(tmp_path):
+    queue_dir = tmp_path / "strict-queues"
+    write_strict_gate_queue_journal(
+        {
+            "schema_version": "polyweather_weather_market_signal_report.v1",
+            "source_snapshot_id": "scan-queue",
+            "strict_gate_diagnostics": {
+                "targeted_paper_queues": {
+                    "ev_calibration": {
+                        "description": "calibrate EV",
+                        "items": [
+                            {
+                                "queue_reasons": ["ev_safe_below_min"],
+                                "market_slug": "slug",
+                                "token_id": "token",
+                                "side": "yes",
+                            }
+                        ],
+                    }
+                }
+            },
+        },
+        queue_dir=queue_dir,
+        generated_at="2026-06-27T00:00:00Z",
+        source="test",
+    )
+
+    report = build_live_readiness_report(
+        journal_dir=tmp_path / "journal",
+        strict_gate_queue_dir=queue_dir,
+        signal_report=_signal_report(candidate_count=0),
+    )
+
+    summary = report["evidence"]["strict_gate_queue_summary"]
+    assert summary["record_count"] == 1
+    assert summary["queue_counts"] == [{"queue_name": "ev_calibration", "count": 1}]
+    assert summary["counts_for_live_gate"] is False
+    assert report["live_gate"] is False
+    assert report["live_authorization_pct"] == 0
+
+
+def test_readiness_attaches_orderbook_archive_coverage_as_diagnostic_only(tmp_path):
+    coverage = {
+        "schema_version": "polyweather_weather_orderbook_archive_coverage.v1",
+        "paper_only": True,
+        "diagnostic_only": True,
+        "counts_for_live_gate": False,
+        "hard_conclusion": "orderbook_archive_coverage_incomplete",
+        "eligible_preresolution_count": 2,
+        "covered_preresolution_count": 1,
+        "coverage_rate": 0.5,
+    }
+
+    report = build_live_readiness_report(
+        journal_dir=tmp_path,
+        signal_report=_signal_report(candidate_count=0),
+        orderbook_archive_coverage_report=coverage,
+    )
+
+    assert report["evidence"]["orderbook_archive_coverage_summary"] == coverage
+    assert "orderbook_archive_coverage_incomplete" in report["diagnostic_blockers"]
+    assert report["live_gate"] is False
+    assert report["live_order_path_available"] is False
+
+
+def test_readiness_hard_gate_summary_explains_empty_paper_state(tmp_path):
+    report = build_live_readiness_report(journal_dir=tmp_path)
+
+    hard_gates = report["hard_gate_summary"]
+    assert hard_gates == report["evidence"]["hard_gate_summary"]
+    assert hard_gates["schema_version"] == "polyweather_weather_live_hard_gates.v1"
+    assert hard_gates["readiness_pct_is_legacy_diagnostic"] is True
+    assert hard_gates["overall_state"] == "paper-only"
+    assert hard_gates["evidence_gate_passed"] is False
+    assert hard_gates["live_authorization_gate_passed"] is False
+    assert hard_gates["live_order_path_hard_disabled"] is True
+    assert "current_signal" in hard_gates["failed_gate_ids"]
+    assert "forward_paper_markout" in hard_gates["failed_gate_ids"]
+    assert "resolved_pnl_audit" in hard_gates["failed_gate_ids"]
+    assert "strategy_evidence_ledger" in hard_gates["failed_gate_ids"]
+    assert "execution_orderbook_diagnostics" in hard_gates["failed_gate_ids"]
+    assert "no_lookahead_replay" in hard_gates["failed_gate_ids"]
+    assert "settlement_calibration" in hard_gates["failed_gate_ids"]
+    assert "live_authorization" in hard_gates["failed_gate_ids"]
+
+
+def test_readiness_hard_gates_keep_authorization_separate_from_evidence(tmp_path):
+    _append_jsonl(
+        tmp_path / "paper_fills.jsonl",
+        [
+            _fill(
+                index,
+                city="seoul",
+                bucket_type="ge",
+                strategy_id="tail_threshold",
+                execution_style="taker_depth_checked",
+                strategy_live_eligible=True,
+                counts_for_live_gate=True,
+            )
+            for index in range(30)
+        ],
+    )
+    _append_jsonl(tmp_path / "markouts.jsonl", [_markout(index, markout_cents=1.0) for index in range(30)])
+    _append_jsonl(tmp_path / "resolved_audits.jsonl", [_resolved(index) for index in range(10)])
+
+    report = build_live_readiness_report(
+        journal_dir=tmp_path,
+        signal_report=_signal_report(candidate_count=1),
+        orderbook_archive_coverage_report=_ready_orderbook_coverage(),
+        strict_gate_replay_report=_ready_strict_gate_replay(),
+        settlement_calibration_report=_ready_settlement_calibration(),
+        live_permission=True,
+        live_order_path_available=True,
+    )
+
+    hard_gates = report["hard_gate_summary"]
+    assert report["live_gate"] is True
+    assert report["live_order_path_available"] is False
+    assert report["live_authorization_pct"] == 0
+    assert hard_gates["evidence_gate_passed"] is True
+    assert hard_gates["live_authorization_gate_passed"] is False
+    assert hard_gates["overall_state"] == "paper-only"
+    assert hard_gates["failed_gate_ids"] == ["live_authorization"]
+    assert hard_gates["tiny_live_eligible_group_count"] == 1
+    replay_summary = report["evidence"]["strict_gate_replay_summary"]
+    assert replay_summary["performance_summary"]["by_strategy"][0]["strategy_id"] == "tail_threshold"
+    assert replay_summary["performance_summary"]["by_strategy"][0]["resolved_pnl_cents"] == 25.0
 
 
 def test_readiness_report_attaches_signal_risk_filter_diagnostics(tmp_path):
@@ -183,6 +465,48 @@ def test_readiness_report_attaches_signal_risk_filter_diagnostics(tmp_path):
                 "would_be_decision_without_risk_rules": "candidate",
             }
         ],
+    }
+    signal["strict_gate_diagnostics"] = {
+        "schema_version": "polyweather_weather_strict_gate_diagnostics.v1",
+        "live_eligible_row_count": 2,
+        "paper_only_row_count": 10,
+        "live_eligible_candidate_count": 0,
+        "live_eligible_watch_count": 0,
+        "live_eligible_reject_count": 2,
+        "non_risk_blocker_category_counts": [
+            {"category": "edge", "count": 1},
+            {"category": "depth", "count": 1},
+        ],
+        "risk_rule_scope_counts": [{"scope": "medium", "count": 1}],
+        "by_strategy": [
+            {
+                "strategy_id": "tail_threshold",
+                "row_count": 2,
+                "candidate_count": 0,
+                "watch_count": 0,
+                "reject_count": 2,
+            }
+        ],
+        "top_live_eligible_reject_samples": [
+            {
+                "city": "seoul",
+                "bucket_type": "ge",
+                "non_risk_blockers": ["ev_safe_below_min"],
+            }
+        ],
+        "targeted_paper_queues": {
+            "ev_calibration": {
+                "paper_only": True,
+                "counts_for_live_gate": False,
+                "row_count": 1,
+                "items": [
+                    {
+                        "market_slug": "highest-temperature-in-seoul-on-june-28-2026-29c-or-above",
+                        "queue_name": "ev_calibration",
+                    }
+                ],
+            }
+        },
     }
     signal["risk_filter"] = {
         "enabled": True,
@@ -249,6 +573,12 @@ def test_readiness_report_attaches_signal_risk_filter_diagnostics(tmp_path):
     assert current_signal["model_join"]["joined"] == 12
     assert current_signal["candidate_gap_counts"]["risk_only_reject_count"] == 1
     assert current_signal["near_candidates"][0]["city"] == "paris"
+    assert current_signal["strict_gate"]["live_eligible_row_count"] == 2
+    assert current_signal["strict_gate"]["paper_only_row_count"] == 10
+    assert current_signal["strict_gate"]["non_risk_blocker_category_counts"][0]["category"] == "edge"
+    assert current_signal["strict_gate"]["by_strategy"][0]["strategy_id"] == "tail_threshold"
+    assert current_signal["strict_gate"]["targeted_paper_queues"][0]["queue_name"] == "ev_calibration"
+    assert current_signal["strict_gate"]["targeted_paper_queues"][0]["items"][0]["queue_name"] == "ev_calibration"
     assert risk_summary["suppressed_saturated_rule_count"] == 1
     assert risk_summary["suppressed_saturated_group_rule_count"] == 2
     assert risk_summary["saturated_rule_count"] == 1
@@ -574,19 +904,33 @@ def test_readiness_report_attaches_quarantine_surface_as_diagnostic_only(tmp_pat
     assert "quarantine_surface_currently_negative" in report["diagnostic_blockers"]
 
 
-def test_readiness_report_reaches_full_gate_only_with_evidence_and_permission(tmp_path):
+def test_readiness_report_keeps_live_order_path_hard_disabled(tmp_path):
     _append_jsonl(tmp_path / "paper_fills.jsonl", [_fill(index) for index in range(30)])
     _append_jsonl(tmp_path / "markouts.jsonl", [_markout(index) for index in range(30)])
     _append_jsonl(tmp_path / "resolved_audits.jsonl", [_resolved(index) for index in range(10)])
+    hard_gate_inputs = {
+        "orderbook_archive_coverage_report": _ready_orderbook_coverage(),
+        "strict_gate_replay_report": _ready_strict_gate_replay(),
+        "settlement_calibration_report": _ready_settlement_calibration(),
+    }
 
     without_permission = build_live_readiness_report(
         journal_dir=tmp_path,
         signal_report=_signal_report(candidate_count=1),
+        **hard_gate_inputs,
     )
     with_permission = build_live_readiness_report(
         journal_dir=tmp_path,
         signal_report=_signal_report(candidate_count=1),
         live_permission=True,
+        **hard_gate_inputs,
+    )
+    requested_order_path = build_live_readiness_report(
+        journal_dir=tmp_path,
+        signal_report=_signal_report(candidate_count=1),
+        live_permission=True,
+        live_order_path_available=True,
+        **hard_gate_inputs,
     )
 
     assert without_permission["live_gate"] is True
@@ -594,7 +938,98 @@ def test_readiness_report_reaches_full_gate_only_with_evidence_and_permission(tm
     assert without_permission["readiness_pct"] == 95.0
     assert without_permission["hard_conclusion"] == "只能继续 paper"
     assert with_permission["live_gate"] is True
-    assert with_permission["live_authorization_pct"] == 100
-    assert with_permission["readiness_pct"] == 100.0
-    assert with_permission["blockers"] == []
-    assert with_permission["hard_conclusion"] == "可实盘"
+    assert with_permission["live_authorization_pct"] == 0
+    assert with_permission["live_order_path_available"] is False
+    assert with_permission["readiness_pct"] == 95.0
+    assert with_permission["blockers"] == ["live_order_path_disabled"]
+    assert with_permission["hard_conclusion"] == "只能继续 paper"
+    assert requested_order_path["live_gate"] is True
+    assert requested_order_path["requested_live_order_path_available"] is True
+    assert requested_order_path["live_order_path_hard_disabled"] is True
+    assert requested_order_path["live_order_path_available"] is False
+    assert requested_order_path["live_authorization_pct"] == 0
+    assert requested_order_path["readiness_pct"] == 95.0
+    assert requested_order_path["blockers"] == ["live_order_path_disabled"]
+    assert requested_order_path["hard_conclusion"] == "只能继续 paper"
+
+
+def test_readiness_ledger_keeps_strategy_ineligible_fills_paper_only(tmp_path):
+    _append_jsonl(
+        tmp_path / "paper_fills.jsonl",
+        [
+            _fill(
+                index,
+                strategy_id="eq_exact_shadow",
+                execution_style="shadow_only",
+                strategy_live_eligible=False,
+                counts_for_live_gate=True,
+                city="paris",
+                bucket_type="eq",
+            )
+            for index in range(30)
+        ],
+    )
+    _append_jsonl(tmp_path / "markouts.jsonl", [_markout(index) for index in range(30)])
+    _append_jsonl(tmp_path / "resolved_audits.jsonl", [_resolved(index) for index in range(10)])
+
+    report = build_live_readiness_report(
+        journal_dir=tmp_path,
+        signal_report=_signal_report(candidate_count=1),
+        live_permission=True,
+        live_order_path_available=True,
+    )
+
+    assert report["evidence"]["paper_fill_count"] == 0
+    assert report["evidence"]["marked_count"] == 0
+    assert report["evidence"]["resolved_count"] == 0
+    assert report["live_gate"] is False
+    assert report["live_authorization_pct"] == 0
+    assert "insufficient_paper_fills_0_of_30" in report["blockers"]
+
+    ledger = report["evidence"]["evidence_ledger"]
+    assert ledger["schema_version"] == "polyweather_weather_evidence_ledger.v1"
+    assert ledger["state_counts"] == [
+        {"state": "tiny-live-eligible", "count": 0},
+        {"state": "needs-evidence", "count": 0},
+        {"state": "paper-only", "count": 1},
+    ]
+    group = ledger["groups"][0]
+    assert group["strategy_id"] == "eq_exact_shadow"
+    assert group["paper_fill_count"] == 30
+    assert group["live_gate_fill_count"] == 0
+    assert group["state"] == "paper-only"
+    assert "strategy_not_live_eligible" in group["blockers"]
+
+
+def test_readiness_infers_legacy_exact_bucket_as_shadow_only(tmp_path):
+    _append_jsonl(
+        tmp_path / "paper_fills.jsonl",
+        [
+            _fill(
+                index,
+                city="ankara",
+                bucket_label="= 28°C",
+                recorded_at="2026-06-26T19:00:00Z",
+                end_date="2026-06-27T12:00:00Z",
+            )
+            for index in range(30)
+        ],
+    )
+    _append_jsonl(tmp_path / "markouts.jsonl", [_markout(index) for index in range(30)])
+    _append_jsonl(tmp_path / "resolved_audits.jsonl", [_resolved(index) for index in range(10)])
+
+    report = build_live_readiness_report(
+        journal_dir=tmp_path,
+        signal_report=_signal_report(candidate_count=1),
+        live_permission=True,
+        live_order_path_available=True,
+    )
+
+    assert report["evidence"]["paper_fill_count"] == 0
+    assert report["live_gate"] is False
+    ledger_group = report["evidence"]["evidence_ledger"]["groups"][0]
+    assert ledger_group["bucket_type"] == "eq"
+    assert ledger_group["strategy_id"] == "eq_exact_shadow"
+    assert ledger_group["execution_style"] == "shadow_only"
+    assert ledger_group["live_gate_fill_count"] == 0
+    assert ledger_group["state"] == "paper-only"

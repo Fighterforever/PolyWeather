@@ -274,6 +274,12 @@ def build_paper_fill_records(
                 "side": item.get("side"),
                 "outcome": item.get("outcome"),
                 "bucket_label": item.get("bucket_label"),
+                "bucket_type": item.get("bucket_type"),
+                "strategy_id": item.get("strategy_id"),
+                "execution_style": item.get("execution_style"),
+                "why_now": item.get("why_now"),
+                "strategy_live_eligible": bool(item.get("strategy_live_eligible", True)),
+                "risk_caps": item.get("risk_caps") if isinstance(item.get("risk_caps"), dict) else None,
                 "entry_price": entry_price,
                 "entry_bid": _safe_float(item.get("bid")),
                 "entry_ask": _safe_float(item.get("ask")),
@@ -282,11 +288,41 @@ def build_paper_fill_records(
                 "entry_bid_depth_usdc_3c": _safe_float(item.get("bid_depth_usdc_3c")),
                 "entry_ask_depth_usdc_3c": _safe_float(item.get("ask_depth_usdc_3c")),
                 "edge_percent": _safe_float(item.get("edge_percent")),
+                "p_lcb": _safe_float(item.get("p_lcb")),
+                "q_effective": _safe_float(item.get("q_effective")),
+                "cost": _safe_float(item.get("cost")),
+                "ev_safe": _safe_float(item.get("ev_safe")),
                 "model_probability": _safe_float(item.get("model_probability")),
                 "market_probability": _safe_float(item.get("market_probability")),
+                "market_implied_yes_price": _safe_float(item.get("market_implied_yes_price")),
+                "market_implied_side_price": _safe_float(item.get("market_implied_side_price")),
+                "market_implied_de_vig_yes_probability": _safe_float(
+                    item.get("market_implied_de_vig_yes_probability")
+                ),
+                "market_implied_de_vig_side_probability": _safe_float(
+                    item.get("market_implied_de_vig_side_probability")
+                ),
+                "market_implied_cdf": _safe_float(item.get("market_implied_cdf")),
+                "market_implied_cdf_raw": _safe_float(item.get("market_implied_cdf_raw")),
+                "market_implied_bucket_family": item.get("market_implied_bucket_family"),
+                "market_implied_de_vig_status": item.get("market_implied_de_vig_status"),
                 "score": _safe_float(item.get("score")),
                 "source_final_score": _safe_float(item.get("source_final_score")),
+                "target_date": item.get("target_date"),
+                "end_time": item.get("end_time"),
                 "end_date": item.get("end_date"),
+                "settlement_spec_status": item.get("settlement_spec_status"),
+                "settlement_rule_hash": item.get("settlement_rule_hash"),
+                "settlement_rule_text": item.get("settlement_rule_text"),
+                "settlement_station_code": item.get("settlement_station_code"),
+                "settlement_station_label": item.get("settlement_station_label"),
+                "settlement_source": item.get("settlement_source"),
+                "settlement_timezone": item.get("settlement_timezone"),
+                "settlement_metric": item.get("settlement_metric"),
+                "settlement_unit": item.get("settlement_unit"),
+                "settlement_spec": item.get("settlement_spec")
+                if isinstance(item.get("settlement_spec"), dict)
+                else None,
                 "blockers": item.get("blockers") or [],
                 "warnings": item.get("warnings") or [],
                 "risk_rule_hits": item.get("risk_rule_hits") or [],
@@ -572,7 +608,11 @@ def build_markout_record(
         "side": fill.get("side"),
         "outcome": fill.get("outcome"),
         "bucket_label": fill.get("bucket_label"),
-        "bucket_type": _bucket_label_type(fill.get("bucket_label")),
+        "bucket_type": fill.get("bucket_type") or _bucket_label_type(fill.get("bucket_label")),
+        "strategy_id": fill.get("strategy_id"),
+        "execution_style": fill.get("execution_style"),
+        "why_now": fill.get("why_now"),
+        "strategy_live_eligible": bool(fill.get("strategy_live_eligible", True)),
         "entry_recorded_at": fill.get("recorded_at"),
         "markout_age_seconds": age_seconds,
         "markout_horizon": markout_horizon_label(age_seconds),
@@ -596,6 +636,25 @@ def build_markout_record(
         "markout_pct": markout_pct,
         "edge_percent_at_entry": _safe_float(fill.get("edge_percent")),
         "model_probability_at_entry": _safe_float(fill.get("model_probability")),
+        "p_lcb_at_entry": _safe_float(fill.get("p_lcb")),
+        "q_effective_at_entry": _safe_float(fill.get("q_effective")),
+        "cost_at_entry": _safe_float(fill.get("cost")),
+        "ev_safe_at_entry": _safe_float(fill.get("ev_safe")),
+        "target_date": fill.get("target_date"),
+        "end_time": fill.get("end_time"),
+        "end_date": fill.get("end_date"),
+        "settlement_spec_status": fill.get("settlement_spec_status"),
+        "settlement_rule_hash": fill.get("settlement_rule_hash"),
+        "settlement_rule_text": fill.get("settlement_rule_text"),
+        "settlement_station_code": fill.get("settlement_station_code"),
+        "settlement_station_label": fill.get("settlement_station_label"),
+        "settlement_source": fill.get("settlement_source"),
+        "settlement_timezone": fill.get("settlement_timezone"),
+        "settlement_metric": fill.get("settlement_metric"),
+        "settlement_unit": fill.get("settlement_unit"),
+        "settlement_spec": fill.get("settlement_spec")
+        if isinstance(fill.get("settlement_spec"), dict)
+        else None,
     }
 
 
@@ -688,6 +747,9 @@ def _with_fill_context(markout: Dict[str, Any], fills_by_id: Dict[str, Dict[str,
         "side",
         "market_slug",
         "signal_bucket",
+        "strategy_id",
+        "execution_style",
+        "why_now",
         "targeted_shadow",
         "targeted_shadow_reasons",
         "quarantine_reason",
@@ -697,6 +759,24 @@ def _with_fill_context(markout: Dict[str, Any], fills_by_id: Dict[str, Dict[str,
     ):
         if not merged.get(key):
             merged[key] = fill.get(key)
+    for key in (
+        "target_date",
+        "end_time",
+        "end_date",
+        "settlement_spec_status",
+        "settlement_rule_hash",
+        "settlement_rule_text",
+        "settlement_station_code",
+        "settlement_station_label",
+        "settlement_source",
+        "settlement_timezone",
+        "settlement_metric",
+        "settlement_unit",
+    ):
+        if not merged.get(key):
+            merged[key] = fill.get(key)
+    if not isinstance(merged.get("settlement_spec"), dict) and isinstance(fill.get("settlement_spec"), dict):
+        merged["settlement_spec"] = fill.get("settlement_spec")
     for key in ("quarantine_non_risk_blockers", "quarantine_non_risk_blocker_categories"):
         if not merged.get(key):
             merged[key] = fill.get(key) or []
@@ -868,6 +948,16 @@ def summarize_markout_strata(
         group_fields=("side",),
         min_count=min_count,
     )
+    by_strategy = summarize_markout_groups(
+        marked,
+        group_fields=("strategy_id",),
+        min_count=min_count,
+    )
+    by_station = summarize_markout_groups(
+        marked,
+        group_fields=("settlement_station_code",),
+        min_count=min_count,
+    )
     by_quarantine_reason = summarize_markout_groups(
         marked,
         group_fields=("quarantine_reason",),
@@ -893,17 +983,31 @@ def summarize_markout_strata(
         group_fields=("markout_horizon", "entry_spread_bucket"),
         min_count=min_count,
     )
+    by_strategy_and_horizon = summarize_markout_groups(
+        marked,
+        group_fields=("strategy_id", "markout_horizon"),
+        min_count=min_count,
+    )
+    by_station_and_horizon = summarize_markout_groups(
+        marked,
+        group_fields=("settlement_station_code", "markout_horizon"),
+        min_count=min_count,
+    )
     groups_by_name = {
         "by_horizon": by_horizon,
         "by_city": by_city,
         "by_market_family": by_market_family,
         "by_bucket_type": by_bucket_type,
         "by_side": by_side,
+        "by_strategy": by_strategy,
+        "by_station": by_station,
         "by_quarantine_reason": by_quarantine_reason,
         "by_quarantine_blocker_scope": by_quarantine_blocker_scope,
         "by_entry_price_bucket": by_entry_price_bucket,
         "by_entry_spread_bucket": by_entry_spread_bucket,
         "by_horizon_and_spread": by_horizon_and_spread,
+        "by_strategy_and_horizon": by_strategy_and_horizon,
+        "by_station_and_horizon": by_station_and_horizon,
     }
     return {
         "schema_version": PAPER_MARKOUT_SCHEMA_VERSION,
@@ -930,10 +1034,14 @@ def summarize_markout_strata(
         "by_market_family": by_market_family,
         "by_bucket_type": by_bucket_type,
         "by_side": by_side,
+        "by_strategy": by_strategy,
+        "by_station": by_station,
         "by_quarantine_reason": by_quarantine_reason,
         "by_quarantine_blocker_scope": by_quarantine_blocker_scope,
         "by_entry_price_bucket": by_entry_price_bucket,
         "by_entry_spread_bucket": by_entry_spread_bucket,
         "by_horizon_and_spread": by_horizon_and_spread,
+        "by_strategy_and_horizon": by_strategy_and_horizon,
+        "by_station_and_horizon": by_station_and_horizon,
         "do_not_live_rules": _negative_group_flags(groups_by_name),
     }

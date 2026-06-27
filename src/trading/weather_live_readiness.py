@@ -13,6 +13,7 @@ from src.trading.weather_maker_quote_journal import summarize_maker_quote_journa
 from src.trading.weather_paper_journal import (
     DEFAULT_PAPER_JOURNAL_DIR,
     PAPER_FILL_SCHEMA_VERSION,
+    _bucket_label_type,
     _safe_float,
     load_jsonl,
     summarize_markout_strata,
@@ -27,17 +28,31 @@ from src.trading.weather_temperature_execution_experiment import (
     DEFAULT_TEMPERATURE_TAKER_JOURNAL_DIR,
     build_temperature_taker_paper_validation_report,
 )
+from src.trading.weather_strategies import assign_weather_strategy
+from src.trading.weather_strict_gate_queue import (
+    default_strict_gate_queue_dir,
+    summarize_strict_gate_queue_journal,
+)
 
 
 LIVE_READINESS_SCHEMA_VERSION = "polyweather_weather_live_readiness.v1"
+LIVE_HARD_GATE_SCHEMA_VERSION = "polyweather_weather_live_hard_gates.v1"
+LIVE_ORDER_PATH_HARD_DISABLED = True
 
 MIN_PAPER_FILLS = 30
 MIN_MARKOUTS = 30
 MIN_RESOLVED_AUDITS = 10
+MIN_REPLAY_FILLS = 30
+MIN_REPLAY_RESOLVED_FILLS = 10
+MIN_SETTLEMENT_OFFICIAL_TRUTH_SAMPLES = 30
+MIN_SETTLEMENT_PROBABILITY_SCORE_SAMPLES = 30
+MIN_SETTLEMENT_RESOLVED_PNL_SAMPLES = 10
 MIN_MARKOUT_WIN_RATE = 0.55
 MIN_RESOLVED_WIN_RATE = 0.55
 MIN_MEAN_MARKOUT_CENTS = 0.0
 MIN_RESOLVED_TOTAL_PNL_CENTS = 0.0
+MIN_REPLAY_RESOLVED_PNL_CENTS = 0.0
+MIN_SETTLEMENT_MEAN_RESOLVED_PNL_PER_SHARE = 0.0
 
 
 def _record_key(record: Dict[str, Any], fallback_prefix: str, index: int) -> str:
@@ -79,6 +94,15 @@ def _signal_counts(
     journal_summary: Dict[str, Any],
 ) -> Tuple[Optional[int], int, str]:
     if isinstance(signal_report, dict):
+        strict_gate = (
+            signal_report.get("strict_gate_diagnostics")
+            if isinstance(signal_report.get("strict_gate_diagnostics"), dict)
+            else {}
+        )
+        if "live_eligible_candidate_count" in strict_gate:
+            candidate_count = int(strict_gate.get("live_eligible_candidate_count") or 0)
+            watch_count = int(strict_gate.get("live_eligible_watch_count") or 0)
+            return candidate_count, candidate_count + watch_count, "strict_current_signal_report"
         summary = signal_report.get("summary") if isinstance(signal_report.get("summary"), dict) else {}
         candidate_count = int(summary.get("candidate_count") or 0)
         watch_count = int(summary.get("watch_count") or 0)
@@ -97,6 +121,7 @@ def _build_blockers(
     resolved_win_rate: Optional[float],
     resolved_total_pnl_cents: Optional[float],
     live_permission: bool,
+    live_order_path_available: bool,
     resolved_gap_hard_conclusion: Optional[str] = None,
 ) -> List[str]:
     blockers: List[str] = []
@@ -133,6 +158,8 @@ def _build_blockers(
             blockers.append("resolved_audit_overdue_backfill_work")
     if not live_permission:
         blockers.append("live_permission_false")
+    if not live_order_path_available:
+        blockers.append("live_order_path_disabled")
     return blockers
 
 
@@ -531,6 +558,11 @@ def _compact_current_signal_diagnostics(signal_report: Optional[Dict[str, Any]])
         if isinstance(signal_report.get("candidate_gap_report"), dict)
         else {}
     )
+    strict_gate = (
+        signal_report.get("strict_gate_diagnostics")
+        if isinstance(signal_report.get("strict_gate_diagnostics"), dict)
+        else {}
+    )
     near_candidates = [
         {
             "question": row.get("question"),
@@ -561,6 +593,21 @@ def _compact_current_signal_diagnostics(signal_report: Optional[Dict[str, Any]])
         for key, value in candidate_gap.items()
         if key.endswith("_count") and isinstance(value, (int, float))
     }
+    strict_queues = strict_gate.get("targeted_paper_queues") if isinstance(strict_gate, dict) else {}
+    strict_queue_summaries = []
+    if isinstance(strict_queues, dict):
+        for queue_name, queue in strict_queues.items():
+            if not isinstance(queue, dict):
+                continue
+            strict_queue_summaries.append(
+                {
+                    "queue_name": queue_name,
+                    "row_count": queue.get("row_count"),
+                    "paper_only": queue.get("paper_only"),
+                    "counts_for_live_gate": queue.get("counts_for_live_gate"),
+                    "items": (queue.get("items") or [])[:3],
+                }
+            )
     return {
         "summary": {
             "total_rows": summary.get("total_rows"),
@@ -589,6 +636,26 @@ def _compact_current_signal_diagnostics(signal_report: Optional[Dict[str, Any]])
         "model_join": source.get("model_join") if isinstance(source.get("model_join"), dict) else None,
         "candidate_gap_counts": candidate_gap_counts,
         "near_candidates": near_candidates,
+        "strict_gate": {
+            "schema_version": strict_gate.get("schema_version"),
+            "live_eligible_row_count": strict_gate.get("live_eligible_row_count"),
+            "paper_only_row_count": strict_gate.get("paper_only_row_count"),
+            "live_eligible_candidate_count": strict_gate.get("live_eligible_candidate_count"),
+            "live_eligible_watch_count": strict_gate.get("live_eligible_watch_count"),
+            "live_eligible_reject_count": strict_gate.get("live_eligible_reject_count"),
+            "non_risk_blocker_category_counts": (
+                strict_gate.get("non_risk_blocker_category_counts") or []
+            )[:10],
+            "risk_rule_scope_counts": (strict_gate.get("risk_rule_scope_counts") or [])[:10],
+            "by_strategy": (strict_gate.get("by_strategy") or [])[:10],
+            "top_live_eligible_reject_samples": (
+                strict_gate.get("top_live_eligible_reject_samples") or []
+            )[:5],
+            "targeted_paper_queues": sorted(
+                strict_queue_summaries,
+                key=lambda row: (-int(row.get("row_count") or 0), str(row.get("queue_name") or "")),
+            ),
+        } if strict_gate else None,
     }
 
 
@@ -605,6 +672,7 @@ def _build_score_components(
     resolved_total_pnl_cents: Optional[float],
     live_permission: bool,
     live_gate: bool,
+    live_order_path_available: bool,
 ) -> Dict[str, float]:
     if current_candidate_count is None:
         signal_available = historical_candidate_fill_count > 0
@@ -631,7 +699,7 @@ def _build_score_components(
         resolved_audit_score += _score_coverage(resolved_count, MIN_RESOLVED_AUDITS, 10.0)
 
     safety_score = 5.0
-    if live_gate and live_permission:
+    if live_gate and live_permission and live_order_path_available:
         safety_score = 10.0
 
     return {
@@ -640,6 +708,677 @@ def _build_score_components(
         "forward_markout": round(forward_markout_score, 6),
         "resolved_audit": round(resolved_audit_score, 6),
         "runtime_safety": round(safety_score, 6),
+    }
+
+
+def _bucket_type_from_fill(fill: Dict[str, Any]) -> str:
+    bucket = fill.get("market_bucket") if isinstance(fill.get("market_bucket"), dict) else {}
+    value = str(bucket.get("bucket_type") or "").strip().lower()
+    if value:
+        return value
+    spec = fill.get("settlement_spec") if isinstance(fill.get("settlement_spec"), dict) else {}
+    value = str(spec.get("bucket_type") or "").strip().lower()
+    if value:
+        return value
+    value = str(fill.get("bucket_type") or "").strip().lower()
+    if value:
+        return value
+    return _bucket_label_type(fill.get("bucket_label"))
+
+
+def _normalize_fill_for_live_readiness(
+    fill: Dict[str, Any],
+    *,
+    generated_at: Optional[str],
+) -> Dict[str, Any]:
+    """Attach derived strategy metadata without mutating the raw paper journal."""
+
+    normalized = dict(fill)
+    bucket_type = _bucket_type_from_fill(normalized)
+    if bucket_type:
+        normalized["bucket_type"] = bucket_type
+
+    strategy = assign_weather_strategy(
+        normalized,
+        bucket_type=bucket_type,
+        now=normalized.get("recorded_at") or generated_at,
+    )
+    normalized.setdefault("strategy_id", strategy.strategy_id)
+    normalized.setdefault("execution_style", strategy.execution_style)
+    normalized.setdefault("why_now", strategy.why_now)
+    normalized.setdefault("risk_caps", strategy.risk_caps)
+
+    explicit_strategy_live = normalized.get("strategy_live_eligible")
+    if explicit_strategy_live is False or strategy.live_eligible is False:
+        normalized["strategy_live_eligible"] = False
+    elif explicit_strategy_live is True:
+        normalized["strategy_live_eligible"] = True
+    else:
+        normalized["strategy_live_eligible"] = strategy.live_eligible
+
+    explicit_counts = normalized.get("counts_for_live_gate")
+    if explicit_counts is False or strategy.counts_for_live_gate is False:
+        normalized["counts_for_live_gate"] = False
+    elif explicit_counts is True:
+        normalized["counts_for_live_gate"] = True
+    else:
+        normalized["counts_for_live_gate"] = strategy.counts_for_live_gate
+
+    return normalized
+
+
+def _ledger_group_key(fill: Dict[str, Any]) -> Tuple[str, str, str, str]:
+    return (
+        str(fill.get("strategy_id") or "unknown"),
+        str(fill.get("city") or "unknown"),
+        str(fill.get("bucket_type") or "unknown"),
+        str(fill.get("execution_style") or "unknown"),
+    )
+
+
+def _build_evidence_ledger(
+    *,
+    fills: Iterable[Dict[str, Any]],
+    markouts_by_fill: Dict[str, Dict[str, Any]],
+    audits_by_fill: Dict[str, Dict[str, Any]],
+    signal_report: Optional[Dict[str, Any]],
+) -> Dict[str, Any]:
+    groups: Dict[Tuple[str, str, str, str], Dict[str, Any]] = {}
+    for fill in fills:
+        if not isinstance(fill, dict):
+            continue
+        key = _ledger_group_key(fill)
+        row = groups.setdefault(
+            key,
+            {
+                "strategy_id": key[0],
+                "city": key[1],
+                "bucket_type": key[2],
+                "execution_style": key[3],
+                "paper_fill_count": 0,
+                "live_gate_fill_count": 0,
+                "markout_count": 0,
+                "markout_win_count": 0,
+                "markout_values": [],
+                "resolved_count": 0,
+                "resolved_win_count": 0,
+                "resolved_pnl_values": [],
+                "paper_only_reason": None,
+            },
+        )
+        row["paper_fill_count"] += 1
+        counts_for_live = fill.get("counts_for_live_gate") is not False
+        strategy_live = fill.get("strategy_live_eligible") is not False
+        if counts_for_live and strategy_live:
+            row["live_gate_fill_count"] += 1
+        else:
+            row["paper_only_reason"] = (
+                "strategy_not_live_eligible"
+                if not strategy_live
+                else "counts_for_live_gate_false"
+            )
+        fill_id = str(fill.get("fill_id") or "")
+        markout = markouts_by_fill.get(fill_id)
+        if isinstance(markout, dict) and markout.get("status") == "marked":
+            value = _safe_float(markout.get("markout_cents"))
+            if value is not None:
+                row["markout_count"] += 1
+                row["markout_values"].append(float(value))
+                if value > 0:
+                    row["markout_win_count"] += 1
+        audit = audits_by_fill.get(fill_id)
+        if isinstance(audit, dict) and audit.get("status") == "resolved":
+            row["resolved_count"] += 1
+            if audit.get("winning") is True:
+                row["resolved_win_count"] += 1
+            pnl = _safe_float(audit.get("pnl_cents"))
+            if pnl is not None:
+                row["resolved_pnl_values"].append(float(pnl))
+
+    rows: List[Dict[str, Any]] = []
+    for row in groups.values():
+        markout_values = row.pop("markout_values")
+        resolved_pnl_values = row.pop("resolved_pnl_values")
+        mean_markout = _mean(markout_values)
+        markout_win_rate = _ratio(int(row["markout_win_count"]), int(row["markout_count"]))
+        resolved_win_rate = _ratio(int(row["resolved_win_count"]), int(row["resolved_count"]))
+        resolved_total_pnl = (
+            round(sum(resolved_pnl_values), 6)
+            if resolved_pnl_values
+            else None
+        )
+        blockers: List[str] = []
+        if row.get("paper_only_reason"):
+            blockers.append(str(row["paper_only_reason"]))
+        if int(row["live_gate_fill_count"]) < MIN_PAPER_FILLS:
+            blockers.append(f"insufficient_paper_fills_{row['live_gate_fill_count']}_of_{MIN_PAPER_FILLS}")
+        if int(row["markout_count"]) < MIN_MARKOUTS:
+            blockers.append(f"insufficient_markouts_{row['markout_count']}_of_{MIN_MARKOUTS}")
+        if mean_markout is None:
+            blockers.append("mean_markout_missing")
+        elif mean_markout < MIN_MEAN_MARKOUT_CENTS:
+            blockers.append("negative_mean_markout_cents")
+        if markout_win_rate is None:
+            blockers.append("markout_win_rate_missing")
+        elif markout_win_rate < MIN_MARKOUT_WIN_RATE:
+            blockers.append("markout_win_rate_below_55pct")
+        if int(row["resolved_count"]) < MIN_RESOLVED_AUDITS:
+            blockers.append(f"insufficient_resolved_audits_{row['resolved_count']}_of_{MIN_RESOLVED_AUDITS}")
+        if resolved_win_rate is None:
+            blockers.append("resolved_win_rate_missing")
+        elif resolved_win_rate < MIN_RESOLVED_WIN_RATE:
+            blockers.append("resolved_win_rate_below_55pct")
+        if resolved_total_pnl is None:
+            blockers.append("resolved_total_pnl_missing")
+        elif resolved_total_pnl < MIN_RESOLVED_TOTAL_PNL_CENTS:
+            blockers.append("resolved_total_pnl_negative")
+        state = "tiny-live-eligible" if not blockers else "needs-evidence"
+        if row.get("paper_only_reason"):
+            state = "paper-only"
+        rows.append(
+            {
+                **row,
+                "mean_markout_cents": mean_markout,
+                "markout_win_rate": markout_win_rate,
+                "resolved_win_rate": resolved_win_rate,
+                "resolved_total_pnl_cents": resolved_total_pnl,
+                "state": state,
+                "blockers": blockers,
+            }
+        )
+
+    coverage = (
+        signal_report.get("coverage_diagnostics")
+        if isinstance(signal_report, dict) and isinstance(signal_report.get("coverage_diagnostics"), dict)
+        else {}
+    )
+    return {
+        "schema_version": "polyweather_weather_evidence_ledger.v1",
+        "group_fields": ["strategy_id", "city", "bucket_type", "execution_style"],
+        "group_count": len(rows),
+        "state_counts": [
+            {"state": state, "count": len([row for row in rows if row.get("state") == state])}
+            for state in ("tiny-live-eligible", "needs-evidence", "paper-only")
+        ],
+        "current_signal_decision_by_strategy": coverage.get("decision_by_strategy") or [],
+        "groups": sorted(
+            rows,
+            key=lambda row: (
+                str(row.get("state") or ""),
+                -int(row.get("live_gate_fill_count") or 0),
+                str(row.get("strategy_id") or ""),
+                str(row.get("city") or ""),
+            ),
+        ),
+    }
+
+
+def _compact_strict_gate_replay_report(report: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    if not isinstance(report, dict):
+        return None
+    replay = report.get("replay") if isinstance(report.get("replay"), dict) else {}
+    execution = (
+        report.get("execution_summary")
+        if isinstance(report.get("execution_summary"), dict)
+        else {}
+    )
+    performance = (
+        report.get("performance_summary")
+        if isinstance(report.get("performance_summary"), dict)
+        else {}
+    )
+    return {
+        "schema_version": report.get("schema_version"),
+        "hard_conclusion": report.get("hard_conclusion"),
+        "paper_only": report.get("paper_only"),
+        "counts_for_live_gate": report.get("counts_for_live_gate"),
+        "queue_record_count": report.get("queue_record_count"),
+        "replay_candidate_count": report.get("replay_candidate_count"),
+        "orderbook_snapshot_count": report.get("orderbook_snapshot_count"),
+        "resolved_outcome_count": report.get("resolved_outcome_count"),
+        "resolved_outcome_official_final_value_count": report.get(
+            "resolved_outcome_official_final_value_count"
+        ),
+        "fill_count": replay.get("fill_count"),
+        "missed_fill_count": replay.get("missed_fill_count"),
+        "missing_resolution_count": replay.get("missing_resolution_count"),
+        "no_visible_orderbook_count": replay.get("no_visible_orderbook_count"),
+        "resolved_pnl_cents": replay.get("resolved_pnl_cents"),
+        "brier_score": replay.get("brier_score"),
+        "log_loss": replay.get("log_loss"),
+        "execution_summary": {
+            "fill_count": execution.get("fill_count"),
+            "fully_filled_count": execution.get("fully_filled_count"),
+            "missed_fill_count": execution.get("missed_fill_count"),
+            "mean_entry_minus_q_effective_cents": execution.get(
+                "mean_entry_minus_q_effective_cents"
+            ),
+            "mean_ev_after_depth_cost_cents": execution.get(
+                "mean_ev_after_depth_cost_cents"
+            ),
+            "by_queue": execution.get("by_queue") or [],
+            "by_strategy": execution.get("by_strategy") or [],
+        },
+        "performance_summary": {
+            "schema_version": performance.get("schema_version"),
+            "fill_count": performance.get("fill_count"),
+            "by_strategy": (performance.get("by_strategy") or [])[:10],
+            "by_queue": (performance.get("by_queue") or [])[:10],
+            "by_bucket_type": (performance.get("by_bucket_type") or [])[:10],
+            "by_city": (performance.get("by_city") or [])[:10],
+            "by_strategy_bucket": (performance.get("by_strategy_bucket") or [])[:10],
+        },
+        "queue_summary": (report.get("queue_summary") or [])[:10],
+        "resolved_outcome_source_counts": report.get("resolved_outcome_source_counts") or [],
+    }
+
+
+def _compact_settlement_calibration_report(report: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    if not isinstance(report, dict):
+        return None
+    global_calibration = (
+        report.get("global_calibration")
+        if isinstance(report.get("global_calibration"), dict)
+        else {}
+    )
+    return {
+        "schema_version": report.get("schema_version"),
+        "hard_conclusion": report.get("hard_conclusion"),
+        "paper_only": report.get("paper_only"),
+        "diagnostic_only": report.get("diagnostic_only"),
+        "counts_for_live_gate": report.get("counts_for_live_gate"),
+        "blockers": report.get("blockers") or [],
+        "record_count": report.get("record_count"),
+        "official_truth_sample_count": report.get("official_truth_sample_count"),
+        "official_truth_coverage": report.get("official_truth_coverage"),
+        "mismatch_count": report.get("mismatch_count"),
+        "gap_count": report.get("gap_count"),
+        "probability_score_sample_count": report.get("probability_score_sample_count"),
+        "resolved_pnl_sample_count": report.get("resolved_pnl_sample_count"),
+        "probability_score_gap_reason": report.get("probability_score_gap_reason"),
+        "resolved_pnl_gap_reason": report.get("resolved_pnl_gap_reason"),
+        "global_calibration": {
+            "sample_count": global_calibration.get("sample_count"),
+            "yes_rate": global_calibration.get("yes_rate"),
+            "probability_score_count": global_calibration.get("probability_score_count"),
+            "brier_score": global_calibration.get("brier_score"),
+            "log_loss": global_calibration.get("log_loss"),
+            "resolved_pnl_count": global_calibration.get("resolved_pnl_count"),
+            "mean_resolved_pnl_per_share": global_calibration.get(
+                "mean_resolved_pnl_per_share"
+            ),
+        },
+        "by_audit_status": report.get("by_audit_status") or [],
+    }
+
+
+def _build_hard_gate_summary(
+    *,
+    current_candidate_count: Optional[int],
+    paper_fill_count: int,
+    marked_count: int,
+    mean_markout_cents: Optional[float],
+    markout_win_rate: Optional[float],
+    resolved_count: int,
+    resolved_win_rate: Optional[float],
+    resolved_total_pnl_cents: Optional[float],
+    evidence_ledger: Dict[str, Any],
+    orderbook_archive_coverage_report: Optional[Dict[str, Any]],
+    strict_gate_replay_summary: Optional[Dict[str, Any]],
+    settlement_calibration_summary: Optional[Dict[str, Any]],
+    live_permission: bool,
+    live_order_path_available: bool,
+    requested_live_order_path_available: bool,
+) -> Dict[str, Any]:
+    """Report the real live-readiness gates separately from the legacy score."""
+
+    gates: List[Dict[str, Any]] = []
+
+    def add_gate(
+        gate_id: str,
+        *,
+        gate_type: str,
+        passed: bool,
+        required: Dict[str, Any],
+        observed: Dict[str, Any],
+        blockers: Optional[List[str]] = None,
+    ) -> None:
+        gates.append(
+            {
+                "gate_id": gate_id,
+                "gate_type": gate_type,
+                "passed": bool(passed),
+                "required": required,
+                "observed": observed,
+                "blockers": blockers or [],
+            }
+        )
+
+    current_signal_passed = current_candidate_count is not None and current_candidate_count > 0
+    add_gate(
+        "current_signal",
+        gate_type="evidence",
+        passed=current_signal_passed,
+        required={"live_eligible_current_candidate_count_min": 1},
+        observed={"current_candidate_count": current_candidate_count},
+        blockers=(
+            ["current_signal_report_missing"]
+            if current_candidate_count is None
+            else ([] if current_signal_passed else ["no_current_weather_signal"])
+        ),
+    )
+
+    forward_blockers: List[str] = []
+    if paper_fill_count < MIN_PAPER_FILLS:
+        forward_blockers.append(f"insufficient_paper_fills_{paper_fill_count}_of_{MIN_PAPER_FILLS}")
+    if marked_count < MIN_MARKOUTS:
+        forward_blockers.append(f"insufficient_markouts_{marked_count}_of_{MIN_MARKOUTS}")
+    if mean_markout_cents is None:
+        forward_blockers.append("mean_markout_missing")
+    elif mean_markout_cents < MIN_MEAN_MARKOUT_CENTS:
+        forward_blockers.append("negative_mean_markout_cents")
+    if markout_win_rate is None:
+        forward_blockers.append("markout_win_rate_missing")
+    elif markout_win_rate < MIN_MARKOUT_WIN_RATE:
+        forward_blockers.append("markout_win_rate_below_55pct")
+    add_gate(
+        "forward_paper_markout",
+        gate_type="evidence",
+        passed=not forward_blockers,
+        required={
+            "paper_fills_min": MIN_PAPER_FILLS,
+            "markouts_min": MIN_MARKOUTS,
+            "mean_markout_cents_min": MIN_MEAN_MARKOUT_CENTS,
+            "markout_win_rate_min": MIN_MARKOUT_WIN_RATE,
+        },
+        observed={
+            "paper_fill_count": paper_fill_count,
+            "marked_count": marked_count,
+            "mean_markout_cents": mean_markout_cents,
+            "markout_win_rate": markout_win_rate,
+        },
+        blockers=forward_blockers,
+    )
+
+    resolved_blockers: List[str] = []
+    if resolved_count < MIN_RESOLVED_AUDITS:
+        resolved_blockers.append(f"insufficient_resolved_audits_{resolved_count}_of_{MIN_RESOLVED_AUDITS}")
+    if resolved_win_rate is None:
+        resolved_blockers.append("resolved_win_rate_missing")
+    elif resolved_win_rate < MIN_RESOLVED_WIN_RATE:
+        resolved_blockers.append("resolved_win_rate_below_55pct")
+    if resolved_total_pnl_cents is None:
+        resolved_blockers.append("resolved_total_pnl_missing")
+    elif resolved_total_pnl_cents < MIN_RESOLVED_TOTAL_PNL_CENTS:
+        resolved_blockers.append("resolved_total_pnl_negative")
+    add_gate(
+        "resolved_pnl_audit",
+        gate_type="evidence",
+        passed=not resolved_blockers,
+        required={
+            "resolved_audits_min": MIN_RESOLVED_AUDITS,
+            "resolved_win_rate_min": MIN_RESOLVED_WIN_RATE,
+            "resolved_total_pnl_cents_min": MIN_RESOLVED_TOTAL_PNL_CENTS,
+        },
+        observed={
+            "resolved_count": resolved_count,
+            "resolved_win_rate": resolved_win_rate,
+            "resolved_total_pnl_cents": resolved_total_pnl_cents,
+        },
+        blockers=resolved_blockers,
+    )
+
+    ledger_groups = evidence_ledger.get("groups") if isinstance(evidence_ledger.get("groups"), list) else []
+    tiny_live_groups = [
+        row
+        for row in ledger_groups
+        if isinstance(row, dict) and row.get("state") == "tiny-live-eligible"
+    ]
+    add_gate(
+        "strategy_evidence_ledger",
+        gate_type="evidence",
+        passed=bool(tiny_live_groups),
+        required={"tiny_live_eligible_group_min": 1},
+        observed={
+            "group_count": evidence_ledger.get("group_count"),
+            "tiny_live_eligible_group_count": len(tiny_live_groups),
+            "state_counts": evidence_ledger.get("state_counts") or [],
+        },
+        blockers=[] if tiny_live_groups else ["no_tiny_live_eligible_strategy_group"],
+    )
+
+    if isinstance(orderbook_archive_coverage_report, dict):
+        archive_conclusion = str(orderbook_archive_coverage_report.get("hard_conclusion") or "")
+        execution_passed = archive_conclusion == "orderbook_archive_coverage_ready"
+        archive_blockers = [] if execution_passed else [archive_conclusion or "orderbook_archive_coverage_not_ready"]
+        archive_observed = {
+            "hard_conclusion": archive_conclusion,
+            "eligible_preresolution_count": orderbook_archive_coverage_report.get("eligible_preresolution_count"),
+            "covered_preresolution_count": orderbook_archive_coverage_report.get("covered_preresolution_count"),
+            "coverage_rate": orderbook_archive_coverage_report.get("coverage_rate"),
+            "diagnostic_only": orderbook_archive_coverage_report.get("diagnostic_only"),
+            "counts_for_live_gate": orderbook_archive_coverage_report.get("counts_for_live_gate"),
+        }
+    else:
+        execution_passed = False
+        archive_blockers = ["orderbook_archive_coverage_missing"]
+        archive_observed = {"hard_conclusion": None}
+    add_gate(
+        "execution_orderbook_diagnostics",
+        gate_type="evidence",
+        passed=execution_passed,
+        required={"orderbook_archive_coverage_hard_conclusion": "orderbook_archive_coverage_ready"},
+        observed=archive_observed,
+        blockers=archive_blockers,
+    )
+
+    replay_blockers: List[str] = []
+    if not isinstance(strict_gate_replay_summary, dict):
+        replay_observed = {"hard_conclusion": None}
+        replay_blockers.append("strict_gate_replay_report_missing")
+    else:
+        replay_conclusion = str(strict_gate_replay_summary.get("hard_conclusion") or "")
+        fill_count = int(strict_gate_replay_summary.get("fill_count") or 0)
+        missing_resolution_count = int(strict_gate_replay_summary.get("missing_resolution_count") or 0)
+        missed_fill_count = int(strict_gate_replay_summary.get("missed_fill_count") or 0)
+        no_visible_orderbook_count = int(strict_gate_replay_summary.get("no_visible_orderbook_count") or 0)
+        resolved_fill_count = max(0, fill_count - missing_resolution_count)
+        replay_pnl_cents = _safe_float(strict_gate_replay_summary.get("resolved_pnl_cents"))
+        if replay_conclusion != "strict_gate_replay_ready_for_ev_audit":
+            replay_blockers.append(replay_conclusion or "strict_gate_replay_not_ready")
+        if fill_count < MIN_REPLAY_FILLS:
+            replay_blockers.append(f"insufficient_replay_fills_{fill_count}_of_{MIN_REPLAY_FILLS}")
+        if resolved_fill_count < MIN_REPLAY_RESOLVED_FILLS:
+            replay_blockers.append(
+                f"insufficient_replay_resolved_fills_{resolved_fill_count}_of_{MIN_REPLAY_RESOLVED_FILLS}"
+            )
+        if missed_fill_count > 0:
+            replay_blockers.append("strict_gate_replay_has_missed_fills")
+        if no_visible_orderbook_count > 0:
+            replay_blockers.append("strict_gate_replay_missing_visible_orderbooks")
+        if missing_resolution_count > 0:
+            replay_blockers.append("strict_gate_replay_missing_resolutions")
+        if replay_pnl_cents is None:
+            replay_blockers.append("strict_gate_replay_resolved_pnl_missing")
+        elif replay_pnl_cents < MIN_REPLAY_RESOLVED_PNL_CENTS:
+            replay_blockers.append("strict_gate_replay_resolved_pnl_negative")
+        if strict_gate_replay_summary.get("brier_score") is None:
+            replay_blockers.append("strict_gate_replay_brier_score_missing")
+        if strict_gate_replay_summary.get("log_loss") is None:
+            replay_blockers.append("strict_gate_replay_log_loss_missing")
+        replay_observed = {
+            "hard_conclusion": replay_conclusion,
+            "fill_count": fill_count,
+            "resolved_fill_count": resolved_fill_count,
+            "missed_fill_count": missed_fill_count,
+            "missing_resolution_count": missing_resolution_count,
+            "no_visible_orderbook_count": no_visible_orderbook_count,
+            "resolved_pnl_cents": replay_pnl_cents,
+            "brier_score": strict_gate_replay_summary.get("brier_score"),
+            "log_loss": strict_gate_replay_summary.get("log_loss"),
+        }
+    add_gate(
+        "no_lookahead_replay",
+        gate_type="evidence",
+        passed=not replay_blockers,
+        required={
+            "hard_conclusion": "strict_gate_replay_ready_for_ev_audit",
+            "replay_fills_min": MIN_REPLAY_FILLS,
+            "replay_resolved_fills_min": MIN_REPLAY_RESOLVED_FILLS,
+            "missed_fill_count": 0,
+            "missing_resolution_count": 0,
+            "no_visible_orderbook_count": 0,
+            "resolved_pnl_cents_min": MIN_REPLAY_RESOLVED_PNL_CENTS,
+            "brier_score_required": True,
+            "log_loss_required": True,
+        },
+        observed=replay_observed,
+        blockers=replay_blockers,
+    )
+
+    calibration_blockers: List[str] = []
+    if not isinstance(settlement_calibration_summary, dict):
+        calibration_observed = {"hard_conclusion": None}
+        calibration_blockers.append("settlement_calibration_report_missing")
+    else:
+        calibration_conclusion = str(settlement_calibration_summary.get("hard_conclusion") or "")
+        official_truth_count = int(settlement_calibration_summary.get("official_truth_sample_count") or 0)
+        probability_count = int(settlement_calibration_summary.get("probability_score_sample_count") or 0)
+        resolved_pnl_count = int(settlement_calibration_summary.get("resolved_pnl_sample_count") or 0)
+        mismatch_count = int(settlement_calibration_summary.get("mismatch_count") or 0)
+        global_calibration = (
+            settlement_calibration_summary.get("global_calibration")
+            if isinstance(settlement_calibration_summary.get("global_calibration"), dict)
+            else {}
+        )
+        mean_resolved_pnl = _safe_float(global_calibration.get("mean_resolved_pnl_per_share"))
+        if calibration_conclusion != "settlement_calibration_ready_diagnostic_only":
+            calibration_blockers.append(calibration_conclusion or "settlement_calibration_not_ready")
+        for blocker in settlement_calibration_summary.get("blockers") or []:
+            text = str(blocker or "").strip()
+            if text and text not in calibration_blockers:
+                calibration_blockers.append(text)
+        if official_truth_count < MIN_SETTLEMENT_OFFICIAL_TRUTH_SAMPLES:
+            calibration_blockers.append(
+                f"insufficient_settlement_official_truth_samples_{official_truth_count}_of_{MIN_SETTLEMENT_OFFICIAL_TRUTH_SAMPLES}"
+            )
+        if probability_count < MIN_SETTLEMENT_PROBABILITY_SCORE_SAMPLES:
+            calibration_blockers.append(
+                f"insufficient_settlement_probability_score_samples_{probability_count}_of_{MIN_SETTLEMENT_PROBABILITY_SCORE_SAMPLES}"
+            )
+        if resolved_pnl_count < MIN_SETTLEMENT_RESOLVED_PNL_SAMPLES:
+            calibration_blockers.append(
+                f"insufficient_settlement_resolved_pnl_samples_{resolved_pnl_count}_of_{MIN_SETTLEMENT_RESOLVED_PNL_SAMPLES}"
+            )
+        if mismatch_count > 0:
+            calibration_blockers.append("settlement_calibration_truth_mismatch")
+        if global_calibration.get("brier_score") is None:
+            calibration_blockers.append("settlement_calibration_brier_score_missing")
+        if global_calibration.get("log_loss") is None:
+            calibration_blockers.append("settlement_calibration_log_loss_missing")
+        if mean_resolved_pnl is None:
+            calibration_blockers.append("settlement_calibration_mean_resolved_pnl_missing")
+        elif mean_resolved_pnl < MIN_SETTLEMENT_MEAN_RESOLVED_PNL_PER_SHARE:
+            calibration_blockers.append("settlement_calibration_mean_resolved_pnl_negative")
+        calibration_observed = {
+            "hard_conclusion": calibration_conclusion,
+            "official_truth_sample_count": official_truth_count,
+            "probability_score_sample_count": probability_count,
+            "resolved_pnl_sample_count": resolved_pnl_count,
+            "mismatch_count": mismatch_count,
+            "official_truth_coverage": settlement_calibration_summary.get("official_truth_coverage"),
+            "brier_score": global_calibration.get("brier_score"),
+            "log_loss": global_calibration.get("log_loss"),
+            "mean_resolved_pnl_per_share": mean_resolved_pnl,
+        }
+    add_gate(
+        "settlement_calibration",
+        gate_type="evidence",
+        passed=not calibration_blockers,
+        required={
+            "hard_conclusion": "settlement_calibration_ready_diagnostic_only",
+            "official_truth_samples_min": MIN_SETTLEMENT_OFFICIAL_TRUTH_SAMPLES,
+            "probability_score_samples_min": MIN_SETTLEMENT_PROBABILITY_SCORE_SAMPLES,
+            "resolved_pnl_samples_min": MIN_SETTLEMENT_RESOLVED_PNL_SAMPLES,
+            "mismatch_count": 0,
+            "brier_score_required": True,
+            "log_loss_required": True,
+            "mean_resolved_pnl_per_share_min": MIN_SETTLEMENT_MEAN_RESOLVED_PNL_PER_SHARE,
+        },
+        observed=calibration_observed,
+        blockers=calibration_blockers,
+    )
+
+    add_gate(
+        "paper_only_safety_boundary",
+        gate_type="runtime_safety",
+        passed=LIVE_ORDER_PATH_HARD_DISABLED and not live_order_path_available,
+        required={"live_order_path_hard_disabled": True},
+        observed={
+            "live_order_path_hard_disabled": LIVE_ORDER_PATH_HARD_DISABLED,
+            "requested_live_order_path_available": requested_live_order_path_available,
+            "effective_live_order_path_available": live_order_path_available,
+        },
+        blockers=[] if LIVE_ORDER_PATH_HARD_DISABLED and not live_order_path_available else ["paper_only_boundary_not_enforced"],
+    )
+
+    authorization_passed = bool(live_permission and live_order_path_available)
+    add_gate(
+        "live_authorization",
+        gate_type="authorization",
+        passed=authorization_passed,
+        required={"live_permission": True, "effective_live_order_path_available": True},
+        observed={
+            "live_permission": bool(live_permission),
+            "effective_live_order_path_available": bool(live_order_path_available),
+            "requested_live_order_path_available": bool(requested_live_order_path_available),
+        },
+        blockers=[] if authorization_passed else [
+            reason
+            for reason, failed in (
+                ("live_permission_false", not live_permission),
+                ("live_order_path_disabled", not live_order_path_available),
+            )
+            if failed
+        ],
+    )
+
+    evidence_gates = [row for row in gates if row.get("gate_type") == "evidence"]
+    evidence_gate_passed = all(row.get("passed") is True for row in evidence_gates)
+    if LIVE_ORDER_PATH_HARD_DISABLED:
+        overall_state = "paper-only"
+    elif evidence_gate_passed and authorization_passed:
+        overall_state = "tiny-live-eligible"
+    elif evidence_gate_passed:
+        overall_state = "tiny-live-eligible-needs-authorization"
+    else:
+        overall_state = "needs-evidence"
+
+    return {
+        "schema_version": LIVE_HARD_GATE_SCHEMA_VERSION,
+        "paper_only": True,
+        "readiness_pct_is_legacy_diagnostic": True,
+        "overall_state": overall_state,
+        "evidence_gate_passed": evidence_gate_passed,
+        "live_authorization_gate_passed": authorization_passed,
+        "live_order_path_hard_disabled": LIVE_ORDER_PATH_HARD_DISABLED,
+        "tiny_live_eligible_group_count": len(tiny_live_groups),
+        "gate_counts": [
+            {
+                "gate_type": gate_type,
+                "passed": len(
+                    [
+                        row
+                        for row in gates
+                        if row.get("gate_type") == gate_type and row.get("passed") is True
+                    ]
+                ),
+                "total": len([row for row in gates if row.get("gate_type") == gate_type]),
+            }
+            for gate_type in ("evidence", "runtime_safety", "authorization")
+        ],
+        "failed_gate_ids": [str(row.get("gate_id")) for row in gates if row.get("passed") is not True],
+        "gates": gates,
     }
 
 
@@ -656,10 +1395,15 @@ def build_live_readiness_report(
     temperature_execution_experiment_report: Optional[Dict[str, Any]] = None,
     current_signal_taker_validation_report: Optional[Dict[str, Any]] = None,
     temperature_taker_validation_report: Optional[Dict[str, Any]] = None,
+    orderbook_archive_coverage_report: Optional[Dict[str, Any]] = None,
+    strict_gate_replay_report: Optional[Dict[str, Any]] = None,
+    settlement_calibration_report: Optional[Dict[str, Any]] = None,
     temperature_taker_journal_dir: str | Path = DEFAULT_TEMPERATURE_TAKER_JOURNAL_DIR,
+    strict_gate_queue_dir: str | Path | None = None,
     include_temperature_taker_validation: bool = False,
     include_quarantine_surface: bool = False,
     live_permission: bool = False,
+    live_order_path_available: bool = False,
     generated_at: Optional[str] = None,
     settlement_grace_hours: float = 24.0,
     quarantine_surface_min_decision_count: int = 5,
@@ -669,9 +1413,17 @@ def build_live_readiness_report(
     quarantine_surface_min_maker_quote_count: int = 0,
     quarantine_surface_min_maker_mean_markout_cents: float = 0.0,
 ) -> Dict[str, Any]:
+    requested_live_order_path_available = bool(live_order_path_available)
+    effective_live_order_path_available = (
+        requested_live_order_path_available and not LIVE_ORDER_PATH_HARD_DISABLED
+    )
     journal_root = Path(journal_dir)
+    strict_gate_queue_summary = summarize_strict_gate_queue_journal(
+        strict_gate_queue_dir or default_strict_gate_queue_dir(journal_root)
+    )
     journal_summary = summarize_paper_journal(journal_root)
     markout_strata_summary = summarize_markout_strata(journal_root, latest_only=True)
+    forward_markout_path_summary = summarize_markout_strata(journal_root, latest_only=False)
     execution_calibration_summary = summarize_execution_calibration(journal_root, latest_only=True)
     maker_quote_summary = summarize_maker_quote_journal(journal_root, latest_only=True)
     resolved_summary = summarize_resolved_audits(journal_root)
@@ -706,14 +1458,24 @@ def build_live_readiness_report(
             generated_at=generated_at,
         )
 
-    fills_by_id = _latest_by_fill_id(load_jsonl(journal_root / "paper_fills.jsonl"))
+    fills_by_id = {
+        fill_id: _normalize_fill_for_live_readiness(record, generated_at=generated_at)
+        for fill_id, record in _latest_by_fill_id(load_jsonl(journal_root / "paper_fills.jsonl")).items()
+    }
     markouts_by_fill = _latest_by_fill_id(load_jsonl(journal_root / "markouts.jsonl"))
     audits_by_fill = _latest_by_fill_id(load_jsonl(journal_root / "resolved_audits.jsonl"))
+    evidence_ledger = _build_evidence_ledger(
+        fills=fills_by_id.values(),
+        markouts_by_fill=markouts_by_fill,
+        audits_by_fill=audits_by_fill,
+        signal_report=signal_report,
+    )
 
     paper_fills = [
         record
         for record in fills_by_id.values()
         if record.get("counts_for_live_gate") is not False
+        and record.get("strategy_live_eligible") is not False
         and record.get("signal_bucket") != "quarantine"
     ]
     eligible_fill_ids = {str(record.get("fill_id")) for record in paper_fills}
@@ -761,7 +1523,7 @@ def build_live_readiness_report(
     markout_win_rate = _ratio(len(markout_wins), marked_count)
     resolved_win_rate = _ratio(len(resolved_wins), resolved_count)
 
-    evidence_gate = (
+    legacy_evidence_gate = (
         current_candidate_count is not None
         and current_candidate_count > 0
         and paper_fill_count >= MIN_PAPER_FILLS
@@ -776,6 +1538,28 @@ def build_live_readiness_report(
         and resolved_total_pnl_cents is not None
         and resolved_total_pnl_cents >= MIN_RESOLVED_TOTAL_PNL_CENTS
     )
+    strict_gate_replay_summary = _compact_strict_gate_replay_report(strict_gate_replay_report)
+    settlement_calibration_summary = _compact_settlement_calibration_report(
+        settlement_calibration_report
+    )
+    hard_gate_summary = _build_hard_gate_summary(
+        current_candidate_count=current_candidate_count,
+        paper_fill_count=paper_fill_count,
+        marked_count=marked_count,
+        mean_markout_cents=mean_markout_cents,
+        markout_win_rate=markout_win_rate,
+        resolved_count=resolved_count,
+        resolved_win_rate=resolved_win_rate,
+        resolved_total_pnl_cents=resolved_total_pnl_cents,
+        evidence_ledger=evidence_ledger,
+        orderbook_archive_coverage_report=orderbook_archive_coverage_report,
+        strict_gate_replay_summary=strict_gate_replay_summary,
+        settlement_calibration_summary=settlement_calibration_summary,
+        live_permission=live_permission,
+        live_order_path_available=effective_live_order_path_available,
+        requested_live_order_path_available=requested_live_order_path_available,
+    )
+    live_gate = bool(hard_gate_summary.get("evidence_gate_passed") is True)
     blockers = _build_blockers(
         current_candidate_count=current_candidate_count,
         paper_fill_count=paper_fill_count,
@@ -786,10 +1570,10 @@ def build_live_readiness_report(
         resolved_win_rate=resolved_win_rate,
         resolved_total_pnl_cents=resolved_total_pnl_cents,
         live_permission=live_permission,
+        live_order_path_available=effective_live_order_path_available,
         resolved_gap_hard_conclusion=str(resolved_gap_summary.get("hard_conclusion") or ""),
     )
-    live_gate = bool(evidence_gate)
-    live_authorization_pct = 100 if live_gate and live_permission else 0
+    live_authorization_pct = 100 if live_gate and live_permission and effective_live_order_path_available else 0
     score_components = _build_score_components(
         current_candidate_count=current_candidate_count,
         historical_candidate_fill_count=historical_candidate_fill_count,
@@ -802,6 +1586,7 @@ def build_live_readiness_report(
         resolved_total_pnl_cents=resolved_total_pnl_cents,
         live_permission=live_permission,
         live_gate=live_gate,
+        live_order_path_available=effective_live_order_path_available,
     )
     readiness_pct = round(sum(score_components.values()), 2)
     diagnostic_blockers: List[str] = []
@@ -901,6 +1686,25 @@ def build_live_readiness_report(
             "temperature_taker_validation_wait_resolved_audit",
         }:
             diagnostic_blockers.append(taker_conclusion)
+    if isinstance(orderbook_archive_coverage_report, dict):
+        archive_conclusion = str(orderbook_archive_coverage_report.get("hard_conclusion") or "")
+        if archive_conclusion and archive_conclusion != "orderbook_archive_coverage_ready":
+            diagnostic_blockers.append(archive_conclusion)
+    if isinstance(strict_gate_replay_summary, dict):
+        replay_conclusion = str(strict_gate_replay_summary.get("hard_conclusion") or "")
+        if replay_conclusion and replay_conclusion != "strict_gate_replay_ready_for_ev_audit":
+            diagnostic_blockers.append(replay_conclusion)
+    else:
+        diagnostic_blockers.append("strict_gate_replay_report_missing")
+    if isinstance(settlement_calibration_summary, dict):
+        calibration_conclusion = str(settlement_calibration_summary.get("hard_conclusion") or "")
+        if (
+            calibration_conclusion
+            and calibration_conclusion != "settlement_calibration_ready_diagnostic_only"
+        ):
+            diagnostic_blockers.append(calibration_conclusion)
+    else:
+        diagnostic_blockers.append("settlement_calibration_report_missing")
 
     return {
         "schema_version": LIVE_READINESS_SCHEMA_VERSION,
@@ -911,10 +1715,17 @@ def build_live_readiness_report(
             "min_paper_fills": MIN_PAPER_FILLS,
             "min_markouts": MIN_MARKOUTS,
             "min_resolved_audits": MIN_RESOLVED_AUDITS,
+            "min_replay_fills": MIN_REPLAY_FILLS,
+            "min_replay_resolved_fills": MIN_REPLAY_RESOLVED_FILLS,
+            "min_settlement_official_truth_samples": MIN_SETTLEMENT_OFFICIAL_TRUTH_SAMPLES,
+            "min_settlement_probability_score_samples": MIN_SETTLEMENT_PROBABILITY_SCORE_SAMPLES,
+            "min_settlement_resolved_pnl_samples": MIN_SETTLEMENT_RESOLVED_PNL_SAMPLES,
             "min_markout_win_rate": MIN_MARKOUT_WIN_RATE,
             "min_resolved_win_rate": MIN_RESOLVED_WIN_RATE,
             "min_mean_markout_cents": MIN_MEAN_MARKOUT_CENTS,
             "min_resolved_total_pnl_cents": MIN_RESOLVED_TOTAL_PNL_CENTS,
+            "min_replay_resolved_pnl_cents": MIN_REPLAY_RESOLVED_PNL_CENTS,
+            "min_settlement_mean_resolved_pnl_per_share": MIN_SETTLEMENT_MEAN_RESOLVED_PNL_PER_SHARE,
         },
         "signal": {
             "source": signal_source,
@@ -934,6 +1745,7 @@ def build_live_readiness_report(
             "resolved_total_pnl_cents": resolved_total_pnl_cents,
             "journal_summary": journal_summary,
             "markout_strata_summary": markout_strata_summary,
+            "forward_markout_path_summary": forward_markout_path_summary,
             "execution_calibration_summary": execution_calibration_summary,
             "maker_quote_summary": maker_quote_summary,
             "current_signal_diagnostics": current_signal_diagnostics,
@@ -947,18 +1759,30 @@ def build_live_readiness_report(
             "temperature_execution_experiment_summary": temperature_execution_summary,
             "current_signal_taker_validation_summary": current_signal_taker_validation_summary,
             "temperature_taker_validation_summary": temperature_taker_validation_summary,
+            "strict_gate_queue_summary": strict_gate_queue_summary,
+            "orderbook_archive_coverage_summary": orderbook_archive_coverage_report,
+            "strict_gate_replay_summary": strict_gate_replay_summary,
+            "settlement_calibration_summary": settlement_calibration_summary,
             "closed_market_backfill_summary": backfill_summary,
+            "evidence_ledger": evidence_ledger,
+            "hard_gate_summary": hard_gate_summary,
         },
         "live_gate": live_gate,
         "live_permission": bool(live_permission),
+        "live_order_path_available": effective_live_order_path_available,
+        "requested_live_order_path_available": requested_live_order_path_available,
+        "live_order_path_hard_disabled": LIVE_ORDER_PATH_HARD_DISABLED,
         "live_authorization_pct": live_authorization_pct,
         "readiness_pct": readiness_pct,
         "distance_to_live_pct": round(max(0.0, 100.0 - readiness_pct), 2),
         "score_components": score_components,
+        "hard_gate_summary": hard_gate_summary,
         "blockers": blockers,
         "diagnostic_blockers": diagnostic_blockers,
         "hard_conclusion": (
-            "可实盘" if live_gate and live_permission else "只能继续 paper"
+            "可实盘"
+            if live_gate and live_permission and effective_live_order_path_available
+            else "只能继续 paper"
         ),
     }
 

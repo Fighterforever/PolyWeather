@@ -9,6 +9,13 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 import requests
 
 from src.data_collection.city_registry import CITY_REGISTRY
+from src.trading.weather_market_catalog import (
+    build_market_bucket,
+    build_temperature_settlement_spec,
+    unsupported_settlement_diagnostics,
+)
+from src.trading.weather_market_implied import enrich_payload_with_market_implied
+from src.trading.weather_market_enrichment import parse_temperature_outcome_spec
 
 
 GAMMA_BASE_URL = "https://gamma-api.polymarket.com"
@@ -52,6 +59,8 @@ class OrderBookSummary:
     ask_depth_usdc_3c: float
     bid_levels: int
     ask_levels: int
+    bid_ladder: List[Dict[str, float]]
+    ask_ladder: List[Dict[str, float]]
 
 
 def _safe_float(value: Any) -> Optional[float]:
@@ -250,6 +259,14 @@ def summarize_order_book(token_id: str, payload: Dict[str, Any], *, depth_cents:
         ),
         bid_levels=len(bids),
         ask_levels=len(asks),
+        bid_ladder=[
+            {"price": price, "size": size}
+            for price, size in sorted(bids, key=lambda item: item[0], reverse=True)
+        ],
+        ask_ladder=[
+            {"price": price, "size": size}
+            for price, size in sorted(asks, key=lambda item: item[0])
+        ],
     )
 
 
@@ -558,7 +575,7 @@ class PolymarketReadonlyClient:
         status = "ready" if rows else "no_current_weather_signal"
         if diagnostics.get("errors") and not rows:
             status = "partial_error"
-        return {
+        return enrich_payload_with_market_implied({
             "schema_version": SCHEMA_VERSION,
             "snapshot_id": f"polymarket-readonly-{generated_at}",
             "generated_at": generated_at,
@@ -566,7 +583,7 @@ class PolymarketReadonlyClient:
             "source": "polymarket_readonly",
             "rows": rows,
             "diagnostics": diagnostics,
-        }
+        })
 
     def build_closed_weather_market_payload(
         self,
@@ -624,7 +641,7 @@ class PolymarketReadonlyClient:
         status = "ready" if rows else "no_closed_weather_markets"
         if diagnostics.get("errors") and not rows:
             status = "partial_error"
-        return {
+        return enrich_payload_with_market_implied({
             "schema_version": SCHEMA_VERSION,
             "snapshot_id": f"polymarket-closed-readonly-{generated_at}",
             "generated_at": generated_at,
@@ -632,7 +649,7 @@ class PolymarketReadonlyClient:
             "source": "polymarket_closed_readonly",
             "rows": rows,
             "diagnostics": diagnostics,
-        }
+        })
 
     def market_to_signal_rows(
         self,
@@ -731,6 +748,48 @@ class PolymarketReadonlyClient:
                 "order_book": book_dict or None,
                 "order_book_error": book_error,
             }
+            if row["market_family"] == "temperature":
+                temperature_spec = parse_temperature_outcome_spec(row)
+                if temperature_spec is None:
+                    row["settlement_spec_status"] = "unsupported"
+                    row["settlement_spec_unsupported_reasons"] = ["unparsed_temperature_market"]
+                    row["settlement_spec"] = unsupported_settlement_diagnostics(
+                        row,
+                        ["unparsed_temperature_market"],
+                    )
+                else:
+                    settlement_spec, settlement_reasons = build_temperature_settlement_spec(
+                        row,
+                        city=temperature_spec.city,
+                        target_date=temperature_spec.target_date,
+                        bucket_type=temperature_spec.comparator,
+                        threshold=temperature_spec.threshold,
+                        unit=temperature_spec.unit,
+                        upper_threshold=temperature_spec.upper_threshold,
+                    )
+                    if settlement_spec is None:
+                        row["settlement_spec_status"] = "unsupported"
+                        row["settlement_spec_unsupported_reasons"] = settlement_reasons
+                        row["settlement_spec"] = unsupported_settlement_diagnostics(row, settlement_reasons)
+                    else:
+                        row["city"] = temperature_spec.city
+                        row["selected_date"] = temperature_spec.target_date
+                        row["bucket_label"] = build_market_bucket(
+                            row,
+                            bucket_type=temperature_spec.comparator,
+                            threshold=temperature_spec.threshold,
+                            upper_threshold=temperature_spec.upper_threshold,
+                            unit=temperature_spec.unit,
+                        ).label
+                        row["settlement_spec_status"] = "supported"
+                        row["settlement_spec"] = settlement_spec.to_dict()
+                        row["market_bucket"] = build_market_bucket(
+                            row,
+                            bucket_type=temperature_spec.comparator,
+                            threshold=temperature_spec.threshold,
+                            upper_threshold=temperature_spec.upper_threshold,
+                            unit=temperature_spec.unit,
+                        ).to_dict()
             rows.append(row)
         return rows
 

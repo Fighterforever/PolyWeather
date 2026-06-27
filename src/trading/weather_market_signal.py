@@ -10,6 +10,7 @@ from src.trading.weather_signal_risk_filter import (
     risk_rules_for_mode,
 )
 from src.trading.polymarket_readonly import classify_weather_market_family_from_row
+from src.trading.weather_strategies import assign_weather_strategy
 
 
 SCHEMA_VERSION = "polyweather_weather_market_signal_report.v1"
@@ -60,6 +61,9 @@ class WeatherMarketSignalConfig:
     suppress_saturated_partition_risk_rules: bool = False
     saturated_risk_rule_min_coverage: float = 0.80
     partition_saturated_risk_rule_min_coverage: float = 0.80
+    require_settlement_spec: bool = True
+    require_ev_safe: bool = True
+    min_ev_safe: float = 0.0
 
 
 def _price_from_row(row: Dict[str, Any]) -> Optional[float]:
@@ -107,12 +111,39 @@ def _bucket_type_from_label(value: Any) -> str:
     return "unknown"
 
 
+def _bucket_type_from_row(row: Dict[str, Any]) -> str:
+    bucket = row.get("market_bucket") if isinstance(row.get("market_bucket"), dict) else {}
+    value = str(bucket.get("bucket_type") or "").strip().lower()
+    if value:
+        return value
+    spec = row.get("settlement_spec") if isinstance(row.get("settlement_spec"), dict) else {}
+    value = str(spec.get("bucket_type") or "").strip().lower()
+    if value:
+        return value
+    return _bucket_type_from_label(row.get("bucket_label"))
+
+
 def _order_book_depth(row: Dict[str, Any], field: str) -> Optional[float]:
     value = _safe_float(row.get(field))
     if value is not None:
         return value
     order_book = row.get("order_book") if isinstance(row.get("order_book"), dict) else {}
     return _safe_float(order_book.get(field))
+
+
+def _settlement_text(
+    row: Dict[str, Any],
+    settlement_spec: Optional[Dict[str, Any]],
+    *fields: str,
+) -> Optional[str]:
+    for field in fields:
+        value = row.get(field)
+        if value is None and settlement_spec:
+            value = settlement_spec.get(field)
+        text = str(value or "").strip()
+        if text:
+            return text
+    return None
 
 
 def _row_is_tradable(row: Dict[str, Any]) -> Tuple[bool, List[str]]:
@@ -142,15 +173,20 @@ def assess_weather_market_row(
     side = _first_text(row, ("side",))
     city = _first_text(row, ("city", "city_display_name"))
     bucket_label = _first_text(row, ("bucket_label",))
-    bucket_type = _bucket_type_from_label(bucket_label)
+    bucket_type = _bucket_type_from_row(row)
     price = _price_from_row(row)
     spread = _spread_from_row(row)
     liquidity = _liquidity_from_row(row)
     bid_depth = _order_book_depth(row, "bid_depth_usdc_3c")
     ask_depth = _order_book_depth(row, "ask_depth_usdc_3c")
     edge_percent = _first_float(row, ("edge_percent", "edge"))
+    ev_safe = _first_float(row, ("ev_safe",))
+    p_lcb = _first_float(row, ("p_lcb",))
+    q_effective = _first_float(row, ("q_effective",))
+    cost = _first_float(row, ("cost",))
     model_probability = _first_float(row, ("model_probability",))
     score = _first_float(row, ("final_score", "signal_confidence"))
+    strategy = assign_weather_strategy(row, bucket_type=bucket_type)
 
     blockers: List[str] = []
     warnings: List[str] = []
@@ -175,13 +211,69 @@ def assess_weather_market_row(
     model_join_status = str(row.get("model_join_status") or "").strip()
     if model_join_status == "unsupported_market_type":
         blockers.append(f"unsupported_model_family:{market_family}")
+    elif model_join_status == "unsupported_settlement_spec":
+        reasons = [
+            str(reason)
+            for reason in row.get("settlement_spec_unsupported_reasons") or []
+            if str(reason)
+        ]
+        blockers.append(
+            "unsupported_settlement_spec"
+            if not reasons
+            else f"unsupported_settlement_spec:{','.join(sorted(set(reasons)))}"
+        )
     elif model_join_status and model_join_status != "joined":
         blockers.append(f"model_not_joined:{model_join_status}")
+
+    settlement_spec = row.get("settlement_spec") if isinstance(row.get("settlement_spec"), dict) else None
+    settlement_status = str(row.get("settlement_spec_status") or (settlement_spec or {}).get("status") or "").strip()
+    if config.require_settlement_spec and market_family == "temperature":
+        if not settlement_spec:
+            blockers.append("missing_settlement_spec")
+        elif settlement_status != "supported":
+            reasons = [
+                str(reason)
+                for reason in (
+                    row.get("settlement_spec_unsupported_reasons")
+                    or settlement_spec.get("unsupported_reasons")
+                    or []
+                )
+                if str(reason)
+            ]
+            blockers.append(
+                "unsupported_settlement_spec"
+                if not reasons
+                else f"unsupported_settlement_spec:{','.join(sorted(set(reasons)))}"
+            )
+        else:
+            required_spec_fields = (
+                "station_code",
+                "settlement_source",
+                "target_date",
+                "timezone",
+                "metric",
+                "unit",
+                "bucket_type",
+                "threshold",
+                "rounding",
+                "rule_hash",
+                "end_time",
+            )
+            for field in required_spec_fields:
+                value = settlement_spec.get(field)
+                if value is None or str(value).strip() == "":
+                    blockers.append(f"missing_settlement_spec_field:{field}")
 
     if edge_percent is None:
         blockers.append("missing_edge")
     elif edge_percent < config.min_edge_percent:
         blockers.append("edge_below_min")
+
+    if config.require_ev_safe and market_family == "temperature":
+        if ev_safe is None:
+            blockers.append("missing_ev_safe")
+        elif ev_safe <= config.min_ev_safe:
+            blockers.append("ev_safe_below_min")
 
     if liquidity is None:
         blockers.append("missing_liquidity")
@@ -253,6 +345,12 @@ def assess_weather_market_row(
         "outcome": row.get("outcome"),
         "bucket_label": bucket_label or None,
         "bucket_type": bucket_type,
+        "strategy_id": strategy.strategy_id,
+        "execution_style": strategy.execution_style,
+        "why_now": strategy.why_now,
+        "strategy_live_eligible": strategy.live_eligible,
+        "counts_for_live_gate": strategy.counts_for_live_gate,
+        "risk_caps": strategy.risk_caps,
         "price": price,
         "bid": _first_float(row, ("bid", "best_bid")),
         "ask": _first_float(row, ("ask", "best_ask")),
@@ -261,10 +359,35 @@ def assess_weather_market_row(
         "bid_depth_usdc_3c": bid_depth,
         "ask_depth_usdc_3c": ask_depth,
         "edge_percent": edge_percent,
+        "p_lcb": p_lcb,
+        "q_effective": q_effective,
+        "cost": cost,
+        "ev_safe": ev_safe,
         "model_probability": model_probability,
         "market_probability": _first_float(row, ("market_probability",)),
-        "end_date": row.get("end_date"),
+        "market_implied_yes_price": _first_float(row, ("market_implied_yes_price",)),
+        "market_implied_side_price": _first_float(row, ("market_implied_side_price",)),
+        "market_implied_de_vig_yes_probability": _first_float(row, ("market_implied_de_vig_yes_probability",)),
+        "market_implied_de_vig_side_probability": _first_float(row, ("market_implied_de_vig_side_probability",)),
+        "market_implied_cdf": _first_float(row, ("market_implied_cdf",)),
+        "market_implied_cdf_raw": _first_float(row, ("market_implied_cdf_raw",)),
+        "market_implied_bucket_family": row.get("market_implied_bucket_family"),
+        "market_implied_de_vig_status": row.get("market_implied_de_vig_status"),
+        "target_date": _settlement_text(row, settlement_spec, "target_date"),
+        "end_time": _settlement_text(row, settlement_spec, "end_time", "endTime", "end_date", "endDate"),
+        "end_date": _settlement_text(row, settlement_spec, "end_date", "endDate", "end_time", "endTime"),
         "source_final_score": score,
+        "settlement_spec_status": settlement_status or None,
+        "settlement_spec_unsupported_reasons": row.get("settlement_spec_unsupported_reasons"),
+        "settlement_rule_hash": (settlement_spec or {}).get("rule_hash"),
+        "settlement_rule_text": (settlement_spec or {}).get("rule_text"),
+        "settlement_station_code": (settlement_spec or {}).get("station_code"),
+        "settlement_station_label": (settlement_spec or {}).get("station_label"),
+        "settlement_source": (settlement_spec or {}).get("settlement_source"),
+        "settlement_timezone": (settlement_spec or {}).get("timezone"),
+        "settlement_metric": (settlement_spec or {}).get("metric"),
+        "settlement_unit": (settlement_spec or {}).get("unit"),
+        "settlement_spec": settlement_spec,
     }
 
 
@@ -360,13 +483,41 @@ def _decision_by_market_family(assessments: Iterable[Dict[str, Any]]) -> List[Di
     return sorted(matrix.values(), key=lambda row: (-int(row["row_count"]), row["market_family"]))
 
 
+def _decision_by_strategy(assessments: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    matrix: Dict[str, Dict[str, int]] = {}
+    for item in assessments:
+        strategy_id = str(item.get("strategy_id") or "unknown")
+        decision = str(item.get("decision") or "unknown")
+        row = matrix.setdefault(
+            strategy_id,
+            {
+                "strategy_id": strategy_id,
+                "row_count": 0,
+                "candidate_count": 0,
+                "watch_count": 0,
+                "reject_count": 0,
+                "live_eligible_count": 0,
+            },
+        )
+        row["row_count"] += 1
+        if item.get("strategy_live_eligible") is True:
+            row["live_eligible_count"] += 1
+        if decision == "candidate":
+            row["candidate_count"] += 1
+        elif decision == "watch":
+            row["watch_count"] += 1
+        elif decision == "reject":
+            row["reject_count"] += 1
+    return sorted(matrix.values(), key=lambda row: (-int(row["row_count"]), row["strategy_id"]))
+
+
 def _blocker_category(reason: str) -> str:
     text = str(reason or "")
     if text.startswith("negative_markout_rule:maker_quote_"):
         return "maker_quote_rule"
     if text.startswith("negative_markout_rule:"):
         return "markout_rule"
-    if text in {"edge_below_min", "missing_edge"}:
+    if text in {"edge_below_min", "missing_edge", "missing_ev_safe", "ev_safe_below_min"}:
         return "edge"
     if text in {"spread_above_max", "missing_spread"}:
         return "spread"
@@ -605,6 +756,240 @@ def build_candidate_gap_report(
         ),
         "near_candidates": [_candidate_gap_item(item) for item in near_candidates],
     }
+
+
+def build_strict_gate_diagnostics(
+    assessments: Iterable[Dict[str, Any]],
+    *,
+    max_samples: int = 10,
+) -> Dict[str, Any]:
+    """Summarize why live-eligible rows failed strict candidate gates.
+
+    This intentionally excludes calibration-only strategies such as
+    ``eq_exact_shadow`` so exact buckets do not hide actionable gate failures in
+    threshold/near-lock rows.
+    """
+
+    rows = [item for item in assessments if isinstance(item, dict)]
+    live_rows = [
+        item
+        for item in rows
+        if item.get("strategy_live_eligible") is True
+        and item.get("counts_for_live_gate") is not False
+    ]
+    paper_only_rows = [item for item in rows if item not in live_rows]
+    live_rejected = [item for item in live_rows if item.get("decision") == "reject"]
+    live_candidates = [item for item in live_rows if item.get("decision") == "candidate"]
+    live_watch = [item for item in live_rows if item.get("decision") == "watch"]
+    non_risk_reasons = [
+        reason
+        for item in live_rejected
+        for reason in _non_risk_blockers(item)
+    ]
+    non_risk_categories = [_blocker_category(reason) for reason in non_risk_reasons]
+    risk_reasons = [
+        str(reason)
+        for item in live_rejected
+        for reason in item.get("risk_rule_hits") or []
+        if str(reason)
+    ]
+    by_strategy: Dict[str, Dict[str, Any]] = {}
+    for item in live_rows:
+        strategy_id = str(item.get("strategy_id") or "unknown")
+        row = by_strategy.setdefault(
+            strategy_id,
+            {
+                "strategy_id": strategy_id,
+                "row_count": 0,
+                "candidate_count": 0,
+                "watch_count": 0,
+                "reject_count": 0,
+                "top_non_risk_categories": {},
+            },
+        )
+        row["row_count"] += 1
+        decision = str(item.get("decision") or "")
+        if decision == "candidate":
+            row["candidate_count"] += 1
+        elif decision == "watch":
+            row["watch_count"] += 1
+        elif decision == "reject":
+            row["reject_count"] += 1
+            for reason in _non_risk_blockers(item):
+                category = _blocker_category(reason)
+                categories = row["top_non_risk_categories"]
+                categories[category] = int(categories.get(category) or 0) + 1
+
+    strategy_rows: List[Dict[str, Any]] = []
+    for row in by_strategy.values():
+        category_counts = [
+            {"category": category, "count": count}
+            for category, count in sorted(
+                row.pop("top_non_risk_categories").items(),
+                key=lambda pair: (-pair[1], pair[0]),
+            )
+        ]
+        row["top_non_risk_categories"] = category_counts
+        strategy_rows.append(row)
+
+    sample_rows = sorted(
+        live_rejected,
+        key=lambda item: (
+            len(set(_non_risk_blockers(item))),
+            len(set(item.get("risk_rule_hits") or [])),
+            -float(item.get("ev_safe") or -999.0),
+            -float(item.get("score") or 0.0),
+        ),
+    )[: max(0, int(max_samples))]
+    samples: List[Dict[str, Any]] = []
+    for item in sample_rows:
+        sample = _sample_for_diagnostics(item)
+        sample["strategy_id"] = item.get("strategy_id")
+        sample["execution_style"] = item.get("execution_style")
+        sample["non_risk_blockers"] = _non_risk_blockers(item)
+        sample["non_risk_blocker_categories"] = _non_risk_blocker_categories(
+            sample["non_risk_blockers"]
+        )
+        sample["risk_rule_hits"] = item.get("risk_rule_hits") or []
+        sample["risk_rule_scope_counts"] = _risk_rule_scope_counts(sample["risk_rule_hits"])
+        sample["p_lcb"] = item.get("p_lcb")
+        sample["q_effective"] = item.get("q_effective")
+        sample["cost"] = item.get("cost")
+        samples.append(sample)
+
+    return {
+        "schema_version": "polyweather_weather_strict_gate_diagnostics.v1",
+        "total_rows": len(rows),
+        "live_eligible_row_count": len(live_rows),
+        "paper_only_row_count": len(paper_only_rows),
+        "live_eligible_candidate_count": len(live_candidates),
+        "live_eligible_watch_count": len(live_watch),
+        "live_eligible_reject_count": len(live_rejected),
+        "non_risk_blocker_counts": _count_items(non_risk_reasons, key_name="reason"),
+        "non_risk_blocker_category_counts": _count_items(
+            non_risk_categories,
+            key_name="category",
+        ),
+        "risk_rule_hit_counts": _count_items(risk_reasons, key_name="reason"),
+        "risk_rule_scope_counts": _risk_rule_scope_counts(risk_reasons),
+        "by_strategy": sorted(
+            strategy_rows,
+            key=lambda row: (-int(row.get("row_count") or 0), str(row.get("strategy_id") or "")),
+        ),
+        "top_live_eligible_reject_samples": samples,
+        "targeted_paper_queues": _strict_gate_targeted_paper_queues(live_rejected),
+    }
+
+
+def _strict_gate_queue_item(
+    item: Dict[str, Any],
+    *,
+    queue_name: str,
+    queue_reasons: Iterable[str],
+) -> Dict[str, Any]:
+    sample = _sample_for_diagnostics(item)
+    non_risk = _non_risk_blockers(item)
+    risk_hits = [str(reason) for reason in item.get("risk_rule_hits") or [] if str(reason)]
+    sample.update(
+        {
+            "queue_name": queue_name,
+            "queue_reasons": sorted({str(reason) for reason in queue_reasons if str(reason)}),
+            "paper_only": True,
+            "counts_for_live_gate": False,
+            "live_gate_excluded": True,
+            "strategy_id": item.get("strategy_id"),
+            "execution_style": item.get("execution_style"),
+            "non_risk_blockers": non_risk,
+            "non_risk_blocker_categories": _non_risk_blocker_categories(non_risk),
+            "risk_rule_hits": risk_hits,
+            "risk_rule_scope_counts": _risk_rule_scope_counts(risk_hits),
+            "p_lcb": item.get("p_lcb"),
+            "q_effective": item.get("q_effective"),
+            "cost": item.get("cost"),
+            "ev_safe": item.get("ev_safe"),
+        }
+    )
+    return sample
+
+
+def _strict_gate_targeted_paper_queues(
+    live_rejected: Iterable[Dict[str, Any]],
+    *,
+    max_items_per_queue: int = 10,
+) -> Dict[str, Any]:
+    rows = [item for item in live_rejected if isinstance(item, dict)]
+    queue_defs = {
+        "ev_calibration": {
+            "description": "live-eligible rows rejected by model edge / ev_safe gates; use for probability calibration, not trading",
+            "categories": {"edge"},
+        },
+        "execution_depth_price": {
+            "description": "live-eligible rows rejected by executable price, spread, depth, or liquidity gates; use for orderbook/execution diagnostics",
+            "categories": {"price", "depth", "spread", "liquidity"},
+        },
+        "risk_rule_review": {
+            "description": "live-eligible rows hit risk rules after strict gates; use to audit whether rules are overbroad, not to override them",
+            "categories": set(),
+        },
+    }
+    queues: Dict[str, Dict[str, Any]] = {}
+    for queue_name, config in queue_defs.items():
+        queues[queue_name] = {
+            "queue_name": queue_name,
+            "description": config["description"],
+            "paper_only": True,
+            "counts_for_live_gate": False,
+            "row_count": 0,
+            "items": [],
+        }
+
+    for item in rows:
+        non_risk = _non_risk_blockers(item)
+        categories = set(_non_risk_blocker_categories(non_risk))
+        risk_hits = [str(reason) for reason in item.get("risk_rule_hits") or [] if str(reason)]
+        memberships: List[Tuple[str, List[str]]] = []
+        if categories & queue_defs["ev_calibration"]["categories"]:
+            memberships.append(
+                (
+                    "ev_calibration",
+                    [reason for reason in non_risk if _blocker_category(reason) == "edge"],
+                )
+            )
+        if categories & queue_defs["execution_depth_price"]["categories"]:
+            memberships.append(
+                (
+                    "execution_depth_price",
+                    [
+                        reason
+                        for reason in non_risk
+                        if _blocker_category(reason) in queue_defs["execution_depth_price"]["categories"]
+                    ],
+                )
+            )
+        if risk_hits:
+            memberships.append(("risk_rule_review", risk_hits))
+
+        for queue_name, reasons in memberships:
+            queue = queues[queue_name]
+            queue["row_count"] += 1
+            queue["items"].append(
+                _strict_gate_queue_item(
+                    item,
+                    queue_name=queue_name,
+                    queue_reasons=reasons,
+                )
+            )
+
+    for queue in queues.values():
+        queue["items"] = sorted(
+            queue["items"],
+            key=lambda item: (
+                -float(item.get("ev_safe") or -999.0),
+                -float(item.get("edge_percent") or 0.0),
+                float(item.get("spread") or 999.0),
+            ),
+        )[: max(0, int(max_items_per_queue))]
+    return queues
 
 
 def _risk_filter_diagnostics(assessments: Iterable[Dict[str, Any]]) -> Dict[str, int]:
@@ -847,8 +1232,11 @@ def _sample_for_diagnostics(item: Dict[str, Any]) -> Dict[str, Any]:
         "decision": item.get("decision"),
         "city": item.get("city"),
         "question": item.get("question"),
+        "market_id": item.get("market_id"),
         "market_slug": item.get("market_slug"),
+        "token_id": item.get("token_id"),
         "side": item.get("side"),
+        "outcome": item.get("outcome"),
         "bucket_label": item.get("bucket_label"),
         "bucket_type": item.get("bucket_type"),
         "market_family": item.get("market_family"),
@@ -862,6 +1250,13 @@ def _sample_for_diagnostics(item: Dict[str, Any]) -> Dict[str, Any]:
         "edge_percent": item.get("edge_percent"),
         "model_probability": item.get("model_probability"),
         "market_probability": item.get("market_probability"),
+        "ev_safe": item.get("ev_safe"),
+        "strategy_id": item.get("strategy_id"),
+        "execution_style": item.get("execution_style"),
+        "strategy_live_eligible": item.get("strategy_live_eligible"),
+        "settlement_rule_hash": item.get("settlement_rule_hash"),
+        "settlement_station_code": item.get("settlement_station_code"),
+        "settlement_source": item.get("settlement_source"),
         "score": item.get("score"),
     }
 
@@ -979,6 +1374,7 @@ def build_weather_market_signal_report(
         min_coverage=float(config.partition_saturated_risk_rule_min_coverage),
     )
     candidate_gap_report = build_candidate_gap_report(assessments)
+    strict_gate_diagnostics = build_strict_gate_diagnostics(assessments)
     coverage_diagnostics = {
         "market_family_counts": _count_by_field(assessments, "market_family", key_name="market_family"),
         "quarantine_by_market_family": _count_by_field(
@@ -1011,6 +1407,7 @@ def build_weather_market_signal_report(
             key_name="market_family",
         ),
         "decision_by_market_family": _decision_by_market_family(assessments),
+        "decision_by_strategy": _decision_by_strategy(assessments),
     }
 
     live_blockers = [
@@ -1105,6 +1502,7 @@ def build_weather_market_signal_report(
         "rejection_reason_samples": _reason_samples(rejected, "blockers"),
         "warning_reason_samples": _reason_samples(assessments, "warnings"),
         "candidate_gap_report": candidate_gap_report,
+        "strict_gate_diagnostics": strict_gate_diagnostics,
     }
     if include_assessments:
         report["assessments"] = assessments

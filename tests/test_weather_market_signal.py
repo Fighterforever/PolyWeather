@@ -10,6 +10,45 @@ from src.trading.weather_market_signal import (
 )
 
 
+def _settlement(
+    *,
+    city: str = "seoul",
+    bucket_type: str = "ge",
+    threshold: float = 28.0,
+    station_code: str = "RKSI",
+) -> dict:
+    return {
+        "p_model": 0.72,
+        "p_lcb": 0.67,
+        "q_effective": 0.42,
+        "cost": 0.01,
+        "ev_safe": 0.24,
+        "settlement_spec_status": "supported",
+        "settlement_spec": {
+            "schema_version": "polyweather_weather_settlement_spec.v1",
+            "status": "supported",
+            "platform": "polymarket",
+            "market_family": "temperature",
+            "city": city,
+            "city_display_name": city.title(),
+            "station_code": station_code,
+            "station_label": station_code,
+            "settlement_source": "metar",
+            "target_date": "2026-06-27",
+            "timezone": "UTC+09:00",
+            "metric": "daily_high_temperature",
+            "unit": "C",
+            "bucket_type": bucket_type,
+            "threshold": threshold,
+            "upper_threshold": None,
+            "rounding": "integer_nearest",
+            "rule_hash": f"rule-{city}-{bucket_type}-{threshold}",
+            "rule_text": "test settlement rule",
+            "end_time": "2026-06-27T12:00:00Z",
+        },
+    }
+
+
 def test_assess_weather_market_row_accepts_strict_candidate():
     row = {
         "id": "hong-kong-28c-yes",
@@ -28,6 +67,7 @@ def test_assess_weather_market_row_accepts_strict_candidate():
         "model_probability": 0.305,
         "final_score": 80,
         "metar_status": {"available_for_today": True, "stale_for_today": False},
+        **_settlement(city="hong kong", bucket_type="eq", threshold=28.0, station_code="HKO"),
     }
 
     assessment = assess_weather_market_row(row)
@@ -36,6 +76,104 @@ def test_assess_weather_market_row_accepts_strict_candidate():
     assert assessment["blockers"] == []
     assert assessment["warnings"] == []
     assert assessment["score"] > 0
+    assert assessment["strategy_id"] == "eq_exact_shadow"
+    assert assessment["strategy_live_eligible"] is False
+    assert assessment["counts_for_live_gate"] is False
+    assert assessment["risk_caps"]["max_position_usdc"] > 0
+    assert assessment["target_date"] == "2026-06-27"
+    assert assessment["end_time"] == "2026-06-27T12:00:00Z"
+    assert assessment["end_date"] == "2026-06-27T12:00:00Z"
+    assert assessment["settlement_station_code"] == "HKO"
+    assert assessment["settlement_source"] == "metar"
+    assert assessment["settlement_rule_hash"] == "rule-hong kong-eq-28.0"
+
+
+def test_assess_weather_market_row_rejects_incomplete_supported_settlement_spec():
+    settlement = _settlement(bucket_type="ge", threshold=28.0)
+    settlement["settlement_spec"] = dict(settlement["settlement_spec"])
+    settlement["settlement_spec"].pop("end_time")
+    row = {
+        "id": "seoul-28c-yes",
+        "market_family": "temperature",
+        "city": "seoul",
+        "market_slug": "highest-temperature-in-seoul-on-june-27-2026-28c-or-above",
+        "side": "yes",
+        "bucket_label": ">= 28°C",
+        "active": True,
+        "closed": False,
+        "tradable": True,
+        "accepting_orders": True,
+        "price": 0.30,
+        "spread": 0.01,
+        "execution_liquidity": 1500,
+        "edge_percent": 20.0,
+        "model_probability": 0.60,
+        **settlement,
+    }
+
+    assessment = assess_weather_market_row(row)
+
+    assert assessment["decision"] == "reject"
+    assert "missing_settlement_spec_field:end_time" in assessment["blockers"]
+
+
+def test_assess_weather_market_row_rejects_temperature_without_settlement_spec():
+    row = {
+        "id": "seoul-28c-yes",
+        "market_family": "temperature",
+        "city": "seoul",
+        "market_slug": "highest-temperature-in-seoul-on-june-27-2026-28c-or-above",
+        "side": "yes",
+        "bucket_label": ">= 28°C",
+        "active": True,
+        "closed": False,
+        "tradable": True,
+        "accepting_orders": True,
+        "price": 0.30,
+        "spread": 0.01,
+        "execution_liquidity": 1500,
+        "edge_percent": 20.0,
+        "model_probability": 0.60,
+        "p_lcb": 0.55,
+        "q_effective": 0.30,
+        "cost": 0.01,
+        "ev_safe": 0.24,
+    }
+
+    assessment = assess_weather_market_row(row)
+
+    assert assessment["decision"] == "reject"
+    assert "missing_settlement_spec" in assessment["blockers"]
+
+
+def test_assess_weather_market_row_rejects_temperature_without_positive_ev_safe():
+    row = {
+        "id": "seoul-28c-yes",
+        "market_family": "temperature",
+        "city": "seoul",
+        "market_slug": "highest-temperature-in-seoul-on-june-27-2026-28c-or-above",
+        "side": "yes",
+        "bucket_label": ">= 28°C",
+        "active": True,
+        "closed": False,
+        "tradable": True,
+        "accepting_orders": True,
+        "price": 0.54,
+        "spread": 0.01,
+        "execution_liquidity": 1500,
+        "edge_percent": 6.0,
+        "model_probability": 0.60,
+        **_settlement(bucket_type="ge", threshold=28.0),
+        "p_lcb": 0.50,
+        "q_effective": 0.54,
+        "cost": 0.01,
+        "ev_safe": -0.05,
+    }
+
+    assessment = assess_weather_market_row(row)
+
+    assert assessment["decision"] == "reject"
+    assert "ev_safe_below_min" in assessment["blockers"]
 
 
 def test_assess_weather_market_row_can_require_quality_surface():
@@ -58,6 +196,7 @@ def test_assess_weather_market_row_can_require_quality_surface():
         },
         "edge_percent": 18.5,
         "model_probability": 0.305,
+        **_settlement(bucket_type="eq", threshold=28.0),
     }
 
     assessment = assess_weather_market_row(
@@ -132,6 +271,7 @@ def test_signal_report_keeps_watch_separate_from_candidate():
                 "execution_liquidity": 900,
                 "edge_percent": 7.0,
                 "model_probability": 0.03,
+                **_settlement(bucket_type="eq", threshold=30.0),
             }
         ],
     }
@@ -166,6 +306,7 @@ def test_signal_report_exposes_market_family_model_coverage_without_unlocking_tr
                 "edge_percent": 7.0,
                 "model_probability": 0.20,
                 "model_join_status": "joined",
+                **_settlement(bucket_type="eq", threshold=30.0),
             },
             {
                 "id": "hurricane-row",
@@ -229,6 +370,7 @@ def test_signal_report_rejects_candidate_matching_negative_markout_rule():
                 "execution_liquidity": 1200,
                 "edge_percent": 33.0,
                 "model_probability": 0.91,
+                **_settlement(city="ankara", bucket_type="eq", threshold=28.0, station_code="LTAC"),
             }
         ],
     }
@@ -285,6 +427,7 @@ def test_signal_report_surfaces_saturated_risk_rules():
                 "execution_liquidity": 1000,
                 "edge_percent": 20.0,
                 "model_probability": 0.5,
+                **_settlement(city="ankara" if index == 0 else "seoul", bucket_type="ge"),
             }
             for index in range(3)
         ],
@@ -329,6 +472,7 @@ def test_signal_report_can_suppress_saturated_broad_rules_without_removing_speci
                 "execution_liquidity": 1000,
                 "edge_percent": 20.0,
                 "model_probability": 0.5,
+                **_settlement(city="ankara" if index == 0 else "seoul", bucket_type="ge"),
             }
             for index in range(3)
         ],
@@ -385,6 +529,7 @@ def test_signal_report_can_suppress_partition_saturated_rules():
                 "execution_liquidity": 1000,
                 "edge_percent": 20.0,
                 "model_probability": 0.5,
+                **_settlement(city="ankara" if index == 0 else "seoul", bucket_type="ge"),
             }
             for index in range(4)
         ],
@@ -490,6 +635,7 @@ def test_signal_report_explains_candidate_gap_without_changing_decisions():
                 "execution_liquidity": 1200,
                 "edge_percent": 20.0,
                 "model_probability": 0.33,
+                **_settlement(city="ankara", bucket_type="eq", threshold=28.0, station_code="LTAC"),
             },
             {
                 "id": "edge-only",
@@ -506,6 +652,7 @@ def test_signal_report_explains_candidate_gap_without_changing_decisions():
                 "execution_liquidity": 1200,
                 "edge_percent": 2.0,
                 "model_probability": 0.33,
+                **_settlement(city="paris", bucket_type="eq", threshold=28.0, station_code="LFPB"),
             },
             {
                 "id": "spread-only",
@@ -522,6 +669,7 @@ def test_signal_report_explains_candidate_gap_without_changing_decisions():
                 "execution_liquidity": 1200,
                 "edge_percent": 20.0,
                 "model_probability": 0.33,
+                **_settlement(bucket_type="eq", threshold=28.0),
             },
         ],
     }
@@ -556,6 +704,142 @@ def test_signal_report_explains_candidate_gap_without_changing_decisions():
     assert categories == {"edge": 1, "spread": 1}
 
 
+def test_signal_report_strict_gate_diagnostics_focus_live_eligible_rows():
+    payload = {
+        "snapshot_id": "strict-gates",
+        "status": "ready",
+        "rows": [
+            {
+                "id": "eq-shadow",
+                "city": "ankara",
+                "market_slug": "highest-temperature-in-ankara-on-june-28-2026-28c",
+                "side": "yes",
+                "bucket_label": "= 28°C",
+                "active": True,
+                "closed": False,
+                "tradable": True,
+                "accepting_orders": True,
+                "price": 0.12,
+                "spread": 0.01,
+                "execution_liquidity": 1200,
+                "bid_depth_usdc_3c": 20,
+                "ask_depth_usdc_3c": 20,
+                "edge_percent": 20.0,
+                "model_probability": 0.33,
+                **_settlement(city="ankara", bucket_type="eq", threshold=28.0, station_code="LTAC"),
+            },
+            {
+                "id": "bad-ev",
+                "city": "seoul",
+                "market_slug": "highest-temperature-in-seoul-on-june-28-2026-29c-or-above",
+                "side": "yes",
+                "bucket_label": ">= 29°C",
+                "active": True,
+                "closed": False,
+                "tradable": True,
+                "accepting_orders": True,
+                "price": 0.25,
+                "spread": 0.01,
+                "execution_liquidity": 1200,
+                "bid_depth_usdc_3c": 20,
+                "ask_depth_usdc_3c": 20,
+                "edge_percent": 20.0,
+                "model_probability": 0.40,
+                **_settlement(city="seoul", bucket_type="ge", threshold=29.0, station_code="RKSI"),
+                "p_lcb": 0.24,
+                "q_effective": 0.25,
+                "cost": 0.01,
+                "ev_safe": -0.02,
+            },
+            {
+                "id": "thin-depth",
+                "city": "seoul",
+                "market_slug": "highest-temperature-in-seoul-on-june-28-2026-30c-or-above",
+                "side": "yes",
+                "bucket_label": ">= 30°C",
+                "active": True,
+                "closed": False,
+                "tradable": True,
+                "accepting_orders": True,
+                "price": 0.25,
+                "spread": 0.01,
+                "execution_liquidity": 1200,
+                "bid_depth_usdc_3c": 20,
+                "ask_depth_usdc_3c": 3,
+                "edge_percent": 20.0,
+                "model_probability": 0.40,
+                **_settlement(city="seoul", bucket_type="ge", threshold=30.0, station_code="RKSI"),
+            },
+            {
+                "id": "strict-candidate",
+                "city": "seoul",
+                "market_slug": "highest-temperature-in-seoul-on-june-28-2026-31c-or-above",
+                "side": "yes",
+                "bucket_label": ">= 31°C",
+                "active": True,
+                "closed": False,
+                "tradable": True,
+                "accepting_orders": True,
+                "price": 0.25,
+                "spread": 0.01,
+                "execution_liquidity": 1200,
+                "bid_depth_usdc_3c": 20,
+                "ask_depth_usdc_3c": 20,
+                "edge_percent": 20.0,
+                "model_probability": 0.40,
+                **_settlement(city="seoul", bucket_type="ge", threshold=31.0, station_code="RKSI"),
+            },
+        ],
+    }
+
+    report = build_weather_market_signal_report(
+        payload,
+        config=WeatherMarketSignalConfig(
+            min_liquidity=10,
+            min_bid_depth_usdc_3c=10,
+            min_ask_depth_usdc_3c=10,
+        ),
+    )
+
+    strict = report["strict_gate_diagnostics"]
+    assert strict["live_eligible_row_count"] == 3
+    assert strict["paper_only_row_count"] == 1
+    assert strict["live_eligible_candidate_count"] == 1
+    assert strict["live_eligible_reject_count"] == 2
+    categories = {row["category"]: row["count"] for row in strict["non_risk_blocker_category_counts"]}
+    assert categories == {"depth": 1, "edge": 1}
+    assert strict["by_strategy"] == [
+        {
+            "strategy_id": "tail_threshold",
+            "row_count": 3,
+            "candidate_count": 1,
+            "watch_count": 0,
+            "reject_count": 2,
+            "top_non_risk_categories": [
+                {"category": "depth", "count": 1},
+                {"category": "edge", "count": 1},
+            ],
+        }
+    ]
+    sample_ids = {row["market_slug"] for row in strict["top_live_eligible_reject_samples"]}
+    assert "highest-temperature-in-seoul-on-june-28-2026-29c-or-above" in sample_ids
+    assert "highest-temperature-in-seoul-on-june-28-2026-30c-or-above" in sample_ids
+    queues = strict["targeted_paper_queues"]
+    assert queues["ev_calibration"]["paper_only"] is True
+    assert queues["ev_calibration"]["counts_for_live_gate"] is False
+    assert queues["ev_calibration"]["row_count"] == 1
+    assert queues["ev_calibration"]["items"][0]["market_slug"] == (
+        "highest-temperature-in-seoul-on-june-28-2026-29c-or-above"
+    )
+    assert queues["ev_calibration"]["items"][0]["queue_reasons"] == ["ev_safe_below_min"]
+    assert queues["execution_depth_price"]["row_count"] == 1
+    assert queues["execution_depth_price"]["items"][0]["market_slug"] == (
+        "highest-temperature-in-seoul-on-june-28-2026-30c-or-above"
+    )
+    assert queues["execution_depth_price"]["items"][0]["queue_reasons"] == ["ask_depth_below_min"]
+    assert queues["risk_rule_review"]["row_count"] == 0
+
+
 def test_signal_report_can_quarantine_single_non_risk_near_misses_without_live_signal():
     payload = {
         "snapshot_id": "near-miss-scan",
@@ -576,6 +860,7 @@ def test_signal_report_can_quarantine_single_non_risk_near_misses_without_live_s
                 "execution_liquidity": 1200,
                 "edge_percent": 20.0,
                 "model_probability": 0.33,
+                **_settlement(bucket_type="eq", threshold=28.0),
             },
             {
                 "id": "unsupported",
@@ -643,6 +928,7 @@ def test_signal_report_exploration_mode_does_not_apply_broad_city_rule():
                 "execution_liquidity": 1200,
                 "edge_percent": 20.0,
                 "model_probability": 0.81,
+                **_settlement(city="new york", bucket_type="range", threshold=78.0, station_code="KLGA"),
             }
         ],
     }
@@ -689,6 +975,7 @@ def test_signal_cli_builds_report_from_scan_payload(monkeypatch, capsys):
                     "execution_liquidity": 1000,
                     "edge_percent": 9.0,
                     "model_probability": 0.25,
+                    **_settlement(bucket_type="eq", threshold=28.0),
                 }
             ],
         },
@@ -728,10 +1015,11 @@ def test_signal_cli_builds_report_from_polymarket_payload(monkeypatch, capsys):
                     "accepting_orders": True,
                     "price": 0.20,
                     "spread": 0.01,
-                    "execution_liquidity": 1000,
-                    "edge_percent": 9.0,
-                    "model_probability": 0.25,
-                }
+                        "execution_liquidity": 1000,
+                        "edge_percent": 9.0,
+                        "model_probability": 0.25,
+                        **_settlement(bucket_type="eq", threshold=28.0),
+                    }
             ],
         }
 
@@ -927,6 +1215,7 @@ def test_signal_cli_paper_tail_profile_keeps_live_gate_closed(monkeypatch, capsy
                     "execution_liquidity": 0.65,
                     "edge_percent": 7.8,
                     "model_probability": 0.108,
+                    **_settlement(bucket_type="ge", threshold=31.0),
                 }
             ],
         },
@@ -970,6 +1259,7 @@ def test_signal_cli_tight_exploration_profile_keeps_spread_strict(monkeypatch, c
                     "execution_liquidity": 1.0,
                     "edge_percent": 12.5,
                     "model_probability": 0.134,
+                    **_settlement(bucket_type="eq", threshold=24.0),
                 }
             ],
         },
@@ -1017,6 +1307,7 @@ def test_signal_cli_quality_surface_profile_filters_to_deeper_non_eq_books(monke
                     },
                     "edge_percent": 12.5,
                     "model_probability": 0.34,
+                    **_settlement(bucket_type="range", threshold=28.0),
                 },
                 {
                     "id": "eq-yes",
@@ -1036,6 +1327,7 @@ def test_signal_cli_quality_surface_profile_filters_to_deeper_non_eq_books(monke
                     },
                     "edge_percent": 12.5,
                     "model_probability": 0.34,
+                    **_settlement(bucket_type="eq", threshold=28.0),
                 },
             ],
         },
@@ -1275,10 +1567,11 @@ def test_signal_cli_can_write_paper_journal(monkeypatch, capsys, tmp_path):
                     "price": 0.029,
                     "spread": 0.006,
                     "execution_liquidity": 0.65,
-                    "edge_percent": 7.8,
-                    "model_probability": 0.108,
-                }
-            ],
+                        "edge_percent": 7.8,
+                        "model_probability": 0.108,
+                        **_settlement(bucket_type="ge", threshold=31.0),
+                    }
+                ],
         },
     )
 

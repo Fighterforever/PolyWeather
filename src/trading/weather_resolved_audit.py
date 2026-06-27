@@ -12,6 +12,7 @@ from src.trading.polymarket_readonly import (
 from src.trading.weather_paper_journal import (
     DEFAULT_PAPER_JOURNAL_DIR,
     _append_jsonl,
+    _bucket_label_type,
     _parse_utc_iso,
     _safe_float,
     load_jsonl,
@@ -19,6 +20,7 @@ from src.trading.weather_paper_journal import (
     utc_now_iso,
 )
 from src.trading.weather_closed_backfill import DEFAULT_BACKFILL_DIR
+from src.trading.weather_strategies import assign_weather_strategy
 
 
 RESOLVED_AUDIT_SCHEMA_VERSION = "polyweather_weather_resolved_audit.v1"
@@ -67,12 +69,18 @@ def build_resolved_audit_record(
     status = "error" if error else "missing_market"
     payout: Optional[float] = None
     winning = None
+    winning_token_id = None
+    resolved_outcome = None
     market_closed = None
     market_resolution_status = None
     outcome_index = None
     outcome_prices: List[Any] = []
+    outcomes: List[str] = []
+    token_ids: List[str] = []
     market_id = fill.get("market_id")
     market_slug = fill.get("market_slug")
+    rule_hash = None
+    official_final_value = None
 
     if isinstance(market, dict):
         market_id = market.get("id") or market_id
@@ -81,6 +89,19 @@ def build_resolved_audit_record(
         market_resolution_status = _market_resolution_status(market)
         status = market_resolution_status
         outcome_prices = _parse_json_list(market.get("outcomePrices"))
+        outcomes = [str(item) for item in _parse_json_list(market.get("outcomes"))]
+        token_ids = [str(item) for item in _parse_json_list(market.get("clobTokenIds"))]
+        rule_hash = market.get("resolutionRuleHash")
+        official_final_value = _safe_float(market.get("officialFinalValue"))
+        winning_indexes = [
+            index
+            for index, value in enumerate(outcome_prices)
+            if (_safe_float(value) or 0.0) >= 0.999
+        ]
+        if len(winning_indexes) == 1:
+            winning_index = winning_indexes[0]
+            winning_token_id = token_ids[winning_index] if winning_index < len(token_ids) else None
+            resolved_outcome = outcomes[winning_index] if winning_index < len(outcomes) else None
         outcome_index = _outcome_index_for_fill(fill, market)
         if status == "resolved" and outcome_index is not None and outcome_index < len(outcome_prices):
             payout = _safe_float(outcome_prices[outcome_index])
@@ -126,11 +147,21 @@ def build_resolved_audit_record(
         "market_closed": market_closed,
         "market_resolution_status": market_resolution_status,
         "question": (market or {}).get("question") if isinstance(market, dict) else fill.get("question"),
+        "city": fill.get("city"),
+        "event_title": fill.get("event_title"),
+        "bucket_label": fill.get("bucket_label"),
+        "bucket_type": fill.get("bucket_type"),
+        "strategy_id": fill.get("strategy_id"),
+        "execution_style": fill.get("execution_style"),
         "token_id": fill.get("token_id"),
+        "winning_token_id": winning_token_id,
+        "resolved_outcome": resolved_outcome,
         "side": fill.get("side"),
         "outcome": fill.get("outcome"),
         "outcome_index": outcome_index,
         "outcome_prices": outcome_prices,
+        "resolution_rule_hash": rule_hash,
+        "official_final_value": official_final_value,
         "entry_price": entry_price,
         "payout": payout,
         "winning": winning,
@@ -139,7 +170,25 @@ def build_resolved_audit_record(
         "entry_recorded_at": fill.get("recorded_at"),
         "edge_percent_at_entry": _safe_float(fill.get("edge_percent")),
         "model_probability_at_entry": _safe_float(fill.get("model_probability")),
+        "p_lcb_at_entry": _safe_float(fill.get("p_lcb")),
+        "q_effective_at_entry": _safe_float(fill.get("q_effective")),
+        "cost_at_entry": _safe_float(fill.get("cost")),
+        "ev_safe_at_entry": _safe_float(fill.get("ev_safe")),
+        "target_date": fill.get("target_date"),
+        "end_time": fill.get("end_time"),
         "end_date": fill.get("end_date"),
+        "settlement_spec_status": fill.get("settlement_spec_status"),
+        "settlement_rule_hash": fill.get("settlement_rule_hash"),
+        "settlement_rule_text": fill.get("settlement_rule_text"),
+        "settlement_station_code": fill.get("settlement_station_code"),
+        "settlement_station_label": fill.get("settlement_station_label"),
+        "settlement_source": fill.get("settlement_source"),
+        "settlement_timezone": fill.get("settlement_timezone"),
+        "settlement_metric": fill.get("settlement_metric"),
+        "settlement_unit": fill.get("settlement_unit"),
+        "settlement_spec": fill.get("settlement_spec")
+        if isinstance(fill.get("settlement_spec"), dict)
+        else None,
     }
 
 
@@ -198,12 +247,16 @@ def market_from_closed_backfill_record(record: Dict[str, Any]) -> Dict[str, Any]
     settled = record.get("settled_probability_by_outcome")
     if not isinstance(settled, dict):
         settled = {}
+    token_id_by_outcome = record.get("token_id_by_outcome")
+    if not isinstance(token_id_by_outcome, dict):
+        token_id_by_outcome = {}
     outcome_prices = [
         _safe_float(settled.get(outcome)) if outcome in settled else None
         for outcome in outcomes
     ]
     token_ids = [
-        str(record.get("winning_token_id") or "") if outcome == record.get("winning_outcome") else ""
+        str(token_id_by_outcome.get(outcome) or "")
+        or (str(record.get("winning_token_id") or "") if outcome == record.get("winning_outcome") else "")
         for outcome in outcomes
     ]
     return {
@@ -215,6 +268,9 @@ def market_from_closed_backfill_record(record: Dict[str, Any]) -> Dict[str, Any]
         "outcomes": json.dumps(outcomes),
         "outcomePrices": json.dumps(outcome_prices),
         "clobTokenIds": json.dumps(token_ids),
+        "resolutionSource": record.get("resolution_source"),
+        "resolutionRuleHash": record.get("rule_hash"),
+        "officialFinalValue": record.get("official_final_value"),
     }
 
 
@@ -548,6 +604,35 @@ def _resolution_gap_action(status: str) -> str:
     return "inspect_audit_error"
 
 
+def _bucket_type_from_fill(fill: Dict[str, Any]) -> str:
+    bucket = fill.get("market_bucket") if isinstance(fill.get("market_bucket"), dict) else {}
+    value = str(bucket.get("bucket_type") or "").strip().lower()
+    if value:
+        return value
+    spec = fill.get("settlement_spec") if isinstance(fill.get("settlement_spec"), dict) else {}
+    value = str(spec.get("bucket_type") or "").strip().lower()
+    if value:
+        return value
+    value = str(fill.get("bucket_type") or "").strip().lower()
+    if value:
+        return value
+    return _bucket_label_type(fill.get("bucket_label"))
+
+
+def _fill_counts_for_live_gate(fill: Dict[str, Any], *, generated_at: Optional[str]) -> bool:
+    if fill.get("counts_for_live_gate") is False or fill.get("signal_bucket") == "quarantine":
+        return False
+    bucket_type = _bucket_type_from_fill(fill)
+    strategy = assign_weather_strategy(
+        fill,
+        bucket_type=bucket_type,
+        now=fill.get("recorded_at") or generated_at,
+    )
+    if fill.get("strategy_live_eligible") is False or strategy.live_eligible is False:
+        return False
+    return strategy.counts_for_live_gate is not False
+
+
 def build_resolved_gap_report(
     *,
     journal_dir: str | Path = DEFAULT_PAPER_JOURNAL_DIR,
@@ -581,7 +666,13 @@ def build_resolved_gap_report(
                 "city": fill.get("city"),
                 "side": fill.get("side"),
                 "signal_bucket": fill.get("signal_bucket"),
-                "counts_for_live_gate": fill.get("counts_for_live_gate", True) is not False,
+                "bucket_type": _bucket_type_from_fill(fill),
+                "strategy_id": assign_weather_strategy(
+                    fill,
+                    bucket_type=_bucket_type_from_fill(fill),
+                    now=fill.get("recorded_at") or generated_at,
+                ).strategy_id,
+                "counts_for_live_gate": _fill_counts_for_live_gate(fill, generated_at=generated_at),
                 "entry_price": _safe_float(fill.get("entry_price")),
                 "recorded_at": fill.get("recorded_at"),
                 "end_date": fill.get("end_date"),

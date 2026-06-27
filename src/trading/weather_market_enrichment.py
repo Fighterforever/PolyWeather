@@ -6,6 +6,13 @@ from datetime import datetime
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from src.data_collection.city_registry import ALIASES, CITY_REGISTRY
+from src.trading.weather_market_catalog import (
+    build_market_bucket,
+    build_temperature_settlement_spec,
+    unsupported_settlement_diagnostics,
+)
+from src.trading.weather_market_implied import enrich_payload_with_market_implied
+from src.trading.weather_probability_model import build_weather_probability_estimate
 
 
 MONTHS = {
@@ -42,7 +49,8 @@ TEMP_RANGE_RE = re.compile(
     re.IGNORECASE,
 )
 SLUG_TEMP_CONDITION_RE = re.compile(
-    r"(?:^|-)(-?\d+(?:\.\d+)?)(?:c|f)?(orabove|orhigher|ormore|orbelow|orlower|orless)(?:$|-)",
+    r"(?:^|-)(-?\d+(?:\.\d+)?)(?:-?([cf]))?-?"
+    r"(or-?above|or-?higher|or-?more|or-?below|or-?lower|or-?less|above|below)(?:$|-)",
     re.IGNORECASE,
 )
 SLUG_TEMP_EXACT_RE = re.compile(
@@ -107,7 +115,8 @@ def _parse_end_date_year(row: Dict[str, Any]) -> Optional[int]:
 
 def parse_market_date(row: Dict[str, Any]) -> Optional[str]:
     text = _row_text(row)
-    match = DATE_RE.search(text)
+    slug_like_text = re.sub(r"[-_]+", " ", text)
+    match = DATE_RE.search(text) or DATE_RE.search(slug_like_text)
     if not match:
         return None
     month = MONTHS[match.group(1).lower()]
@@ -148,7 +157,7 @@ def match_city_from_market_text(row: Dict[str, Any]) -> Optional[str]:
 
 
 def _normalize_comparator(text: str) -> str:
-    lowered = str(text or "").lower().replace(" ", "")
+    lowered = str(text or "").lower().replace(" ", "").replace("-", "")
     if lowered in {"orabove", "orhigher", "ormore", "above"}:
         return "ge"
     if lowered in {"orbelow", "orlower", "orless", "below"}:
@@ -194,7 +203,9 @@ def parse_temperature_outcome_spec(row: Dict[str, Any]) -> Optional[TemperatureO
         slug_match = SLUG_TEMP_CONDITION_RE.search(str(row.get("market_slug") or ""))
         if slug_match:
             threshold = _safe_float(slug_match.group(1))
-            comparator = _normalize_comparator(slug_match.group(2))
+            if slug_match.group(2):
+                unit = slug_match.group(2).upper()
+            comparator = _normalize_comparator(slug_match.group(3))
         else:
             exact_match = TEMP_EXACT_RE.search(text)
             slug_exact_match = SLUG_TEMP_EXACT_RE.search(str(row.get("market_slug") or ""))
@@ -316,6 +327,7 @@ def enrich_polymarket_payload_with_scan_models(
     unsupported = 0
     missing_model = 0
     missing_distribution = 0
+    unsupported_settlement = 0
 
     for row in rows or []:
         if not isinstance(row, dict):
@@ -337,6 +349,33 @@ def enrich_polymarket_payload_with_scan_models(
             comparator_label = {"ge": ">=", "le": "<=", "eq": "="}[spec.comparator]
             enriched["bucket_label"] = f"{comparator_label} {spec.threshold:g}°{spec.unit}"
         enriched["parsed_temperature_spec"] = asdict(spec)
+        settlement_spec, settlement_reasons = build_temperature_settlement_spec(
+            enriched,
+            city=spec.city,
+            target_date=spec.target_date,
+            bucket_type=spec.comparator,
+            threshold=spec.threshold,
+            unit=spec.unit,
+            upper_threshold=spec.upper_threshold,
+        )
+        if settlement_spec is None:
+            enriched["model_join_status"] = "unsupported_settlement_spec"
+            enriched["settlement_spec_status"] = "unsupported"
+            enriched["settlement_spec_unsupported_reasons"] = settlement_reasons
+            enriched["settlement_spec"] = unsupported_settlement_diagnostics(enriched, settlement_reasons)
+            unsupported_settlement += 1
+            enriched_rows.append(enriched)
+            continue
+        market_bucket = build_market_bucket(
+            enriched,
+            bucket_type=spec.comparator,
+            threshold=spec.threshold,
+            upper_threshold=spec.upper_threshold,
+            unit=spec.unit,
+        )
+        enriched["settlement_spec_status"] = "supported"
+        enriched["settlement_spec"] = settlement_spec.to_dict()
+        enriched["market_bucket"] = market_bucket.to_dict()
         if not model_row:
             enriched["model_join_status"] = "missing_scan_model_row"
             missing_model += 1
@@ -363,12 +402,18 @@ def enrich_polymarket_payload_with_scan_models(
             continue
 
         edge_percent = (model_probability - market_price) * 100.0
+        ev_estimate = build_weather_probability_estimate(
+            enriched,
+            model_probability=model_probability,
+            fallback_price=market_price,
+        )
         enriched.update(
             {
                 "model_join_status": "joined",
                 "model_probability": round(model_probability, 6),
                 "edge_percent": round(edge_percent, 4),
                 "final_score": round(edge_percent * 10.0, 4),
+                **ev_estimate.to_dict(),
                 "source_model_row_id": model_row.get("id") or model_row.get("row_id"),
                 "deb_prediction": model_row.get("deb_prediction"),
                 "distribution_preview": distribution[:8],
@@ -394,9 +439,12 @@ def enrich_polymarket_payload_with_scan_models(
         "unsupported_market_type": unsupported,
         "missing_scan_model_row": missing_model,
         "missing_probability_distribution": missing_distribution,
+        "unsupported_settlement_spec": unsupported_settlement,
     }
-    return {
-        **polymarket_payload,
-        "rows": enriched_rows,
-        "diagnostics": diagnostics,
-    }
+    return enrich_payload_with_market_implied(
+        {
+            **polymarket_payload,
+            "rows": enriched_rows,
+            "diagnostics": diagnostics,
+        }
+    )

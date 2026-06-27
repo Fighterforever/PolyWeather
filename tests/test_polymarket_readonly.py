@@ -70,6 +70,11 @@ def test_summarize_order_book_computes_executable_surface():
     assert summary.spread == 0.04
     assert summary.ask_depth_usdc_3c == 13.9
     assert summary.bid_depth_usdc_3c == 47.2
+    assert summary.bid_ladder == [
+        {"price": 0.41, "size": 20.0},
+        {"price": 0.39, "size": 100.0},
+    ]
+    assert summary.ask_ladder[0] == {"price": 0.45, "size": 10.0}
 
 
 def test_weather_filter_excludes_non_meteorological_matches():
@@ -123,6 +128,7 @@ def test_market_to_signal_rows_maps_binary_gamma_market_without_network():
         "active": True,
         "closed": False,
         "enableOrderBook": True,
+        "endDate": "2026-06-27T12:00:00Z",
     }
     market = {
         "id": "market-1",
@@ -132,6 +138,7 @@ def test_market_to_signal_rows_maps_binary_gamma_market_without_network():
         "closed": False,
         "enableOrderBook": True,
         "acceptingOrders": True,
+        "endDate": "2026-06-27T12:00:00Z",
         "outcomes": '["Yes", "No"]',
         "outcomePrices": '["0.31", "0.69"]',
         "clobTokenIds": '["yes-token", "no-token"]',
@@ -148,6 +155,10 @@ def test_market_to_signal_rows_maps_binary_gamma_market_without_network():
     assert [row["token_id"] for row in rows] == ["yes-token", "no-token"]
     assert rows[0]["price"] == 0.31
     assert rows[0]["market_family"] == "temperature"
+    assert rows[0]["settlement_spec_status"] == "supported"
+    assert rows[0]["settlement_spec"]["station_code"] == "RKSI"
+    assert rows[0]["market_bucket"]["bucket_type"] == "ge"
+    assert rows[0]["bucket_label"] == ">= 28°C"
     assert rows[0]["tradable"] is True
     assert rows[0]["accepting_orders"] is True
     assert rows[0]["liquidity"] == 1200
@@ -162,6 +173,7 @@ def test_market_to_signal_rows_marks_not_accepting_orders_as_not_tradable():
         "active": True,
         "closed": False,
         "enableOrderBook": True,
+        "endDate": "2026-06-27T12:00:00Z",
     }
     market = {
         "id": "market-1",
@@ -171,6 +183,7 @@ def test_market_to_signal_rows_marks_not_accepting_orders_as_not_tradable():
         "closed": False,
         "enableOrderBook": True,
         "acceptingOrders": False,
+        "endDate": "2026-06-27T12:00:00Z",
         "outcomes": '["Yes", "No"]',
         "outcomePrices": '["0.31", "0.69"]',
         "clobTokenIds": '["yes-token", "no-token"]',
@@ -190,6 +203,7 @@ def test_build_weather_market_payload_filters_and_reads_clob_books():
         "active": True,
         "closed": False,
         "enableOrderBook": True,
+        "endDate": "2026-06-27T12:00:00Z",
         "markets": [
             {
                 "id": "market-1",
@@ -199,6 +213,7 @@ def test_build_weather_market_payload_filters_and_reads_clob_books():
                 "closed": False,
                 "enableOrderBook": True,
                 "acceptingOrders": True,
+                "endDate": "2026-06-27T12:00:00Z",
                 "outcomes": '["Yes", "No"]',
                 "outcomePrices": '["0.31", "0.69"]',
                 "clobTokenIds": '["yes-token", "no-token"]',
@@ -230,9 +245,12 @@ def test_build_weather_market_payload_filters_and_reads_clob_books():
     assert payload["status"] == "ready"
     assert payload["diagnostics"]["weather_events"] == 1
     assert payload["diagnostics"]["markets_kept"] == 1
+    assert payload["diagnostics"]["market_implied"]["threshold_cdf_group_count"] == 1
     assert len(payload["rows"]) == 2
     assert payload["rows"][0]["price"] == 0.32
     assert payload["rows"][0]["spread"] == 0.02
+    assert payload["rows"][0]["settlement_spec_status"] == "supported"
+    assert payload["rows"][0]["settlement_spec"]["station_code"] == "RKSI"
 
 
 def test_build_weather_market_payload_skips_expired_and_not_accepting_markets():
@@ -329,6 +347,7 @@ def test_build_closed_weather_market_payload_keeps_closed_weather_markets_only()
         "active": True,
         "closed": True,
         "enableOrderBook": True,
+        "endDate": "2026-06-25T12:00:00Z",
         "markets": [
             {
                 "id": "market-closed",
@@ -336,6 +355,7 @@ def test_build_closed_weather_market_payload_keeps_closed_weather_markets_only()
                 "slug": "highest-temperature-in-nyc-on-june-25-2026-between-86-87f",
                 "active": True,
                 "closed": True,
+                "endDate": "2026-06-25T12:00:00Z",
                 "outcomes": '["Yes", "No"]',
                 "outcomePrices": '["1", "0"]',
                 "clobTokenIds": '["yes-token", "no-token"]',
@@ -363,3 +383,5 @@ def test_build_closed_weather_market_payload_keeps_closed_weather_markets_only()
     assert len(payload["rows"]) == 2
     assert {row["market_id"] for row in payload["rows"]} == {"market-closed"}
     assert payload["rows"][0]["closed"] is True
+    assert payload["rows"][0]["settlement_spec_status"] == "supported"
+    assert payload["rows"][0]["settlement_spec"]["station_code"] == "KLGA"
