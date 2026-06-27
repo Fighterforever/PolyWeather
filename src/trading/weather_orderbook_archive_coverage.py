@@ -6,6 +6,11 @@ from typing import Any, Dict, Iterable, List, Optional
 
 from src.trading.polymarket_orderbook_archive import DEFAULT_ORDERBOOK_ARCHIVE_DIR
 from src.trading.weather_closed_backfill import DEFAULT_BACKFILL_DIR
+from src.trading.weather_market_catalog import (
+    observation_window_end_time_utc,
+    settlement_due_time_utc,
+    settlement_grace_hours_for_source,
+)
 from src.trading.weather_paper_journal import _safe_float, load_jsonl, utc_now_iso
 
 
@@ -35,13 +40,56 @@ def _iso(value: datetime) -> str:
     return value.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
-def _end_time(row: Dict[str, Any]) -> Optional[datetime]:
+def _market_close_time(row: Dict[str, Any]) -> Optional[datetime]:
     spec = row.get("settlement_spec") if isinstance(row.get("settlement_spec"), dict) else {}
-    for value in (spec.get("end_time"), row.get("end_date"), row.get("endDate"), row.get("end_time"), row.get("endTime")):
+    for value in (
+        spec.get("market_close_time"),
+        spec.get("end_time"),
+        row.get("market_close_time"),
+        row.get("end_date"),
+        row.get("endDate"),
+        row.get("end_time"),
+        row.get("endTime"),
+    ):
         parsed = _parse_utc(value)
         if parsed is not None:
             return parsed
     return None
+
+
+def _timezone_name(row: Dict[str, Any]) -> Optional[str]:
+    spec = row.get("settlement_spec") if isinstance(row.get("settlement_spec"), dict) else {}
+    return _text(row.get("settlement_timezone") or row.get("timezone") or spec.get("timezone")) or None
+
+
+def _target_date(row: Dict[str, Any]) -> Optional[str]:
+    spec = row.get("settlement_spec") if isinstance(row.get("settlement_spec"), dict) else {}
+    return _text(row.get("target_date") or spec.get("target_date")) or None
+
+
+def _settlement_source(row: Dict[str, Any]) -> Optional[str]:
+    spec = row.get("settlement_spec") if isinstance(row.get("settlement_spec"), dict) else {}
+    return _text(row.get("settlement_source") or spec.get("settlement_source")) or None
+
+
+def _observation_window_end_time(row: Dict[str, Any]) -> Optional[datetime]:
+    spec = row.get("settlement_spec") if isinstance(row.get("settlement_spec"), dict) else {}
+    for value in (row.get("observation_window_end_time"), spec.get("observation_window_end_time")):
+        parsed = _parse_utc(value)
+        if parsed is not None:
+            return parsed
+    derived = observation_window_end_time_utc(_target_date(row), _timezone_name(row))
+    return _parse_utc(derived)
+
+
+def _settlement_due_time(row: Dict[str, Any]) -> Optional[datetime]:
+    spec = row.get("settlement_spec") if isinstance(row.get("settlement_spec"), dict) else {}
+    for value in (row.get("settlement_due_time"), spec.get("settlement_due_time")):
+        parsed = _parse_utc(value)
+        if parsed is not None:
+            return parsed
+    derived = settlement_due_time_utc(_target_date(row), _timezone_name(row), _settlement_source(row))
+    return _parse_utc(derived)
 
 
 def _recorded_at(row: Dict[str, Any]) -> Optional[datetime]:
@@ -121,7 +169,12 @@ def _closed_token_records(closed_records: Iterable[Dict[str, Any]]) -> tuple[Dic
             "city": record.get("city"),
             "bucket_label": record.get("bucket_label"),
             "target_date": record.get("target_date"),
-            "end_time": _iso(_end_time(record)) if _end_time(record) else None,
+            "end_time": _iso(_market_close_time(record)) if _market_close_time(record) else None,
+            "market_close_time": _iso(_market_close_time(record)) if _market_close_time(record) else None,
+            "observation_window_end_time": (
+                _iso(_observation_window_end_time(record)) if _observation_window_end_time(record) else None
+            ),
+            "settlement_due_time": _iso(_settlement_due_time(record)) if _settlement_due_time(record) else None,
         }
         if not token_id:
             gaps.append({**base, "gap_reason": "closed_record_missing_yes_token_id"})
@@ -150,9 +203,12 @@ def _archived_token_records(archive_rows: Iterable[Dict[str, Any]]) -> Dict[str,
         if not token_id:
             continue
         recorded_at = _recorded_at(row)
-        end_time = _end_time(row)
+        market_close_time = _market_close_time(row)
+        observation_end_time = _observation_window_end_time(row)
+        settlement_due_time = _settlement_due_time(row)
         settlement_spec = row.get("settlement_spec") if isinstance(row.get("settlement_spec"), dict) else {}
         market_bucket = row.get("market_bucket") if isinstance(row.get("market_bucket"), dict) else {}
+        settlement_source = _settlement_source(row)
         existing = tokens.setdefault(
             token_id,
             {
@@ -163,10 +219,17 @@ def _archived_token_records(archive_rows: Iterable[Dict[str, Any]]) -> Dict[str,
                 "bucket_label": row.get("bucket_label"),
                 "bucket_type": row.get("bucket_type") or market_bucket.get("bucket_type"),
                 "target_date": row.get("target_date") or settlement_spec.get("target_date"),
-                "end_time": _iso(end_time) if end_time else None,
+                "end_time": _iso(market_close_time) if market_close_time else None,
+                "market_close_time": _iso(market_close_time) if market_close_time else None,
+                "observation_window_end_time": _iso(observation_end_time) if observation_end_time else None,
+                "settlement_due_time": _iso(settlement_due_time) if settlement_due_time else None,
+                "settlement_grace_hours": row.get("settlement_grace_hours")
+                or settlement_spec.get("settlement_grace_hours")
+                or settlement_grace_hours_for_source(settlement_source),
                 "settlement_rule_hash": row.get("settlement_rule_hash") or settlement_spec.get("rule_hash"),
                 "settlement_station_code": row.get("settlement_station_code") or settlement_spec.get("station_code"),
-                "settlement_source": row.get("settlement_source") or settlement_spec.get("settlement_source"),
+                "settlement_source": settlement_source,
+                "settlement_timezone": _timezone_name(row),
                 "archive_count": 0,
                 "ready_orderbook_count": 0,
                 "first_archive_at": None,
@@ -176,14 +239,21 @@ def _archived_token_records(archive_rows: Iterable[Dict[str, Any]]) -> Dict[str,
         existing["archive_count"] += 1
         if _orderbook_ready(row):
             existing["ready_orderbook_count"] += 1
-        if existing.get("end_time") is None and end_time is not None:
-            existing["end_time"] = _iso(end_time)
+        if existing.get("end_time") is None and market_close_time is not None:
+            existing["end_time"] = _iso(market_close_time)
+        if existing.get("market_close_time") is None and market_close_time is not None:
+            existing["market_close_time"] = _iso(market_close_time)
+        if existing.get("observation_window_end_time") is None and observation_end_time is not None:
+            existing["observation_window_end_time"] = _iso(observation_end_time)
+        if existing.get("settlement_due_time") is None and settlement_due_time is not None:
+            existing["settlement_due_time"] = _iso(settlement_due_time)
         for source_field, target_field in (
             ("bucket_type", "bucket_type"),
             ("target_date", "target_date"),
             ("settlement_rule_hash", "settlement_rule_hash"),
             ("settlement_station_code", "settlement_station_code"),
             ("settlement_source", "settlement_source"),
+            ("settlement_timezone", "settlement_timezone"),
         ):
             if existing.get(target_field) is None and row.get(source_field) is not None:
                 existing[target_field] = row.get(source_field)
@@ -197,19 +267,27 @@ def _archived_token_records(archive_rows: Iterable[Dict[str, Any]]) -> Dict[str,
 
 
 def _pending_closed_backfill_status(record: Dict[str, Any], *, now: datetime) -> str:
-    end_time = _parse_utc(record.get("end_time"))
-    if end_time is None:
-        return "missing_end_time"
-    if end_time <= now:
-        return "refresh_closed_backfill_due"
-    return "await_market_end"
+    settlement_due_time = _parse_utc(record.get("settlement_due_time"))
+    if settlement_due_time is None:
+        return "missing_settlement_due_time_metadata"
+    market_close_time = _parse_utc(record.get("market_close_time") or record.get("end_time"))
+    if market_close_time is not None and now < market_close_time:
+        return "awaiting_market_close"
+    observation_end_time = _parse_utc(record.get("observation_window_end_time"))
+    if observation_end_time is not None and now < observation_end_time:
+        return "awaiting_observation_window_end"
+    if now < settlement_due_time:
+        return "awaiting_settlement_due_time"
+    return "closed_backfill_due"
 
 
 def _pending_gap_reason(status: str) -> str:
     return {
-        "missing_end_time": "archived_orderbook_pending_closed_backfill_missing_end_time",
-        "refresh_closed_backfill_due": "archived_orderbook_pending_closed_backfill_due",
-        "await_market_end": "archived_orderbook_waiting_for_market_end",
+        "missing_settlement_due_time_metadata": "archived_orderbook_missing_settlement_due_time_metadata",
+        "closed_backfill_due": "archived_orderbook_pending_closed_backfill_due",
+        "awaiting_market_close": "archived_orderbook_waiting_for_market_close",
+        "awaiting_observation_window_end": "archived_orderbook_waiting_for_observation_window_end",
+        "awaiting_settlement_due_time": "archived_orderbook_waiting_for_settlement_due_time",
     }.get(status, "archived_orderbook_pending_closed_backfill")
 
 
@@ -220,9 +298,12 @@ def _pending_records_by_status(
     now: datetime,
 ) -> Dict[str, List[Dict[str, Any]]]:
     grouped: Dict[str, List[Dict[str, Any]]] = {
-        "refresh_closed_backfill_due": [],
-        "await_market_end": [],
-        "missing_end_time": [],
+        "awaiting_market_close": [],
+        "awaiting_observation_window_end": [],
+        "awaiting_settlement_due_time": [],
+        "closed_backfill_due": [],
+        "closed_backfill_attempted_but_market_open": [],
+        "missing_settlement_due_time_metadata": [],
     }
     for token_id in sorted(token_ids):
         record = dict(archived_by_token[token_id])
@@ -268,16 +349,38 @@ def _closed_backfill_command(
     return command
 
 
-def _earliest_end_time(records: Iterable[Dict[str, Any]]) -> Optional[datetime]:
+def _earliest_time(records: Iterable[Dict[str, Any]], field: str) -> Optional[datetime]:
     values = [
         parsed
         for record in records
-        for parsed in [_parse_utc(record.get("end_time"))]
+        for parsed in [_parse_utc(record.get(field))]
         if parsed is not None
     ]
     if not values:
         return None
     return min(values)
+
+
+def _records_at_time(records: Iterable[Dict[str, Any]], field: str, timestamp: Optional[datetime]) -> List[Dict[str, Any]]:
+    if timestamp is None:
+        return []
+    return [
+        row
+        for row in records
+        if _parse_utc(row.get(field)) == timestamp
+    ]
+
+
+def _wrong_due_prevented(records: Iterable[Dict[str, Any]], *, now: datetime) -> List[Dict[str, Any]]:
+    prevented = []
+    for record in records:
+        status = _text(record.get("pending_closed_backfill_status"))
+        if status not in {"awaiting_observation_window_end", "awaiting_settlement_due_time"}:
+            continue
+        market_close_time = _parse_utc(record.get("market_close_time") or record.get("end_time"))
+        if market_close_time is not None and market_close_time <= now:
+            prevented.append(record)
+    return prevented
 
 
 def build_orderbook_closed_token_coverage_report(
@@ -309,7 +412,14 @@ def build_orderbook_closed_token_coverage_report(
     )
     pending_records = [
         row
-        for status in ("refresh_closed_backfill_due", "await_market_end", "missing_end_time")
+        for status in (
+            "closed_backfill_due",
+            "awaiting_market_close",
+            "awaiting_observation_window_end",
+            "awaiting_settlement_due_time",
+            "closed_backfill_attempted_but_market_open",
+            "missing_settlement_due_time_metadata",
+        )
         for row in pending_by_status.get(status, [])
     ]
 
@@ -337,18 +447,33 @@ def build_orderbook_closed_token_coverage_report(
         hard_conclusion = "orderbook_closed_token_coverage_ready"
 
     sample_count = max(0, int(max_samples))
-    refresh_due = pending_by_status.get("refresh_closed_backfill_due", [])
-    await_market_end = pending_by_status.get("await_market_end", [])
-    missing_end_time = pending_by_status.get("missing_end_time", [])
+    refresh_due = pending_by_status.get("closed_backfill_due", [])
+    awaiting_market_close = pending_by_status.get("awaiting_market_close", [])
+    awaiting_observation_end = pending_by_status.get("awaiting_observation_window_end", [])
+    awaiting_settlement_due = pending_by_status.get("awaiting_settlement_due_time", [])
+    attempted_open = pending_by_status.get("closed_backfill_attempted_but_market_open", [])
+    missing_settlement_due_metadata = pending_by_status.get("missing_settlement_due_time_metadata", [])
+    wrong_due_prevented = _wrong_due_prevented(pending_records, now=now)
     due_queries = _market_queries(refresh_due)
-    next_await_end = _earliest_end_time(await_market_end)
-    next_await_records = [
-        row
-        for row in await_market_end
-        if next_await_end is not None and _parse_utc(row.get("end_time")) == next_await_end
+    next_market_close = _earliest_time(awaiting_market_close, "market_close_time")
+    next_observation_end = _earliest_time(awaiting_observation_end, "observation_window_end_time")
+    next_settlement_due = _earliest_time(awaiting_settlement_due, "settlement_due_time")
+    next_market_close_records = _records_at_time(awaiting_market_close, "market_close_time", next_market_close)
+    next_observation_end_records = _records_at_time(
+        awaiting_observation_end,
+        "observation_window_end_time",
+        next_observation_end,
+    )
+    next_settlement_due_records = _records_at_time(awaiting_settlement_due, "settlement_due_time", next_settlement_due)
+    next_market_close_queries = _market_queries(next_market_close_records)
+    next_observation_end_queries = _market_queries(next_observation_end_records)
+    next_settlement_due_queries = _market_queries(next_settlement_due_records)
+    next_wait_candidates = [
+        value
+        for value in (next_market_close, next_observation_end, next_settlement_due)
+        if value is not None
     ]
-    next_await_queries = _market_queries(next_await_records)
-    next_refresh_check_after = _iso(now) if refresh_due else (_iso(next_await_end) if next_await_end else None)
+    next_refresh_check_after = _iso(now) if refresh_due else (_iso(min(next_wait_candidates)) if next_wait_candidates else None)
     return {
         "schema_version": ORDERBOOK_CLOSED_TOKEN_COVERAGE_SCHEMA_VERSION,
         "paper_only": True,
@@ -361,8 +486,15 @@ def build_orderbook_closed_token_coverage_report(
         "unmatched_closed_token_count": len(missing_archive_tokens),
         "unmatched_archived_token_count": len(pending_closed_tokens),
         "pending_closed_backfill_due_token_count": len(refresh_due),
-        "pending_closed_backfill_await_market_end_token_count": len(await_market_end),
-        "pending_closed_backfill_missing_end_time_token_count": len(missing_end_time),
+        "pending_closed_backfill_await_market_end_token_count": len(awaiting_market_close),
+        "pending_closed_backfill_missing_end_time_token_count": len(missing_settlement_due_metadata),
+        "pending_awaiting_market_close_token_count": len(awaiting_market_close),
+        "pending_awaiting_observation_window_end_token_count": len(awaiting_observation_end),
+        "pending_awaiting_settlement_due_time_token_count": len(awaiting_settlement_due),
+        "closed_backfill_due_token_count": len(refresh_due),
+        "closed_backfill_attempted_but_market_open_token_count": len(attempted_open),
+        "missing_settlement_due_time_metadata_token_count": len(missing_settlement_due_metadata),
+        "wrong_due_prevented_count": len(wrong_due_prevented),
         "closed_missing_yes_token_count": len(closed_gaps),
         "gap_count": len(gaps),
         "gaps_by_reason": _count_by(gaps, "gap_reason", key_name="reason"),
@@ -373,29 +505,57 @@ def build_orderbook_closed_token_coverage_report(
             "counts_for_live_gate": False,
             "generated_at": _iso(now),
             "refresh_due_count": len(refresh_due),
-            "await_market_end_count": len(await_market_end),
-            "missing_end_time_count": len(missing_end_time),
+            "closed_backfill_due_count": len(refresh_due),
+            "await_market_end_count": len(awaiting_market_close),
+            "awaiting_market_close_count": len(awaiting_market_close),
+            "awaiting_observation_window_end_count": len(awaiting_observation_end),
+            "awaiting_settlement_due_time_count": len(awaiting_settlement_due),
+            "closed_backfill_attempted_but_market_open_count": len(attempted_open),
+            "missing_end_time_count": len(missing_settlement_due_metadata),
+            "missing_settlement_due_time_metadata_count": len(missing_settlement_due_metadata),
+            "wrong_due_prevented_count": len(wrong_due_prevented),
             "request_count": len(refresh_due),
             "market_query_count": len(due_queries),
-            "next_await_market_end": _iso(next_await_end) if next_await_end else None,
+            "next_await_market_end": _iso(next_market_close) if next_market_close else None,
+            "next_market_close_check_after": _iso(next_market_close) if next_market_close else None,
+            "next_observation_window_end_after": _iso(next_observation_end) if next_observation_end else None,
+            "next_settlement_due_check_after": _iso(next_settlement_due) if next_settlement_due else None,
             "next_refresh_check_after": next_refresh_check_after,
-            "next_await_market_end_token_count": len(next_await_records),
-            "next_await_market_query_count": len(next_await_queries),
+            "next_await_market_end_token_count": len(next_market_close_records),
+            "next_await_market_query_count": len(next_market_close_queries),
             "next_action": (
                 "refresh_closed_weather_backfill_for_due_archived_markets"
                 if refresh_due
                 else (
-                    "preserve_end_time_in_future_orderbook_archives"
-                    if missing_end_time
-                    else "wait_for_archived_markets_to_reach_end_time"
+                    "wait_for_archived_markets_to_reach_market_close"
+                    if awaiting_market_close
+                    else (
+                        "wait_for_observation_window_end"
+                        if awaiting_observation_end
+                        else (
+                            "wait_for_settlement_due_time"
+                            if awaiting_settlement_due
+                            else "preserve_settlement_due_time_metadata_in_future_orderbook_archives"
+                        )
+                    )
                 )
             ),
             "market_queries": due_queries[:sample_count],
-            "next_await_market_queries": next_await_queries[:sample_count],
+            "next_due_market_queries": due_queries[:sample_count],
+            "next_await_market_queries": next_market_close_queries[:sample_count],
+            "next_market_close_queries": next_market_close_queries[:sample_count],
+            "next_observation_window_end_queries": next_observation_end_queries[:sample_count],
+            "next_settlement_due_queries": next_settlement_due_queries[:sample_count],
             "recommended_command": _closed_backfill_command(due_queries),
             "requests": refresh_due[:sample_count],
-            "await_market_end_samples": await_market_end[:sample_count],
-            "missing_end_time_samples": missing_end_time[:sample_count],
+            "await_market_end_samples": awaiting_market_close[:sample_count],
+            "awaiting_market_close_samples": awaiting_market_close[:sample_count],
+            "awaiting_observation_window_end_samples": awaiting_observation_end[:sample_count],
+            "awaiting_settlement_due_time_samples": awaiting_settlement_due[:sample_count],
+            "wrong_due_prevented_samples": wrong_due_prevented[:sample_count],
+            "closed_backfill_attempted_but_market_open_samples": attempted_open[:sample_count],
+            "missing_end_time_samples": missing_settlement_due_metadata[:sample_count],
+            "missing_settlement_due_time_metadata_samples": missing_settlement_due_metadata[:sample_count],
         },
         "matched_samples": [
             {
@@ -442,7 +602,7 @@ def build_orderbook_archive_coverage_report(
         if side not in {"yes", "y"}:
             continue
         token_id = _text(row.get("token_id"))
-        end_time = _end_time(row)
+        market_close_time = _market_close_time(row)
         active = row.get("active") is not False
         closed = row.get("closed") is True
         accepting = row.get("accepting_orders") is not False
@@ -453,15 +613,20 @@ def build_orderbook_archive_coverage_report(
             "token_id": token_id or None,
             "city": row.get("city"),
             "bucket_label": row.get("bucket_label"),
-            "end_time": _iso(end_time) if end_time else None,
+            "end_time": _iso(market_close_time) if market_close_time else None,
+            "market_close_time": _iso(market_close_time) if market_close_time else None,
+            "observation_window_end_time": (
+                _iso(_observation_window_end_time(row)) if _observation_window_end_time(row) else None
+            ),
+            "settlement_due_time": _iso(_settlement_due_time(row)) if _settlement_due_time(row) else None,
         }
         if not token_id:
             gaps.append({**base, "gap_reason": "missing_token_id"})
             continue
-        if end_time is None:
-            gaps.append({**base, "gap_reason": "missing_market_end_time"})
+        if market_close_time is None:
+            gaps.append({**base, "gap_reason": "missing_market_close_time"})
             continue
-        if end_time <= now:
+        if market_close_time <= now:
             gaps.append({**base, "gap_reason": "market_already_ended"})
             continue
         if closed or not active or not accepting or not tradable:
@@ -473,7 +638,7 @@ def build_orderbook_archive_coverage_report(
 
         record = {
             **base,
-            "minutes_to_end": round((end_time - now).total_seconds() / 60.0, 2),
+            "minutes_to_end": round((market_close_time - now).total_seconds() / 60.0, 2),
             "best_ask": _safe_float((row.get("order_book") or {}).get("best_ask") if isinstance(row.get("order_book"), dict) else row.get("best_ask")),
             "best_bid": _safe_float((row.get("order_book") or {}).get("best_bid") if isinstance(row.get("order_book"), dict) else row.get("best_bid")),
             "spread": _safe_float((row.get("order_book") or {}).get("spread") if isinstance(row.get("order_book"), dict) else row.get("spread")),
@@ -482,7 +647,7 @@ def build_orderbook_archive_coverage_report(
         archive_times = [
             time
             for time in archive_by_token.get(token_id, [])
-            if time <= end_time
+            if time <= market_close_time
         ]
         if archive_times:
             covered.append(

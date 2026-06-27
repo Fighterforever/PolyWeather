@@ -1,0 +1,209 @@
+{
+  "affected_market_count": 44,
+  "affected_token_count": 44,
+  "any_market_already_settlement_due_at_2026_06_27T120500Z": false,
+  "attempt_diagnosis": {
+    "closed_backfill_due_token_count": 0,
+    "counts_for_live_gate": false,
+    "diagnostic_only": true,
+    "open_market_slug_count": 44,
+    "paper_only": true,
+    "root_cause": "attempted_too_early_settlement_due_time_not_reached",
+    "sample_market_slugs": [
+      "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+      "highest-temperature-in-london-on-june-27-2026-32c",
+      "highest-temperature-in-istanbul-on-june-27-2026-23corbelow",
+      "highest-temperature-in-moscow-on-june-27-2026-22c",
+      "highest-temperature-in-london-on-june-27-2026-35corhigher",
+      "highest-temperature-in-moscow-on-june-27-2026-23c",
+      "highest-temperature-in-ankara-on-june-27-2026-28c",
+      "highest-temperature-in-london-on-june-27-2026-27c",
+      "highest-temperature-in-ankara-on-june-27-2026-34corhigher",
+      "highest-temperature-in-istanbul-on-june-27-2026-25c",
+      "highest-temperature-in-london-on-june-27-2026-29c",
+      "highest-temperature-in-moscow-on-june-27-2026-20c",
+      "highest-temperature-in-ankara-on-june-27-2026-31c",
+      "highest-temperature-in-london-on-june-27-2026-28c",
+      "highest-temperature-in-istanbul-on-june-27-2026-24c",
+      "highest-temperature-in-london-on-june-27-2026-31c",
+      "highest-temperature-in-london-on-june-27-2026-26c",
+      "highest-temperature-in-istanbul-on-june-27-2026-33corhigher",
+      "highest-temperature-in-ankara-on-june-27-2026-33c",
+      "highest-temperature-in-moscow-on-june-27-2026-26c"
+    ],
+    "schema_version": "polyweather_weather_due_refresh_attempt_diagnosis.v1",
+    "wrong_due_prevented_count": 44
+  },
+  "before_corrected_counts": {
+    "closed_backfill_due_token_count": 0,
+    "pending_awaiting_market_close_token_count": 76,
+    "pending_awaiting_observation_window_end_token_count": 44,
+    "pending_awaiting_settlement_due_time_token_count": 0
+  },
+  "by_city": [
+    {
+      "city": "ankara",
+      "count": 11
+    },
+    {
+      "city": "istanbul",
+      "count": 11
+    },
+    {
+      "city": "london",
+      "count": 11
+    },
+    {
+      "city": "moscow",
+      "count": 11
+    }
+  ],
+  "by_settlement_source": [
+    {
+      "count": 33,
+      "settlement_source": "metar"
+    },
+    {
+      "count": 11,
+      "settlement_source": "noaa"
+    }
+  ],
+  "by_station": [
+    {
+      "count": 11,
+      "settlement_station_code": "EGLC"
+    },
+    {
+      "count": 11,
+      "settlement_station_code": "LTAC"
+    },
+    {
+      "count": 11,
+      "settlement_station_code": "LTFM"
+    },
+    {
+      "count": 11,
+      "settlement_station_code": "UUWW"
+    }
+  ],
+  "corrected_due_clock_report": "evidence/archived_due_refresh_due_clock_after_1200.json",
+  "counts_for_live_gate": false,
+  "diagnostic_only": true,
+  "due_schedule_by_station_date_source": [
+    {
+      "market_count": 11,
+      "observation_window_end_time": "2026-06-27T20:59:59Z",
+      "sample_market_slugs": [
+        "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+        "highest-temperature-in-ankara-on-june-27-2026-25c",
+        "highest-temperature-in-ankara-on-june-27-2026-26c",
+        "highest-temperature-in-ankara-on-june-27-2026-27c",
+        "highest-temperature-in-ankara-on-june-27-2026-28c",
+        "highest-temperature-in-ankara-on-june-27-2026-29c",
+        "highest-temperature-in-ankara-on-june-27-2026-30c",
+        "highest-temperature-in-ankara-on-june-27-2026-31c",
+        "highest-temperature-in-ankara-on-june-27-2026-32c",
+        "highest-temperature-in-ankara-on-june-27-2026-33c"
+      ],
+      "settlement_due_time": "2026-06-28T02:59:59Z",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_count": 11
+    },
+    {
+      "market_count": 11,
+      "observation_window_end_time": "2026-06-27T20:59:59Z",
+      "sample_market_slugs": [
+        "highest-temperature-in-istanbul-on-june-27-2026-23corbelow",
+        "highest-temperature-in-istanbul-on-june-27-2026-24c",
+        "highest-temperature-in-istanbul-on-june-27-2026-25c",
+        "highest-temperature-in-istanbul-on-june-27-2026-26c",
+        "highest-temperature-in-istanbul-on-june-27-2026-27c",
+        "highest-temperature-in-istanbul-on-june-27-2026-28c",
+        "highest-temperature-in-istanbul-on-june-27-2026-29c",
+        "highest-temperature-in-istanbul-on-june-27-2026-30c",
+        "highest-temperature-in-istanbul-on-june-27-2026-31c",
+        "highest-temperature-in-istanbul-on-june-27-2026-32c"
+      ],
+      "settlement_due_time": "2026-06-28T02:59:59Z",
+      "settlement_source": "noaa",
+      "station_code": "LTFM",
+      "target_date": "2026-06-27",
+      "token_count": 11
+    },
+    {
+      "market_count": 11,
+      "observation_window_end_time": "2026-06-27T20:59:59Z",
+      "sample_market_slugs": [
+        "highest-temperature-in-moscow-on-june-27-2026-17corbelow",
+        "highest-temperature-in-moscow-on-june-27-2026-18c",
+        "highest-temperature-in-moscow-on-june-27-2026-19c",
+        "highest-temperature-in-moscow-on-june-27-2026-20c",
+        "highest-temperature-in-moscow-on-june-27-2026-21c",
+        "highest-temperature-in-moscow-on-june-27-2026-22c",
+        "highest-temperature-in-moscow-on-june-27-2026-23c",
+        "highest-temperature-in-moscow-on-june-27-2026-24c",
+        "highest-temperature-in-moscow-on-june-27-2026-25c",
+        "highest-temperature-in-moscow-on-june-27-2026-26c"
+      ],
+      "settlement_due_time": "2026-06-28T02:59:59Z",
+      "settlement_source": "metar",
+      "station_code": "UUWW",
+      "target_date": "2026-06-27",
+      "token_count": 11
+    },
+    {
+      "market_count": 11,
+      "observation_window_end_time": "2026-06-27T23:59:59Z",
+      "sample_market_slugs": [
+        "highest-temperature-in-london-on-june-27-2026-25corbelow",
+        "highest-temperature-in-london-on-june-27-2026-26c",
+        "highest-temperature-in-london-on-june-27-2026-27c",
+        "highest-temperature-in-london-on-june-27-2026-28c",
+        "highest-temperature-in-london-on-june-27-2026-29c",
+        "highest-temperature-in-london-on-june-27-2026-30c",
+        "highest-temperature-in-london-on-june-27-2026-31c",
+        "highest-temperature-in-london-on-june-27-2026-32c",
+        "highest-temperature-in-london-on-june-27-2026-33c",
+        "highest-temperature-in-london-on-june-27-2026-34c"
+      ],
+      "settlement_due_time": "2026-06-28T05:59:59Z",
+      "settlement_source": "metar",
+      "station_code": "EGLC",
+      "target_date": "2026-06-27",
+      "token_count": 11
+    }
+  ],
+  "earliest_settlement_due_time": "2026-06-28T02:59:59Z",
+  "generated_at": "2026-06-27T12:05:00Z",
+  "next_closed_backfill_execution_time_utc": "2026-06-28T02:59:59Z",
+  "original_attempt_report": "evidence/archived_due_refresh_execute_after_1200.json",
+  "paper_only": true,
+  "root_cause": "premature_closed_backfill_attempt_settlement_due_time_not_reached",
+  "sample_market_slugs": [
+    "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+    "highest-temperature-in-ankara-on-june-27-2026-25c",
+    "highest-temperature-in-ankara-on-june-27-2026-26c",
+    "highest-temperature-in-ankara-on-june-27-2026-27c",
+    "highest-temperature-in-ankara-on-june-27-2026-28c",
+    "highest-temperature-in-ankara-on-june-27-2026-29c",
+    "highest-temperature-in-ankara-on-june-27-2026-30c",
+    "highest-temperature-in-ankara-on-june-27-2026-31c",
+    "highest-temperature-in-ankara-on-june-27-2026-32c",
+    "highest-temperature-in-ankara-on-june-27-2026-33c",
+    "highest-temperature-in-ankara-on-june-27-2026-34corhigher",
+    "highest-temperature-in-istanbul-on-june-27-2026-23corbelow",
+    "highest-temperature-in-istanbul-on-june-27-2026-24c",
+    "highest-temperature-in-istanbul-on-june-27-2026-25c",
+    "highest-temperature-in-istanbul-on-june-27-2026-26c",
+    "highest-temperature-in-istanbul-on-june-27-2026-27c",
+    "highest-temperature-in-istanbul-on-june-27-2026-28c",
+    "highest-temperature-in-istanbul-on-june-27-2026-29c",
+    "highest-temperature-in-istanbul-on-june-27-2026-30c",
+    "highest-temperature-in-istanbul-on-june-27-2026-31c"
+  ],
+  "schema_version": "polyweather_after_1200_due_clock_diagnosis.v1",
+  "targeted_backfill_open_market_root_cause": "settlement_due_time_not_reached_not_lookup_failure",
+  "wrong_due_prevented_count": 44
+}

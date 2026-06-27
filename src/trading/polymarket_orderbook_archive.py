@@ -48,10 +48,12 @@ def _iso_utc(value: datetime) -> str:
     return value.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
-def _row_end_time(row: Dict[str, Any]) -> Optional[datetime]:
+def _row_market_close_time(row: Dict[str, Any]) -> Optional[datetime]:
     settlement_spec = row.get("settlement_spec") if isinstance(row.get("settlement_spec"), dict) else {}
     for value in (
+        settlement_spec.get("market_close_time"),
         settlement_spec.get("end_time"),
+        row.get("market_close_time"),
         row.get("end_time"),
         row.get("endTime"),
         row.get("end_date"),
@@ -135,7 +137,11 @@ def build_orderbook_snapshot_records(
             continue
         settlement_spec = row.get("settlement_spec") if isinstance(row.get("settlement_spec"), dict) else None
         market_bucket = row.get("market_bucket") if isinstance(row.get("market_bucket"), dict) else None
-        end_time = _row_end_time(row)
+        market_close_time = _row_market_close_time(row)
+        observation_window_end_time = (settlement_spec or {}).get("observation_window_end_time") or row.get(
+            "observation_window_end_time"
+        )
+        settlement_due_time = (settlement_spec or {}).get("settlement_due_time") or row.get("settlement_due_time")
         identity = {
             "source_snapshot_id": source_snapshot_id,
             "recorded_at": recorded_at,
@@ -162,8 +168,15 @@ def build_orderbook_snapshot_records(
             "threshold": _safe_float(row.get("threshold") or (market_bucket or {}).get("threshold")),
             "unit": row.get("unit") or (market_bucket or {}).get("unit"),
             "target_date": row.get("target_date") or (settlement_spec or {}).get("target_date"),
-            "end_date": _iso_utc(end_time) if end_time is not None else row.get("end_date"),
-            "end_time": _iso_utc(end_time) if end_time is not None else row.get("end_time"),
+            "end_date": _iso_utc(market_close_time) if market_close_time is not None else row.get("end_date"),
+            "end_time": _iso_utc(market_close_time) if market_close_time is not None else row.get("end_time"),
+            "market_close_time": (
+                _iso_utc(market_close_time) if market_close_time is not None else row.get("market_close_time")
+            ),
+            "observation_window_end_time": observation_window_end_time,
+            "settlement_due_time": settlement_due_time,
+            "settlement_grace_hours": (settlement_spec or {}).get("settlement_grace_hours")
+            or row.get("settlement_grace_hours"),
             "settlement_spec_status": row.get("settlement_spec_status") or (settlement_spec or {}).get("status"),
             "settlement_rule_hash": row.get("settlement_rule_hash") or (settlement_spec or {}).get("rule_hash"),
             "settlement_station_code": row.get("settlement_station_code") or (settlement_spec or {}).get("station_code"),

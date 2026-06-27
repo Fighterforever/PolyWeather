@@ -81,7 +81,7 @@
     "positive_ev_safe_but_negative_pnl_samples": [],
     "resolved_fill_count": 0,
     "resolved_fill_coverage": 0.0,
-    "resolved_pnl_cents": 0.0,
+    "resolved_pnl_cents": null,
     "schema_version": "polyweather_weather_strict_gate_replay_ev_audit.v1"
   },
   "execution_summary": {
@@ -1211,8 +1211,8 @@
     "no_visible_orderbook_count": 0,
     "paper_only": true,
     "replay_time": "2026-06-27T11:44:31Z",
-    "resolved_pnl_cents": 0.0,
-    "resolved_pnl_usdc": 0,
+    "resolved_pnl_cents": null,
+    "resolved_pnl_usdc": null,
     "schema_version": "polyweather_weather_replay.v1",
     "skipped_future_candidate_count": 0
   },

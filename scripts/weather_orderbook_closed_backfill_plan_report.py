@@ -27,6 +27,12 @@ def _summary_only(report: dict) -> dict:
     followup = dict(trimmed.get("closed_backfill_followup_plan") or {})
     followup.pop("requests", None)
     followup.pop("await_market_end_samples", None)
+    followup.pop("awaiting_market_close_samples", None)
+    followup.pop("awaiting_observation_window_end_samples", None)
+    followup.pop("awaiting_settlement_due_time_samples", None)
+    followup.pop("wrong_due_prevented_samples", None)
+    followup.pop("closed_backfill_attempted_but_market_open_samples", None)
+    followup.pop("missing_settlement_due_time_metadata_samples", None)
     followup.pop("missing_end_time_samples", None)
     followup.pop("next_await_market_queries", None)
     trimmed["closed_backfill_followup_plan"] = followup

@@ -46,8 +46,24 @@ def _archive_row(**overrides):
         "side": "yes",
         "target_date": "2026-06-28",
         "end_time": "2026-06-28T12:00:00Z",
+        "market_close_time": "2026-06-28T12:00:00Z",
+        "observation_window_end_time": "2026-06-28T14:59:59Z",
+        "settlement_due_time": "2026-06-28T20:59:59Z",
+        "settlement_grace_hours": 6.0,
         "settlement_station_code": "RKSI",
         "settlement_source": "metar",
+        "settlement_timezone": "UTC+09:00",
+        "settlement_spec": {
+            "target_date": "2026-06-28",
+            "timezone": "UTC+09:00",
+            "market_close_time": "2026-06-28T12:00:00Z",
+            "end_time": "2026-06-28T12:00:00Z",
+            "observation_window_end_time": "2026-06-28T14:59:59Z",
+            "settlement_due_time": "2026-06-28T20:59:59Z",
+            "settlement_grace_hours": 6.0,
+            "station_code": "RKSI",
+            "settlement_source": "metar",
+        },
         "bucket_type": "ge",
         "best_ask": 0.64,
         "best_bid": 0.60,
@@ -157,8 +173,12 @@ def test_orderbook_closed_token_coverage_reports_archived_tokens_waiting_for_clo
     assert report["archived_unique_token_count"] == 1
     assert report["unmatched_archived_token_count"] == 1
     assert report["pending_closed_backfill_await_market_end_token_count"] == 1
-    assert report["closed_backfill_followup_plan"]["next_action"] == "wait_for_archived_markets_to_reach_end_time"
+    assert report["pending_awaiting_market_close_token_count"] == 1
+    assert report["closed_backfill_followup_plan"]["next_action"] == "wait_for_archived_markets_to_reach_market_close"
     assert report["closed_backfill_followup_plan"]["next_await_market_end"] == "2026-06-28T12:00:00Z"
+    assert report["closed_backfill_followup_plan"]["next_market_close_check_after"] == "2026-06-28T12:00:00Z"
+    assert report["closed_backfill_followup_plan"]["next_observation_window_end_after"] is None
+    assert report["closed_backfill_followup_plan"]["next_settlement_due_check_after"] is None
     assert report["closed_backfill_followup_plan"]["next_refresh_check_after"] == "2026-06-28T12:00:00Z"
     assert report["closed_backfill_followup_plan"]["next_await_market_end_token_count"] == 1
     assert report["closed_backfill_followup_plan"]["next_await_market_query_count"] == 1
@@ -166,27 +186,94 @@ def test_orderbook_closed_token_coverage_reports_archived_tokens_waiting_for_clo
         "highest-temperature-in-seoul-on-june-28-2026-30c-or-above"
     ]
     assert report["gaps_by_reason"] == [
-        {"reason": "archived_orderbook_waiting_for_market_end", "count": 1}
+        {"reason": "archived_orderbook_waiting_for_market_close", "count": 1}
     ]
     assert report["archived_markets_pending_closed_backfill_samples"][0]["token_id"] == "active-token"
-    assert report["archived_markets_pending_closed_backfill_samples"][0]["pending_closed_backfill_status"] == "await_market_end"
+    assert report["archived_markets_pending_closed_backfill_samples"][0]["pending_closed_backfill_status"] == "awaiting_market_close"
 
 
-def test_orderbook_closed_token_coverage_reports_due_closed_backfill_refresh():
+def test_orderbook_closed_token_coverage_does_not_refresh_before_observation_window_end():
     report = build_orderbook_closed_token_coverage_report(
         closed_records=[],
         orderbook_snapshots=[_archive_row(token_id="ended-token")],
         generated_at="2026-06-28T13:05:00Z",
     )
 
+    assert report["pending_closed_backfill_due_token_count"] == 0
+    assert report["closed_backfill_due_token_count"] == 0
+    assert report["pending_awaiting_observation_window_end_token_count"] == 1
+    assert report["wrong_due_prevented_count"] == 1
+    assert report["closed_backfill_followup_plan"]["request_count"] == 0
+    assert report["closed_backfill_followup_plan"]["market_query_count"] == 0
+    assert report["closed_backfill_followup_plan"]["next_action"] == "wait_for_observation_window_end"
+    assert report["closed_backfill_followup_plan"]["next_observation_window_end_after"] == "2026-06-28T14:59:59Z"
+    assert report["closed_backfill_followup_plan"]["next_settlement_due_check_after"] is None
+    assert report["gaps_by_reason"] == [
+        {"reason": "archived_orderbook_waiting_for_observation_window_end", "count": 1}
+    ]
+
+
+def test_orderbook_closed_token_coverage_does_not_treat_ankara_market_close_as_settlement_due():
+    report = build_orderbook_closed_token_coverage_report(
+        closed_records=[],
+        orderbook_snapshots=[
+            _archive_row(
+                token_id="ankara-token",
+                market_id="market-ankara",
+                market_slug="highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+                city="ankara",
+                target_date="2026-06-27",
+                end_time="2026-06-27T12:00:00Z",
+                market_close_time="2026-06-27T12:00:00Z",
+                observation_window_end_time=None,
+                settlement_due_time=None,
+                settlement_station_code="LTAC",
+                settlement_source="metar",
+                settlement_timezone="UTC+03:00",
+                settlement_spec={
+                    "target_date": "2026-06-27",
+                    "timezone": "UTC+03:00",
+                    "market_close_time": "2026-06-27T12:00:00Z",
+                    "end_time": "2026-06-27T12:00:00Z",
+                    "station_code": "LTAC",
+                    "settlement_source": "metar",
+                },
+            )
+        ],
+        generated_at="2026-06-27T12:05:00Z",
+    )
+
+    sample = report["archived_markets_pending_closed_backfill_samples"][0]
+    assert report["pending_closed_backfill_due_token_count"] == 0
+    assert report["pending_awaiting_observation_window_end_token_count"] == 1
+    assert report["wrong_due_prevented_count"] == 1
+    assert sample["market_close_time"] == "2026-06-27T12:00:00Z"
+    assert sample["observation_window_end_time"] == "2026-06-27T20:59:59Z"
+    assert sample["settlement_due_time"] == "2026-06-28T02:59:59Z"
+    assert sample["pending_closed_backfill_status"] == "awaiting_observation_window_end"
+    assert report["closed_backfill_followup_plan"]["next_observation_window_end_after"] == "2026-06-27T20:59:59Z"
+    assert report["closed_backfill_followup_plan"]["next_settlement_due_check_after"] is None
+
+
+def test_orderbook_closed_token_coverage_reports_due_closed_backfill_refresh_after_settlement_due():
+    report = build_orderbook_closed_token_coverage_report(
+        closed_records=[],
+        orderbook_snapshots=[_archive_row(token_id="ended-token")],
+        generated_at="2026-06-28T21:05:00Z",
+    )
+
     assert report["pending_closed_backfill_due_token_count"] == 1
+    assert report["closed_backfill_due_token_count"] == 1
     assert report["closed_backfill_followup_plan"]["request_count"] == 1
     assert report["closed_backfill_followup_plan"]["next_action"] == (
         "refresh_closed_weather_backfill_for_due_archived_markets"
     )
-    assert report["closed_backfill_followup_plan"]["next_refresh_check_after"] == "2026-06-28T13:05:00Z"
+    assert report["closed_backfill_followup_plan"]["next_refresh_check_after"] == "2026-06-28T21:05:00Z"
     assert report["closed_backfill_followup_plan"]["next_await_market_end"] is None
     assert report["closed_backfill_followup_plan"]["market_queries"] == [
+        "highest-temperature-in-seoul-on-june-28-2026-30c-or-above"
+    ]
+    assert report["closed_backfill_followup_plan"]["next_due_market_queries"] == [
         "highest-temperature-in-seoul-on-june-28-2026-30c-or-above"
     ]
     assert report["closed_backfill_followup_plan"]["recommended_command"][-2:] == [
@@ -199,18 +286,57 @@ def test_orderbook_closed_token_coverage_reports_due_closed_backfill_refresh():
     ]
 
 
+def test_due_refresh_diagnoses_open_targeted_backfill_as_attempted_too_early():
+    diagnosis = refresh_cli.diagnose_targeted_backfill_attempt(
+        attempted_report={
+            "execution": {
+                "targeted_backfill_result": {
+                    "payload_diagnostics": {
+                        "open_market_slug_count": 44,
+                        "open_market_slugs": [
+                            "highest-temperature-in-ankara-on-june-27-2026-24corbelow"
+                        ],
+                    }
+                }
+            }
+        },
+        corrected_plan_report={
+            "closed_backfill_due_token_count": 0,
+            "wrong_due_prevented_count": 44,
+        },
+    )
+
+    assert diagnosis["root_cause"] == "attempted_too_early_settlement_due_time_not_reached"
+    assert diagnosis["open_market_slug_count"] == 44
+    assert diagnosis["sample_market_slugs"] == [
+        "highest-temperature-in-ankara-on-june-27-2026-24corbelow"
+    ]
+
+
 def test_orderbook_closed_token_coverage_reports_missing_archive_end_time():
     report = build_orderbook_closed_token_coverage_report(
         closed_records=[],
-        orderbook_snapshots=[_archive_row(token_id="legacy-token", end_time=None, target_date=None)],
+        orderbook_snapshots=[
+            _archive_row(
+                token_id="legacy-token",
+                end_time=None,
+                market_close_time=None,
+                observation_window_end_time=None,
+                settlement_due_time=None,
+                target_date=None,
+                settlement_timezone=None,
+                settlement_spec={},
+            )
+        ],
         generated_at="2026-06-28T13:05:00Z",
     )
 
     assert report["pending_closed_backfill_missing_end_time_token_count"] == 1
-    assert report["closed_backfill_followup_plan"]["next_action"] == "preserve_end_time_in_future_orderbook_archives"
+    assert report["missing_settlement_due_time_metadata_token_count"] == 1
+    assert report["closed_backfill_followup_plan"]["next_action"] == "preserve_settlement_due_time_metadata_in_future_orderbook_archives"
     assert report["closed_backfill_followup_plan"]["next_refresh_check_after"] is None
     assert report["gaps_by_reason"] == [
-        {"reason": "archived_orderbook_pending_closed_backfill_missing_end_time", "count": 1}
+        {"reason": "archived_orderbook_missing_settlement_due_time_metadata", "count": 1}
     ]
 
 
@@ -246,7 +372,7 @@ def test_orderbook_closed_backfill_plan_cli_reports_due_query_without_row_sample
             "--orderbook-archive-dir",
             str(archive_dir),
             "--generated-at",
-            "2026-06-28T13:05:00Z",
+            "2026-06-28T21:05:00Z",
             "--summary-only",
         ]
     )
@@ -277,7 +403,7 @@ def test_archived_orderbook_due_refresh_cli_dry_run_does_not_write_backfill(tmp_
             "--orderbook-archive-dir",
             str(archive_dir),
             "--generated-at",
-            "2026-06-28T13:05:00Z",
+            "2026-06-28T21:05:00Z",
             "--summary-only",
         ]
     )
@@ -348,7 +474,7 @@ def test_archived_orderbook_due_refresh_cli_executes_with_explicit_confirmation(
             "--orderbook-archive-dir",
             str(archive_dir),
             "--generated-at",
-            "2026-06-28T13:05:00Z",
+            "2026-06-28T21:05:00Z",
             "--execute",
             "--confirm",
             "PAPER_ONLY_ARCHIVED_ORDERBOOK_REFRESH",
@@ -393,7 +519,7 @@ def test_archived_orderbook_due_refresh_blocks_execute_without_confirmation(tmp_
             "--orderbook-archive-dir",
             str(archive_dir),
             "--generated-at",
-            "2026-06-28T13:05:00Z",
+            "2026-06-28T21:05:00Z",
             "--execute",
             "--summary-only",
         ]

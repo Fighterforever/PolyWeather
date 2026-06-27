@@ -4,7 +4,7 @@ import re
 import hashlib
 import json
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
 
 from src.data_collection.city_registry import CITY_REGISTRY
@@ -57,6 +57,10 @@ class SettlementSpec:
     rounding: str
     rule_text: str
     rule_hash: str
+    market_close_time: str
+    observation_window_end_time: str
+    settlement_due_time: str
+    settlement_grace_hours: float
     end_time: str
     status: str = "supported"
     unsupported_reasons: tuple[str, ...] = ()
@@ -132,6 +136,60 @@ def _timezone_from_offset(offset_seconds: Any) -> Optional[str]:
     hours, remainder = divmod(total_seconds, 3600)
     minutes = remainder // 60
     return f"UTC{sign}{hours:02d}:{minutes:02d}"
+
+
+def _timezone_offset(timezone_name: Any) -> Optional[timezone]:
+    text = _text(timezone_name).upper()
+    if text in {"UTC", "Z"}:
+        return timezone.utc
+    match = re.fullmatch(r"UTC([+-])(\d{1,2})(?::?(\d{2}))?", text)
+    if not match:
+        return None
+    sign = 1 if match.group(1) == "+" else -1
+    hours = int(match.group(2))
+    minutes = int(match.group(3) or 0)
+    return timezone(sign * timedelta(hours=hours, minutes=minutes))
+
+
+def _iso_utc(value: datetime) -> str:
+    return value.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def settlement_grace_hours_for_source(source: Any) -> float:
+    normalized = _text(source).lower()
+    source_grace = {
+        "metar": 6.0,
+        "noaa": 6.0,
+        "wunderground": 6.0,
+        "aeroweb": 6.0,
+    }
+    return max(6.0, float(source_grace.get(normalized, 6.0)))
+
+
+def observation_window_end_time_utc(target_date: Any, timezone_name: Any) -> Optional[str]:
+    date_text = _text(target_date)
+    tzinfo = _timezone_offset(timezone_name)
+    if not date_text or tzinfo is None:
+        return None
+    try:
+        date_value = datetime.strptime(date_text, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+    local_end = datetime.combine(date_value, datetime.max.time().replace(microsecond=0), tzinfo=tzinfo)
+    return _iso_utc(local_end)
+
+
+def settlement_due_time_utc(
+    target_date: Any,
+    timezone_name: Any,
+    settlement_source: Any,
+) -> Optional[str]:
+    observation_end = observation_window_end_time_utc(target_date, timezone_name)
+    if observation_end is None:
+        return None
+    parsed = datetime.fromisoformat(observation_end.replace("Z", "+00:00"))
+    due = parsed + timedelta(hours=settlement_grace_hours_for_source(settlement_source))
+    return _iso_utc(due)
 
 
 def _bucket_label(bucket_type: str, threshold: float, upper_threshold: Optional[float], unit: str) -> str:
@@ -236,6 +294,12 @@ def build_temperature_settlement_spec(
     end_time = _end_time(row)
     if not end_time:
         unsupported.append("missing_end_time")
+    observation_window_end_time = observation_window_end_time_utc(target_date, timezone_name)
+    if not observation_window_end_time:
+        unsupported.append("missing_observation_window_end_time")
+    settlement_due_time = settlement_due_time_utc(target_date, timezone_name, source)
+    if not settlement_due_time:
+        unsupported.append("missing_settlement_due_time")
     normalized_bucket_type = _text(bucket_type).lower()
     if normalized_bucket_type not in {"ge", "le", "eq", "range"}:
         unsupported.append("unsupported_bucket_type")
@@ -288,6 +352,10 @@ def build_temperature_settlement_spec(
             rounding="integer_nearest",
             rule_text=rule,
             rule_hash=rule_hash,
+            market_close_time=end_time,
+            observation_window_end_time=observation_window_end_time,
+            settlement_due_time=settlement_due_time,
+            settlement_grace_hours=settlement_grace_hours_for_source(source),
             end_time=end_time,
         ),
         [],

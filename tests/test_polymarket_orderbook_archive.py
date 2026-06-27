@@ -47,6 +47,10 @@ def test_build_and_write_orderbook_archive_records(tmp_path):
                 "settlement_spec_status": "supported",
                 "settlement_spec": {
                     "end_time": "2026-06-27T12:00:00Z",
+                    "market_close_time": "2026-06-27T12:00:00Z",
+                    "observation_window_end_time": "2026-06-27T14:59:59Z",
+                    "settlement_due_time": "2026-06-27T20:59:59Z",
+                    "settlement_grace_hours": 6.0,
                     "target_date": "2026-06-27",
                     "station_code": "RKSI",
                     "settlement_source": "metar",
@@ -92,6 +96,10 @@ def test_build_and_write_orderbook_archive_records(tmp_path):
     assert records[0]["taker_buy_probe"]["avg_price"] == 0.41
     assert records[0]["end_time"] == "2026-06-27T12:00:00Z"
     assert records[0]["end_date"] == "2026-06-27T12:00:00Z"
+    assert records[0]["market_close_time"] == "2026-06-27T12:00:00Z"
+    assert records[0]["observation_window_end_time"] == "2026-06-27T14:59:59Z"
+    assert records[0]["settlement_due_time"] == "2026-06-27T20:59:59Z"
+    assert records[0]["settlement_grace_hours"] == 6.0
     assert records[0]["settlement_station_code"] == "RKSI"
     assert records[0]["settlement_source"] == "metar"
     assert records[0]["settlement_rule_hash"] == "rule-1"

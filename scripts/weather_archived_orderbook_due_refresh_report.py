@@ -27,6 +27,72 @@ SCHEMA_VERSION = "polyweather_archived_orderbook_due_refresh_report.v1"
 CONFIRM_TOKEN = "PAPER_ONLY_ARCHIVED_ORDERBOOK_REFRESH"
 
 
+def _token_overlap_summary(report: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "matched_closed_archived_token_count": report.get("matched_closed_archived_token_count"),
+        "pending_closed_backfill_due_token_count": report.get("pending_closed_backfill_due_token_count"),
+        "pending_closed_backfill_await_market_end_token_count": report.get(
+            "pending_closed_backfill_await_market_end_token_count"
+        ),
+        "pending_closed_backfill_missing_end_time_token_count": report.get(
+            "pending_closed_backfill_missing_end_time_token_count"
+        ),
+        "pending_awaiting_market_close_token_count": report.get("pending_awaiting_market_close_token_count"),
+        "pending_awaiting_observation_window_end_token_count": report.get(
+            "pending_awaiting_observation_window_end_token_count"
+        ),
+        "pending_awaiting_settlement_due_time_token_count": report.get(
+            "pending_awaiting_settlement_due_time_token_count"
+        ),
+        "closed_backfill_due_token_count": report.get("closed_backfill_due_token_count"),
+        "closed_backfill_attempted_but_market_open_token_count": report.get(
+            "closed_backfill_attempted_but_market_open_token_count"
+        ),
+        "missing_settlement_due_time_metadata_token_count": report.get(
+            "missing_settlement_due_time_metadata_token_count"
+        ),
+        "wrong_due_prevented_count": report.get("wrong_due_prevented_count"),
+    }
+
+
+def diagnose_targeted_backfill_attempt(
+    *,
+    attempted_report: Dict[str, Any],
+    corrected_plan_report: Dict[str, Any],
+) -> Dict[str, Any]:
+    execution = attempted_report.get("execution") if isinstance(attempted_report.get("execution"), dict) else {}
+    result = (
+        execution.get("targeted_backfill_result")
+        if isinstance(execution.get("targeted_backfill_result"), dict)
+        else {}
+    )
+    diagnostics = (
+        result.get("payload_diagnostics")
+        if isinstance(result.get("payload_diagnostics"), dict)
+        else {}
+    )
+    open_count = int(diagnostics.get("open_market_slug_count") or 0)
+    closed_due_count = int(corrected_plan_report.get("closed_backfill_due_token_count") or 0)
+    prevented_count = int(corrected_plan_report.get("wrong_due_prevented_count") or 0)
+    if open_count > 0 and closed_due_count <= 0 and prevented_count >= open_count:
+        root_cause = "attempted_too_early_settlement_due_time_not_reached"
+    elif open_count > 0:
+        root_cause = "targeted_backfill_returned_open_markets"
+    else:
+        root_cause = "no_open_market_attempt_detected"
+    return {
+        "schema_version": "polyweather_weather_due_refresh_attempt_diagnosis.v1",
+        "paper_only": True,
+        "diagnostic_only": True,
+        "counts_for_live_gate": False,
+        "root_cause": root_cause,
+        "open_market_slug_count": open_count,
+        "closed_backfill_due_token_count": closed_due_count,
+        "wrong_due_prevented_count": prevented_count,
+        "sample_market_slugs": (diagnostics.get("open_market_slugs") or [])[:20],
+    }
+
+
 def _summary_preresolution_replay(report: Dict[str, Any]) -> Dict[str, Any]:
     replay = report.get("replay") if isinstance(report.get("replay"), dict) else {}
     evidence = report.get("historical_evidence") if isinstance(report.get("historical_evidence"), dict) else {}
@@ -112,16 +178,7 @@ def build_due_refresh_report(
         "due_market_query_count": market_query_count,
         "loaded_market_query_count": len(market_queries),
         "status": "dry_run",
-        "before_token_overlap": {
-            "matched_closed_archived_token_count": plan_report.get("matched_closed_archived_token_count"),
-            "pending_closed_backfill_due_token_count": plan_report.get("pending_closed_backfill_due_token_count"),
-            "pending_closed_backfill_await_market_end_token_count": plan_report.get(
-                "pending_closed_backfill_await_market_end_token_count"
-            ),
-            "pending_closed_backfill_missing_end_time_token_count": plan_report.get(
-                "pending_closed_backfill_missing_end_time_token_count"
-            ),
-        },
+        "before_token_overlap": _token_overlap_summary(plan_report),
     }
     replay_report = None
     after_plan_report = None
@@ -154,20 +211,7 @@ def build_due_refresh_report(
                 {
                     "status": "executed",
                     "targeted_backfill_result": backfill_result,
-                    "after_token_overlap": {
-                        "matched_closed_archived_token_count": after_plan_report.get(
-                            "matched_closed_archived_token_count"
-                        ),
-                        "pending_closed_backfill_due_token_count": after_plan_report.get(
-                            "pending_closed_backfill_due_token_count"
-                        ),
-                        "pending_closed_backfill_await_market_end_token_count": after_plan_report.get(
-                            "pending_closed_backfill_await_market_end_token_count"
-                        ),
-                        "pending_closed_backfill_missing_end_time_token_count": after_plan_report.get(
-                            "pending_closed_backfill_missing_end_time_token_count"
-                        ),
-                    },
+                    "after_token_overlap": _token_overlap_summary(after_plan_report),
                     "preresolution_replay_summary": _summary_preresolution_replay(replay_report),
                 }
             )
@@ -202,6 +246,12 @@ def _summary_only(report: Dict[str, Any]) -> Dict[str, Any]:
     followup = dict(plan.get("closed_backfill_followup_plan") or {})
     followup.pop("requests", None)
     followup.pop("await_market_end_samples", None)
+    followup.pop("awaiting_market_close_samples", None)
+    followup.pop("awaiting_observation_window_end_samples", None)
+    followup.pop("awaiting_settlement_due_time_samples", None)
+    followup.pop("wrong_due_prevented_samples", None)
+    followup.pop("closed_backfill_attempted_but_market_open_samples", None)
+    followup.pop("missing_settlement_due_time_metadata_samples", None)
     followup.pop("missing_end_time_samples", None)
     followup.pop("next_await_market_queries", None)
     plan["closed_backfill_followup_plan"] = followup
@@ -215,6 +265,12 @@ def _summary_only(report: Dict[str, Any]) -> Dict[str, Any]:
         after_followup = dict(after_plan.get("closed_backfill_followup_plan") or {})
         after_followup.pop("requests", None)
         after_followup.pop("await_market_end_samples", None)
+        after_followup.pop("awaiting_market_close_samples", None)
+        after_followup.pop("awaiting_observation_window_end_samples", None)
+        after_followup.pop("awaiting_settlement_due_time_samples", None)
+        after_followup.pop("wrong_due_prevented_samples", None)
+        after_followup.pop("closed_backfill_attempted_but_market_open_samples", None)
+        after_followup.pop("missing_settlement_due_time_metadata_samples", None)
         after_followup.pop("missing_end_time_samples", None)
         after_followup.pop("next_await_market_queries", None)
         after_plan["closed_backfill_followup_plan"] = after_followup

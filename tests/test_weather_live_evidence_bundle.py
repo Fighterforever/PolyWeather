@@ -58,8 +58,24 @@ def _archived_orderbook(**overrides):
         "side": "yes",
         "target_date": "2026-06-26",
         "end_time": "2026-06-26T12:00:00Z",
+        "market_close_time": "2026-06-26T12:00:00Z",
+        "observation_window_end_time": "2026-06-26T14:59:59Z",
+        "settlement_due_time": "2026-06-26T20:59:59Z",
+        "settlement_grace_hours": 6.0,
         "settlement_station_code": "RKSI",
         "settlement_source": "metar",
+        "settlement_timezone": "UTC+09:00",
+        "settlement_spec": {
+            "target_date": "2026-06-26",
+            "timezone": "UTC+09:00",
+            "market_close_time": "2026-06-26T12:00:00Z",
+            "end_time": "2026-06-26T12:00:00Z",
+            "observation_window_end_time": "2026-06-26T14:59:59Z",
+            "settlement_due_time": "2026-06-26T20:59:59Z",
+            "settlement_grace_hours": 6.0,
+            "station_code": "RKSI",
+            "settlement_source": "metar",
+        },
         "bucket_type": "ge",
         "best_ask": 0.64,
         "best_bid": 0.60,
@@ -254,6 +270,7 @@ def test_live_evidence_bundle_merges_preresolution_orderbook_archive_into_calibr
         closed_backfill_records=[_closed_record()],
         closed_snapshot_rows=[],
         replay_time="2026-06-26T13:00:00Z",
+        generated_at="2026-06-26T13:00:00Z",
         min_official_truth_samples=1,
         min_probability_score_samples=1,
         min_resolved_pnl_samples=1,
@@ -285,6 +302,7 @@ def test_live_evidence_bundle_surfaces_archived_tokens_pending_closed_backfill()
         closed_backfill_records=[_closed_record()],
         closed_snapshot_rows=[],
         replay_time="2026-06-26T13:00:00Z",
+        generated_at="2026-06-26T13:00:00Z",
         min_official_truth_samples=1,
         min_probability_score_samples=1,
         min_resolved_pnl_samples=1,
@@ -296,12 +314,15 @@ def test_live_evidence_bundle_surfaces_archived_tokens_pending_closed_backfill()
     assert coverage["matched_closed_archived_token_count"] == 0
     assert coverage["unmatched_archived_token_count"] == 1
     assert coverage["unmatched_closed_token_count"] == 1
-    assert coverage["pending_closed_backfill_due_token_count"] == 1
-    assert coverage["closed_backfill_followup_plan"]["request_count"] == 1
+    assert coverage["pending_closed_backfill_due_token_count"] == 0
+    assert coverage["pending_awaiting_observation_window_end_token_count"] == 1
+    assert coverage["wrong_due_prevented_count"] == 1
+    assert coverage["closed_backfill_followup_plan"]["request_count"] == 0
+    assert coverage["closed_backfill_followup_plan"]["next_action"] == "wait_for_observation_window_end"
     assert report["official_value_backfill_report"]["target_scope"]["target_record_count"] == 0
     assert report["official_value_backfill_report"]["input_record_count"] == 0
     assert report["gap_summary"]["coverage"]["archived_pending_closed_backfill_token_count"] == 1
-    assert report["gap_summary"]["coverage"]["archived_pending_closed_backfill_due_token_count"] == 1
+    assert report["gap_summary"]["coverage"]["archived_pending_closed_backfill_due_token_count"] == 0
     assert report["gap_summary"]["coverage"]["closed_missing_archive_token_count"] == 1
     gap_ids = [row["gap_id"] for row in report["gap_summary"]["gaps"]]
     assert "archived_orderbooks_pending_closed_backfill" in gap_ids
