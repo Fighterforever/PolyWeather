@@ -190,6 +190,14 @@ def run_guarded_due_pipeline(
         print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
         return 0
 
+    if args.check_only:
+        command = _pipeline_command(args, generated_at=_iso(now))
+        payload = _summary_base(args, now=now, status="ready_to_run")
+        payload["command_preview"] = command
+        _write_json(args.pending_output, payload)
+        print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
+        return 0
+
     if not _acquire_lock(args.lock_file, now=now, ttl_seconds=args.lock_ttl_seconds):
         payload = _summary_base(args, now=now, status="already_running")
         payload["lock_file_exists"] = True
@@ -283,6 +291,7 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     parser.add_argument("--allow-partial-official-truth", action="store_true")
     parser.add_argument("--fetch-external-official-values", action="store_true")
     parser.add_argument("--lock-ttl-seconds", type=int, default=7200)
+    parser.add_argument("--check-only", action="store_true")
     parser.add_argument("--now-utc", default=None, help=argparse.SUPPRESS)
     return parser.parse_args(argv)
 

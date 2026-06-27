@@ -128,6 +128,24 @@ def test_guarded_due_runner_active_lock_skips_pipeline(tmp_path):
     assert lock_file.exists()
 
 
+def test_guarded_due_runner_check_only_after_due_does_not_execute_pipeline(tmp_path):
+    calls = []
+    args = _args(tmp_path)
+    args.check_only = True
+
+    rc = runner.run_guarded_due_pipeline(
+        args,
+        subprocess_run=lambda *args, **kwargs: calls.append(args),
+    )
+
+    pending = json.loads((tmp_path / "evidence" / "due_pipeline_metar_ltac_uuww_pending.json").read_text())
+    assert rc == 0
+    assert calls == []
+    assert pending["status"] == "ready_to_run"
+    assert "--execute-closed-backfill" in pending["command_preview"]
+    assert "--live" not in pending["command_preview"]
+
+
 def test_guarded_due_runner_rejects_unresolved_zero_pnl(tmp_path):
     def fake_run(command, **kwargs):
         summary_path = command[command.index("--summary-output") + 1]
