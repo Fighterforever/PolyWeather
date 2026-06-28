@@ -181,6 +181,113 @@ def test_verified_high_since_start_no_touch_allows_future_probability():
     assert no_row["barrier_already_touched"] is False
 
 
+def test_touch_near_miss_watch_not_candidate_or_fill():
+    report = build_crypto_probability_edge_report(
+        active_markets=[
+            _market(
+                market_slug="will-bitcoin-reach-85000-by-december-31-2026-from-june-8",
+                title="Will Bitcoin reach $85,000 by December 31, 2026?",
+                question="Will Bitcoin reach $85,000 by December 31, 2026?",
+                description="This resolves Yes if any Binance candle High is at least $85,000 after market creation.",
+                token_id_by_outcome={"Yes": "yes-token", "No": "no-token"},
+                token_ids=["yes-token", "no-token"],
+                orderbooks={
+                    "yes-token": {"best_bid": 0.26, "best_ask": 0.27, "spread": 0.01, "ask_depth_usdc_3c": 100},
+                    "no-token": {"best_bid": 0.70, "best_ask": 0.73, "spread": 0.03, "ask_depth_usdc_3c": 100},
+                },
+            )
+        ],
+        spot_prices={"BTC": 60000},
+        generated_at="2026-06-29T00:00:00Z",
+        high_since_start_fetcher=lambda **kwargs: {
+            "max_high_since_start": 65000,
+            "max_high_at": "2026-06-20T00:00:00Z",
+            "high_since_start_verified": True,
+            "barrier_already_touched": False,
+            "kline_count": 1000,
+            "gap_reason": None,
+        },
+        min_edge=0.02,
+        cost=0.01,
+    )
+
+    assert report["candidate_count"] == 0
+    assert report["near_miss_watch_count"] >= 1
+    watch = report["near_miss_watch"][0]
+    assert watch["probability_semantics"] == "touch_barrier"
+    assert watch["counts_for_live_gate"] is False
+    assert watch["EV_safe"] < 0.02
+
+
+def test_proxy_creation_time_blocks_official_candidate_but_keeps_watch():
+    report = build_crypto_probability_edge_report(
+        active_markets=[
+            _market(
+                market_slug="will-bitcoin-reach-85000-by-december-31-2026",
+                title="Will Bitcoin reach $85,000 by December 31, 2026?",
+                question="Will Bitcoin reach $85,000 by December 31, 2026?",
+                description="This resolves Yes if any Binance candle High is at least $85,000 after market creation.",
+                earliest_price_history_timestamp="2026-06-09T00:00:00Z",
+                token_id_by_outcome={"Yes": "yes-token", "No": "no-token"},
+                token_ids=["yes-token", "no-token"],
+                orderbooks={
+                    "yes-token": {"best_bid": 0.78, "best_ask": 0.7965, "spread": 0.0165, "ask_depth_usdc_3c": 100},
+                    "no-token": {"best_bid": 0.19, "best_ask": 0.2035, "spread": 0.0135, "ask_depth_usdc_3c": 100},
+                },
+            )
+        ],
+        spot_prices={"BTC": 80000},
+        generated_at="2026-06-29T00:00:00Z",
+        high_since_start_fetcher=lambda **kwargs: {
+            "max_high_since_start": 81000,
+            "high_since_start_verified": True,
+            "barrier_already_touched": False,
+            "kline_count": 1000,
+            "gap_reason": None,
+        },
+        min_edge=0.001,
+        cost=0.0,
+    )
+
+    assert report["candidate_count"] == 0
+    assert report["near_miss_watch_count"] >= 1
+    assert report["near_miss_watch"][0]["creation_time_proxy"] is True
+
+
+def test_proxy_creation_time_rejects_otherwise_valid_candidate():
+    report = build_crypto_probability_edge_report(
+        active_markets=[
+            _market(
+                market_slug="will-bitcoin-reach-85000-by-december-31-2026",
+                title="Will Bitcoin reach $85,000 by December 31, 2026?",
+                question="Will Bitcoin reach $85,000 by December 31, 2026?",
+                description="This resolves Yes if any Binance candle High is at least $85,000 after market creation.",
+                earliest_price_history_timestamp="2026-06-09T00:00:00Z",
+                token_id_by_outcome={"Yes": "yes-token", "No": "no-token"},
+                token_ids=["yes-token", "no-token"],
+                orderbooks={
+                    "yes-token": {"best_bid": 0.2, "best_ask": 0.25, "spread": 0.05, "ask_depth_usdc_3c": 100},
+                    "no-token": {"best_bid": 0.7, "best_ask": 0.75, "spread": 0.05, "ask_depth_usdc_3c": 100},
+                },
+            )
+        ],
+        spot_prices={"BTC": 80000},
+        generated_at="2026-06-29T00:00:00Z",
+        high_since_start_fetcher=lambda **kwargs: {
+            "max_high_since_start": 81000,
+            "high_since_start_verified": True,
+            "barrier_already_touched": False,
+            "kline_count": 1000,
+            "gap_reason": None,
+        },
+        min_edge=0.001,
+        cost=0.0,
+    )
+
+    assert report["candidate_count"] == 0
+    assert any(row["reason"] == "creation_time_proxy_not_official" for row in report["gap_reasons"])
+
+
 def test_no_side_ev_uses_touch_probability():
     report = build_crypto_probability_edge_report(
         active_markets=[

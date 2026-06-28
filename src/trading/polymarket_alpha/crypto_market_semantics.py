@@ -10,6 +10,8 @@ from src.trading.polymarket_alpha.probability_dataset import write_json
 
 
 SCHEMA_VERSION = "polyweather_polymarket_alpha_crypto_market_semantics.v1"
+METADATA_CREATION_FIELDS = ("createdAt", "created_at", "creationTime", "creation_time", "created", "start_time", "startDate")
+PROXY_CREATION_FIELDS = ("earliest_trade_timestamp", "earliest_trade_time", "earliest_price_history_timestamp", "earliest_price_history_time")
 
 
 def _text(value: Any) -> str:
@@ -80,14 +82,60 @@ def classify_crypto_parse_gap(market: Dict[str, Any]) -> str:
 
 
 def parse_start_time(market: Dict[str, Any], *, generated_at: Optional[str] = None, end_time: Optional[str] = None) -> Optional[str]:
-    for field in ("start_time", "created_at", "createdAt", "creation_time", "created"):
+    resolved = resolve_market_creation_time(market, generated_at=generated_at, end_time=end_time, allow_proxy=False)
+    if resolved.get("market_creation_time"):
+        return str(resolved["market_creation_time"])
+
+
+def resolve_market_creation_time(
+    market: Dict[str, Any],
+    *,
+    generated_at: Optional[str] = None,
+    end_time: Optional[str] = None,
+    allow_proxy: bool = True,
+) -> Dict[str, Any]:
+    end_dt = _parse_utc(end_time or market.get("end_time") or market.get("endDate"))
+    metadata_missing_reasons: List[str] = []
+    for field in METADATA_CREATION_FIELDS:
         parsed = _parse_utc(market.get(field))
         if parsed is not None:
-            return _iso(parsed)
+            if end_dt is not None and parsed > end_dt:
+                return {
+                    "market_creation_time": None,
+                    "creation_time_source": field,
+                    "creation_time_proxy": False,
+                    "can_generate_official_candidate": False,
+                    "can_generate_shadow_watch": False,
+                    "gap_reason": "creation_time_after_end_time",
+                    "metadata_missing_reason": None,
+                }
+            return {
+                "market_creation_time": _iso(parsed),
+                "creation_time_source": field,
+                "creation_time_proxy": False,
+                "can_generate_official_candidate": True,
+                "can_generate_shadow_watch": True,
+                "gap_reason": None,
+                "metadata_missing_reason": None,
+            }
+        metadata_missing_reasons.append(f"missing_{field}")
     slug = _text(market.get("market_slug")).lower()
     match = re.search(r"from-([a-z]+)-([0-9]{1,2})", slug)
     if not match:
-        return None
+        if allow_proxy:
+            proxy = _resolve_proxy_creation_time(market, end_dt=end_dt)
+            if proxy.get("market_creation_time"):
+                return proxy
+        return {
+            "market_creation_time": None,
+            "creation_time_source": None,
+            "creation_time_proxy": False,
+            "can_generate_official_candidate": False,
+            "can_generate_shadow_watch": False,
+            "gap_reason": "start_time_unverified",
+            "metadata_missing_reason": "metadata_creation_time_missing",
+            "metadata_missing_fields": metadata_missing_reasons,
+        }
     month_name, day_text = match.groups()
     month_lookup = {
         "january": 1,
@@ -116,8 +164,16 @@ def parse_start_time(market: Dict[str, Any], *, generated_at: Optional[str] = No
     }
     month = month_lookup.get(month_name)
     if month is None:
-        return None
-    end_dt = _parse_utc(end_time or market.get("end_time"))
+        return {
+            "market_creation_time": None,
+            "creation_time_source": "slug_from_date",
+            "creation_time_proxy": False,
+            "can_generate_official_candidate": False,
+            "can_generate_shadow_watch": False,
+            "gap_reason": "slug_from_date_parse_failed",
+            "metadata_missing_reason": "metadata_creation_time_missing",
+            "metadata_missing_fields": metadata_missing_reasons,
+        }
     generated_dt = _parse_utc(generated_at)
     candidate_years: List[int] = []
     if generated_dt is not None:
@@ -135,12 +191,140 @@ def parse_start_time(market: Dict[str, Any], *, generated_at: Optional[str] = No
         except ValueError:
             continue
         if end_dt is None or candidate_dt <= end_dt:
-            return _iso(candidate_dt)
+            return {
+                "market_creation_time": _iso(candidate_dt),
+                "creation_time_source": "slug_from_date",
+                "creation_time_proxy": False,
+                "can_generate_official_candidate": True,
+                "can_generate_shadow_watch": True,
+                "gap_reason": None,
+                "metadata_missing_reason": "metadata_creation_time_missing",
+                "metadata_missing_fields": metadata_missing_reasons,
+            }
     try:
         fallback_year = (end_dt.year - 1) if end_dt is not None else datetime.now(timezone.utc).year
-        return _iso(datetime(int(fallback_year), int(month), int(day_text), tzinfo=timezone.utc))
+        fallback = datetime(int(fallback_year), int(month), int(day_text), tzinfo=timezone.utc)
+        if end_dt is not None and fallback > end_dt:
+            raise ValueError("slug start after end")
+        return {
+            "market_creation_time": _iso(fallback),
+            "creation_time_source": "slug_from_date",
+            "creation_time_proxy": False,
+            "can_generate_official_candidate": True,
+            "can_generate_shadow_watch": True,
+            "gap_reason": None,
+            "metadata_missing_reason": "metadata_creation_time_missing",
+            "metadata_missing_fields": metadata_missing_reasons,
+        }
     except ValueError:
-        return None
+        return {
+            "market_creation_time": None,
+            "creation_time_source": "slug_from_date",
+            "creation_time_proxy": False,
+            "can_generate_official_candidate": False,
+            "can_generate_shadow_watch": False,
+            "gap_reason": "creation_time_after_end_time",
+            "metadata_missing_reason": "metadata_creation_time_missing",
+            "metadata_missing_fields": metadata_missing_reasons,
+        }
+
+
+def _resolve_proxy_creation_time(market: Dict[str, Any], *, end_dt: Optional[datetime]) -> Dict[str, Any]:
+    for field in PROXY_CREATION_FIELDS:
+        parsed = _parse_utc(market.get(field))
+        if parsed is None:
+            continue
+        if end_dt is not None and parsed > end_dt:
+            return {
+                "market_creation_time": None,
+                "creation_time_source": field,
+                "creation_time_proxy": True,
+                "can_generate_official_candidate": False,
+                "can_generate_shadow_watch": False,
+                "gap_reason": "creation_time_after_end_time",
+                "metadata_missing_reason": "metadata_creation_time_missing",
+            }
+        return {
+            "market_creation_time": _iso(parsed),
+            "creation_time_source": "earliest_trade_proxy" if "trade" in field else "earliest_price_history_proxy",
+            "creation_time_proxy": True,
+            "can_generate_official_candidate": False,
+            "can_generate_shadow_watch": True,
+            "gap_reason": None,
+            "metadata_missing_reason": "metadata_creation_time_missing",
+        }
+    price_history = market.get("price_history")
+    if isinstance(price_history, list):
+        parsed_rows = [_parse_utc((row or {}).get("timestamp")) for row in price_history if isinstance(row, dict)]
+        parsed_rows = [row for row in parsed_rows if row is not None]
+        if parsed_rows:
+            first = min(parsed_rows)
+            if end_dt is not None and first > end_dt:
+                gap = "creation_time_after_end_time"
+                first_iso = None
+            else:
+                gap = None
+                first_iso = _iso(first)
+            return {
+                "market_creation_time": first_iso,
+                "creation_time_source": "earliest_price_history_proxy",
+                "creation_time_proxy": True,
+                "can_generate_official_candidate": False,
+                "can_generate_shadow_watch": first_iso is not None,
+                "gap_reason": gap,
+                "metadata_missing_reason": "metadata_creation_time_missing",
+            }
+    trade_tape = market.get("trade_tape") if isinstance(market.get("trade_tape"), dict) else {}
+    trades = market.get("trades") or trade_tape.get("trades")
+    if isinstance(trades, list):
+        parsed_trades = [_parse_utc((row or {}).get("timestamp")) for row in trades if isinstance(row, dict)]
+        parsed_trades = [row for row in parsed_trades if row is not None]
+        if parsed_trades:
+            first = min(parsed_trades)
+            if end_dt is not None and first > end_dt:
+                gap = "creation_time_after_end_time"
+                first_iso = None
+            else:
+                gap = None
+                first_iso = _iso(first)
+            return {
+                "market_creation_time": first_iso,
+                "creation_time_source": "earliest_trade_proxy",
+                "creation_time_proxy": True,
+                "can_generate_official_candidate": False,
+                "can_generate_shadow_watch": first_iso is not None,
+                "gap_reason": gap,
+                "metadata_missing_reason": "metadata_creation_time_missing",
+            }
+    return {
+        "market_creation_time": None,
+        "creation_time_source": None,
+        "creation_time_proxy": False,
+        "can_generate_official_candidate": False,
+        "can_generate_shadow_watch": False,
+        "gap_reason": "start_time_unverified",
+        "metadata_missing_reason": "metadata_creation_time_missing",
+    }
+
+
+def merge_market_metadata(market: Dict[str, Any], metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    merged = dict(market)
+    if not isinstance(metadata, dict):
+        return merged
+    field_map = {
+        "createdAt": "createdAt",
+        "created_at": "created_at",
+        "creationTime": "creationTime",
+        "startDate": "startDate",
+        "endDate": "end_time",
+        "description": "description",
+        "resolutionSource": "resolution_source",
+        "rules": "rules",
+    }
+    for source, target in field_map.items():
+        if not merged.get(target) and metadata.get(source):
+            merged[target] = metadata.get(source)
+    return merged
 
 
 def build_crypto_semantics_audit_report(
@@ -227,6 +411,8 @@ __all__ = [
     "classify_crypto_parse_gap",
     "load_jsonl",
     "market_rule_text",
+    "merge_market_metadata",
     "parse_start_time",
+    "resolve_market_creation_time",
     "write_json",
 ]

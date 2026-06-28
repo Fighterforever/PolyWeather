@@ -54,6 +54,61 @@ def _cache_name(pair: str, interval: str, start_ms: int, end_ms: int) -> str:
     return f"{safe}.json"
 
 
+def _load_covering_cache(
+    *,
+    pair: str,
+    interval: str,
+    start_ms: int,
+    end_ms: int,
+    cache_dir: str | Path,
+) -> Optional[Dict[str, Any]]:
+    directory = Path(cache_dir)
+    if not directory.exists():
+        return None
+    prefix = f"{pair}_{interval}_".upper()
+    for path in sorted(directory.glob(f"{pair}_{interval.upper()}_*.json")):
+        name = path.stem.upper()
+        if not name.startswith(prefix):
+            continue
+        parts = name[len(prefix):].split("_")
+        if len(parts) < 2:
+            continue
+        try:
+            cached_start = int(parts[0])
+            cached_end = int(parts[1])
+        except ValueError:
+            continue
+        if cached_start > start_ms or cached_end < end_ms:
+            continue
+        try:
+            cached = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(cached, dict) or cached.get("schema_version") != SCHEMA_VERSION:
+            continue
+        rows = []
+        for row in cached.get("klines") or []:
+            if not isinstance(row, dict):
+                continue
+            open_ms = int(row.get("open_time_ms") or 0)
+            if start_ms <= open_ms <= end_ms:
+                rows.append(row)
+        covered = dict(cached)
+        covered.update(
+            {
+                "start_time": _iso(datetime.fromtimestamp(start_ms / 1000, tz=timezone.utc)),
+                "end_time": _iso(datetime.fromtimestamp(end_ms / 1000, tz=timezone.utc)),
+                "request_count": 0,
+                "kline_count": len(rows),
+                "klines": rows,
+                "cache_source": str(path),
+                "cache_coverage": "covering_range",
+            }
+        )
+        return covered
+    return None
+
+
 def fetch_binance_klines(
     *,
     pair: str,
@@ -83,6 +138,16 @@ def fetch_binance_klines(
             cached = {}
         if isinstance(cached, dict) and cached.get("schema_version") == SCHEMA_VERSION:
             return cached
+    if use_cache:
+        covering = _load_covering_cache(
+            pair=pair,
+            interval=interval,
+            start_ms=start_ms,
+            end_ms=end_ms,
+            cache_dir=cache_dir,
+        )
+        if covering is not None:
+            return covering
 
     fetcher = fetcher or _fetch_url_json
     cursor = start_ms
@@ -150,6 +215,7 @@ def _parse_kline(row: Any) -> Optional[Dict[str, Any]]:
     if not isinstance(row, list) or len(row) < 5:
         return None
     high = _safe_float(row[2])
+    close = _safe_float(row[4]) if len(row) > 4 else None
     open_time_ms = int(row[0]) if str(row[0]).isdigit() else None
     close_time_ms = int(row[6]) if len(row) > 6 and str(row[6]).isdigit() else None
     if high is None or open_time_ms is None:
@@ -162,6 +228,7 @@ def _parse_kline(row: Any) -> Optional[Dict[str, Any]]:
         "close_time_ms": close_time_ms,
         "close_time": _iso(close_dt),
         "high": high,
+        "close": close,
     }
 
 

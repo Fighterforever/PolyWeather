@@ -12,6 +12,17 @@ from src.trading.polymarket_alpha.probability_dataset import write_json, write_j
 
 
 SCHEMA_VERSION = "polyweather_polymarket_alpha_probability_edge_journal.v1"
+CRYPTO_TOUCH_REQUIRED_FIELDS = (
+    "semantics_type",
+    "probability_semantics",
+    "market_creation_time",
+    "high_since_start_verified",
+    "barrier_already_touched",
+    "max_high_since_start",
+    "p_yes_touch",
+    "p_no_touch",
+    "p_trade_lcb",
+)
 
 
 def _safe_float(value: Any) -> Optional[float]:
@@ -137,8 +148,22 @@ def build_probability_edge_fills_with_snapshots(
     active_by_token = _active_market_by_token(active_markets)
     fills: List[Dict[str, Any]] = []
     snapshots: List[Dict[str, Any]] = []
+    rejected: List[Dict[str, Any]] = []
     for candidate in candidates:
         if not isinstance(candidate, dict):
+            continue
+        rejection_reason = _crypto_touch_fill_rejection_reason(candidate)
+        if rejection_reason:
+            rejected.append(
+                {
+                    "market_slug": candidate.get("market_slug"),
+                    "token_id": candidate.get("token_id"),
+                    "reason": rejection_reason,
+                    "paper_only": True,
+                    "counts_for_live_gate": False,
+                    "live_order_path": False,
+                }
+            )
             continue
         snapshot = build_orderbook_snapshot(candidate, active_by_token=active_by_token, recorded_at=recorded_at)
         snapshots.append(snapshot)
@@ -156,7 +181,29 @@ def build_probability_edge_fills_with_snapshots(
         "fills": fills,
         "orderbook_snapshots": snapshots,
         "orderbook_snapshot_id_null_count": len([row for row in fills if not row.get("orderbook_snapshot_id")]),
+        "rejected_fill_count": len(rejected),
+        "rejected_fills": rejected,
     }
+
+
+def _crypto_touch_fill_rejection_reason(candidate: Dict[str, Any]) -> Optional[str]:
+    is_crypto_touch = (
+        str(candidate.get("model_source") or "") == "crypto_lognormal_threshold_model"
+        or str(candidate.get("probability_semantics") or "") == "touch_barrier"
+        or str(candidate.get("semantics_type") or "") == "touch_barrier"
+    )
+    if not is_crypto_touch:
+        return None
+    missing = [field for field in CRYPTO_TOUCH_REQUIRED_FIELDS if candidate.get(field) is None]
+    if missing:
+        return f"missing_crypto_touch_fields:{','.join(missing)}"
+    if str(candidate.get("semantics_type")) != "touch_barrier" or str(candidate.get("probability_semantics")) != "touch_barrier":
+        return "crypto_touch_semantics_mismatch"
+    if not bool(candidate.get("high_since_start_verified")):
+        return "start_time_unverified_or_high_unverified"
+    if bool(candidate.get("barrier_already_touched")):
+        return "barrier_already_touched"
+    return None
 
 
 def _first_after(rows: List[Dict[str, Any]], at: datetime, horizon_seconds: int) -> Optional[Dict[str, Any]]:

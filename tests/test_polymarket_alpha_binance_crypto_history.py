@@ -78,3 +78,30 @@ def test_does_not_use_non_binance_source(tmp_path):
 
     assert result["ok"] is False
     assert result["gap_reason"] == "unsupported_binance_pair"
+
+
+def test_fetch_klines_reuses_covering_cache(tmp_path):
+    result = fetch_binance_klines(
+        pair="BTCUSDT",
+        start_time="2026-06-08T00:00:00Z",
+        end_time="2026-06-08T00:05:00Z",
+        cache_dir=tmp_path,
+        fetcher=lambda url: [
+            _kline(1780876800000, 69000),
+            _kline(1780876860000, 70000),
+            _kline(1780876920000, 71000),
+        ],
+    )
+    assert result["kline_count"] == 3
+
+    subset = fetch_binance_klines(
+        pair="BTCUSDT",
+        start_time="2026-06-08T00:01:00Z",
+        end_time="2026-06-08T00:03:00Z",
+        cache_dir=tmp_path,
+        fetcher=lambda url: (_ for _ in ()).throw(AssertionError("should use cache")),
+    )
+
+    assert subset["request_count"] == 0
+    assert subset["cache_coverage"] == "covering_range"
+    assert subset["kline_count"] == 2

@@ -113,3 +113,67 @@ def test_orderbook_snapshot_written_before_fill():
     assert len(journal["orderbook_snapshots"]) == 1
     assert len(journal["fills"]) == 1
     assert journal["orderbook_snapshots"][0]["source"] == "active_market_orderbook"
+
+
+def _valid_crypto_touch_candidate(**overrides):
+    row = {
+        "market_slug": "btc-touch",
+        "token_id": "yes-token",
+        "category": "crypto",
+        "side": "YES",
+        "model_source": "crypto_lognormal_threshold_model",
+        "semantics_type": "touch_barrier",
+        "probability_semantics": "touch_barrier",
+        "market_creation_time": "2026-06-08T00:00:00Z",
+        "high_since_start_verified": True,
+        "barrier_already_touched": False,
+        "max_high_since_start": 65000,
+        "p_yes_touch": 0.4,
+        "p_no_touch": 0.6,
+        "p_trade_lcb": 0.32,
+        "q_effective": 0.2,
+        "orderbook_snapshot": {"best_bid": 0.19, "best_ask": 0.2, "bid_ladder": [], "ask_ladder": []},
+    }
+    row.update(overrides)
+    return row
+
+
+def test_crypto_fill_requires_touch_semantics_fields():
+    journal = build_probability_edge_fills_with_snapshots(
+        candidates=[_valid_crypto_touch_candidate(market_creation_time=None)],
+        recorded_at="2026-01-01T00:00:00Z",
+    )
+
+    assert journal["fills"] == []
+    assert journal["rejected_fill_count"] == 1
+    assert "missing_crypto_touch_fields" in journal["rejected_fills"][0]["reason"]
+
+
+def test_crypto_fill_rejects_start_time_unverified():
+    journal = build_probability_edge_fills_with_snapshots(
+        candidates=[_valid_crypto_touch_candidate(high_since_start_verified=False)],
+        recorded_at="2026-01-01T00:00:00Z",
+    )
+
+    assert journal["fills"] == []
+    assert journal["rejected_fills"][0]["reason"] == "start_time_unverified_or_high_unverified"
+
+
+def test_crypto_fill_rejects_barrier_already_touched():
+    journal = build_probability_edge_fills_with_snapshots(
+        candidates=[_valid_crypto_touch_candidate(barrier_already_touched=True)],
+        recorded_at="2026-01-01T00:00:00Z",
+    )
+
+    assert journal["fills"] == []
+    assert journal["rejected_fills"][0]["reason"] == "barrier_already_touched"
+
+
+def test_valid_crypto_touch_fill_gets_orderbook_snapshot_id():
+    journal = build_probability_edge_fills_with_snapshots(
+        candidates=[_valid_crypto_touch_candidate()],
+        recorded_at="2026-01-01T00:00:00Z",
+    )
+
+    assert journal["rejected_fill_count"] == 0
+    assert journal["fills"][0]["orderbook_snapshot_id"]

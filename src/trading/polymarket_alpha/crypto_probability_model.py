@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
 from src.trading.polymarket_alpha.binance_crypto_history import verify_high_since_start
-from src.trading.polymarket_alpha.crypto_market_semantics import classify_crypto_semantics, parse_start_time
+from src.trading.polymarket_alpha.crypto_market_semantics import classify_crypto_semantics, resolve_market_creation_time
 from src.trading.polymarket_alpha.probability_dataset import write_json, write_jsonl
 from src.trading.polymarket_readonly import PolymarketReadonlyClient
 
@@ -293,6 +293,9 @@ def _candidate_from_probability(
             "market_slug": market.get("market_slug"),
             "token_id": _token_for_outcome(market, side),
             "side": side,
+            "asset": parsed.get("asset"),
+            "threshold": parsed.get("threshold"),
+            "target_time": parsed.get("target_time"),
             "p_yes_model": round(p_yes, 8),
             "p_yes_lcb": round(p_yes_lcb, 8),
             "p_yes_ucb": round(p_yes_ucb, 8),
@@ -426,6 +429,7 @@ def build_crypto_probability_edge_report(
     high_since_start_verified_count = 0
     barrier_already_touched_count = 0
     verified_not_touched_count = 0
+    near_miss_watch: List[Dict[str, Any]] = []
     for market in active_rows:
         if not isinstance(market, dict) or not market.get("active"):
             continue
@@ -456,7 +460,13 @@ def build_crypto_probability_edge_report(
         )
         p_yes_terminal = p_yes_terminal_above if parsed.get("direction") == "above" else 1.0 - p_yes_terminal_above
         semantics_type = classify_crypto_semantics(market)
-        start_time = parse_start_time(market, generated_at=generated_at, end_time=parsed.get("target_time") or market.get("end_time"))
+        creation = resolve_market_creation_time(
+            market,
+            generated_at=generated_at,
+            end_time=parsed.get("target_time") or market.get("end_time"),
+            allow_proxy=True,
+        )
+        start_time = creation.get("market_creation_time")
         high_since_start = None
         max_high_at = None
         high_kline_count = 0
@@ -492,7 +502,7 @@ def build_crypto_probability_edge_report(
                 if barrier_already_touched:
                     p_yes_touch = 1.0
             else:
-                high_gap_reason = "start_time_unverified"
+                high_gap_reason = str(creation.get("gap_reason") or "start_time_unverified")
             if p_yes_touch is None:
                 p_yes_touch = first_passage_probability_upper(
                     spot=spot,
@@ -524,12 +534,18 @@ def build_crypto_probability_edge_report(
             "p_no_touch": round(1.0 - p_yes_touch, 8) if p_yes_touch is not None else None,
             "probability_semantics": probability_semantics,
             "historical_high_since_start": high_since_start,
+            "max_high_since_start": high_since_start,
             "max_high_at": max_high_at,
             "high_since_start_verified": high_verified,
             "barrier_already_touched": barrier_already_touched,
             "high_since_start_kline_count": high_kline_count,
             "high_since_start_gap_reason": high_gap_reason,
             "parsed_start_time": start_time,
+            "market_creation_time": start_time,
+            "creation_time_source": creation.get("creation_time_source"),
+            "creation_time_proxy": creation.get("creation_time_proxy"),
+            "can_generate_official_candidate": creation.get("can_generate_official_candidate"),
+            "can_generate_shadow_watch": creation.get("can_generate_shadow_watch"),
         }
         if semantics_type == "touch_barrier" and (not high_verified or barrier_already_touched):
             candidate = None
@@ -543,6 +559,9 @@ def build_crypto_probability_edge_report(
                         "market_slug": market.get("market_slug"),
                         "token_id": _token_for_outcome(market, side),
                         "side": side,
+                        "asset": parsed.get("asset"),
+                        "threshold": parsed.get("threshold"),
+                        "target_time": parsed.get("target_time"),
                         "p_yes_model": round(p_yes, 8),
                         "p_yes_lcb": round(p_lcb, 8),
                         "p_yes_ucb": round(p_ucb, 8),
@@ -574,13 +593,22 @@ def build_crypto_probability_edge_report(
                 min_depth=float(min_depth),
                 max_spread=float(max_spread),
             )
+            if (
+                candidate
+                and semantics_type == "touch_barrier"
+                and not bool(creation.get("can_generate_official_candidate"))
+            ):
+                candidate = None
+                gap = "creation_time_proxy_not_official" if creation.get("creation_time_proxy") else str(creation.get("gap_reason") or "start_time_unverified")
         if executable_available:
             executable_price_available_count += 1
         for side_row in side_rows:
-            near_misses.append(
-                {
+            near_row = {
                     "market_slug": market.get("market_slug"),
                     "token_id": side_row.get("token_id"),
+                    "asset": side_row.get("asset"),
+                    "threshold": side_row.get("threshold"),
+                    "target_time": side_row.get("target_time"),
                     "side": side_row.get("side"),
                     "p_model": side_row.get("p_model"),
                     "p_lcb": side_row.get("p_lcb"),
@@ -604,12 +632,38 @@ def build_crypto_probability_edge_report(
                     "semantics_type": side_row.get("semantics_type"),
                     "probability_semantics": side_row.get("probability_semantics"),
                     "historical_high_since_start": side_row.get("historical_high_since_start"),
+                    "max_high_since_start": side_row.get("max_high_since_start"),
                     "max_high_at": side_row.get("max_high_at"),
                     "high_since_start_verified": side_row.get("high_since_start_verified"),
                     "barrier_already_touched": side_row.get("barrier_already_touched"),
                     "high_since_start_gap_reason": side_row.get("high_since_start_gap_reason"),
+                    "market_creation_time": side_row.get("market_creation_time"),
+                    "creation_time_source": side_row.get("creation_time_source"),
+                    "creation_time_proxy": side_row.get("creation_time_proxy"),
+                    "can_generate_official_candidate": side_row.get("can_generate_official_candidate"),
+                    "can_generate_shadow_watch": side_row.get("can_generate_shadow_watch"),
+                    "q_effective": side_row.get("best_ask"),
                 }
-            )
+            near_misses.append(near_row)
+            ev_safe = _safe_float(near_row.get("EV_safe"))
+            if (
+                semantics_type == "touch_barrier"
+                and bool(near_row.get("high_since_start_verified"))
+                and not bool(near_row.get("barrier_already_touched"))
+                and near_row.get("best_ask") is not None
+                and near_row.get("depth") is not None
+                and ev_safe is not None
+                and -0.005 <= ev_safe < float(min_edge)
+            ):
+                near_miss_watch.append(
+                    {
+                        "watch_id": _stable_watch_id(near_row),
+                        **near_row,
+                        "paper_only": True,
+                        "counts_for_live_gate": False,
+                        "live_order_path": False,
+                    }
+                )
         watch_rows.append({
             "market_slug": market.get("market_slug"),
             "category": category,
@@ -626,10 +680,16 @@ def build_crypto_probability_edge_report(
             "probability_semantics": probability_semantics,
             "semantics_type": semantics_type,
             "historical_high_since_start": high_since_start,
+            "max_high_since_start": high_since_start,
             "max_high_at": max_high_at,
             "high_since_start_verified": high_verified,
             "barrier_already_touched": barrier_already_touched,
             "high_since_start_gap_reason": high_gap_reason,
+            "market_creation_time": start_time,
+            "creation_time_source": creation.get("creation_time_source"),
+            "creation_time_proxy": creation.get("creation_time_proxy"),
+            "can_generate_official_candidate": creation.get("can_generate_official_candidate"),
+            "can_generate_shadow_watch": creation.get("can_generate_shadow_watch"),
             "gap": gap,
             "executable_price_available": executable_available,
             "paper_only": True,
@@ -642,6 +702,11 @@ def build_crypto_probability_edge_report(
     candidates = sorted(candidates, key=lambda row: float(row.get("EV_safe") or -1e9), reverse=True)
     near_misses = sorted(
         near_misses,
+        key=lambda row: float(row.get("EV_safe") if row.get("EV_safe") is not None else -1e9),
+        reverse=True,
+    )
+    near_miss_watch = sorted(
+        near_miss_watch,
         key=lambda row: float(row.get("EV_safe") if row.get("EV_safe") is not None else -1e9),
         reverse=True,
     )
@@ -662,6 +727,10 @@ def build_crypto_probability_edge_report(
         "orderbook_fetch_success_count": len(orderbook_fetch_summary.get("fetched", {})),
         "orderbook_fetch_error_count": len(orderbook_fetch_summary.get("errors", {})),
         "top_10_near_misses": near_misses[:10],
+        "near_miss_watch_count": len(near_miss_watch),
+        "best_near_miss_EV_safe": near_miss_watch[0].get("EV_safe") if near_miss_watch else None,
+        "near_miss_watch_by_asset": _count_by(near_miss_watch, "asset"),
+        "near_miss_watch_by_side": _count_by(near_miss_watch, "side"),
         "touch_barrier_market_count": touch_barrier_market_count,
         "high_since_start_verified_count": high_since_start_verified_count,
         "barrier_already_touched_count": barrier_already_touched_count,
@@ -677,8 +746,32 @@ def build_crypto_probability_edge_report(
             )
         ),
         "watch_rows": watch_rows,
+        "near_miss_watch": near_miss_watch,
         "candidates": candidates,
     }
+
+
+def _stable_watch_id(row: Dict[str, Any]) -> str:
+    text = json.dumps(
+        {
+            "market_slug": row.get("market_slug"),
+            "token_id": row.get("token_id"),
+            "side": row.get("side"),
+            "market_creation_time": row.get("market_creation_time"),
+            "target_time": row.get("target_time"),
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+        default=str,
+    )
+    import hashlib
+
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:24]
+
+
+def _count_by(rows: Iterable[Dict[str, Any]], key: str) -> List[Dict[str, Any]]:
+    counts: Counter[str] = Counter(str(row.get(key) or "missing") for row in rows if isinstance(row, dict))
+    return [{"bucket": bucket, "count": counts[bucket]} for bucket in sorted(counts)]
 
 
 def load_jsonl(path: str | Path) -> List[Dict[str, Any]]:

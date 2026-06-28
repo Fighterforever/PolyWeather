@@ -78,6 +78,8 @@ def main(argv: list[str] | None = None) -> None:
     report["paper_fill_count"] = len(journal.get("fills") or [])
     report["candidate_count"] = len(journal.get("fills") or [])
     report["orderbook_snapshot_id_null_count"] = journal.get("orderbook_snapshot_id_null_count")
+    report["rejected_fill_count"] = journal.get("rejected_fill_count")
+    report["rejected_fills"] = journal.get("rejected_fills") or []
     report["artifact_paths"] = {
         "fills": str(args.fills_output),
         "watch_rows": str(args.watch_rows_output),

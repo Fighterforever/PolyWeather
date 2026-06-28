@@ -1,0 +1,21 @@
+{
+  "artifact_paths": {
+    "markouts": "evidence/polymarket_alpha/crypto_touch_near_miss_markouts.jsonl"
+  },
+  "available_markout_count": 0,
+  "counts_for_live_gate": false,
+  "live_order_path": false,
+  "markout_row_count": 15,
+  "markout_status": "missing_later_snapshots",
+  "mean_markout_cents": null,
+  "missing_snapshot_reason_counts": [
+    {
+      "count": 15,
+      "reason": "missing_entry_time"
+    }
+  ],
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_crypto_touch_watch_markout.v1",
+  "scope": "polymarket_only",
+  "watch_count": 3
+}

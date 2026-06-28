@@ -4,7 +4,9 @@ from src.trading.polymarket_alpha.crypto_market_semantics import (
     build_crypto_semantics_audit_report,
     classify_crypto_parse_gap,
     classify_crypto_semantics,
+    merge_market_metadata,
     parse_start_time,
+    resolve_market_creation_time,
 )
 
 
@@ -82,6 +84,44 @@ def test_market_creation_time_preferred_over_slug():
     market = _market(created_at="2026-06-09T12:34:56Z")
 
     assert parse_start_time(market, generated_at="2026-06-29T00:00:00Z", end_time=market["end_time"]) == "2026-06-09T12:34:56Z"
+
+
+def test_gamma_created_at_metadata_preferred_over_slug():
+    market = merge_market_metadata(_market(), {"createdAt": "2026-06-07T12:00:00Z"})
+    resolved = resolve_market_creation_time(market, generated_at="2026-06-29T00:00:00Z", end_time=market["end_time"])
+
+    assert resolved["market_creation_time"] == "2026-06-07T12:00:00Z"
+    assert resolved["creation_time_source"] == "createdAt"
+    assert resolved["creation_time_proxy"] is False
+    assert resolved["can_generate_official_candidate"] is True
+
+
+def test_earliest_price_history_proxy_is_shadow_only():
+    resolved = resolve_market_creation_time(
+        _market(
+            market_slug="will-bitcoin-reach-70000-by-december-31-2026",
+            earliest_price_history_timestamp="2026-06-10T00:00:00Z",
+        ),
+        generated_at="2026-06-29T00:00:00Z",
+        end_time="2027-01-01T05:00:00Z",
+    )
+
+    assert resolved["market_creation_time"] == "2026-06-10T00:00:00Z"
+    assert resolved["creation_time_source"] == "earliest_price_history_proxy"
+    assert resolved["creation_time_proxy"] is True
+    assert resolved["can_generate_official_candidate"] is False
+    assert resolved["can_generate_shadow_watch"] is True
+
+
+def test_start_after_end_is_blocked():
+    resolved = resolve_market_creation_time(
+        _market(createdAt="2028-01-01T00:00:00Z"),
+        generated_at="2026-06-29T00:00:00Z",
+        end_time="2027-01-01T05:00:00Z",
+    )
+
+    assert resolved["market_creation_time"] is None
+    assert resolved["gap_reason"] == "creation_time_after_end_time"
 
 
 def test_ambiguous_start_time_blocks_touch_candidate():
