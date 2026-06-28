@@ -52,6 +52,8 @@ def build_basket_paper_fill(candidate: Dict[str, Any], *, created_at: Optional[s
         "total_cost": candidate.get("total_cost"),
         "worst_case_payout": candidate.get("worst_case_payout"),
         "edge_cents": candidate.get("edge_cents"),
+        "solver_method": candidate.get("solver_method"),
+        "outcome_payoff_vector": candidate.get("outcome_payoff_vector"),
         "created_at": created_at,
         "orderbook_snapshot_ids": [
             row.get("orderbook_snapshot_id")

@@ -77,6 +77,7 @@ def _main_blocker(status: str) -> str:
         "alpha_candidate_paper_only_review": "paper_only_review_required",
         "waiting_for_exact_breach_liquidity": "no_current_exact_breach_liquidity",
         "historical_proxy_nonpositive_or_unclear": "historical_trade_proxy_not_positive",
+        "structural_lp_arbitrage_forward_paper_started": "structural_lp_candidate_found_paper_only",
     }.get(status, "insufficient_evidence")
 
 
@@ -99,6 +100,7 @@ def _next_action(status: str) -> str:
         "structural_arbitrage_forward_paper_started": "collect_forward_basket_markouts_and_resolution_paper_only",
         "no_current_structural_arbitrage": "keep_low_frequency_bucket_family_sampler_running",
         "historical_structural_edge_needs_forward_sampling": "forward_sample_bucket_family_arbitrage_with_real_orderbooks",
+        "structural_lp_arbitrage_forward_paper_started": "write_lp_basket_paper_fills_and_track_resolution",
     }.get(status, "collect_targeted_evidence")
 
 
@@ -158,6 +160,14 @@ def _structural_status(
     return "no_current_structural_arbitrage"
 
 
+def _structural_lp_status(*, candidate_count: int, family_count: int) -> str:
+    if candidate_count > 0:
+        return "structural_lp_arbitrage_forward_paper_started"
+    if family_count > 0:
+        return "no_current_structural_arbitrage"
+    return "no_current_structural_arbitrage"
+
+
 def _positive_station_guidance(report: Dict[str, Any]) -> Dict[str, Any]:
     summary = _summary(report)
     station_rows = summary.get("by_station") if isinstance(summary.get("by_station"), list) else []
@@ -194,6 +204,7 @@ def build_alpha_viability_scoreboard(
     active_sampler_report: Dict[str, Any] | None = None,
     non_dust_due_runner_status: Dict[str, Any] | None = None,
     bucket_family_arbitrage_report: Dict[str, Any] | None = None,
+    bucket_family_lp_arbitrage_report: Dict[str, Any] | None = None,
     bucket_family_historical_replay_report: Dict[str, Any] | None = None,
     generated_at: Optional[str] = None,
 ) -> Dict[str, Any]:
@@ -209,6 +220,7 @@ def build_alpha_viability_scoreboard(
     active = _summary(active_sampler_report or {})
     due = _compact(non_dust_due_runner_status or {})
     bucket_arbitrage = _compact(bucket_family_arbitrage_report or {})
+    bucket_lp = _compact(bucket_family_lp_arbitrage_report or {})
     bucket_historical = _compact(bucket_family_historical_replay_report or {})
 
     strict_resolved_pnl = _safe_float(strict.get("resolved_pnl_cents"))
@@ -318,6 +330,22 @@ def build_alpha_viability_scoreboard(
                 "structural_pair_candidate_found_paper_only"
                 if _safe_int(bucket_arbitrage.get("monotonic_pair_candidate_count")) > 0
                 else "no_current_monotonic_pair_edge"
+            ),
+        ),
+        _row(
+            strategy_id="bucket_family_payoff_matrix_arbitrage",
+            status=_structural_lp_status(
+                candidate_count=_safe_int(bucket_lp.get("lp_candidate_count") or bucket_lp.get("candidate_count")),
+                family_count=_safe_int(bucket_lp.get("lp_family_count") or bucket_lp.get("partition_family_count")),
+            ),
+            signal_count=_safe_int(bucket_lp.get("lp_family_count") or bucket_lp.get("partition_family_count")),
+            executable_proxy_count=_safe_int(bucket_lp.get("lp_candidate_count") or bucket_lp.get("candidate_count")),
+            forward_paper_fill_count=_safe_int(bucket_lp.get("lp_basket_paper_fill_count")),
+            non_dust_only=True,
+            main_blocker=(
+                "structural_lp_candidate_found_paper_only"
+                if _safe_int(bucket_lp.get("lp_candidate_count") or bucket_lp.get("candidate_count")) > 0
+                else "no_current_payoff_matrix_edge"
             ),
         ),
         _row(
@@ -457,7 +485,10 @@ def build_alpha_viability_scoreboard(
     structural_continue = [
         row["strategy_id"]
         for row in rows
-        if row["status"] == "structural_arbitrage_forward_paper_started"
+        if row["status"] in {
+            "structural_arbitrage_forward_paper_started",
+            "structural_lp_arbitrage_forward_paper_started",
+        }
     ]
     continue_strategies = sorted(set(continue_strategies + structural_continue))
     ol_guidance = _positive_station_guidance(observation_lock_trade_replay_report or {})
@@ -491,6 +522,17 @@ def build_alpha_viability_scoreboard(
     else:
         live_should_pause = False
         reason = "paper_only_forward_sampling_can_continue"
+    structural_candidate_total = _safe_int(bucket_arbitrage.get("candidate_count")) + _safe_int(
+        bucket_lp.get("lp_candidate_count") or bucket_lp.get("candidate_count")
+    )
+    if structural_candidate_total <= 0 and non_dust_status == "waiting_due":
+        live_push_verdict = "wait_non_dust_due_only"
+    elif structural_candidate_total <= 0 and non_dust_status == "failed":
+        live_push_verdict = "live_push_pause_recommended"
+    elif _safe_int(bucket_lp.get("lp_candidate_count") or bucket_lp.get("candidate_count")) > 0:
+        live_push_verdict = "structural_lp_arbitrage_forward_paper_started"
+    else:
+        live_push_verdict = "structural_arbitrage_forward_paper_started"
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at,
@@ -507,6 +549,7 @@ def build_alpha_viability_scoreboard(
             "live_should_pause": live_should_pause,
             "reason": reason,
             "alpha_viability_final_verdict": reason,
+            "live_push_verdict": live_push_verdict,
             "live_order_path": False,
             "counts_for_live_gate": False,
             "eq_dead_no_proxy_robustness": {
@@ -545,6 +588,13 @@ def build_alpha_viability_scoreboard(
                 "historical_executable_depth_available_count": _safe_int(
                     bucket_historical.get("executable_depth_available_count")
                 ),
+            },
+            "bucket_family_payoff_matrix_arbitrage": {
+                "lp_family_count": _safe_int(bucket_lp.get("lp_family_count") or bucket_lp.get("partition_family_count")),
+                "lp_candidate_count": _safe_int(bucket_lp.get("lp_candidate_count") or bucket_lp.get("candidate_count")),
+                "best_lp_edge_cents": _safe_float(bucket_lp.get("best_lp_edge_cents")),
+                "lp_near_miss_count": _safe_int(bucket_lp.get("lp_near_miss_count")),
+                "lp_basket_paper_fill_count": _safe_int(bucket_lp.get("lp_basket_paper_fill_count")),
             },
         },
         "historical_trade_proxy_guidance": {
@@ -619,11 +669,19 @@ def update_profit_strategy_state_report(
                 "bucket_family_buy_all_yes",
                 "bucket_family_buy_all_no",
                 "monotonic_threshold_pair",
+                "bucket_family_payoff_matrix_arbitrage",
             )
         }
         active["bucket_family_structural_arbitrage"] = {
             "status": "structural_arbitrage_forward_paper_started"
-            if any(row.get("status") == "structural_arbitrage_forward_paper_started" for row in bucket_rows.values())
+            if any(
+                row.get("status")
+                in {
+                    "structural_arbitrage_forward_paper_started",
+                    "structural_lp_arbitrage_forward_paper_started",
+                }
+                for row in bucket_rows.values()
+            )
             else "no_current_structural_arbitrage",
             "paper_only": True,
             "counts_for_live_gate": False,

@@ -15,6 +15,12 @@ def _candidate():
         "total_cost": 0.6,
         "worst_case_payout": 1.0,
         "edge_cents": 40.0,
+        "solver_method": "active_set_bruteforce",
+        "outcome_payoff_vector": [
+            {"outcome_index": 0, "payout": 1.0},
+            {"outcome_index": 1, "payout": 1.0},
+            {"outcome_index": 2, "payout": 1.0},
+        ],
         "legs": [
             {"market_slug": "m1", "token_id": "t1", "side": "YES", "best_ask": 0.2, "orderbook_snapshot_id": "s1"},
             {"market_slug": "m2", "token_id": "t2", "side": "YES", "best_ask": 0.2, "orderbook_snapshot_id": "s2"},
@@ -37,6 +43,8 @@ def test_basket_fill_has_worst_case_payout():
     assert fill["total_cost"] == 0.6
     assert fill["worst_case_payout"] == 1.0
     assert fill["edge_cents"] == 40.0
+    assert fill["solver_method"] == "active_set_bruteforce"
+    assert fill["outcome_payoff_vector"][0]["payout"] == 1.0
 
 
 def test_basket_fill_not_live_eligible(tmp_path):

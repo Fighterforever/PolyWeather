@@ -174,3 +174,39 @@ def test_alpha_viability_scoreboard_marks_historical_structural_edge_as_forward_
     assert row["status"] == "historical_structural_edge_needs_forward_sampling"
     assert row["trade_proxy_pnl_cents"] == 10.0
     assert row["live_eligible"] is False
+
+
+def test_alpha_viability_scoreboard_adds_payoff_matrix_lp_row_and_live_push_verdict():
+    report = build_alpha_viability_scoreboard(
+        bucket_family_arbitrage_report={"family_count": 4, "candidate_count": 0},
+        bucket_family_lp_arbitrage_report={
+            "lp_family_count": 4,
+            "lp_candidate_count": 1,
+            "best_lp_edge_cents": 2.5,
+            "lp_near_miss_count": 3,
+            "lp_basket_paper_fill_count": 1,
+        },
+        non_dust_due_runner_status={"status": "waiting_due"},
+        generated_at="2026-06-28T00:00:00Z",
+    )
+
+    row = _row(report, "bucket_family_payoff_matrix_arbitrage")
+    assert row["status"] == "structural_lp_arbitrage_forward_paper_started"
+    assert row["forward_paper_fill_count"] == 1
+    assert row["live_eligible"] is False
+    assert "bucket_family_payoff_matrix_arbitrage" in report["summary"]["continue_strategy_ids"]
+    assert report["summary"]["bucket_family_payoff_matrix_arbitrage"]["best_lp_edge_cents"] == 2.5
+    assert report["summary"]["live_push_verdict"] == "structural_lp_arbitrage_forward_paper_started"
+    assert report["live_order_path"] is False
+
+
+def test_alpha_viability_scoreboard_waits_non_dust_when_no_structural_arbitrage():
+    report = build_alpha_viability_scoreboard(
+        bucket_family_arbitrage_report={"family_count": 4, "candidate_count": 0},
+        bucket_family_lp_arbitrage_report={"lp_family_count": 4, "lp_candidate_count": 0},
+        non_dust_due_runner_status={"status": "waiting_due"},
+        generated_at="2026-06-28T00:00:00Z",
+    )
+
+    assert _row(report, "bucket_family_payoff_matrix_arbitrage")["status"] == "no_current_structural_arbitrage"
+    assert report["summary"]["live_push_verdict"] == "wait_non_dust_due_only"

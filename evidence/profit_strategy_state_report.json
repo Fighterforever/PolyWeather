@@ -38,6 +38,21 @@
           "strategy_id": "bucket_family_buy_all_yes",
           "trade_proxy_pnl_cents": 0.0
         },
+        "bucket_family_payoff_matrix_arbitrage": {
+          "executable_proxy_count": 0,
+          "forward_paper_fill_count": 0,
+          "live_eligible": false,
+          "main_blocker": "no_current_payoff_matrix_edge",
+          "next_action": "keep_low_frequency_bucket_family_sampler_running",
+          "non_dust_only": true,
+          "official_truth_coverage": null,
+          "resolved_fill_count": 0,
+          "resolved_pnl_cents": null,
+          "signal_count": 8,
+          "status": "no_current_structural_arbitrage",
+          "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+          "trade_proxy_pnl_cents": null
+        },
         "monotonic_threshold_pair": {
           "executable_proxy_count": 0,
           "forward_paper_fill_count": 0,
@@ -64,7 +79,7 @@
       "status": "no_current_bid"
     },
     "eq_dead_no_lock": {
-      "active_breached_eq_count": 10,
+      "active_breached_eq_count": 12,
       "active_eq_station_count": 4,
       "conservative_proxy_candidate_count": 1,
       "conservative_proxy_pnl_cents": 47.481386,
@@ -431,11 +446,18 @@
     }
   },
   "alpha_viability_scoreboard_summary": {
-    "active_breached_eq_count": 10,
+    "active_breached_eq_count": 12,
     "active_eq_station_count": 4,
     "active_supported_station_count_after": 4,
     "active_supported_station_count_before": 3,
     "alpha_viability_final_verdict": "waiting_for_non_dust_due_and_eq_dead_no_not_robust",
+    "bucket_family_payoff_matrix_arbitrage": {
+      "best_lp_edge_cents": null,
+      "lp_basket_paper_fill_count": 0,
+      "lp_candidate_count": 0,
+      "lp_family_count": 8,
+      "lp_near_miss_count": 8
+    },
     "bucket_family_structural_arbitrage": {
       "basket_paper_fill_count": 0,
       "best_edge_cents": null,
@@ -466,6 +488,7 @@
       "maker_inferred"
     ],
     "live_order_path": false,
+    "live_push_verdict": "wait_non_dust_due_only",
     "live_should_pause": true,
     "non_dust_threshold_cdf_status": "waiting_due",
     "pause_strategy_ids": [
@@ -474,11 +497,12 @@
       "threshold_latency"
     ],
     "reason": "waiting_for_non_dust_due_and_eq_dead_no_not_robust",
-    "strategy_count": 10,
+    "strategy_count": 11,
     "wait_strategy_ids": [
       "bucket_family_buy_all_yes",
       "bucket_family_buy_all_no",
       "monotonic_threshold_pair",
+      "bucket_family_payoff_matrix_arbitrage",
       "non_dust_threshold_cdf"
     ]
   },
@@ -525,7 +549,7 @@
     }
   },
   "final_conclusion": "threshold_latency_active_forward_paper_sampling",
-  "generated_at": "2026-06-28T10:06:06Z",
+  "generated_at": "2026-06-28T10:36:31Z",
   "historical_trade_proxy_guidance": {
     "guidance_reason": "no_historical_trade_proxy_edge",
     "prioritized_station_codes": [
