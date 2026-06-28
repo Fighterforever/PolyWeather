@@ -111,8 +111,8 @@
       "resolved_pnl_cents": null,
       "runner_label": "com.polyweather.observation-lock-execution-sampler",
       "sampler_report_path": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
-      "stale_blocker_count": 64,
-      "stale_warning_count": 2,
+      "stale_blocker_count": 22,
+      "stale_warning_count": 0,
       "status": "active_execution_sampling",
       "synthetic_locked_side_price_count": 0,
       "top_current_blocker": "ask_depth_too_low=2"
@@ -120,9 +120,9 @@
     "observation_lock_execution_sampler": {
       "counts_for_live_gate": false,
       "executable_candidate_count": 0,
-      "generated_at": "2026-06-28T05:46:20Z",
+      "generated_at": "2026-06-28T06:27:07Z",
       "install_report_path": "evidence/observation_lock_sampler_launchd_install_report.json",
-      "last_run_status": "no_current_candidate",
+      "last_run_status": "no_executable_direct_locked_side_candidate",
       "live_order_path": false,
       "locked_count": 66,
       "metar_freshness_status": "fresh_candidates_required",
@@ -130,8 +130,16 @@
       "paper_fill_count": 0,
       "reject_reason_counts": [
         {
-          "count": 240,
-          "reason": "executable_edge_not_positive"
+          "count": 239,
+          "reason": "not_locked_side_token_row"
+        },
+        {
+          "count": 238,
+          "reason": "missing_locked_side_ask_depth"
+        },
+        {
+          "count": 238,
+          "reason": "missing_locked_side_orderbook"
         },
         {
           "count": 238,
@@ -159,32 +167,85 @@
         },
         {
           "count": 66,
-          "reason": "stale_intraday_observation"
-        },
-        {
-          "count": 66,
           "reason": "unsupported_official_source_not_alpha"
         },
         {
-          "count": 48,
+          "count": 50,
           "reason": "spread_too_wide"
         },
         {
-          "count": 36,
+          "count": 38,
           "reason": "dust_price"
         },
         {
-          "count": 36,
+          "count": 38,
           "reason": "dust_price_bucket_not_alpha"
+        },
+        {
+          "count": 26,
+          "reason": "missing_spread"
+        },
+        {
+          "count": 22,
+          "reason": "stale_intraday_observation"
+        },
+        {
+          "count": 2,
+          "reason": "ask_depth_too_low"
+        },
+        {
+          "count": 2,
+          "reason": "executable_edge_not_positive"
+        },
+        {
+          "count": 2,
+          "reason": "locked_side_ask_depth_too_low"
+        },
+        {
+          "count": 2,
+          "reason": "missing_executable_price"
         }
       ],
-      "remaining_blocker": "no active executable non-dust observation-lock candidate; top reject reasons: executable_edge_not_positive=240, not_observation_locked=238, observation_not_locked=238, bucket_type_not_sampled=198, eq_exact_not_alpha=198",
+      "remaining_blocker": "no active executable direct locked-side ge/le candidate; top ge/le reject reasons: ask_depth_too_low=2, executable_edge_not_positive=2, locked_side_ask_depth_too_low=2, missing_executable_price=2",
       "report_path": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
       "runner_label": "com.polyweather.observation-lock-execution-sampler",
       "scanned_row_count": 240,
       "stale_intraday_observation_count": 66,
       "start_interval_seconds": 300,
-      "status": "installed_running"
+      "status": "installed_running",
+      "ge_le_locked_count": 2,
+      "stale_warning_count": 0,
+      "stale_blocker_count": 22,
+      "direct_locked_side_book_count": 2,
+      "synthetic_locked_side_price_count": 0,
+      "missing_locked_side_orderbook_count": 0,
+      "locked_watch_orderbook_snapshot_count": 1,
+      "ge_le_locked_reject_reason_counts": [
+        {
+          "count": 2,
+          "reason": "ask_depth_too_low"
+        },
+        {
+          "count": 2,
+          "reason": "executable_edge_not_positive"
+        },
+        {
+          "count": 2,
+          "reason": "locked_side_ask_depth_too_low"
+        },
+        {
+          "count": 2,
+          "reason": "missing_executable_price"
+        },
+        {
+          "count": 2,
+          "reason": "missing_spread"
+        },
+        {
+          "count": 1,
+          "reason": "not_locked_side_token_row"
+        }
+      ]
     }
   },
   "artifacts": {

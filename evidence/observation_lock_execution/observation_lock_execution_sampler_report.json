@@ -30,7 +30,7 @@
       "reason": "not_locked_side_token_row"
     }
   ],
-  "generated_at": "2026-06-28T06:21:44Z",
+  "generated_at": "2026-06-28T06:27:07Z",
   "intraday_visible_station_count": 3,
   "live_order_path": false,
   "locked_count": 66,
@@ -120,24 +120,24 @@
       "reason": "unsupported_official_source_not_alpha"
     },
     {
-      "count": 64,
-      "reason": "stale_intraday_observation"
-    },
-    {
-      "count": 48,
+      "count": 50,
       "reason": "spread_too_wide"
     },
     {
-      "count": 37,
+      "count": 38,
       "reason": "dust_price"
     },
     {
-      "count": 37,
+      "count": 38,
       "reason": "dust_price_bucket_not_alpha"
     },
     {
-      "count": 24,
+      "count": 26,
       "reason": "missing_spread"
+    },
+    {
+      "count": 22,
+      "reason": "stale_intraday_observation"
     },
     {
       "count": 2,
@@ -158,8 +158,8 @@
   ],
   "scanned_row_count": 240,
   "schema_version": "polyweather_observation_lock_execution_sampler.v1",
-  "stale_blocker_count": 64,
-  "stale_warning_count": 2,
+  "stale_blocker_count": 22,
+  "stale_warning_count": 0,
   "synthetic_locked_side_price_count": 0,
   "top_locked_watch_samples": [
     {
@@ -190,11 +190,11 @@
         "not_locked_side_token_row"
       ],
       "freshness_blocker": null,
-      "freshness_status": "stale_warning",
-      "freshness_warning": "stale_intraday_observation",
-      "intraday_observation_count": 324,
-      "latest_available_at": "2026-06-28T05:54:15Z",
-      "latest_observation_at": "2026-06-28T06:00:00Z",
+      "freshness_status": "fresh",
+      "freshness_warning": null,
+      "intraday_observation_count": 351,
+      "latest_available_at": "2026-06-28T06:24:13Z",
+      "latest_observation_at": "2026-06-28T06:20:00Z",
       "live_order_path": false,
       "lock_is_immutable": true,
       "lock_state": "le_yes_dead_no_locked",
@@ -285,11 +285,11 @@
         "missing_spread"
       ],
       "freshness_blocker": null,
-      "freshness_status": "stale_warning",
-      "freshness_warning": "stale_intraday_observation",
-      "intraday_observation_count": 324,
-      "latest_available_at": "2026-06-28T05:54:15Z",
-      "latest_observation_at": "2026-06-28T06:00:00Z",
+      "freshness_status": "fresh",
+      "freshness_warning": null,
+      "intraday_observation_count": 351,
+      "latest_available_at": "2026-06-28T06:24:13Z",
+      "latest_observation_at": "2026-06-28T06:20:00Z",
       "live_order_path": false,
       "lock_is_immutable": true,
       "lock_state": "le_yes_dead_no_locked",
@@ -384,11 +384,11 @@
         "not_locked_side_token_row"
       ],
       "freshness_blocker": null,
-      "freshness_status": "stale_warning",
-      "freshness_warning": "stale_intraday_observation",
-      "intraday_observation_count": 324,
-      "latest_available_at": "2026-06-28T05:54:15Z",
-      "latest_observation_at": "2026-06-28T06:00:00Z",
+      "freshness_status": "fresh",
+      "freshness_warning": null,
+      "intraday_observation_count": 351,
+      "latest_available_at": "2026-06-28T06:24:13Z",
+      "latest_observation_at": "2026-06-28T06:20:00Z",
       "live_order_path": false,
       "lock_is_immutable": true,
       "lock_state": "le_yes_dead_no_locked",
@@ -479,11 +479,11 @@
         "missing_spread"
       ],
       "freshness_blocker": null,
-      "freshness_status": "stale_warning",
-      "freshness_warning": "stale_intraday_observation",
-      "intraday_observation_count": 324,
-      "latest_available_at": "2026-06-28T05:54:15Z",
-      "latest_observation_at": "2026-06-28T06:00:00Z",
+      "freshness_status": "fresh",
+      "freshness_warning": null,
+      "intraday_observation_count": 351,
+      "latest_available_at": "2026-06-28T06:24:13Z",
+      "latest_observation_at": "2026-06-28T06:20:00Z",
       "live_order_path": false,
       "lock_is_immutable": true,
       "lock_state": "le_yes_dead_no_locked",
