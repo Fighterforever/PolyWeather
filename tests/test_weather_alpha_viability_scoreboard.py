@@ -123,3 +123,54 @@ def test_alpha_viability_scoreboard_marks_non_dust_failed_and_current_paths_unpr
     assert report["summary"]["live_should_pause"] is True
     assert report["summary"]["reason"] == "all_current_weather_alpha_paths_failed_or_unproven"
     assert "dust_tail_near_lock" in report["summary"]["kill_strategy_ids"]
+
+
+def test_alpha_viability_scoreboard_adds_bucket_family_structural_rows():
+    report = build_alpha_viability_scoreboard(
+        bucket_family_arbitrage_report={
+            "family_count": 4,
+            "partition_family_count": 2,
+            "candidate_count": 2,
+            "buy_all_yes_candidate_count": 1,
+            "buy_all_no_candidate_count": 0,
+            "monotonic_pair_count": 5,
+            "monotonic_pair_candidate_count": 1,
+            "best_edge_cents": 3.5,
+            "basket_paper_fill_count": 2,
+        },
+        generated_at="2026-06-28T00:00:00Z",
+    )
+
+    yes = _row(report, "bucket_family_buy_all_yes")
+    no = _row(report, "bucket_family_buy_all_no")
+    mono = _row(report, "monotonic_threshold_pair")
+    assert yes["status"] == "structural_arbitrage_forward_paper_started"
+    assert no["status"] == "no_current_structural_arbitrage"
+    assert mono["status"] == "structural_arbitrage_forward_paper_started"
+    assert yes["live_eligible"] is False
+    assert "bucket_family_buy_all_yes" in report["summary"]["continue_strategy_ids"]
+    assert report["summary"]["bucket_family_structural_arbitrage"]["best_edge_cents"] == 3.5
+    assert report["live_order_path"] is False
+
+
+def test_alpha_viability_scoreboard_marks_historical_structural_edge_as_forward_sampling_only():
+    report = build_alpha_viability_scoreboard(
+        bucket_family_arbitrage_report={
+            "family_count": 3,
+            "candidate_count": 0,
+            "buy_all_yes_candidate_count": 0,
+            "buy_all_no_candidate_count": 0,
+            "monotonic_pair_candidate_count": 0,
+        },
+        bucket_family_historical_replay_report={
+            "approximate_edge_candidate_count": 2,
+            "executable_depth_available_count": 0,
+            "approximate_pnl_cents": 10.0,
+        },
+        generated_at="2026-06-28T00:00:00Z",
+    )
+
+    row = _row(report, "bucket_family_buy_all_yes")
+    assert row["status"] == "historical_structural_edge_needs_forward_sampling"
+    assert row["trade_proxy_pnl_cents"] == 10.0
+    assert row["live_eligible"] is False

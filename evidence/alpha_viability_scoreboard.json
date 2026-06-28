@@ -1,6 +1,6 @@
 {
   "counts_for_live_gate": false,
-  "generated_at": "2026-06-28T09:28:42Z",
+  "generated_at": "2026-06-28T10:06:06Z",
   "historical_trade_proxy_guidance": {
     "guidance_reason": "no_historical_trade_proxy_edge",
     "prioritized_station_codes": [
@@ -24,6 +24,51 @@
       "executable_proxy_count": 0,
       "forward_paper_fill_count": 0,
       "live_eligible": false,
+      "main_blocker": "no_current_buy_all_yes_basket_edge",
+      "next_action": "keep_low_frequency_bucket_family_sampler_running",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 9,
+      "status": "no_current_structural_arbitrage",
+      "strategy_id": "bucket_family_buy_all_yes",
+      "trade_proxy_pnl_cents": 0.0
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "main_blocker": "no_current_buy_all_no_basket_edge",
+      "next_action": "keep_low_frequency_bucket_family_sampler_running",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 9,
+      "status": "no_current_structural_arbitrage",
+      "strategy_id": "bucket_family_buy_all_no",
+      "trade_proxy_pnl_cents": 0.0
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "main_blocker": "no_current_monotonic_pair_edge",
+      "next_action": "keep_low_frequency_bucket_family_sampler_running",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 0,
+      "status": "no_current_structural_arbitrage",
+      "strategy_id": "monotonic_threshold_pair",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
       "main_blocker": "awaiting_non_dust_due_resolution",
       "next_action": "wait_for_scheduled_non_dust_due_runner",
       "non_dust_only": true,
@@ -36,7 +81,7 @@
       "trade_proxy_pnl_cents": null
     },
     {
-      "active_breached_eq_count": 6,
+      "active_breached_eq_count": 10,
       "active_eq_station_count": 4,
       "active_supported_station_count_after": 4,
       "active_supported_station_count_before": 3,
@@ -140,11 +185,23 @@
   ],
   "schema_version": "polyweather_alpha_viability_scoreboard.v1",
   "summary": {
-    "active_breached_eq_count": 6,
+    "active_breached_eq_count": 10,
     "active_eq_station_count": 4,
     "active_supported_station_count_after": 4,
     "active_supported_station_count_before": 3,
     "alpha_viability_final_verdict": "waiting_for_non_dust_due_and_eq_dead_no_not_robust",
+    "bucket_family_structural_arbitrage": {
+      "basket_paper_fill_count": 0,
+      "best_edge_cents": null,
+      "buy_all_no_candidate_count": 0,
+      "buy_all_yes_candidate_count": 0,
+      "candidate_count": 0,
+      "family_count": 9,
+      "historical_approximate_edge_candidate_count": 0,
+      "historical_executable_depth_available_count": 0,
+      "monotonic_pair_candidate_count": 0,
+      "partition_family_count": 8
+    },
     "continue_strategy_ids": [],
     "counts_for_live_gate": false,
     "eq_dead_no_current_status": "eq_dead_no_proxy_not_robust_keep_monitoring_only",
@@ -171,8 +228,11 @@
       "threshold_latency"
     ],
     "reason": "waiting_for_non_dust_due_and_eq_dead_no_not_robust",
-    "strategy_count": 7,
+    "strategy_count": 10,
     "wait_strategy_ids": [
+      "bucket_family_buy_all_yes",
+      "bucket_family_buy_all_no",
+      "monotonic_threshold_pair",
       "non_dust_threshold_cdf"
     ]
   }

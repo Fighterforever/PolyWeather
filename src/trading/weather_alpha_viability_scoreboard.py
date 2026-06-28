@@ -96,6 +96,9 @@ def _next_action(status: str) -> str:
         "alpha_candidate_paper_only_review": "paper_only_review_no_live_gate",
         "waiting_for_exact_breach_liquidity": "keep_eq_dead_no_sampler_running_until_direct_no_ask_appears",
         "historical_proxy_nonpositive_or_unclear": "pause_strategy_or_require_new_tradeability_filter",
+        "structural_arbitrage_forward_paper_started": "collect_forward_basket_markouts_and_resolution_paper_only",
+        "no_current_structural_arbitrage": "keep_low_frequency_bucket_family_sampler_running",
+        "historical_structural_edge_needs_forward_sampling": "forward_sample_bucket_family_arbitrage_with_real_orderbooks",
     }.get(status, "collect_targeted_evidence")
 
 
@@ -139,6 +142,22 @@ def _truth_coverage(summary: Dict[str, Any]) -> Optional[float]:
     return round(truth / total, 6)
 
 
+def _structural_status(
+    *,
+    candidate_count: int,
+    family_count: int,
+    historical_approximate_count: int,
+    historical_depth_count: int,
+) -> str:
+    if candidate_count > 0:
+        return "structural_arbitrage_forward_paper_started"
+    if historical_approximate_count > 0 and historical_depth_count <= 0:
+        return "historical_structural_edge_needs_forward_sampling"
+    if family_count > 0:
+        return "no_current_structural_arbitrage"
+    return "no_current_structural_arbitrage"
+
+
 def _positive_station_guidance(report: Dict[str, Any]) -> Dict[str, Any]:
     summary = _summary(report)
     station_rows = summary.get("by_station") if isinstance(summary.get("by_station"), list) else []
@@ -174,6 +193,8 @@ def build_alpha_viability_scoreboard(
     threshold_latency_trade_replay_report: Dict[str, Any] | None = None,
     active_sampler_report: Dict[str, Any] | None = None,
     non_dust_due_runner_status: Dict[str, Any] | None = None,
+    bucket_family_arbitrage_report: Dict[str, Any] | None = None,
+    bucket_family_historical_replay_report: Dict[str, Any] | None = None,
     generated_at: Optional[str] = None,
 ) -> Dict[str, Any]:
     generated_at = generated_at or utc_now_iso()
@@ -187,6 +208,8 @@ def build_alpha_viability_scoreboard(
     tl_trade = _summary(threshold_latency_trade_replay_report or {})
     active = _summary(active_sampler_report or {})
     due = _compact(non_dust_due_runner_status or {})
+    bucket_arbitrage = _compact(bucket_family_arbitrage_report or {})
+    bucket_historical = _compact(bucket_family_historical_replay_report or {})
 
     strict_resolved_pnl = _safe_float(strict.get("resolved_pnl_cents"))
     ol_proxy_pnl = _safe_float(ol_trade.get("trade_proxy_pnl_cents"))
@@ -241,6 +264,62 @@ def build_alpha_viability_scoreboard(
         eq_status = "eq_dead_no_proxy_not_robust_keep_monitoring_only"
 
     rows = [
+        _row(
+            strategy_id="bucket_family_buy_all_yes",
+            status=_structural_status(
+                candidate_count=_safe_int(bucket_arbitrage.get("buy_all_yes_candidate_count")),
+                family_count=_safe_int(bucket_arbitrage.get("family_count")),
+                historical_approximate_count=_safe_int(bucket_historical.get("approximate_edge_candidate_count")),
+                historical_depth_count=_safe_int(bucket_historical.get("executable_depth_available_count")),
+            ),
+            signal_count=_safe_int(bucket_arbitrage.get("family_count")),
+            executable_proxy_count=_safe_int(bucket_arbitrage.get("buy_all_yes_candidate_count")),
+            forward_paper_fill_count=_safe_int(bucket_arbitrage.get("basket_paper_fill_count")),
+            trade_proxy_pnl_cents=_safe_float(bucket_historical.get("approximate_pnl_cents")),
+            non_dust_only=True,
+            main_blocker=(
+                "structural_basket_candidate_found_paper_only"
+                if _safe_int(bucket_arbitrage.get("buy_all_yes_candidate_count")) > 0
+                else "no_current_buy_all_yes_basket_edge"
+            ),
+        ),
+        _row(
+            strategy_id="bucket_family_buy_all_no",
+            status=_structural_status(
+                candidate_count=_safe_int(bucket_arbitrage.get("buy_all_no_candidate_count")),
+                family_count=_safe_int(bucket_arbitrage.get("family_count")),
+                historical_approximate_count=_safe_int(bucket_historical.get("approximate_edge_candidate_count")),
+                historical_depth_count=_safe_int(bucket_historical.get("executable_depth_available_count")),
+            ),
+            signal_count=_safe_int(bucket_arbitrage.get("family_count")),
+            executable_proxy_count=_safe_int(bucket_arbitrage.get("buy_all_no_candidate_count")),
+            forward_paper_fill_count=_safe_int(bucket_arbitrage.get("basket_paper_fill_count")),
+            trade_proxy_pnl_cents=_safe_float(bucket_historical.get("approximate_pnl_cents")),
+            non_dust_only=True,
+            main_blocker=(
+                "structural_basket_candidate_found_paper_only"
+                if _safe_int(bucket_arbitrage.get("buy_all_no_candidate_count")) > 0
+                else "no_current_buy_all_no_basket_edge"
+            ),
+        ),
+        _row(
+            strategy_id="monotonic_threshold_pair",
+            status=_structural_status(
+                candidate_count=_safe_int(bucket_arbitrage.get("monotonic_pair_candidate_count")),
+                family_count=_safe_int(bucket_arbitrage.get("family_count")),
+                historical_approximate_count=0,
+                historical_depth_count=0,
+            ),
+            signal_count=_safe_int(bucket_arbitrage.get("monotonic_pair_count")),
+            executable_proxy_count=_safe_int(bucket_arbitrage.get("monotonic_pair_candidate_count")),
+            forward_paper_fill_count=_safe_int(bucket_arbitrage.get("basket_paper_fill_count")),
+            non_dust_only=True,
+            main_blocker=(
+                "structural_pair_candidate_found_paper_only"
+                if _safe_int(bucket_arbitrage.get("monotonic_pair_candidate_count")) > 0
+                else "no_current_monotonic_pair_edge"
+            ),
+        ),
         _row(
             strategy_id="non_dust_threshold_cdf",
             status=non_dust_status,
@@ -354,7 +433,7 @@ def build_alpha_viability_scoreboard(
     wait_strategies = [
         row["strategy_id"]
         for row in rows
-        if row["status"] in {"waiting_due", "single_positive_needs_more"}
+        if row["status"] in {"waiting_due", "single_positive_needs_more", "no_current_structural_arbitrage"}
     ]
     pause_strategies = [
         row["strategy_id"]
@@ -375,6 +454,12 @@ def build_alpha_viability_scoreboard(
             "killed_diagnostic_only",
         }
     ]
+    structural_continue = [
+        row["strategy_id"]
+        for row in rows
+        if row["status"] == "structural_arbitrage_forward_paper_started"
+    ]
+    continue_strategies = sorted(set(continue_strategies + structural_continue))
     ol_guidance = _positive_station_guidance(observation_lock_trade_replay_report or {})
     tl_guidance = _positive_station_guidance(threshold_latency_trade_replay_report or {})
     eq_guidance = _positive_station_guidance(eq_dead_no_trade_replay_report or {})
@@ -445,6 +530,22 @@ def build_alpha_viability_scoreboard(
             "eq_dead_no_forward_paper_fill_count": eq_forward_fill_count,
             "eq_dead_no_current_status": eq_status,
             "non_dust_threshold_cdf_status": non_dust_status,
+            "bucket_family_structural_arbitrage": {
+                "family_count": _safe_int(bucket_arbitrage.get("family_count")),
+                "partition_family_count": _safe_int(bucket_arbitrage.get("partition_family_count")),
+                "candidate_count": _safe_int(bucket_arbitrage.get("candidate_count")),
+                "buy_all_yes_candidate_count": _safe_int(bucket_arbitrage.get("buy_all_yes_candidate_count")),
+                "buy_all_no_candidate_count": _safe_int(bucket_arbitrage.get("buy_all_no_candidate_count")),
+                "monotonic_pair_candidate_count": _safe_int(bucket_arbitrage.get("monotonic_pair_candidate_count")),
+                "best_edge_cents": _safe_float(bucket_arbitrage.get("best_edge_cents")),
+                "basket_paper_fill_count": _safe_int(bucket_arbitrage.get("basket_paper_fill_count")),
+                "historical_approximate_edge_candidate_count": _safe_int(
+                    bucket_historical.get("approximate_edge_candidate_count")
+                ),
+                "historical_executable_depth_available_count": _safe_int(
+                    bucket_historical.get("executable_depth_available_count")
+                ),
+            },
         },
         "historical_trade_proxy_guidance": {
             "sampler_mode": sampler_mode,
@@ -512,6 +613,25 @@ def update_profit_strategy_state_report(
             threshold["status"] = "reduced_frequency_no_current_candidate"
             threshold["next_action"] = "keep_observation_logging_reduce_execution_sampling_until_new_evidence"
             threshold["live_order_path"] = False
+        bucket_rows = {
+            key: rows.get(key) or {}
+            for key in (
+                "bucket_family_buy_all_yes",
+                "bucket_family_buy_all_no",
+                "monotonic_threshold_pair",
+            )
+        }
+        active["bucket_family_structural_arbitrage"] = {
+            "status": "structural_arbitrage_forward_paper_started"
+            if any(row.get("status") == "structural_arbitrage_forward_paper_started" for row in bucket_rows.values())
+            else "no_current_structural_arbitrage",
+            "paper_only": True,
+            "counts_for_live_gate": False,
+            "live_order_path": False,
+            "strategies": bucket_rows,
+            "report_path": "evidence/bucket_family/basket_arbitrage_report.json",
+            "historical_replay_path": "evidence/bucket_family/basket_historical_replay_report.json",
+        }
     return updated
 
 

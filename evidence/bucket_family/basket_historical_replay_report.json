@@ -1,0 +1,367 @@
+{
+  "approximate_edge_candidate_count": 0,
+  "approximate_pnl_cents": 0.0,
+  "arbitrage_summary": {
+    "best_edge_cents": null,
+    "candidate_count": 0,
+    "no_candidate_blocker_counts": [
+      {
+        "blocker": "edge_below_min",
+        "count": 24
+      },
+      {
+        "blocker": "incomplete_partition",
+        "count": 4
+      },
+      {
+        "blocker": "missing_depth",
+        "count": 24
+      }
+    ]
+  },
+  "artifact_paths": {
+    "rows_output": "evidence/bucket_family/basket_historical_replay_rows.jsonl",
+    "summary_output": "evidence/bucket_family/basket_historical_replay_report.json"
+  },
+  "by_event_date": [
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 2,
+      "target_date": "2026-02-14"
+    },
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 2,
+      "target_date": "2026-03-31"
+    },
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 4,
+      "target_date": "2026-04-15"
+    },
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 4,
+      "target_date": "2026-04-16"
+    },
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 2,
+      "target_date": "2026-04-17"
+    },
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 2,
+      "target_date": "2026-04-23"
+    },
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 8,
+      "target_date": "2026-06-27"
+    }
+  ],
+  "by_station": [
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 2,
+      "station_code": "EGLC"
+    },
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 2,
+      "station_code": "KLGA"
+    },
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 4,
+      "station_code": "LFPB"
+    },
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 4,
+      "station_code": "LTAC"
+    },
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 4,
+      "station_code": "LTFM"
+    },
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 4,
+      "station_code": "RKSI"
+    },
+    {
+      "approximate_edge_candidate_count": 0,
+      "approximate_pnl_cents": 0.0,
+      "family_count": 4,
+      "station_code": "UUWW"
+    }
+  ],
+  "can_count_as_real_pnl": false,
+  "catalog_summary": {
+    "family_count": 12,
+    "gap_counts": [
+      {
+        "count": 1,
+        "reason": "missing_exact_thresholds"
+      },
+      {
+        "count": 1,
+        "reason": "missing_or_multiple_upper_tail"
+      },
+      {
+        "count": 1,
+        "reason": "unsupported_bucket_type"
+      }
+    ],
+    "partition_candidate_count": 10
+  },
+  "counts_for_live_gate": false,
+  "executable_depth_available_count": 0,
+  "family_count": 12,
+  "live_order_path": false,
+  "missing_price_or_depth_count": 24,
+  "paper_only": true,
+  "replayable_family_count": 10,
+  "schema_version": "polyweather_weather_bucket_family_historical_replay.v1",
+  "source": {
+    "closed_rows_source": "polymarket_closed_search",
+    "diagnostics": {
+      "city_temperature_query_count": 12,
+      "closed_markets_kept": 150,
+      "closed_weather_events": 38,
+      "errors": [],
+      "market_implied": {
+        "monotonic_violation_group_count": 0,
+        "mutually_exclusive_group_count": 12,
+        "mutually_exclusive_groups": [
+          {
+            "bucket_family": "mutually_exclusive",
+            "group_key": "380625|highest-temperature-in-seoul-on-april-17-2026|seoul|2026-04-17",
+            "overround": 2.0,
+            "row_count": 18,
+            "status": "normalised",
+            "underround": 0.0
+          },
+          {
+            "bucket_family": "mutually_exclusive",
+            "group_key": "373584|highest-temperature-in-seoul-on-april-15-2026|seoul|2026-04-15",
+            "overround": 0.0,
+            "row_count": 18,
+            "status": "insufficient_family",
+            "underround": 1.0
+          },
+          {
+            "bucket_family": "mutually_exclusive",
+            "group_key": "379785|highest-temperature-in-paris-on-april-16-2026|paris|2026-04-16",
+            "overround": 2.0,
+            "row_count": 18,
+            "status": "normalised",
+            "underround": 0.0
+          },
+          {
+            "bucket_family": "mutually_exclusive",
+            "group_key": "373581|highest-temperature-in-paris-on-april-15-2026|paris|2026-04-15",
+            "overround": 2.0,
+            "row_count": 18,
+            "status": "normalised",
+            "underround": 0.0
+          },
+          {
+            "bucket_family": "mutually_exclusive",
+            "group_key": "379791|highest-temperature-in-nyc-on-april-16-2026|new york|2026-04-16",
+            "overround": 2.0,
+            "row_count": 18,
+            "status": "normalised",
+            "underround": 0.0
+          },
+          {
+            "bucket_family": "mutually_exclusive",
+            "group_key": "632075|highest-temperature-in-ankara-on-june-27-2026|ankara|2026-06-27",
+            "overround": 2.0,
+            "row_count": 18,
+            "status": "normalised",
+            "underround": 0.0
+          },
+          {
+            "bucket_family": "mutually_exclusive",
+            "group_key": "206168|highest-temperature-in-ankara-on-february-14-2026|ankara|2026-02-14",
+            "overround": 2.0,
+            "row_count": 14,
+            "status": "normalised",
+            "underround": 0.0
+          },
+          {
+            "bucket_family": "mutually_exclusive",
+            "group_key": "632090|highest-temperature-in-istanbul-on-june-27-2026|istanbul|2026-06-27",
+            "overround": 2.0,
+            "row_count": 18,
+            "status": "normalised",
+            "underround": 0.0
+          },
+          {
+            "bucket_family": "mutually_exclusive",
+            "group_key": "313361|highest-temperature-in-istanbul-on-march-31-2026|istanbul|2026-03-31",
+            "overround": 2.0,
+            "row_count": 18,
+            "status": "normalised",
+            "underround": 0.0
+          },
+          {
+            "bucket_family": "mutually_exclusive",
+            "group_key": "632089|highest-temperature-in-moscow-on-june-27-2026|moscow|2026-06-27",
+            "overround": 2.0,
+            "row_count": 18,
+            "status": "normalised",
+            "underround": 0.0
+          },
+          {
+            "bucket_family": "mutually_exclusive",
+            "group_key": "401702|highest-temperature-in-moscow-on-april-23-2026|moscow|2026-04-23",
+            "overround": 0.0,
+            "row_count": 18,
+            "status": "insufficient_family",
+            "underround": 1.0
+          },
+          {
+            "bucket_family": "mutually_exclusive",
+            "group_key": "632073|highest-temperature-in-london-on-june-27-2026|london|2026-06-27",
+            "overround": 2.0,
+            "row_count": 14,
+            "status": "normalised",
+            "underround": 0.0
+          }
+        ],
+        "rows_seen": 300,
+        "rows_with_yes_price": 300,
+        "schema_version": "polyweather_weather_market_implied.v1",
+        "threshold_cdf_group_count": 12,
+        "threshold_cdf_groups": [
+          {
+            "bucket_family": "threshold_cdf",
+            "group_key": "380625|highest-temperature-in-seoul-on-april-17-2026|seoul|2026-04-17",
+            "monotonic_violation_count": 0,
+            "row_count": 4,
+            "status": "fitted"
+          },
+          {
+            "bucket_family": "threshold_cdf",
+            "group_key": "373584|highest-temperature-in-seoul-on-april-15-2026|seoul|2026-04-15",
+            "monotonic_violation_count": 0,
+            "row_count": 4,
+            "status": "fitted"
+          },
+          {
+            "bucket_family": "threshold_cdf",
+            "group_key": "379785|highest-temperature-in-paris-on-april-16-2026|paris|2026-04-16",
+            "monotonic_violation_count": 0,
+            "row_count": 4,
+            "status": "fitted"
+          },
+          {
+            "bucket_family": "threshold_cdf",
+            "group_key": "373581|highest-temperature-in-paris-on-april-15-2026|paris|2026-04-15",
+            "monotonic_violation_count": 0,
+            "row_count": 4,
+            "status": "fitted"
+          },
+          {
+            "bucket_family": "threshold_cdf",
+            "group_key": "379791|highest-temperature-in-nyc-on-april-16-2026|new york|2026-04-16",
+            "monotonic_violation_count": 0,
+            "row_count": 4,
+            "status": "fitted"
+          },
+          {
+            "bucket_family": "threshold_cdf",
+            "group_key": "632075|highest-temperature-in-ankara-on-june-27-2026|ankara|2026-06-27",
+            "monotonic_violation_count": 0,
+            "row_count": 4,
+            "status": "fitted"
+          },
+          {
+            "bucket_family": "threshold_cdf",
+            "group_key": "206168|highest-temperature-in-ankara-on-february-14-2026|ankara|2026-02-14",
+            "monotonic_violation_count": 0,
+            "row_count": 4,
+            "status": "fitted"
+          },
+          {
+            "bucket_family": "threshold_cdf",
+            "group_key": "632090|highest-temperature-in-istanbul-on-june-27-2026|istanbul|2026-06-27",
+            "monotonic_violation_count": 0,
+            "row_count": 4,
+            "status": "fitted"
+          },
+          {
+            "bucket_family": "threshold_cdf",
+            "group_key": "313361|highest-temperature-in-istanbul-on-march-31-2026|istanbul|2026-03-31",
+            "monotonic_violation_count": 0,
+            "row_count": 4,
+            "status": "fitted"
+          },
+          {
+            "bucket_family": "threshold_cdf",
+            "group_key": "632089|highest-temperature-in-moscow-on-june-27-2026|moscow|2026-06-27",
+            "monotonic_violation_count": 0,
+            "row_count": 4,
+            "status": "fitted"
+          },
+          {
+            "bucket_family": "threshold_cdf",
+            "group_key": "401702|highest-temperature-in-moscow-on-april-23-2026|moscow|2026-04-23",
+            "monotonic_violation_count": 0,
+            "row_count": 4,
+            "status": "fitted"
+          },
+          {
+            "bucket_family": "threshold_cdf",
+            "group_key": "632073|highest-temperature-in-london-on-june-27-2026|london|2026-06-27",
+            "monotonic_violation_count": 0,
+            "row_count": 2,
+            "status": "fitted"
+          }
+        ]
+      },
+      "markets_seen": 250,
+      "open_weather_events": 39,
+      "raw_search_events": 78,
+      "rows": 300,
+      "search_queries": [
+        "temperature",
+        "rain",
+        "hurricane",
+        "air quality",
+        "highest temperature in Ankara",
+        "highest temperature in Istanbul",
+        "highest temperature in Moscow",
+        "highest temperature in London",
+        "highest temperature in Paris",
+        "highest temperature in Seoul",
+        "highest temperature in Busan",
+        "highest temperature in Hong Kong",
+        "highest temperature in Shenzhen",
+        "highest temperature in Taipei",
+        "highest temperature in Shanghai",
+        "highest temperature in Singapore"
+      ],
+      "weather_events": 77
+    },
+    "payload_row_count": 300,
+    "payload_status": "ready"
+  }
+}

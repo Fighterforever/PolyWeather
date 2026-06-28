@@ -1,0 +1,40 @@
+{
+  "counts_for_live_gate": false,
+  "family_count": 9,
+  "gap_counts": [
+    {
+      "count": 1,
+      "reason": "missing_or_multiple_lower_tail"
+    },
+    {
+      "count": 1,
+      "reason": "missing_or_multiple_upper_tail"
+    }
+  ],
+  "gaps": [
+    {
+      "bucket_count": 1,
+      "event_slug": "highest-temperature-in-moscow-on-june-29-2026",
+      "market_slugs": [
+        "highest-temperature-in-moscow-on-june-29-2026-22c"
+      ],
+      "partition_gap_reasons": [
+        "missing_or_multiple_lower_tail",
+        "missing_or_multiple_upper_tail"
+      ],
+      "settlement_source": "metar",
+      "station_code": "UUWW",
+      "target_date": "2026-06-29"
+    }
+  ],
+  "live_order_path": false,
+  "paper_only": true,
+  "partition_candidate_count": 8,
+  "schema_version": "polyweather_weather_bucket_family_gaps.v1",
+  "skipped_row_counts": [
+    {
+      "count": 2,
+      "reason": "not_temperature"
+    }
+  ]
+}
