@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 from pathlib import Path
+from datetime import datetime, timezone
 from typing import Any, Dict, Iterable, List, Optional
 
 from src.trading.polymarket_orderbook_archive import DEFAULT_ORDERBOOK_ARCHIVE_DIR
@@ -388,6 +389,156 @@ def _resolution_source_counts(records: Iterable[Dict[str, Any]]) -> List[Dict[st
     return _count_by(records, "resolution_record_source", key_name="resolution_record_source")
 
 
+def _parse_utc(value: Any) -> Optional[datetime]:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def _visible_at_or_before(row: Dict[str, Any], replay_time: str, *fields: str) -> bool:
+    replay_dt = _parse_utc(replay_time)
+    if replay_dt is None:
+        return True
+    for field in fields:
+        parsed = _parse_utc(row.get(field))
+        if parsed is not None:
+            return parsed <= replay_dt
+    return True
+
+
+def _visible_orderbooks_by_token(
+    orderbook_rows: Iterable[Dict[str, Any]],
+    *,
+    replay_time: str,
+) -> Dict[str, Dict[str, Any]]:
+    latest: Dict[str, Dict[str, Any]] = {}
+    latest_time: Dict[str, str] = {}
+    for row in orderbook_rows:
+        if not isinstance(row, dict):
+            continue
+        token_id = str(row.get("token_id") or "").strip()
+        recorded_at = str(row.get("recorded_at") or row.get("available_at") or "")
+        if not token_id or not _visible_at_or_before(row, replay_time, "recorded_at", "available_at"):
+            continue
+        if token_id not in latest_time or recorded_at > latest_time[token_id]:
+            latest[token_id] = row
+            latest_time[token_id] = recorded_at
+    return latest
+
+
+def _has_ask_ladder(orderbook: Optional[Dict[str, Any]]) -> bool:
+    if not isinstance(orderbook, dict):
+        return False
+    asks = orderbook.get("ask_ladder") or orderbook.get("asks")
+    return isinstance(asks, list) and bool(asks)
+
+
+def _sample_row(row: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        key: row.get(key)
+        for key in (
+            "queue_record_id",
+            "row_id",
+            "id",
+            "queue_name",
+            "strategy_id",
+            "market_slug",
+            "token_id",
+            "side",
+            "available_at",
+            "generated_at",
+            "recorded_at",
+            "bucket_type",
+            "price",
+            "ask",
+            "ev_safe",
+        )
+        if row.get(key) is not None
+    }
+
+
+def _no_fill_diagnostics(
+    *,
+    queue_rows: List[Dict[str, Any]],
+    candidates: List[Dict[str, Any]],
+    orderbook_rows: List[Dict[str, Any]],
+    resolved_rows: List[Dict[str, Any]],
+    replay: Dict[str, Any],
+    replay_time: str,
+) -> Dict[str, Any]:
+    visible_books = _visible_orderbooks_by_token(orderbook_rows, replay_time=replay_time)
+    queue_with_token = [row for row in queue_rows if str(row.get("token_id") or "").strip()]
+    missing_token_rows = [row for row in queue_rows if not str(row.get("token_id") or "").strip()]
+    visible_candidates: List[Dict[str, Any]] = []
+    missing_ask_ladder_rows: List[Dict[str, Any]] = []
+    future_candidates: List[Dict[str, Any]] = []
+    no_visible_candidates: List[Dict[str, Any]] = []
+    for candidate in candidates:
+        if not _visible_at_or_before(candidate, replay_time, "generated_at", "recorded_at", "available_at"):
+            future_candidates.append(candidate)
+            continue
+        token_id = str(candidate.get("token_id") or "").strip()
+        orderbook = visible_books.get(token_id)
+        if orderbook is None:
+            no_visible_candidates.append(candidate)
+            continue
+        visible_candidates.append(candidate)
+        if not _has_ask_ladder(orderbook):
+            missing_ask_ladder_rows.append(candidate)
+
+    reasons: List[Dict[str, Any]] = []
+    if not queue_rows:
+        reasons.append({"reason": "strict_gate_queue_missing", "count": 1})
+    if queue_rows and not candidates:
+        reasons.append(
+            {
+                "reason": "no_tokenized_replay_candidates",
+                "count": max(1, len(missing_token_rows)),
+            }
+        )
+    fill_count = int(replay.get("fill_count") or 0)
+    if fill_count <= 0 and candidates:
+        reason_counts = {
+            "future_candidate": int(replay.get("skipped_future_candidate_count") or len(future_candidates)),
+            "no_visible_orderbook": int(replay.get("no_visible_orderbook_count") or len(no_visible_candidates)),
+            "missing_ask_ladder": len(missing_ask_ladder_rows),
+            "depth_insufficient": int(replay.get("missed_fill_count") or 0),
+        }
+        for reason, count in sorted(reason_counts.items(), key=lambda pair: (-pair[1], pair[0])):
+            if count > 0:
+                reasons.append({"reason": reason, "count": count})
+    return {
+        "schema_version": "polyweather_weather_strict_gate_replay_no_fill_diagnostics.v1",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "queue_record_count": len(queue_rows),
+        "replay_candidate_count": len(candidates),
+        "orderbook_snapshot_count": len(orderbook_rows),
+        "resolved_outcome_count": len(resolved_rows),
+        "queue_with_token_count": len(queue_with_token),
+        "candidate_with_visible_orderbook_count": len(visible_candidates),
+        "no_visible_orderbook_count": int(replay.get("no_visible_orderbook_count") or 0),
+        "skipped_future_candidate_count": int(replay.get("skipped_future_candidate_count") or 0),
+        "missed_fill_count": int(replay.get("missed_fill_count") or 0),
+        "missing_ask_ladder_count": len(missing_ask_ladder_rows),
+        "missing_token_id_count": len(missing_token_rows),
+        "top_no_fill_reasons": reasons[:10],
+        "sample_rows": {
+            "queue_missing_token": [_sample_row(row) for row in missing_token_rows[:5]],
+            "future_candidate": [_sample_row(row) for row in future_candidates[:5]],
+            "no_visible_orderbook": [_sample_row(row) for row in no_visible_candidates[:5]],
+            "missing_ask_ladder": [_sample_row(row) for row in missing_ask_ladder_rows[:5]],
+        },
+    }
+
+
 def _official_final_value_samples(records: Iterable[Dict[str, Any]], *, limit: int = 10) -> List[Dict[str, Any]]:
     samples: List[Dict[str, Any]] = []
     seen: set[tuple[str, str]] = set()
@@ -461,6 +612,14 @@ def build_strict_gate_replay_report(
     )
     performance_summary = _performance_summary(replay)
     ev_audit_summary = _ev_audit_summary(replay)
+    no_fill_diagnostics = _no_fill_diagnostics(
+        queue_rows=queue_rows,
+        candidates=candidates,
+        orderbook_rows=orderbook_rows,
+        resolved_rows=resolved_rows,
+        replay=replay,
+        replay_time=replay_time,
+    )
     report = {
         "schema_version": STRICT_GATE_REPLAY_SCHEMA_VERSION,
         "paper_only": True,
@@ -480,6 +639,7 @@ def build_strict_gate_replay_report(
         "execution_summary": _execution_summary(replay),
         "performance_summary": performance_summary,
         "ev_audit_summary": ev_audit_summary,
+        "no_fill_diagnostics": no_fill_diagnostics,
         "resolved_fill_count": ev_audit_summary.get("resolved_fill_count"),
         "resolved_fill_coverage": ev_audit_summary.get("resolved_fill_coverage"),
         "positive_ev_safe_but_negative_pnl_count": ev_audit_summary.get(

@@ -37,6 +37,8 @@ def build_program_arguments(args: argparse.Namespace) -> list[str]:
         args.run_after_utc,
         "--paper-journal-dir",
         args.paper_journal_dir,
+        "--strict-gate-queue-dir",
+        args.strict_gate_queue_dir,
         "--orderbook-archive-dir",
         args.orderbook_archive_dir,
         "--backfill-dir",
@@ -144,6 +146,7 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     parser.add_argument("--label", default=DEFAULT_LABEL)
     parser.add_argument("--run-after-utc", default="2026-06-28T03:05:00Z")
     parser.add_argument("--paper-journal-dir", default="evidence/paper_run")
+    parser.add_argument("--strict-gate-queue-dir", default="evidence/strict_gate_queues")
     parser.add_argument("--orderbook-archive-dir", default="evidence/orderbook_archive")
     parser.add_argument("--backfill-dir", default="evidence/weather_backfill_local")
     parser.add_argument("--summary-output", default="evidence/due_pipeline_metar_ltac_uuww_after_due.json")

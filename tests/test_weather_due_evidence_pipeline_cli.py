@@ -20,6 +20,8 @@ def _archive_row(**overrides):
         "settlement_station_code": "LTAC",
         "settlement_source": "metar",
         "settlement_timezone": "UTC+03:00",
+        "best_ask": 0.002,
+        "best_bid": 0.001,
         "settlement_spec": {
             "target_date": "2026-06-27",
             "timezone": "UTC+03:00",
@@ -30,6 +32,79 @@ def _archive_row(**overrides):
         },
         "ask_ladder": [{"price": 0.002, "size": 2.0}],
         "bid_ladder": [{"price": 0.001, "size": 2.0}],
+    }
+    row.update(overrides)
+    return row
+
+
+def _closed_row(**overrides):
+    row = {
+        "status": "resolved",
+        "market_id": "market-ankara",
+        "market_slug": "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+        "event_slug": "highest-temperature-in-ankara-on-june-27-2026",
+        "city": "ankara",
+        "target_date": "2026-06-27",
+        "bucket_type": "le",
+        "bucket_label": "<= 24°C",
+        "outcomes": ["Yes", "No"],
+        "settled_probability_by_outcome": {"Yes": 1.0, "No": 0.0},
+        "token_id_by_outcome": {"Yes": "ankara-token", "No": "ankara-no-token"},
+        "winning_outcome": "Yes",
+        "winning_token_id": "ankara-token",
+        "official_final_value": 23.0,
+        "official_final_value_source": "fixture_metar",
+        "parsed_temperature_spec": {
+            "city": "ankara",
+            "comparator": "le",
+            "market_type": "maxtemp",
+            "target_date": "2026-06-27",
+            "threshold": 24.0,
+            "unit": "C",
+            "upper_threshold": None,
+        },
+        "settlement_station_code": "LTAC",
+        "settlement_source": "metar",
+        "settlement_due_time": "2026-06-28T02:59:59Z",
+        "market_close_time": "2026-06-27T12:00:00Z",
+        "settlement_spec": {
+            "target_date": "2026-06-27",
+            "timezone": "UTC+03:00",
+            "market_close_time": "2026-06-27T12:00:00Z",
+            "end_time": "2026-06-27T12:00:00Z",
+            "station_code": "LTAC",
+            "settlement_source": "metar",
+            "market_family": "temperature",
+            "metric": "daily_high_temperature",
+            "threshold": 24.0,
+            "bucket_type": "le",
+            "unit": "C",
+        },
+    }
+    row.update(overrides)
+    return row
+
+
+def _queue_row(**overrides):
+    row = {
+        "schema_version": "polyweather_weather_strict_gate_queue.v1",
+        "queue_record_id": "queue-ankara",
+        "generated_at": "2026-06-27T11:55:00Z",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "queue_name": "ev_calibration",
+        "queue_reasons": ["edge_below_min"],
+        "market_slug": "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+        "token_id": "ankara-token",
+        "side": "yes",
+        "bucket_type": "le",
+        "strategy_id": "near_lock",
+        "q_effective": 0.002,
+        "ev_safe": 0.01,
+        "model_probability": 0.20,
+        "p_lcb": 0.20,
+        "settlement_station_code": "LTAC",
+        "settlement_source": "metar",
     }
     row.update(overrides)
     return row
@@ -94,7 +169,7 @@ def test_due_evidence_pipeline_cli_blocks_execute_before_settlement_due(tmp_path
     assert output["before_token_overlap"]["wrong_due_prevented_count"] == 1
     assert output["alpha_conclusion"] == "inconclusive_waiting_for_resolution_or_backfill"
     assert written["due_status"] == output["due_status"]
-    assert written["artifact_paths"] == {}
+    assert "strict_gate_replay" in written["artifact_paths"]
 
 
 def test_due_evidence_pipeline_attempts_execute_when_due_count_positive(monkeypatch, tmp_path):
@@ -380,3 +455,102 @@ def test_due_evidence_pipeline_reports_official_truth_ready_market_unresolved(mo
     ]
     assert report["official_truth"]["official_truth_sample_count"] == 1
     assert report["targeted_closed_backfill"]["open_market_slug_count"] == 1
+
+
+def test_due_pipeline_uses_explicit_strict_gate_queue_dir(tmp_path):
+    paper_dir = tmp_path / "paper"
+    explicit_queue_dir = tmp_path / "explicit_queues"
+    archive_dir = tmp_path / "archive"
+    backfill_dir = tmp_path / "backfill"
+    _append_jsonl(archive_dir / "orderbook_snapshots.jsonl", [_archive_row()])
+    _append_jsonl(backfill_dir / "closed_markets.jsonl", [_closed_row()])
+    _append_jsonl(explicit_queue_dir / "strict_gate_queue.jsonl", [_queue_row()])
+
+    report = pipeline_cli.build_due_evidence_pipeline_report(
+        paper_journal_dir=paper_dir,
+        strict_gate_queue_dir=explicit_queue_dir,
+        orderbook_archive_dir=archive_dir,
+        backfill_dir=backfill_dir,
+        generated_at="2026-06-28T03:05:00Z",
+        replay_time="2026-06-28T03:05:00Z",
+        include_settlement_sources=["metar"],
+        include_station_codes=["LTAC"],
+    )
+
+    queue_input = report["strict_gate_queue_input"]
+    assert queue_input["source"] == "explicit"
+    assert queue_input["raw_record_count"] == 1
+    assert queue_input["matching_scoped_token_count"] == 1
+    assert report["strict_replay"]["queue_record_count"] == 1
+    assert report["strict_replay"]["replay_candidate_count"] == 1
+    assert report["strict_replay"]["fill_count"] == 1
+    assert report["live_order_path"] is False
+
+
+def test_due_pipeline_calibration_uses_preresolution_orderbook_evidence(tmp_path):
+    archive_dir = tmp_path / "archive"
+    backfill_dir = tmp_path / "backfill"
+    paper_dir = tmp_path / "paper"
+    _append_jsonl(archive_dir / "orderbook_snapshots.jsonl", [_archive_row()])
+    _append_jsonl(backfill_dir / "closed_markets.jsonl", [_closed_row()])
+
+    report = pipeline_cli.build_due_evidence_pipeline_report(
+        paper_journal_dir=paper_dir,
+        orderbook_archive_dir=archive_dir,
+        backfill_dir=backfill_dir,
+        generated_at="2026-06-28T03:05:00Z",
+        replay_time="2026-06-28T03:05:00Z",
+        include_settlement_sources=["metar"],
+        include_station_codes=["LTAC"],
+    )
+
+    assert report["historical_evidence_input"]["strict_gate_supplement_count"] == 0
+    assert report["historical_evidence_input"]["preresolution_orderbook_supplement_count"] == 1
+    assert report["historical_evidence_input"]["merged_supplement_count"] == 1
+    assert report["settlement_calibration"]["probability_score_sample_count"] == 1
+    assert report["settlement_calibration"]["resolved_pnl_sample_count"] == 1
+
+
+def test_due_pipeline_archived_overlap_replay_is_diagnostic_only(tmp_path):
+    archive_dir = tmp_path / "archive"
+    backfill_dir = tmp_path / "backfill"
+    paper_dir = tmp_path / "paper"
+    _append_jsonl(archive_dir / "orderbook_snapshots.jsonl", [_archive_row()])
+    _append_jsonl(backfill_dir / "closed_markets.jsonl", [_closed_row()])
+
+    report = pipeline_cli.build_due_evidence_pipeline_report(
+        paper_journal_dir=paper_dir,
+        orderbook_archive_dir=archive_dir,
+        backfill_dir=backfill_dir,
+        generated_at="2026-06-28T03:05:00Z",
+        replay_time="2026-06-28T03:05:00Z",
+        include_settlement_sources=["metar"],
+        include_station_codes=["LTAC"],
+    )
+
+    archived_replay = report["archived_overlap_replay"]
+    assert archived_replay["fill_count"] == 1
+    assert archived_replay["resolved_pnl_cents"] == 99.8
+    assert archived_replay["counts_for_live_gate"] is False
+    assert archived_replay["diagnostic_only"] is True
+    assert archived_replay["counts_for_live_gate_note"] == "diagnostic_only_not_live_eligible"
+
+
+def test_due_pipeline_surfaces_no_fill_diagnostics(tmp_path):
+    paper_dir = tmp_path / "paper"
+    explicit_queue_dir = tmp_path / "explicit_queues"
+    _append_jsonl(explicit_queue_dir / "strict_gate_queue.jsonl", [_queue_row()])
+
+    report = pipeline_cli.build_due_evidence_pipeline_report(
+        paper_journal_dir=paper_dir,
+        strict_gate_queue_dir=explicit_queue_dir,
+        orderbook_archive_dir=tmp_path / "archive",
+        backfill_dir=tmp_path / "backfill",
+        generated_at="2026-06-28T03:05:00Z",
+        replay_time="2026-06-28T03:05:00Z",
+    )
+
+    diagnostics = report["strict_replay"]["no_fill_diagnostics"]
+    assert diagnostics["queue_record_count"] == 1
+    assert diagnostics["replay_candidate_count"] == 1
+    assert diagnostics["top_no_fill_reasons"][0]["reason"] == "no_visible_orderbook"

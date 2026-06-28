@@ -101,6 +101,8 @@ def _pipeline_command(args: argparse.Namespace, *, generated_at: str) -> list[st
         str(PROJECT_ROOT / "scripts" / "weather_run_due_evidence_pipeline.py"),
         "--paper-journal-dir",
         str(args.paper_journal_dir),
+        "--strict-gate-queue-dir",
+        str(args.strict_gate_queue_dir),
         "--orderbook-archive-dir",
         str(args.orderbook_archive_dir),
         "--backfill-dir",
@@ -136,6 +138,7 @@ def _summary_base(args: argparse.Namespace, *, now: datetime, status: str) -> Di
         "now_utc": _iso(now),
         "run_after_utc": args.run_after_utc,
         "summary_output": str(args.summary_output),
+        "strict_gate_queue_dir": str(args.strict_gate_queue_dir),
         "lock_file": str(args.lock_file),
         "done_file": str(args.done_file),
         "include_settlement_source": list(args.include_settlement_sources or []),
@@ -278,6 +281,7 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Guarded paper-only Polymarket weather due evidence runner.")
     parser.add_argument("--run-after-utc", required=True)
     parser.add_argument("--paper-journal-dir", required=True)
+    parser.add_argument("--strict-gate-queue-dir", required=True)
     parser.add_argument("--orderbook-archive-dir", required=True)
     parser.add_argument("--backfill-dir", required=True)
     parser.add_argument("--summary-output", required=True)

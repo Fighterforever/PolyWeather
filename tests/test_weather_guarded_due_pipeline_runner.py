@@ -13,6 +13,8 @@ def _args(tmp_path, *, now_utc="2026-06-28T03:06:00Z"):
             "2026-06-28T03:05:00Z",
             "--paper-journal-dir",
             str(tmp_path / "paper"),
+            "--strict-gate-queue-dir",
+            str(tmp_path / "strict_queues"),
             "--orderbook-archive-dir",
             str(tmp_path / "archive"),
             "--backfill-dir",
@@ -80,6 +82,7 @@ def test_guarded_due_runner_after_due_calls_pipeline_with_subset_args(tmp_path):
     assert len(calls) == 1
     command = calls[0]
     assert "--execute-closed-backfill" in command
+    assert command[command.index("--strict-gate-queue-dir") + 1] == str(tmp_path / "strict_queues")
     assert command[command.index("--confirm") + 1] == "PAPER_ONLY_ARCHIVED_ORDERBOOK_REFRESH"
     assert command.count("--include-station-code") == 2
     assert command[command.index("--include-station-code") + 1] == "LTAC"

@@ -30,6 +30,8 @@ def test_launchd_plist_contains_interval_workdir_and_logs(tmp_path):
     assert plist["StandardErrorPath"].endswith("evidence/logs/due_pipeline_launchd.err.log")
     assert "--run-after-utc" in plist["ProgramArguments"]
     assert "2026-06-28T03:05:00Z" in plist["ProgramArguments"]
+    assert "--strict-gate-queue-dir" in plist["ProgramArguments"]
+    assert "evidence/strict_gate_queues" in plist["ProgramArguments"]
     assert "--include-settlement-source" in plist["ProgramArguments"]
     assert "metar" in plist["ProgramArguments"]
     assert plist["ProgramArguments"].count("--include-station-code") == 2

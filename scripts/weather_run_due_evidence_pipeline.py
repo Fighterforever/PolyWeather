@@ -22,6 +22,7 @@ from src.trading.weather_closed_backfill import (  # noqa: E402
     DEFAULT_BACKFILL_DIR,
     run_targeted_closed_weather_backfill_from_market_slugs,
 )
+from src.trading.weather_closed_historical_replay import build_preresolution_orderbook_replay_report  # noqa: E402
 from src.trading.weather_closed_replay_seed import load_closed_backfill_records_with_snapshot_supplements  # noqa: E402
 from src.trading.weather_historical_evidence import historical_evidence_from_replay_report  # noqa: E402
 from src.trading.weather_live_evidence_bundle import (  # noqa: E402
@@ -227,6 +228,78 @@ def _filter_queue_by_tokens(records: Iterable[Dict[str, Any]], token_ids: set[st
     ]
 
 
+def _market_slugs(records: Iterable[Dict[str, Any]]) -> set[str]:
+    return {
+        str(row.get("market_slug") or "").strip()
+        for row in records
+        if isinstance(row, dict) and str(row.get("market_slug") or "").strip()
+    }
+
+
+def _queue_sample(row: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        key: row.get(key)
+        for key in (
+            "queue_record_id",
+            "queue_name",
+            "strategy_id",
+            "market_slug",
+            "token_id",
+            "side",
+            "settlement_station_code",
+            "settlement_source",
+            "bucket_label",
+            "price",
+            "ask",
+            "generated_at",
+        )
+        if row.get(key) is not None
+    }
+
+
+def _strict_gate_queue_input_summary(
+    *,
+    queue_dir: str | Path,
+    queue_rows: Iterable[Dict[str, Any]],
+    scoped_token_ids: set[str],
+    scoped_market_slugs: set[str],
+    source: str,
+) -> Dict[str, Any]:
+    queue_root = Path(queue_dir)
+    queue_path = queue_root / "strict_gate_queue.jsonl"
+    rows = [row for row in queue_rows if isinstance(row, dict)]
+    with_token_rows = [row for row in rows if str(row.get("token_id") or "").strip()]
+    matching_token_rows = [
+        row
+        for row in with_token_rows
+        if str(row.get("token_id") or "").strip() in scoped_token_ids
+    ]
+    matching_slug_rows = [
+        row
+        for row in rows
+        if str(row.get("market_slug") or "").strip()
+        and str(row.get("market_slug") or "").strip() in scoped_market_slugs
+    ]
+    queue_tokens = {str(row.get("token_id") or "").strip() for row in with_token_rows}
+    scoped_without_queue = sorted(scoped_token_ids - queue_tokens)
+    queue_without_scope = sorted(queue_tokens - scoped_token_ids)
+    return {
+        "source": source,
+        "queue_dir": str(queue_root),
+        "queue_path": str(queue_path),
+        "queue_path_exists": queue_path.exists(),
+        "raw_record_count": len(rows),
+        "with_token_count": len(with_token_rows),
+        "scoped_token_count": len(scoped_token_ids),
+        "matching_scoped_token_count": len(matching_token_rows),
+        "matching_market_slug_count": len({str(row.get("market_slug") or "").strip() for row in matching_slug_rows}),
+        "nonmatching_token_count": len(queue_without_scope),
+        "matched_queue_samples": [_queue_sample(row) for row in matching_token_rows[:10]],
+        "scoped_token_without_queue_samples": scoped_without_queue[:10],
+        "queue_token_without_scope_samples": queue_without_scope[:10],
+    }
+
+
 def _plus_hours_iso(value: Any, hours: int) -> Optional[str]:
     text = str(value or "").strip()
     if not text:
@@ -313,6 +386,7 @@ def _readiness_compact(report: Dict[str, Any]) -> Dict[str, Any]:
 def build_due_evidence_pipeline_report(
     *,
     paper_journal_dir: str | Path = DEFAULT_PAPER_JOURNAL_DIR,
+    strict_gate_queue_dir: Optional[str | Path] = None,
     orderbook_archive_dir: str | Path = DEFAULT_ORDERBOOK_ARCHIVE_DIR,
     backfill_dir: str | Path = DEFAULT_BACKFILL_DIR,
     generated_at: Optional[str] = None,
@@ -339,6 +413,8 @@ def build_due_evidence_pipeline_report(
         execute=False,
     )
     plan_report = due_dry_run.get("plan_report") if isinstance(due_dry_run.get("plan_report"), dict) else {}
+    effective_generated_at = generated_at or plan_report.get("generated_at")
+    effective_replay_time = replay_time or effective_generated_at
     followup = (
         plan_report.get("closed_backfill_followup_plan")
         if isinstance(plan_report.get("closed_backfill_followup_plan"), dict)
@@ -438,7 +514,8 @@ def build_due_evidence_pipeline_report(
     if not isinstance(after_plan, dict):
         after_plan = plan_report
 
-    queue_dir = default_strict_gate_queue_dir(paper_journal_dir)
+    queue_dir = Path(strict_gate_queue_dir) if strict_gate_queue_dir else default_strict_gate_queue_dir(paper_journal_dir)
+    queue_input_source = "explicit" if strict_gate_queue_dir else "default_from_paper_journal"
     orderbook_rows = _load_orderbooks(orderbook_archive_dir)
     filtered_orderbook_rows = _filter_records(
         orderbook_rows,
@@ -448,6 +525,7 @@ def build_due_evidence_pipeline_report(
         exclude_station_codes=exclude_station_codes,
     )
     scoped_token_ids = _token_ids(filtered_orderbook_rows)
+    scoped_market_slugs = _market_slugs(filtered_orderbook_rows)
     backfill_rows = load_closed_backfill_records_with_snapshot_supplements(backfill_dir)
     filtered_backfill_rows = _filter_records(
         backfill_rows,
@@ -456,7 +534,17 @@ def build_due_evidence_pipeline_report(
         include_station_codes=include_station_codes,
         exclude_station_codes=exclude_station_codes,
     )
-    queue_rows = _filter_queue_by_tokens(load_jsonl(queue_dir / "strict_gate_queue.jsonl"), scoped_token_ids)
+    scoped_token_ids.update(_token_ids(filtered_backfill_rows))
+    scoped_market_slugs.update(_market_slugs(filtered_backfill_rows))
+    raw_queue_rows = load_jsonl(queue_dir / "strict_gate_queue.jsonl")
+    strict_gate_queue_input = _strict_gate_queue_input_summary(
+        queue_dir=queue_dir,
+        queue_rows=raw_queue_rows,
+        scoped_token_ids=scoped_token_ids,
+        scoped_market_slugs=scoped_market_slugs,
+        source=queue_input_source,
+    )
+    queue_rows = _filter_queue_by_tokens(raw_queue_rows, scoped_token_ids)
     audit_rows = _filter_queue_by_tokens(load_jsonl(Path(paper_journal_dir) / "resolved_audits.jsonl"), scoped_token_ids)
     strict_report = build_strict_gate_replay_report(
         queue_records=queue_rows,
@@ -465,7 +553,7 @@ def build_due_evidence_pipeline_report(
             audit_records=audit_rows,
             backfill_records=filtered_backfill_rows,
         ),
-        replay_time=replay_time,
+        replay_time=effective_replay_time,
         size=size,
     )
     overlap_rows = _closed_records_with_archived_overlap(filtered_backfill_rows, filtered_orderbook_rows)
@@ -490,18 +578,59 @@ def build_due_evidence_pipeline_report(
         strict_report,
         source="due_evidence_pipeline_strict_gate_replay",
     )
+    overlap_rows_with_official = apply_official_value_supplements(
+        overlap_rows,
+        supplements=ready_supplements,
+    )
+    archived_overlap_replay_report = build_preresolution_orderbook_replay_report(
+        closed_records=overlap_rows_with_official,
+        orderbook_snapshots=filtered_orderbook_rows,
+        replay_time=effective_replay_time,
+        size=size,
+    )
+    archived_overlap_historical = (
+        archived_overlap_replay_report.get("historical_evidence")
+        if isinstance(archived_overlap_replay_report.get("historical_evidence"), dict)
+        else {}
+    )
+    strict_supplements = [
+        row
+        for row in historical_evidence_report.get("supplements") or []
+        if isinstance(row, dict)
+    ]
+    preresolution_supplements = [
+        row
+        for row in archived_overlap_historical.get("supplements") or []
+        if isinstance(row, dict)
+    ]
+    merged_historical_supplements = [*strict_supplements, *preresolution_supplements]
+    historical_evidence_input = {
+        "strict_gate_supplement_count": len(strict_supplements),
+        "preresolution_orderbook_supplement_count": len(preresolution_supplements),
+        "merged_supplement_count": len(merged_historical_supplements),
+        "no_lookahead_true_count": len(
+            [row for row in merged_historical_supplements if row.get("no_lookahead") is True]
+        ),
+        "sources": sorted(
+            {
+                str(row.get("source") or "unknown")
+                for row in merged_historical_supplements
+                if isinstance(row, dict)
+            }
+        ),
+    }
     calibration_report = build_settlement_calibration_report(
         backfill_rows_with_official,
-        historical_evidence_supplements=historical_evidence_report.get("supplements") or [],
+        historical_evidence_supplements=merged_historical_supplements,
     )
     live_bundle_report = build_live_evidence_bundle_report(
         queue_records=queue_rows,
         orderbook_snapshots=filtered_orderbook_rows,
         closed_backfill_records=filtered_backfill_rows,
         audit_records=audit_rows,
-        replay_time=replay_time,
+        replay_time=effective_replay_time,
         size=size,
-        generated_at=generated_at,
+        generated_at=effective_generated_at,
         official_value_supplements=ready_supplements,
         include_settlement_sources=include_settlement_sources,
         exclude_settlement_sources=exclude_settlement_sources,
@@ -517,7 +646,7 @@ def build_due_evidence_pipeline_report(
         orderbook_archive_coverage_report=after_plan,
         live_permission=False,
         live_order_path_available=False,
-        generated_at=generated_at,
+        generated_at=effective_generated_at,
     )
     replay = strict_report.get("replay") if isinstance(strict_report.get("replay"), dict) else {}
     alpha_conclusion = _alpha_conclusion(strict_report, calibration_report)
@@ -537,7 +666,7 @@ def build_due_evidence_pipeline_report(
     unresolved_tokens: list[Dict[str, Any]] = []
     if alpha_conclusion == "official_truth_ready_market_unresolved":
         resolved_pnl_unavailable_reason = "polymarket_market_not_resolved"
-        next_polymarket_resolution_check_after = _plus_hours_iso(generated_at or plan_report.get("generated_at"), 1)
+        next_polymarket_resolution_check_after = _plus_hours_iso(effective_generated_at, 1)
         unresolved_tokens = _unresolved_token_rows(filtered_due_records)
     observation_plan = build_official_observation_request_plan(
         filtered_scope_records or official_value_records,
@@ -550,11 +679,12 @@ def build_due_evidence_pipeline_report(
         "diagnostic_only": True,
         "counts_for_live_gate": False,
         "live_order_path": False,
-        "generated_at": generated_at or plan_report.get("generated_at"),
-        "replay_time": replay_time,
+        "generated_at": effective_generated_at,
+        "replay_time": effective_replay_time,
         "paper_journal_dir": str(paper_journal_dir),
         "orderbook_archive_dir": str(orderbook_archive_dir),
         "backfill_dir": str(backfill_dir),
+        "strict_gate_queue_input": strict_gate_queue_input,
         "due_status": due_status,
         "closed_backfill_executed": (
             (due_execute or {}).get("execution", {}).get("status") == "executed"
@@ -583,6 +713,8 @@ def build_due_evidence_pipeline_report(
         "before_token_overlap": _overlap_summary(plan_report),
         "after_token_overlap": _overlap_summary(after_plan),
         "strict_replay": {
+            "queue_record_count": strict_report.get("queue_record_count"),
+            "replay_candidate_count": strict_report.get("replay_candidate_count"),
             "fill_count": replay.get("fill_count"),
             "resolved_fill_count": strict_report.get("resolved_fill_count"),
             "missing_resolution_count": replay.get("missing_resolution_count"),
@@ -592,6 +724,26 @@ def build_due_evidence_pipeline_report(
             "log_loss": replay.get("log_loss"),
             "by_strategy_bucket": strict_report.get("by_strategy_bucket") or [],
             "by_price_bucket": strict_report.get("by_price_bucket") or [],
+            "no_fill_diagnostics": strict_report.get("no_fill_diagnostics"),
+        },
+        "archived_overlap_replay": {
+            "hard_conclusion": archived_overlap_replay_report.get("hard_conclusion"),
+            "counts_for_live_gate": archived_overlap_replay_report.get("counts_for_live_gate"),
+            "diagnostic_only": archived_overlap_replay_report.get("diagnostic_only"),
+            "input_summary": archived_overlap_replay_report.get("input_summary"),
+            "fill_count": (archived_overlap_replay_report.get("replay") or {}).get("fill_count")
+            if isinstance(archived_overlap_replay_report.get("replay"), dict)
+            else None,
+            "resolved_pnl_cents": (archived_overlap_replay_report.get("replay") or {}).get("resolved_pnl_cents")
+            if isinstance(archived_overlap_replay_report.get("replay"), dict)
+            else None,
+            "brier_score": (archived_overlap_replay_report.get("replay") or {}).get("brier_score")
+            if isinstance(archived_overlap_replay_report.get("replay"), dict)
+            else None,
+            "log_loss": (archived_overlap_replay_report.get("replay") or {}).get("log_loss")
+            if isinstance(archived_overlap_replay_report.get("replay"), dict)
+            else None,
+            "counts_for_live_gate_note": "diagnostic_only_not_live_eligible",
         },
         "official_truth": {
             "target_scope": "closed_archive_overlap",
@@ -616,6 +768,7 @@ def build_due_evidence_pipeline_report(
             "resolved_pnl_sample_count": calibration_report.get("resolved_pnl_sample_count"),
             "historical_evidence_no_lookahead": calibration_report.get("historical_evidence_no_lookahead"),
         },
+        "historical_evidence_input": historical_evidence_input,
         "alpha_conclusion": alpha_conclusion,
         "resolved_pnl_unavailable_reason": resolved_pnl_unavailable_reason,
         "next_polymarket_resolution_check_after": next_polymarket_resolution_check_after,
@@ -625,6 +778,7 @@ def build_due_evidence_pipeline_report(
             "due_dry_run": due_dry_run,
             "due_execute": due_execute,
             "strict_gate_replay": strict_report,
+            "archived_overlap_replay": archived_overlap_replay_report,
             "official_value_backfill": official_value_report,
             "settlement_truth_audit": truth_audit_report,
             "historical_evidence": historical_evidence_report,
@@ -643,6 +797,7 @@ def _write_component_artifacts(summary_output: Path, report: Dict[str, Any]) -> 
     suffix = stem[len("due_pipeline_") :] if stem.startswith("due_pipeline_") else stem
     paths = {
         "strict_gate_replay": out_dir / f"strict_gate_replay_{suffix}.json",
+        "archived_overlap_replay": out_dir / f"archived_overlap_replay_{suffix}.json",
         "official_value_overlap": out_dir / f"official_value_{suffix}.jsonl",
         "settlement_truth_audit": out_dir / f"settlement_truth_audit_{suffix}.json",
         "settlement_calibration": out_dir / f"settlement_calibration_{suffix}.json",
@@ -651,6 +806,8 @@ def _write_component_artifacts(summary_output: Path, report: Dict[str, Any]) -> 
     }
     if isinstance(components.get("strict_gate_replay"), dict):
         _write_json(paths["strict_gate_replay"], components["strict_gate_replay"])
+    if isinstance(components.get("archived_overlap_replay"), dict):
+        _write_json(paths["archived_overlap_replay"], components["archived_overlap_replay"])
     official = components.get("official_value_backfill") if isinstance(components.get("official_value_backfill"), dict) else {}
     _write_jsonl(paths["official_value_overlap"], official.get("supplements") or [])
     if isinstance(components.get("settlement_truth_audit"), dict):
@@ -675,6 +832,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         description="Run the paper-only due evidence pipeline from archived orderbooks through calibration/readiness inputs.",
     )
     parser.add_argument("--paper-journal-dir", default=str(DEFAULT_PAPER_JOURNAL_DIR))
+    parser.add_argument(
+        "--strict-gate-queue-dir",
+        default=None,
+        help="Directory containing strict-gate queue JSONL. Defaults to <paper-journal-dir>/strict_gate_queues.",
+    )
     parser.add_argument("--orderbook-archive-dir", default=str(DEFAULT_ORDERBOOK_ARCHIVE_DIR))
     parser.add_argument("--backfill-dir", default=str(DEFAULT_BACKFILL_DIR))
     parser.add_argument("--generated-at", default=None)
@@ -706,6 +868,7 @@ def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
     report = build_due_evidence_pipeline_report(
         paper_journal_dir=args.paper_journal_dir,
+        strict_gate_queue_dir=args.strict_gate_queue_dir,
         orderbook_archive_dir=args.orderbook_archive_dir,
         backfill_dir=args.backfill_dir,
         generated_at=args.generated_at,
@@ -724,11 +887,7 @@ def main(argv: list[str] | None = None) -> None:
     output_report = report if args.include_component_reports else _summary_for_output(report)
     if args.summary_output:
         summary_path = Path(args.summary_output)
-        artifact_paths = (
-            _write_component_artifacts(summary_path, report)
-            if report.get("closed_backfill_executed") is True
-            else {}
-        )
+        artifact_paths = _write_component_artifacts(summary_path, report)
         output_report = dict(output_report)
         output_report["artifact_paths"] = artifact_paths
         _write_json(summary_path, output_report)

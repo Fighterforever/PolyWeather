@@ -111,6 +111,53 @@ def test_strict_gate_replay_reports_missing_orderbook_before_resolution():
     assert report["hard_conclusion"] == "strict_gate_replay_needs_orderbook_archive"
 
 
+def test_strict_replay_no_fill_diagnostics_for_missing_queue():
+    report = build_strict_gate_replay_report(
+        queue_records=[],
+        orderbook_snapshots=[_orderbook()],
+        resolved_outcomes=[],
+        replay_time="2026-06-27T01:00:00Z",
+        size=1.0,
+    )
+
+    diagnostics = report["no_fill_diagnostics"]
+    assert diagnostics["queue_record_count"] == 0
+    assert diagnostics["top_no_fill_reasons"] == [{"reason": "strict_gate_queue_missing", "count": 1}]
+    assert report["hard_conclusion"] == "strict_gate_replay_no_queue_records"
+
+
+def test_strict_replay_no_fill_diagnostics_for_missing_orderbook():
+    report = build_strict_gate_replay_report(
+        queue_records=[_queue_record()],
+        orderbook_snapshots=[],
+        resolved_outcomes=[],
+        replay_time="2026-06-27T01:00:00Z",
+        size=1.0,
+    )
+
+    diagnostics = report["no_fill_diagnostics"]
+    assert diagnostics["queue_record_count"] == 1
+    assert diagnostics["replay_candidate_count"] == 1
+    assert diagnostics["candidate_with_visible_orderbook_count"] == 0
+    assert diagnostics["no_visible_orderbook_count"] == 1
+    assert diagnostics["top_no_fill_reasons"][0] == {"reason": "no_visible_orderbook", "count": 1}
+
+
+def test_strict_replay_no_fill_diagnostics_for_missing_tokenized_candidates():
+    report = build_strict_gate_replay_report(
+        queue_records=[_queue_record(token_id="")],
+        orderbook_snapshots=[],
+        resolved_outcomes=[],
+        replay_time="2026-06-27T01:00:00Z",
+        size=1.0,
+    )
+
+    diagnostics = report["no_fill_diagnostics"]
+    assert diagnostics["queue_record_count"] == 1
+    assert diagnostics["missing_token_id_count"] == 1
+    assert diagnostics["top_no_fill_reasons"][0]["reason"] == "no_tokenized_replay_candidates"
+
+
 def test_strict_gate_replay_unresolved_fills_do_not_report_zero_pnl():
     report = build_strict_gate_replay_report(
         queue_records=[_queue_record()],
