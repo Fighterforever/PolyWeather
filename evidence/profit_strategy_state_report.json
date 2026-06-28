@@ -65,7 +65,7 @@
     "non_dust_threshold_cdf": {
       "run_after_utc": "2026-06-30T03:05:00Z",
       "runner_label": "com.polyweather.non-dust-uuww-due-pipeline",
-      "status": "pending_due"
+      "status": "pending_due_runner"
     },
     "observation_lock_alpha": {
       "collect_intraday_before_scan": true,
@@ -305,6 +305,54 @@
           "count": 2
         }
       ]
+    },
+    "post_lock_observation_lock_direct_taker": {
+      "status": "no_current_edge_market_already_reflected",
+      "live_order_path": false,
+      "ge_le_locked_count": 2,
+      "direct_locked_side_taker_candidate_count": 0,
+      "market_already_reflected_lock_count": 2,
+      "report_path": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json"
+    },
+    "dead_side_capture": {
+      "status": "no_current_bid",
+      "live_order_path": false,
+      "dead_side_bid_available_count": 0,
+      "dead_side_capture_candidate_count": 0,
+      "diagnostic_only": true,
+      "report_path": "evidence/observation_lock_execution/dead_side_capture_sampler_report.json"
+    },
+    "threshold_latency": {
+      "status": "active_forward_paper_sampling",
+      "paper_only": true,
+      "counts_for_live_gate": false,
+      "live_order_path": false,
+      "launchd_label": "com.polyweather.threshold-latency-sampler",
+      "start_interval_seconds": 60,
+      "collect_intraday_before_scan": true,
+      "station_codes": [
+        "LTAC",
+        "UUWW",
+        "EGLC"
+      ],
+      "signal_report_path": "evidence/threshold_latency/threshold_latency_signal_report.json",
+      "sampler_report_path": "evidence/threshold_latency/threshold_latency_execution_sampler_report.json",
+      "launchd_install_report_path": "evidence/threshold_latency/threshold_latency_sampler_launchd_install_report.json",
+      "markout_report_path": "evidence/threshold_latency/markout_report.json",
+      "resolved_audit_report_path": "evidence/threshold_latency/resolved_audit_report.json",
+      "scanned_row_count": 240,
+      "metar_update_event_count": 11,
+      "near_cross_count": 2,
+      "just_crossed_count": 0,
+      "candidate_count": 0,
+      "paper_fill_count": 0,
+      "watch_count": 2,
+      "markout_setup_status": "ready_waiting_for_paper_fills",
+      "markout_fill_count": 0,
+      "available_markout_count": 0,
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "generated_at": "2026-06-28T07:19:01Z"
     }
   },
   "artifacts": {
@@ -349,17 +397,17 @@
       "status": "failed"
     }
   },
-  "final_conclusion": "observation_lock_market_already_reflected_currently_no_edge",
+  "final_conclusion": "threshold_latency_active_forward_paper_sampling",
   "killed_paths": [
     "eq_exact_live",
     "dust_tail_live",
     "maker_inferred_live"
   ],
-  "latest_focus": "observation_lock_direct_locked_side_execution_sampling",
+  "latest_focus": "threshold_latency_forward_paper_sampling",
   "live": {
     "can_tiny_live": false,
     "live_order_path": false,
-    "reason": "paper-only active sampler found current ge/le locks already reflected by market; no direct taker or dead-side diagnostic fill"
+    "reason": "threshold-latency sampler is paper-only and has no forward fills yet"
   },
   "live_order_path": false,
   "paper_only": true,

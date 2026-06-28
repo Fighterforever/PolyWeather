@@ -69,7 +69,7 @@
       }
     ]
   },
-  "final_conclusion": "observation_lock_market_already_reflected_currently_no_edge",
+  "final_conclusion": "threshold_latency_active_forward_paper_sampling",
   "historical_non_dust_threshold_replay": "pending_non_dust_uuww_due_runner",
   "non_dust_uuww_due_runner_status": "pending_due",
   "historical_observation_lock_alpha": "historical_locked_signal_tradability_triage_complete",
@@ -321,7 +321,7 @@
     "triage_rows_path": "evidence/historical_replay/observation_lock_locked_signal_triage.jsonl"
   },
   "live_order_path": false,
-  "next_action": "continue METAR-first observation-lock sampler; current ge/le lock is already reflected by market, wait for dead-side bid or direct locked-side ask before paper evidence",
+  "next_action": "let 60-second paper-only threshold-latency sampler collect forward evidence around fresh METAR updates",
   "observation_lock_active_sampler": {
     "collect_intraday_before_scan": true,
     "direct_locked_side_book_count": 2,
@@ -574,5 +574,16 @@
     "polymarket_clob_prices_history",
     "open_meteo_historical_forecast",
     "kalshi_public_market_reference"
-  ]
+  ],
+  "threshold_latency": {
+    "status": "active_forward_paper_sampling",
+    "live_order_path": false,
+    "generated_at": "2026-06-28T07:19:01Z",
+    "candidate_count": 0,
+    "paper_fill_count": 0,
+    "near_cross_count": 2,
+    "just_crossed_count": 0,
+    "sampler_report_path": "evidence/threshold_latency/threshold_latency_execution_sampler_report.json",
+    "signal_report_path": "evidence/threshold_latency/threshold_latency_signal_report.json"
+  }
 }
