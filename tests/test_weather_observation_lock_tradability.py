@@ -94,3 +94,40 @@ def test_tradability_excludes_dust_from_live_evidence():
     assert row["price_bucket"] == "price_lt_0_005"
     assert "dust_price_not_live_evidence" in row["data_gap_reason"]
     assert row["counts_for_live_gate"] is False
+
+
+def test_tradability_outputs_ge_le_alpha_ranking():
+    report = build_observation_lock_tradability_report(
+        historical_replay_report={"signals": [_signal("a", side="NO"), _signal("b", side="YES")]},
+        price_history_rows=[
+            {"token_id": "a", "timestamp": "2026-06-20T09:59:00Z", "price": 0.98},
+            {"token_id": "b", "timestamp": "2026-06-20T09:59:00Z", "price": 0.2},
+        ],
+        alpha_dataset_rows=[{"market_slug": "m", "payout": 1.0}],
+    )
+
+    assert report["summary"]["ge_le_locked_signal_count"] == 2
+    assert report["summary"]["ge_le_price_available_count"] == 2
+    assert report["summary"]["ge_le_approx_positive_edge_count"] == 2
+    assert len(report["alpha_eligible_ge_le_locked_signal_triage"]) == 2
+    assert report["alpha_eligible_ge_le_locked_signal_triage"][0]["ge_le_triage_rank"] == 1
+
+
+def test_tradability_excludes_eq_from_alpha_ranking():
+    eq_signal = _signal("eq-token")
+    eq_signal["bucket_type"] = "eq"
+    eq_signal["lock_state"] = "eq_yes_dead_no_locked"
+    eq_signal["locked_side"] = "NO"
+    report = build_observation_lock_tradability_report(
+        historical_replay_report={"signals": [eq_signal, _signal("le-token", side="NO")]},
+        price_history_rows=[
+            {"token_id": "eq-token", "timestamp": "2026-06-20T09:59:00Z", "price": 0.1},
+            {"token_id": "le-token", "timestamp": "2026-06-20T09:59:00Z", "price": 0.98},
+        ],
+        alpha_dataset_rows=[{"market_slug": "m", "payout": 1.0}],
+    )
+
+    alpha_rows = report["alpha_eligible_ge_le_locked_signal_triage"]
+    assert [row["token_id"] for row in alpha_rows] == ["le-token"]
+    assert report["summary"]["ge_le_locked_signal_count"] == 1
+    assert all(row["bucket_type"] in {"ge", "le"} for row in alpha_rows)

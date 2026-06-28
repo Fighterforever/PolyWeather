@@ -16,11 +16,13 @@ def _row(
     bid_depth: float = 10.0,
     station: str = "UUWW",
     source: str = "metar",
+    side: str = "yes",
+    token_id: str = "yes-token",
 ):
     return {
         "market_slug": f"highest-temperature-test-{bucket_type}",
-        "token_id": "yes-token",
-        "side": "yes",
+        "token_id": token_id,
+        "side": side,
         "bucket_type": bucket_type,
         "threshold": threshold,
         "upper_threshold": upper_threshold,
@@ -82,6 +84,7 @@ def test_le_bucket_current_high_above_threshold_locks_no_side():
     assert row["locked_side"] == "NO"
     assert row["price_semantics"] == "synthetic_no_from_yes_bid"
     assert row["q_effective"] == 0.8
+    assert row["synthetic_price_diagnostic_only"] is True
 
 
 def test_ge_bucket_not_locked_below_threshold():
@@ -169,3 +172,134 @@ def test_no_intraday_blocks_candidate_from_repository(tmp_path):
     assert row["lock_state"] == "missing_intraday_observation"
     assert row["decision"] == "reject"
     assert report["summary"]["missing_intraday_count"] == 1
+
+
+def test_no_locked_uses_direct_no_token_ask():
+    rows = [
+        _row(bucket_type="le", threshold=24, best_bid=0.2, best_ask=0.3, side="yes", token_id="yes-token"),
+        _row(bucket_type="le", threshold=24, best_bid=0.7, best_ask=0.8, side="no", token_id="no-token"),
+    ]
+    report = _report(rows, [_obs(28)])
+    no_row = [row for row in report["rows"] if row["token_id"] == "no-token"][0]
+
+    assert no_row["lock_state"] == "le_yes_dead_no_locked"
+    assert no_row["locked_side"] == "NO"
+    assert no_row["locked_side_token_id"] == "no-token"
+    assert no_row["executable_price_source_type"] == "direct_locked_side_book"
+    assert no_row["q_effective"] == 0.8
+    assert no_row["current_row_is_locked_side_token"] is True
+
+
+def test_no_locked_synthetic_from_yes_bid_is_diagnostic_only():
+    report = _report([_row(bucket_type="le", threshold=24, best_bid=0.2, side="yes")], [_obs(28)])
+    row = _first(report)
+
+    assert row["executable_price_source_type"] == "synthetic_from_opposite_bid"
+    assert row["synthetic_price_diagnostic_only"] is True
+    assert "synthetic_no_price_diagnostic_only" in row["blockers"]
+    assert row["decision"] == "watch"
+
+
+def test_yes_locked_uses_yes_token_ask():
+    report = _report([_row(bucket_type="ge", threshold=23, best_ask=0.4, side="yes", token_id="yes-token")], [_obs(24)])
+    row = _first(report)
+
+    assert row["locked_side"] == "YES"
+    assert row["locked_side_token_id"] == "yes-token"
+    assert row["executable_price_source_type"] == "direct_locked_side_book"
+    assert row["q_effective"] == 0.4
+
+
+def test_missing_locked_side_book_blocks_candidate_with_reason():
+    report = _report([_row(bucket_type="le", threshold=24, best_bid=None, best_ask=0.3, side="yes")], [_obs(28)])
+    row = _first(report)
+
+    assert row["locked_side"] == "NO"
+    assert row["executable_price_source_type"] == "missing"
+    assert "missing_locked_side_orderbook" in row["blockers"]
+    assert row["decision"] == "watch"
+
+
+def test_market_side_orderbook_index_pairs_yes_no_tokens():
+    rows = [
+        _row(bucket_type="le", threshold=24, side="yes", token_id="yes-token", best_ask=0.3),
+        _row(bucket_type="le", threshold=24, side="no", token_id="no-token", best_ask=0.8),
+    ]
+    report = _report(rows, [_obs(28)])
+
+    assert report["summary"]["direct_locked_side_book_count"] == 2
+    assert {row["locked_side_token_id"] for row in report["rows"]} == {"no-token"}
+
+
+def test_stale_but_crossed_ge_lock_is_warning_not_blocker():
+    report = build_observation_lock_signal_report(
+        [_row(bucket_type="ge", threshold=23, best_ask=0.4)],
+        observations=[_obs(24, observed_at="2026-06-29T09:40:00Z")],
+        generated_at="2026-06-29T10:06:00Z",
+    )
+    row = _first(report)
+
+    assert row["lock_is_immutable"] is True
+    assert row["freshness_status"] == "stale_warning"
+    assert row["freshness_warning"] == "stale_intraday_observation"
+    assert row["freshness_blocker"] is None
+    assert "stale_intraday_observation" not in row["blockers"]
+
+
+def test_stale_but_crossed_le_lock_is_warning_not_blocker():
+    rows = [
+        _row(bucket_type="le", threshold=24, side="yes", token_id="yes-token", best_bid=0.2),
+        _row(bucket_type="le", threshold=24, side="no", token_id="no-token", best_ask=0.8),
+    ]
+    report = build_observation_lock_signal_report(
+        rows,
+        observations=[_obs(28, observed_at="2026-06-29T09:40:00Z")],
+        generated_at="2026-06-29T10:06:00Z",
+    )
+    no_row = [row for row in report["rows"] if row["token_id"] == "no-token"][0]
+
+    assert no_row["lock_is_immutable"] is True
+    assert no_row["freshness_status"] == "stale_warning"
+    assert no_row["freshness_blocker"] is None
+    assert "stale_intraday_observation" not in no_row["blockers"]
+
+
+def test_stale_not_locked_signal_still_blocked():
+    report = build_observation_lock_signal_report(
+        [_row(bucket_type="ge", threshold=23)],
+        observations=[_obs(22, observed_at="2026-06-29T09:40:00Z")],
+        generated_at="2026-06-29T10:06:00Z",
+    )
+    row = _first(report)
+
+    assert row["lock_is_immutable"] is False
+    assert row["freshness_status"] == "stale_blocker"
+    assert row["freshness_blocker"] == "stale_intraday_observation"
+    assert "stale_intraday_observation" in row["blockers"]
+
+
+def test_wrong_target_date_observation_blocks_lock():
+    wrong_date_obs = {**_obs(24), "target_date": "2026-06-28", "target_date_local": "2026-06-28"}
+    report = build_observation_lock_signal_report(
+        [_row(bucket_type="ge", threshold=23)],
+        observations=[wrong_date_obs],
+        generated_at="2026-06-29T10:06:00Z",
+    )
+    row = _first(report)
+
+    assert row["observation_target_date_valid"] is False
+    assert row["freshness_blocker"] == "wrong_observation_target_date"
+    assert "wrong_observation_target_date" in row["blockers"]
+
+
+def test_future_available_at_blocks_lock():
+    future_obs = _obs(24, observed_at="2026-06-29T10:10:00Z")
+    report = build_observation_lock_signal_report(
+        [_row(bucket_type="ge", threshold=23)],
+        observations=[future_obs],
+        generated_at="2026-06-29T10:06:00Z",
+    )
+    row = _first(report)
+
+    assert row["freshness_blocker"] == "future_available_at"
+    assert "future_available_at" in row["blockers"]

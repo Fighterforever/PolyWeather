@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from collections import Counter
 from datetime import datetime, timezone
@@ -77,17 +78,31 @@ def _candidate_reject_reasons(
         reasons.append("not_observation_locked")
     if row.get("official_current_high") is None:
         reasons.append("missing_intraday_observation")
-    if row.get("latest_available_at") and not _is_fresh(
-        row,
-        generated_at=generated_at,
-        max_staleness_minutes=max_staleness_minutes,
+    if row.get("freshness_blocker"):
+        reasons.append(str(row.get("freshness_blocker")))
+    elif (
+        not row.get("lock_is_immutable")
+        and row.get("latest_available_at")
+        and not _is_fresh(row, generated_at=generated_at, max_staleness_minutes=max_staleness_minutes)
     ):
         reasons.append("stale_intraday_observation")
     if row.get("latest_available_at") is None:
         reasons.append("missing_intraday_available_at")
     if row.get("anomaly_flags"):
         reasons.append("blocked_by_observation_anomaly")
-    if _safe_float(row.get("executable_edge")) is None or float(row.get("executable_edge") or 0.0) <= 0:
+    if row.get("executable_price_source_type") == "synthetic_from_opposite_bid":
+        reasons.append("synthetic_no_price_diagnostic_only")
+    if row.get("executable_price_source_type") != "direct_locked_side_book":
+        reasons.append("missing_locked_side_orderbook")
+    if not row.get("current_row_is_locked_side_token"):
+        reasons.append("not_locked_side_token_row")
+    if _safe_float(row.get("locked_side_ask_depth")) is None:
+        reasons.append("missing_locked_side_ask_depth")
+    elif float(row.get("locked_side_ask_depth") or 0.0) <= 0:
+        reasons.append("locked_side_ask_depth_too_low")
+    if row.get("executable_price_source_type") == "direct_locked_side_book" and (
+        _safe_float(row.get("executable_edge")) is None or float(row.get("executable_edge") or 0.0) <= 0
+    ):
         reasons.append("executable_edge_not_positive")
     return sorted(set(reasons))
 
@@ -110,6 +125,7 @@ def _fill_from_signal(row: Dict[str, Any], *, recorded_at: str) -> Dict[str, Any
         "recorded_at": recorded_at,
         "market_slug": row.get("market_slug"),
         "token_id": row.get("token_id"),
+        "locked_side_token_id": row.get("locked_side_token_id"),
         "side": row.get("side"),
         "locked_side": row.get("locked_side"),
         "lock_state": row.get("lock_state"),
@@ -122,11 +138,73 @@ def _fill_from_signal(row: Dict[str, Any], *, recorded_at: str) -> Dict[str, Any
         "entry_price": row.get("q_effective"),
         "q_effective": row.get("q_effective"),
         "executable_edge": row.get("executable_edge"),
+        "executable_price_source_type": row.get("executable_price_source_type"),
+        "locked_side_ask_depth": row.get("locked_side_ask_depth"),
         "price_bucket": row.get("price_bucket"),
         "orderbook_snapshot_id": row.get("orderbook_snapshot_id"),
         "settlement_spec": row.get("settlement_spec"),
         "no_lookahead": bool(row.get("no_lookahead") is not False),
     }
+
+
+def _write_jsonl(path: str | Path, rows: Iterable[Dict[str, Any]]) -> int:
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    materialized = [row for row in rows if isinstance(row, dict)]
+    with target.open("w", encoding="utf-8") as handle:
+        for row in materialized:
+            handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+    return len(materialized)
+
+
+def _counter_rows(counter: Counter[str], field: str) -> List[Dict[str, Any]]:
+    return [
+        {field: key, "count": count}
+        for key, count in sorted(counter.items(), key=lambda pair: (-pair[1], pair[0]))
+    ]
+
+
+def _collect_intraday(args: argparse.Namespace) -> Dict[str, Any]:
+    command = [
+        sys.executable,
+        str(PROJECT_ROOT / "scripts" / "weather_collect_intraday_observations.py"),
+        "--output",
+        args.intraday_observation_path,
+        "--manifest",
+        args.intraday_manifest_path,
+    ]
+    for station in args.station_codes or ["LTAC", "UUWW", "EGLC"]:
+        command.extend(["--station-code", station])
+    result = subprocess.run(command, text=True, capture_output=True, check=False)
+    return {
+        "command": command,
+        "returncode": result.returncode,
+        "stdout_tail": result.stdout[-2000:],
+        "stderr_tail": result.stderr[-2000:],
+        "station_codes": args.station_codes or ["LTAC", "UUWW", "EGLC"],
+        "observation_output_path": args.intraday_observation_path,
+        "manifest_path": args.intraday_manifest_path,
+    }
+
+
+def _collector_failed_report(*, generated_at: str, collection_report: Dict[str, Any], summary_output: str | Path) -> Dict[str, Any]:
+    report = {
+        "schema_version": SCHEMA_VERSION,
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+        "generated_at": generated_at,
+        "collector_failed": True,
+        "collector_report": collection_report,
+        "scanned_row_count": 0,
+        "locked_count": 0,
+        "ge_le_locked_count": 0,
+        "executable_candidate_count": 0,
+        "paper_fill_count": 0,
+        "reject_reason_counts": [{"reason": "collector_failed", "count": 1}],
+    }
+    _write_json(summary_output, report)
+    return report
 
 
 def build_observation_lock_execution_sampler_report(
@@ -161,8 +239,11 @@ def build_observation_lock_execution_sampler_report(
     sampled_buckets = {str(item).strip().lower() for item in bucket_types if str(item).strip()}
     by_token = {_text(row.get("token_id")): row for row in source_rows if _text(row.get("token_id"))}
     reject_counts: Counter[str] = Counter()
+    ge_le_locked_reject_counts: Counter[str] = Counter()
+    locked_watch_reason_counts: Counter[str] = Counter()
     candidates: List[Dict[str, Any]] = []
     watch_samples: List[Dict[str, Any]] = []
+    locked_watch_rows: List[Dict[str, Any]] = []
     for row in signal_report.get("rows") or []:
         if not isinstance(row, dict):
             continue
@@ -178,10 +259,19 @@ def build_observation_lock_execution_sampler_report(
         else:
             for reason in reasons or ["not_candidate"]:
                 reject_counts[reason] += 1
-            if row.get("locked_side") and len(watch_samples) < 20:
-                watch_samples.append({**row, "execution_sampler_reject_reasons": reasons})
+        is_ge_le_locked = row.get("lock_state") in {"ge_yes_locked", "le_yes_dead_no_locked"} and row.get("bucket_type") in sampled_buckets
+        if is_ge_le_locked:
+            for reason in reasons or ["candidate"]:
+                ge_le_locked_reject_counts[reason] += 1
+            if row.get("decision") != "shadow":
+                locked_watch = {**row, "execution_sampler_reject_reasons": reasons}
+                locked_watch_rows.append(locked_watch)
+                for reason in reasons or ["candidate"]:
+                    locked_watch_reason_counts[reason] += 1
+                if len(watch_samples) < 20:
+                    watch_samples.append(locked_watch)
     candidates = candidates[: max(0, int(max_candidates))]
-    candidate_source_rows = [by_token.get(_text(row.get("token_id"))) for row in candidates]
+    candidate_source_rows = [by_token.get(_text(row.get("locked_side_token_id") or row.get("token_id"))) for row in candidates]
     candidate_source_rows = [row for row in candidate_source_rows if isinstance(row, dict)]
     snapshot_records = build_orderbook_snapshot_records(
         candidate_source_rows,
@@ -205,6 +295,27 @@ def build_observation_lock_execution_sampler_report(
     fill_path = fill_root / "paper_fills.jsonl"
     fill_path.touch(exist_ok=True)
     fills_written = _append_jsonl(fill_path, fills)
+    locked_watch_source_rows = []
+    seen_locked_watch_tokens: set[str] = set()
+    for row in locked_watch_rows:
+        token = _text(row.get("locked_side_token_id") or row.get("token_id"))
+        if not token or token in seen_locked_watch_tokens:
+            continue
+        source_row = by_token.get(token)
+        if isinstance(source_row, dict):
+            locked_watch_source_rows.append(source_row)
+            seen_locked_watch_tokens.add(token)
+    locked_watch_snapshot_records = build_orderbook_snapshot_records(
+        locked_watch_source_rows,
+        recorded_at=generated_at,
+        source_snapshot_id=f"observation-lock-locked-watch-{generated_at}",
+        source="observation_lock_execution_sampler_locked_watch",
+    )
+    locked_watch_snapshot_path = archive_root / "locked_watch_orderbook_snapshots.jsonl"
+    locked_watch_snapshot_path.touch(exist_ok=True)
+    locked_watch_snapshots_written = _append_jsonl(locked_watch_snapshot_path, locked_watch_snapshot_records)
+    locked_watch_rows_path = archive_root / "locked_watch_rows.jsonl"
+    locked_watch_rows_written = _write_jsonl(locked_watch_rows_path, locked_watch_rows)
     summary = signal_report.get("summary") if isinstance(signal_report.get("summary"), dict) else {}
     report = {
         "schema_version": SCHEMA_VERSION,
@@ -215,23 +326,34 @@ def build_observation_lock_execution_sampler_report(
         "scanned_row_count": len(source_rows),
         "intraday_visible_station_count": summary.get("intraday_visible_station_count"),
         "locked_count": summary.get("locked_count"),
+        "ge_le_locked_count": summary.get("ge_le_locked_count"),
+        "stale_warning_count": summary.get("stale_warning_count"),
+        "stale_blocker_count": summary.get("stale_blocker_count"),
+        "direct_locked_side_book_count": summary.get("direct_locked_side_book_count"),
+        "synthetic_locked_side_price_count": summary.get("synthetic_locked_side_price_count"),
+        "missing_locked_side_orderbook_count": summary.get("missing_locked_side_orderbook_count"),
         "executable_candidate_count": len(candidates),
         "paper_fill_count": len(fills),
         "paper_fill_written_count": fills_written,
         "orderbook_snapshot_count": len(snapshot_records),
         "orderbook_snapshot_written_count": snapshots_written,
-        "reject_reason_counts": [
-            {"reason": reason, "count": count}
-            for reason, count in sorted(reject_counts.items(), key=lambda pair: (-pair[1], pair[0]))
-        ],
+        "locked_watch_orderbook_snapshot_count": len(locked_watch_snapshot_records),
+        "locked_watch_orderbook_snapshot_written_count": locked_watch_snapshots_written,
+        "locked_watch_rows_written_count": locked_watch_rows_written,
+        "reject_reason_counts": _counter_rows(reject_counts, "reason"),
+        "ge_le_locked_reject_reason_counts": _counter_rows(ge_le_locked_reject_counts, "reason"),
+        "locked_watch_reason_counts": _counter_rows(locked_watch_reason_counts, "reason"),
         "candidate_samples": candidates[:10],
         "top_watch_samples": watch_samples[:10],
+        "top_locked_watch_samples": watch_samples[:10],
         "metar_freshness_status": "fresh_candidates_required",
         "max_staleness_minutes": float(max_staleness_minutes),
         "paths": {
             "orderbook_snapshots": str(snapshot_path),
             "paper_fills": str(fill_path),
             "signal_report": str(signal_report_output) if signal_report_output else None,
+            "locked_watch_orderbook_snapshots": str(locked_watch_snapshot_path),
+            "locked_watch_rows": str(locked_watch_rows_path),
         },
     }
     _write_json(Path(orderbook_archive_dir) / "observation_lock_execution_sampler_report.json", report)
@@ -255,11 +377,24 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     parser.add_argument("--max-spread", type=float, default=0.03)
     parser.add_argument("--min-ask-depth", type=float, default=1.0)
     parser.add_argument("--polymarket-row-limit", type=int, default=240)
+    parser.add_argument("--collect-intraday-before-scan", action="store_true")
+    parser.add_argument("--station-code", action="append", dest="station_codes", default=None)
+    parser.add_argument("--intraday-manifest-path", default="evidence/official_observations/manifest.json")
     return parser.parse_args(argv)
 
 
 def main(argv: Optional[list[str]] = None) -> None:
     args = parse_args(argv)
+    if args.collect_intraday_before_scan:
+        collection_report = _collect_intraday(args)
+        if collection_report["returncode"] != 0:
+            report = _collector_failed_report(
+                generated_at=utc_now_iso(),
+                collection_report=collection_report,
+                summary_output=args.summary_output,
+            )
+            print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
+            return
     loaded_rows = _load_rows_json(args.rows_json)
     if loaded_rows is None:
         payload = build_polymarket_weather_payload(

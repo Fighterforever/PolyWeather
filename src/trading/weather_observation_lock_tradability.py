@@ -96,6 +96,14 @@ def _time_to_close_bucket(minutes: Any) -> str:
     return "gt_2h"
 
 
+def _is_ge_le_alpha_eligible(row: Dict[str, Any]) -> bool:
+    return (
+        _text(row.get("bucket_type")).lower() in {"ge", "le"}
+        and _text(row.get("locked_side")).upper() in {"YES", "NO"}
+        and row.get("price_bucket") != "price_lt_0_005"
+    )
+
+
 def _locked_side_payout(dataset_row: Optional[Dict[str, Any]], locked_side: str) -> Optional[float]:
     yes_payout = _safe_float((dataset_row or {}).get("payout") if dataset_row else None)
     if yes_payout is None:
@@ -194,6 +202,17 @@ def build_observation_lock_tradability_report(
     )
     for rank, row in enumerate(triage_rows, start=1):
         row["triage_rank"] = rank
+    ge_le_rows = [row for row in triage_rows if _is_ge_le_alpha_eligible(row)]
+    ge_le_rows.sort(
+        key=lambda row: (
+            row.get("approximate_edge") is not None,
+            float(row.get("approximate_edge") or -999.0),
+            -float(row.get("time_to_close") or 999999.0),
+        ),
+        reverse=True,
+    )
+    for rank, row in enumerate(ge_le_rows, start=1):
+        row["ge_le_triage_rank"] = rank
     price_available_count = len([row for row in triage_rows if row.get("historical_price_available")])
     executable_count = len([row for row in triage_rows if row.get("executable_depth_available")])
     positive = len(
@@ -211,6 +230,15 @@ def build_observation_lock_tradability_report(
         ]
     )
     missing = len(triage_rows) - price_available_count
+    ge_le_price_available_count = len([row for row in ge_le_rows if row.get("historical_price_available")])
+    ge_le_missing_price_count = len(ge_le_rows) - ge_le_price_available_count
+    ge_le_positive = len(
+        [
+            row
+            for row in ge_le_rows
+            if row.get("approximate_edge") is not None and float(row.get("approximate_edge") or 0.0) > 0
+        ]
+    )
     summary = {
         "schema_version": f"{SCHEMA_VERSION}.summary",
         "paper_only": True,
@@ -222,6 +250,10 @@ def build_observation_lock_tradability_report(
         "approximate_positive_edge_count": positive,
         "approximate_negative_edge_count": negative,
         "missing_price_count": missing,
+        "ge_le_locked_signal_count": len(ge_le_rows),
+        "ge_le_price_available_count": ge_le_price_available_count,
+        "ge_le_approx_positive_edge_count": ge_le_positive,
+        "ge_le_missing_price_count": ge_le_missing_price_count,
         "by_station": _count_by(triage_rows, "station_code"),
         "by_bucket_type": _count_by(triage_rows, "bucket_type"),
         "by_time_to_close": _count_by(triage_rows, "time_to_close_bucket"),
@@ -235,6 +267,11 @@ def build_observation_lock_tradability_report(
             for row in triage_rows
             if not row.get("historical_price_available")
         ][:20],
+        "top_ge_le_approx_positive_locked_signals": [
+            row
+            for row in ge_le_rows
+            if row.get("approximate_edge") is not None and float(row.get("approximate_edge") or 0.0) > 0
+        ][:20],
     }
     return {
         "schema_version": SCHEMA_VERSION,
@@ -242,6 +279,8 @@ def build_observation_lock_tradability_report(
         "counts_for_live_gate": False,
         "live_order_path": False,
         "summary": summary,
+        "all_locked_signal_triage": triage_rows,
+        "alpha_eligible_ge_le_locked_signal_triage": ge_le_rows,
         "rows": triage_rows,
     }
 
@@ -266,6 +305,7 @@ def write_observation_lock_tradability_artifacts(
     *,
     summary_output: str | Path,
     rows_output: str | Path,
+    ge_le_summary_output: str | Path | None = None,
 ) -> Dict[str, Any]:
     summary_path = Path(summary_output)
     rows_path = Path(rows_output)
@@ -276,8 +316,23 @@ def write_observation_lock_tradability_artifacts(
         for row in report.get("rows") or []:
             if isinstance(row, dict):
                 handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+    ge_le_output = None
+    if ge_le_summary_output:
+        ge_le_path = Path(ge_le_summary_output)
+        ge_le_path.parent.mkdir(parents=True, exist_ok=True)
+        ge_le_report = {
+            "schema_version": f"{SCHEMA_VERSION}.ge_le_alpha",
+            "paper_only": True,
+            "counts_for_live_gate": False,
+            "live_order_path": False,
+            "summary": report.get("summary") or {},
+            "rows": report.get("alpha_eligible_ge_le_locked_signal_triage") or [],
+        }
+        ge_le_path.write_text(json.dumps(ge_le_report, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
+        ge_le_output = str(ge_le_path)
     return {
         "summary_output": str(summary_path),
         "rows_output": str(rows_path),
+        "ge_le_summary_output": ge_le_output,
         "locked_signal_count": (report.get("summary") or {}).get("locked_signal_count"),
     }

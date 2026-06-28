@@ -18,11 +18,12 @@ def _row(
     ask_depth: float = 10.0,
     bid_depth: float = 10.0,
     token_id: str = "yes-token",
+    side: str = "yes",
 ) -> dict:
     return {
         "market_slug": f"highest-temperature-test-{bucket_type}-{token_id}",
         "token_id": token_id,
-        "side": "yes",
+        "side": side,
         "bucket_type": bucket_type,
         "threshold": threshold,
         "target_date": "2026-06-29",
@@ -121,11 +122,11 @@ def test_execution_sampler_rejects_anomaly(tmp_path):
     assert "blocked_by_observation_anomaly" in reasons
 
 
-def test_sampler_blocks_stale_intraday_observation(tmp_path):
+def test_sampler_blocks_stale_not_locked_intraday_observation(tmp_path):
     report = _run(
         tmp_path,
         [_row()],
-        [_obs(24, available_at="2026-06-29T09:40:00Z")],
+        [_obs(22, available_at="2026-06-29T09:40:00Z")],
         generated_at="2026-06-29T10:06:00Z",
     )
 
@@ -146,3 +147,35 @@ def test_sampler_uses_latest_visible_observation(tmp_path):
     assert report["candidate_samples"][0]["official_current_high"] == 24
     signal_report = json.loads(Path(tmp_path / "signal_report.json").read_text(encoding="utf-8"))
     assert signal_report["rows"][0]["latest_available_at"] == "2026-06-29T10:00:00Z"
+
+
+def test_sampler_archives_locked_watch_orderbook_even_without_candidate(tmp_path):
+    report = _run(
+        tmp_path,
+        [_row(bucket_type="le", threshold=24, best_bid=0.2, best_ask=0.3, side="yes", token_id="yes-token")],
+        [_obs(28)],
+    )
+
+    assert report["paper_fill_count"] == 0
+    assert report["ge_le_locked_count"] == 1
+    assert report["locked_watch_orderbook_snapshot_count"] == 1
+    assert report["locked_watch_rows_written_count"] == 1
+    reasons = {row["reason"] for row in report["ge_le_locked_reject_reason_counts"]}
+    assert "synthetic_no_price_diagnostic_only" in reasons
+    watch_rows = load_jsonl(tmp_path / "archive" / "locked_watch_rows.jsonl")
+    watch_snapshots = load_jsonl(tmp_path / "archive" / "locked_watch_orderbook_snapshots.jsonl")
+    assert len(watch_rows) == 1
+    assert len(watch_snapshots) == 1
+
+
+def test_sampler_does_not_archive_eq_shadow_as_alpha_watch(tmp_path):
+    report = _run(
+        tmp_path,
+        [_row(bucket_type="eq", threshold=23, best_bid=0.2, best_ask=0.3, side="yes", token_id="yes-token")],
+        [_obs(28)],
+    )
+
+    assert report["paper_fill_count"] == 0
+    assert report["ge_le_locked_count"] == 0
+    assert report["locked_watch_orderbook_snapshot_count"] == 0
+    assert load_jsonl(tmp_path / "archive" / "locked_watch_rows.jsonl") == []

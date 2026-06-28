@@ -1,5 +1,53 @@
 {
   "active_alpha_research": {
+    "historical_ge_le_tradability_triage": {
+      "approx_positive_edge_count": 1,
+      "counts_for_live_gate": false,
+      "live_order_path": false,
+      "locked_signal_count": 50,
+      "missing_price_count": 0,
+      "price_available_count": 50,
+      "report_path": "evidence/historical_replay/observation_lock_ge_le_tradability_report.json",
+      "status": "complete",
+      "top_ge_le_approx_positive_locked_signals": [
+        {
+          "approximate_edge": 0.016,
+          "approximate_price": 0.979,
+          "bucket_type": "le",
+          "can_compute_real_pnl": false,
+          "can_count_as_pnl": false,
+          "counts_for_live_gate": false,
+          "data_gap_reason": [
+            "historical_price_not_executable_depth"
+          ],
+          "dust_price": false,
+          "evidence_type": "approximate_price_only",
+          "executable_depth_available": false,
+          "ge_le_triage_rank": 1,
+          "historical_price_available": true,
+          "historical_price_source": "polymarket_clob_prices_history",
+          "historical_price_timestamp": "2026-06-27T05:00:05Z",
+          "live_order_path": false,
+          "lock_state": "le_yes_dead_no_locked",
+          "locked_side": "NO",
+          "market_slug": "highest-temperature-in-moscow-on-june-27-2026-17corbelow",
+          "official_current_high": 18.0,
+          "outcome": 0.0,
+          "paper_only": true,
+          "payout": 1.0,
+          "price_bucket": "price_ge_0_03",
+          "replay_time": "2026-06-27T05:36:07Z",
+          "schema_version": "polyweather_observation_lock_tradability.v1.locked_signal",
+          "station_code": "UUWW",
+          "target_date": "2026-06-27",
+          "threshold": 17.0,
+          "time_to_close": 383.883,
+          "time_to_close_bucket": "gt_2h",
+          "token_id": "45216753547761882030203911510849899472552844747999172882006780508001418763973",
+          "triage_rank": 7
+        }
+      ]
+    },
     "historical_tradability_triage": {
       "approximate_negative_edge_count": 96,
       "approximate_positive_edge_count": 9,
@@ -20,18 +68,54 @@
       "status": "pending_due"
     },
     "observation_lock_alpha": {
-      "active_sampler_installed": true,
-      "active_sampler_last_run_status": "no_current_candidate",
-      "approximate_positive_edge_count": 9,
-      "executable_depth_available_count": 0,
+      "collect_intraday_before_scan": true,
+      "direct_locked_side_book_count": 2,
+      "executable_candidate_count": 0,
+      "final_conclusion": "observation_lock_alpha_waiting_for_direct_locked_side_liquidity",
+      "ge_le_locked_count": 2,
+      "ge_le_locked_reject_reason_counts": [
+        {
+          "count": 2,
+          "reason": "ask_depth_too_low"
+        },
+        {
+          "count": 2,
+          "reason": "executable_edge_not_positive"
+        },
+        {
+          "count": 2,
+          "reason": "locked_side_ask_depth_too_low"
+        },
+        {
+          "count": 2,
+          "reason": "missing_executable_price"
+        },
+        {
+          "count": 2,
+          "reason": "missing_spread"
+        },
+        {
+          "count": 1,
+          "reason": "not_locked_side_token_row"
+        }
+      ],
+      "historical_ge_le_approx_positive_count": 1,
+      "launchd_install_report_path": "evidence/observation_lock_sampler_launchd_install_report.json",
       "live_order_path": false,
       "locked_signal_count": 105,
-      "missing_price_count": 0,
-      "observation_lock_paper_fill_count": 0,
-      "price_available_count": 105,
-      "remaining_blocker": "no active executable non-dust observation-lock candidate; top reject reasons: executable_edge_not_positive=240, not_observation_locked=238, observation_not_locked=238, bucket_type_not_sampled=198, eq_exact_not_alpha=198",
+      "locked_watch_orderbook_snapshot_count": 1,
+      "missing_locked_side_orderbook_count": 0,
+      "non_dust_uuww_due_runner_status": "pending_due",
+      "observation_lock_active_sampler_status": "installed_running",
+      "paper_fill_count": 0,
       "resolved_pnl_cents": null,
-      "status": "active_execution_sampling"
+      "runner_label": "com.polyweather.observation-lock-execution-sampler",
+      "sampler_report_path": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
+      "stale_blocker_count": 64,
+      "stale_warning_count": 2,
+      "status": "active_execution_sampling",
+      "synthetic_locked_side_price_count": 0,
+      "top_current_blocker": "ask_depth_too_low=2"
     },
     "observation_lock_execution_sampler": {
       "counts_for_live_gate": false,
@@ -107,6 +191,7 @@
     "intraday_launchd_install_report": "evidence/intraday_observation_launchd_install_report.json",
     "intraday_observation_collector": "evidence/official_observations/intraday_observations.jsonl",
     "observation_lock_execution_sampler_report": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
+    "observation_lock_ge_le_tradability_report": "evidence/historical_replay/observation_lock_ge_le_tradability_report.json",
     "observation_lock_locked_signal_triage": "evidence/historical_replay/observation_lock_locked_signal_triage.jsonl",
     "observation_lock_paper_journal": "evidence/observation_lock_paper/fills.jsonl",
     "observation_lock_sampler_launchd_install_report": "evidence/observation_lock_sampler_launchd_install_report.json",
@@ -144,17 +229,17 @@
       "status": "failed"
     }
   },
-  "final_conclusion": "observation_lock_alpha_ready_for_execution_sampling_but_no_current_candidate",
+  "final_conclusion": "observation_lock_alpha_waiting_for_direct_locked_side_liquidity",
   "killed_paths": [
     "eq_exact_live",
     "dust_tail_live",
     "maker_inferred_live"
   ],
-  "latest_focus": "observation_lock_active_execution_sampling",
+  "latest_focus": "observation_lock_direct_locked_side_execution_sampling",
   "live": {
     "can_tiny_live": false,
     "live_order_path": false,
-    "reason": "paper-only active execution sampling is running; live remains hard-disabled until resolved non-dust paper evidence exists"
+    "reason": "paper-only active sampler still has no executable direct locked-side fill"
   },
   "live_order_path": false,
   "paper_only": true,

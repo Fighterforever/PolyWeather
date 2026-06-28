@@ -1,7 +1,7 @@
 {
   "blockers": [
-    "historical Polymarket price history is approximate only, not executable orderbook depth",
-    "active sampler has not found a current non-dust positive executable-edge candidate",
+    "direct locked-side token exists but current ask/depth is not executable for current ge/le locks",
+    "historical ge/le triage is approximate only, not executable depth",
     "non-dust threshold path still waits for due runner resolution"
   ],
   "counts_for_live_gate": false,
@@ -44,17 +44,70 @@
   },
   "execution_sampling": {
     "active_sampler_installed": true,
-    "active_sampler_last_run_status": "no_current_candidate",
+    "active_sampler_last_run_status": "no_executable_direct_locked_side_candidate",
+    "counts_for_live_gate": false,
+    "direct_locked_side_book_count": 2,
+    "executable_candidate_count": 0,
+    "ge_le_locked_count": 2,
+    "live_order_path": false,
+    "non_dust_uuww_due_runner_status": "pending_due",
+    "observation_lock_sampler_report": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
+    "paper_fill_count": 0,
+    "status": "installed_running",
+    "top_current_blocker": "ask_depth_too_low=2"
+  },
+  "final_conclusion": "observation_lock_alpha_waiting_for_direct_locked_side_liquidity",
+  "historical_non_dust_threshold_replay": "pending_non_dust_uuww_due_runner",
+  "non_dust_uuww_due_runner_status": "pending_due",
+  "historical_observation_lock_alpha": "historical_locked_signal_tradability_triage_complete",
+  "historical_observation_lock_ge_le_tradability": {
+    "approx_positive_edge_count": 1,
     "counts_for_live_gate": false,
     "live_order_path": false,
-    "observation_lock_paper_fill_count": 0,
-    "observation_lock_sampler_report": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
-    "remaining_blocker": "no active executable non-dust observation-lock candidate; top reject reasons: executable_edge_not_positive=240, not_observation_locked=238, observation_not_locked=238, bucket_type_not_sampled=198, eq_exact_not_alpha=198",
-    "status": "installed_running"
+    "locked_signal_count": 50,
+    "missing_price_count": 0,
+    "price_available_count": 50,
+    "report_path": "evidence/historical_replay/observation_lock_ge_le_tradability_report.json",
+    "status": "complete",
+    "top_ge_le_approx_positive_locked_signals": [
+      {
+        "approximate_edge": 0.016,
+        "approximate_price": 0.979,
+        "bucket_type": "le",
+        "can_compute_real_pnl": false,
+        "can_count_as_pnl": false,
+        "counts_for_live_gate": false,
+        "data_gap_reason": [
+          "historical_price_not_executable_depth"
+        ],
+        "dust_price": false,
+        "evidence_type": "approximate_price_only",
+        "executable_depth_available": false,
+        "ge_le_triage_rank": 1,
+        "historical_price_available": true,
+        "historical_price_source": "polymarket_clob_prices_history",
+        "historical_price_timestamp": "2026-06-27T05:00:05Z",
+        "live_order_path": false,
+        "lock_state": "le_yes_dead_no_locked",
+        "locked_side": "NO",
+        "market_slug": "highest-temperature-in-moscow-on-june-27-2026-17corbelow",
+        "official_current_high": 18.0,
+        "outcome": 0.0,
+        "paper_only": true,
+        "payout": 1.0,
+        "price_bucket": "price_ge_0_03",
+        "replay_time": "2026-06-27T05:36:07Z",
+        "schema_version": "polyweather_observation_lock_tradability.v1.locked_signal",
+        "station_code": "UUWW",
+        "target_date": "2026-06-27",
+        "threshold": 17.0,
+        "time_to_close": 383.883,
+        "time_to_close_bucket": "gt_2h",
+        "token_id": "45216753547761882030203911510849899472552844747999172882006780508001418763973",
+        "triage_rank": 7
+      }
+    ]
   },
-  "final_conclusion": "observation_lock_alpha_ready_for_execution_sampling_but_no_current_candidate",
-  "historical_non_dust_threshold_replay": "pending_non_dust_uuww_due_runner",
-  "historical_observation_lock_alpha": "historical_locked_signal_tradability_triage_complete",
   "historical_observation_lock_replay": {
     "brier_score": null,
     "by_bucket_type": [
@@ -255,7 +308,53 @@
     "triage_rows_path": "evidence/historical_replay/observation_lock_locked_signal_triage.jsonl"
   },
   "live_order_path": false,
-  "next_action": "continue five-minute observation-lock execution sampling with fresh METAR and archive orderbook before any paper fill",
+  "next_action": "continue five-minute METAR-first observation-lock sampler; wait for direct locked-side ask liquidity on ge/le locks",
+  "observation_lock_active_sampler": {
+    "collect_intraday_before_scan": true,
+    "direct_locked_side_book_count": 2,
+    "executable_candidate_count": 0,
+    "ge_le_locked_count": 2,
+    "ge_le_locked_reject_reason_counts": [
+      {
+        "count": 2,
+        "reason": "ask_depth_too_low"
+      },
+      {
+        "count": 2,
+        "reason": "executable_edge_not_positive"
+      },
+      {
+        "count": 2,
+        "reason": "locked_side_ask_depth_too_low"
+      },
+      {
+        "count": 2,
+        "reason": "missing_executable_price"
+      },
+      {
+        "count": 2,
+        "reason": "missing_spread"
+      },
+      {
+        "count": 1,
+        "reason": "not_locked_side_token_row"
+      }
+    ],
+    "launchd_install_report_path": "evidence/observation_lock_sampler_launchd_install_report.json",
+    "live_order_path": false,
+    "locked_watch_orderbook_snapshot_count": 1,
+    "missing_locked_side_orderbook_count": 0,
+    "non_dust_uuww_due_runner_status": "pending_due",
+    "observation_lock_active_sampler_status": "installed_running",
+    "paper_fill_count": 0,
+    "runner_label": "com.polyweather.observation-lock-execution-sampler",
+    "sampler_report_path": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
+    "stale_blocker_count": 64,
+    "stale_warning_count": 2,
+    "status": "active_execution_sampling",
+    "synthetic_locked_side_price_count": 0,
+    "top_current_blocker": "ask_depth_too_low=2"
+  },
   "observation_lock_execution_sampler": {
     "counts_for_live_gate": false,
     "executable_candidate_count": 0,

@@ -33,8 +33,11 @@ def build_program_arguments(args: argparse.Namespace) -> list[str]:
         str(args.python_path or _default_python(repo_root)),
         str(repo_root / "scripts" / "weather_observation_lock_execution_sampler.py"),
         "--paper-only",
+        "--collect-intraday-before-scan",
         "--intraday-observation-path",
         args.intraday_observation_path,
+        "--intraday-manifest-path",
+        args.intraday_manifest_path,
         "--orderbook-archive-dir",
         args.orderbook_archive_dir,
         "--paper-fill-dir",
@@ -56,6 +59,8 @@ def build_program_arguments(args: argparse.Namespace) -> list[str]:
         program.append("--exclude-dust")
     for bucket_type in _as_list(args.bucket_types, default=["ge", "le"]):
         program.extend(["--bucket-type", bucket_type])
+    for station in _as_list(args.station_codes, default=["LTAC", "UUWW", "EGLC"]):
+        program.extend(["--station-code", station])
     return program
 
 
@@ -136,6 +141,10 @@ def install_launchd(args: argparse.Namespace, *, run=subprocess.run) -> Dict[str
             "stderr": payload["StandardErrorPath"],
         },
         "program_arguments": payload["ProgramArguments"],
+        "collect_intraday_before_scan": True,
+        "station_codes": args.station_codes or ["LTAC", "UUWW", "EGLC"],
+        "observation_output_path": args.intraday_observation_path,
+        "sampler_output_path": args.summary_output,
         "commands": commands,
     }
 
@@ -145,6 +154,7 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     parser.add_argument("--repo-root", default=str(PROJECT_ROOT))
     parser.add_argument("--label", default=DEFAULT_LABEL)
     parser.add_argument("--intraday-observation-path", default="evidence/official_observations/intraday_observations.jsonl")
+    parser.add_argument("--intraday-manifest-path", default="evidence/official_observations/manifest.json")
     parser.add_argument("--orderbook-archive-dir", default="evidence/observation_lock_execution")
     parser.add_argument("--paper-fill-dir", default="evidence/observation_lock_execution")
     parser.add_argument("--signal-report-output", default="evidence/observation_lock_execution/latest_signal_report.json")
@@ -153,6 +163,7 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     parser.add_argument("--exclude-dust", action="store_true", default=True)
     parser.add_argument("--include-dust", action="store_false", dest="exclude_dust")
     parser.add_argument("--bucket-type", action="append", dest="bucket_types", default=None)
+    parser.add_argument("--station-code", action="append", dest="station_codes", default=None)
     parser.add_argument("--max-staleness-minutes", type=float, default=10.0)
     parser.add_argument("--max-spread", type=float, default=0.03)
     parser.add_argument("--min-ask-depth", type=float, default=1.0)
