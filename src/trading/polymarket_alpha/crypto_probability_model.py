@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
+from src.trading.polymarket_alpha.binance_crypto_history import verify_high_since_start
 from src.trading.polymarket_alpha.crypto_market_semantics import classify_crypto_semantics, parse_start_time
 from src.trading.polymarket_alpha.probability_dataset import write_json, write_jsonl
 from src.trading.polymarket_readonly import PolymarketReadonlyClient
@@ -72,9 +73,11 @@ def parse_crypto_threshold_market(market: Dict[str, Any]) -> Optional[Dict[str, 
     if direction is None:
         return None
     candidates = []
-    for match in re.finditer(r"(\$?)\s*([0-9]{1,3}(?:,[0-9]{3})+(?:\.\d+)?|[0-9]{3,6}(?:\.\d+)?)\s*(k\b)?", text):
+    for match in re.finditer(r"(\$?)\s*([0-9]{1,3}(?:,[0-9]{3})+(?:\.\d+)?|[0-9]{1,8}(?:\.\d+)?)\s*([km]\b)?", text):
         has_currency = bool(match.group(1))
-        has_k_suffix = bool(match.group(3))
+        suffix_token = str(match.group(3) or "").strip().lower()
+        has_k_suffix = suffix_token == "k"
+        has_m_suffix = suffix_token == "m"
         before = text[max(0, match.start() - 28): match.start()]
         after = text[match.end(): match.end() + 12]
         has_price_context = bool(re.search(r"(above|over|below|under|hit|reach|exceed|price|target|at\s+least|less\s+than)[^a-z0-9]{0,10}$", before))
@@ -89,6 +92,8 @@ def parse_crypto_threshold_market(market: Dict[str, Any]) -> Optional[Dict[str, 
             continue
         if has_k_suffix and value < 1000:
             value *= 1000
+        if has_m_suffix and value < 1_000_000:
+            value *= 1_000_000
         # Reject date/year artifacts unless the nearby wording clearly makes this a price level.
         if 1900 <= value <= 2100 and not (has_currency or has_k_suffix or re.search(r"(reach|hit|above|over|below|under|price|target)", before + after)):
             continue
@@ -125,30 +130,54 @@ def first_passage_probability_upper(*, spot: float, threshold: float, annual_vol
 
 
 def fetch_binance_high_since_start(asset: str, start_time: str, end_time: str) -> Optional[float]:
-    start_dt = _parse_utc(start_time)
-    end_dt = _parse_utc(end_time)
-    if start_dt is None or end_dt is None or end_dt <= start_dt:
-        return None
-    symbol = f"{asset.upper()}USDT"
-    start_ms = int(start_dt.timestamp() * 1000)
-    end_ms = int(end_dt.timestamp() * 1000)
-    url = (
-        "https://api.binance.com/api/v3/klines"
-        f"?symbol={symbol}&interval=1h&startTime={start_ms}&endTime={end_ms}&limit=1000"
+    result = verify_high_since_start(
+        asset=asset,
+        threshold=0.0,
+        market_creation_time=start_time,
+        current_time=end_time,
     )
+    return _safe_float(result.get("max_high_since_start"))
+
+
+def _call_high_since_start_fetcher(
+    fetcher: Any,
+    *,
+    asset: str,
+    threshold: float,
+    start_time: str,
+    generated_at: str,
+    cache_dir: str | Path,
+) -> Dict[str, Any]:
+    if fetcher is None:
+        return verify_high_since_start(
+            asset=asset,
+            threshold=threshold,
+            market_creation_time=start_time,
+            current_time=generated_at,
+            cache_dir=cache_dir,
+        )
     try:
-        with urllib.request.urlopen(url, timeout=12) as response:
-            payload = json.loads(response.read().decode("utf-8"))
-    except Exception:
-        return None
-    highs = []
-    if isinstance(payload, list):
-        for row in payload:
-            if isinstance(row, list) and len(row) > 2:
-                high = _safe_float(row[2])
-                if high is not None:
-                    highs.append(high)
-    return max(highs) if highs else None
+        result = fetcher(asset=asset, threshold=threshold, market_creation_time=start_time, current_time=generated_at)
+    except TypeError:
+        result = fetcher(asset, start_time, generated_at)
+    if isinstance(result, dict):
+        return result
+    high = _safe_float(result)
+    return {
+        "asset": asset,
+        "market_creation_time": start_time,
+        "verification_start_time": start_time,
+        "verification_end_time": generated_at,
+        "max_high_since_start": high,
+        "max_high_at": None,
+        "barrier_already_touched": bool(high is not None and high >= threshold),
+        "high_since_start_verified": high is not None,
+        "kline_count": 0,
+        "gap_reason": None if high is not None else "high_since_start_unverified",
+        "data_source": "test_or_external_high_since_start_fetcher",
+        "paper_only": True,
+        "live_order_path": False,
+    }
 
 
 def _token_for_outcome(market: Dict[str, Any], outcome: str) -> Optional[str]:
@@ -366,6 +395,7 @@ def build_crypto_probability_edge_report(
     min_depth: float = 10.0,
     max_spread: float = 0.15,
     high_since_start_fetcher: Optional[Any] = None,
+    high_since_start_cache_dir: str | Path = "evidence/polymarket_alpha/binance_klines",
 ) -> Dict[str, Any]:
     generated_dt = _parse_utc(generated_at) if generated_at else datetime.now(timezone.utc)
     generated_at = generated_dt.isoformat().replace("+00:00", "Z")
@@ -392,6 +422,10 @@ def build_crypto_probability_edge_report(
     parsed_count = 0
     model_ready_count = 0
     executable_price_available_count = 0
+    touch_barrier_market_count = 0
+    high_since_start_verified_count = 0
+    barrier_already_touched_count = 0
+    verified_not_touched_count = 0
     for market in active_rows:
         if not isinstance(market, dict) or not market.get("active"):
             continue
@@ -422,23 +456,43 @@ def build_crypto_probability_edge_report(
         )
         p_yes_terminal = p_yes_terminal_above if parsed.get("direction") == "above" else 1.0 - p_yes_terminal_above
         semantics_type = classify_crypto_semantics(market)
-        start_time = parse_start_time(market, generated_at=generated_at)
+        start_time = parse_start_time(market, generated_at=generated_at, end_time=parsed.get("target_time") or market.get("end_time"))
         high_since_start = None
+        max_high_at = None
+        high_kline_count = 0
+        high_gap_reason = None
         high_verified = False
+        barrier_already_touched = False
         probability_semantics = semantics_type if semantics_type != "ambiguous" else "ambiguous"
         p_yes_touch = None
         if semantics_type == "touch_barrier":
+            touch_barrier_market_count += 1
             probability_semantics = "touch_barrier"
             if spot >= float(parsed["threshold"]):
                 high_since_start = spot
+                max_high_at = generated_at
                 high_verified = True
+                barrier_already_touched = True
                 p_yes_touch = 1.0
             elif start_time:
-                fetcher = high_since_start_fetcher or fetch_binance_high_since_start
-                high_since_start = _safe_float(fetcher(asset, start_time, generated_at))
-                high_verified = high_since_start is not None
-                if high_since_start is not None and high_since_start >= float(parsed["threshold"]):
+                high_result = _call_high_since_start_fetcher(
+                    high_since_start_fetcher,
+                    asset=asset,
+                    threshold=float(parsed["threshold"]),
+                    start_time=start_time,
+                    generated_at=generated_at,
+                    cache_dir=high_since_start_cache_dir,
+                )
+                high_since_start = _safe_float(high_result.get("max_high_since_start"))
+                max_high_at = high_result.get("max_high_at")
+                high_kline_count = int(high_result.get("kline_count") or 0)
+                high_gap_reason = high_result.get("gap_reason")
+                high_verified = bool(high_result.get("high_since_start_verified"))
+                barrier_already_touched = bool(high_result.get("barrier_already_touched"))
+                if barrier_already_touched:
                     p_yes_touch = 1.0
+            else:
+                high_gap_reason = "start_time_unverified"
             if p_yes_touch is None:
                 p_yes_touch = first_passage_probability_upper(
                     spot=spot,
@@ -447,7 +501,14 @@ def build_crypto_probability_edge_report(
                     years=years,
                 )
             if not high_verified:
-                gaps["high_since_start_unverified"] += 1
+                gaps[str(high_gap_reason or "high_since_start_unverified")] += 1
+            else:
+                high_since_start_verified_count += 1
+                if barrier_already_touched:
+                    barrier_already_touched_count += 1
+                    gaps["barrier_already_touched"] += 1
+                else:
+                    verified_not_touched_count += 1
         elif semantics_type == "ambiguous":
             gaps["ambiguous_crypto_market_semantics"] += 1
         p_yes = p_yes_touch if semantics_type == "touch_barrier" else p_yes_terminal
@@ -463,12 +524,16 @@ def build_crypto_probability_edge_report(
             "p_no_touch": round(1.0 - p_yes_touch, 8) if p_yes_touch is not None else None,
             "probability_semantics": probability_semantics,
             "historical_high_since_start": high_since_start,
+            "max_high_at": max_high_at,
             "high_since_start_verified": high_verified,
+            "barrier_already_touched": barrier_already_touched,
+            "high_since_start_kline_count": high_kline_count,
+            "high_since_start_gap_reason": high_gap_reason,
             "parsed_start_time": start_time,
         }
-        if semantics_type == "touch_barrier" and not high_verified:
+        if semantics_type == "touch_barrier" and (not high_verified or barrier_already_touched):
             candidate = None
-            gap = "high_since_start_unverified"
+            gap = "barrier_already_touched" if barrier_already_touched else str(high_gap_reason or "high_since_start_unverified")
             side_rows = []
             executable_available = any(_side_quote(market, side)[0] is not None for side in ("YES", "NO"))
             for side in ("YES", "NO"):
@@ -539,7 +604,10 @@ def build_crypto_probability_edge_report(
                     "semantics_type": side_row.get("semantics_type"),
                     "probability_semantics": side_row.get("probability_semantics"),
                     "historical_high_since_start": side_row.get("historical_high_since_start"),
+                    "max_high_at": side_row.get("max_high_at"),
                     "high_since_start_verified": side_row.get("high_since_start_verified"),
+                    "barrier_already_touched": side_row.get("barrier_already_touched"),
+                    "high_since_start_gap_reason": side_row.get("high_since_start_gap_reason"),
                 }
             )
         watch_rows.append({
@@ -558,7 +626,10 @@ def build_crypto_probability_edge_report(
             "probability_semantics": probability_semantics,
             "semantics_type": semantics_type,
             "historical_high_since_start": high_since_start,
+            "max_high_at": max_high_at,
             "high_since_start_verified": high_verified,
+            "barrier_already_touched": barrier_already_touched,
+            "high_since_start_gap_reason": high_gap_reason,
             "gap": gap,
             "executable_price_available": executable_available,
             "paper_only": True,
@@ -591,9 +662,20 @@ def build_crypto_probability_edge_report(
         "orderbook_fetch_success_count": len(orderbook_fetch_summary.get("fetched", {})),
         "orderbook_fetch_error_count": len(orderbook_fetch_summary.get("errors", {})),
         "top_10_near_misses": near_misses[:10],
+        "touch_barrier_market_count": touch_barrier_market_count,
+        "high_since_start_verified_count": high_since_start_verified_count,
+        "barrier_already_touched_count": barrier_already_touched_count,
+        "verified_not_touched_count": verified_not_touched_count,
         "touch_barrier_candidate_count": len([row for row in candidates if row.get("semantics_type") == "touch_barrier"]),
         "terminal_candidate_count": len([row for row in candidates if row.get("semantics_type") in {"terminal_above", "terminal_below", "close_above", "close_below"}]),
-        "invalidated_due_semantics_count": int(gaps.get("high_since_start_unverified", 0) + gaps.get("ambiguous_crypto_market_semantics", 0)),
+        "invalidated_due_semantics_count": int(
+            sum(
+                value
+                for key, value in gaps.items()
+                if key in {"high_since_start_unverified", "start_time_unverified", "ambiguous_crypto_market_semantics", "barrier_already_touched"}
+                or str(key).startswith("binance_fetch_error")
+            )
+        ),
         "watch_rows": watch_rows,
         "candidates": candidates,
     }

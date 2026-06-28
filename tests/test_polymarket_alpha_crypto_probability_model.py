@@ -118,6 +118,69 @@ def test_no_fill_if_high_since_start_unverified_for_touch_market():
     assert reasons["high_since_start_unverified"] >= 1
 
 
+def test_start_time_unverified_blocks_touch_candidate():
+    report = build_crypto_probability_edge_report(
+        active_markets=[
+            _market(
+                market_slug="will-bitcoin-reach-70000-by-december-31-2026",
+                title="Will Bitcoin reach $70,000 by December 31, 2026?",
+                question="Will Bitcoin reach $70,000 by December 31, 2026?",
+                description="This resolves Yes if any Binance candle High is at least $70,000 after market creation.",
+                token_id_by_outcome={"Yes": "yes-token", "No": "no-token"},
+                token_ids=["yes-token", "no-token"],
+                orderbooks={
+                    "yes-token": {"best_bid": 0.4, "best_ask": 0.45, "spread": 0.05, "ask_depth_usdc_3c": 100},
+                    "no-token": {"best_bid": 0.5, "best_ask": 0.55, "spread": 0.05, "ask_depth_usdc_3c": 100},
+                },
+            )
+        ],
+        spot_prices={"BTC": 60000},
+        generated_at="2026-06-29T00:00:00Z",
+    )
+
+    assert report["candidate_count"] == 0
+    reasons = {row["reason"]: row["count"] for row in report["gap_reasons"]}
+    assert reasons["start_time_unverified"] >= 1
+
+
+def test_verified_high_since_start_no_touch_allows_future_probability():
+    report = build_crypto_probability_edge_report(
+        active_markets=[
+            _market(
+                market_slug="will-bitcoin-reach-70000-by-december-31-2026-from-june-8",
+                title="Will Bitcoin reach $70,000 by December 31, 2026?",
+                question="Will Bitcoin reach $70,000 by December 31, 2026?",
+                description="This resolves Yes if any Binance candle High is at least $70,000 after market creation.",
+                token_id_by_outcome={"Yes": "yes-token", "No": "no-token"},
+                token_ids=["yes-token", "no-token"],
+                orderbooks={
+                    "yes-token": {"best_bid": 0.35, "best_ask": 0.4, "spread": 0.05, "ask_depth_usdc_3c": 100},
+                    "no-token": {"best_bid": 0.55, "best_ask": 0.6, "spread": 0.05, "ask_depth_usdc_3c": 100},
+                },
+            )
+        ],
+        spot_prices={"BTC": 60000},
+        generated_at="2026-06-29T00:00:00Z",
+        high_since_start_fetcher=lambda **kwargs: {
+            "max_high_since_start": 65000,
+            "max_high_at": "2026-06-20T00:00:00Z",
+            "high_since_start_verified": True,
+            "barrier_already_touched": False,
+            "kline_count": 1000,
+            "gap_reason": None,
+        },
+        min_edge=0.0,
+    )
+
+    assert report["touch_barrier_market_count"] == 1
+    assert report["high_since_start_verified_count"] == 1
+    assert report["barrier_already_touched_count"] == 0
+    assert report["verified_not_touched_count"] == 1
+    no_row = next(row for row in report["top_10_near_misses"] if row["side"] == "NO")
+    assert no_row["high_since_start_verified"] is True
+    assert no_row["barrier_already_touched"] is False
+
+
 def test_no_side_ev_uses_touch_probability():
     report = build_crypto_probability_edge_report(
         active_markets=[

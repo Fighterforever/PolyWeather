@@ -284,6 +284,9 @@ def build_markout_report(
         "by_model_source": _bucket_summary(markouts, "model_source", "markout_cents"),
         "markouts": markouts,
     }
+    if not materialized_fills:
+        report["markout_status"] = "ready_waiting_for_valid_crypto_fills"
+        report["legacy_markout_status"] = "ready_waiting_for_probability_edge_fills"
     return report
 
 

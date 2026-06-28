@@ -55,7 +55,8 @@ def test_probability_edge_markout_waits_for_probability_edge_fills_when_empty():
     report = build_markout_report(fills=[], price_rows=[])
 
     assert report["fill_count"] == 0
-    assert report["markout_status"] == "ready_waiting_for_probability_edge_fills"
+    assert report["markout_status"] == "ready_waiting_for_valid_crypto_fills"
+    assert report["legacy_markout_status"] == "ready_waiting_for_probability_edge_fills"
 
 
 def test_probability_edge_resolved_audit_keeps_unresolved_pnl_null():

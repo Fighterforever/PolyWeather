@@ -33,6 +33,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--summary-output", default=str(DEFAULT_REPORT))
     parser.add_argument("--candidates-output", default=str(DEFAULT_CANDIDATES))
     parser.add_argument("--semantics-audit", default=str(DEFAULT_SEMANTICS_AUDIT))
+    parser.add_argument("--high-since-start-cache-dir", default=str(DEFAULT_ROOT / "binance_klines"))
     parser.add_argument("--btc-spot", type=float, default=None)
     parser.add_argument("--eth-spot", type=float, default=None)
     parser.add_argument("--fetch-binance-spot", action=argparse.BooleanOptionalAction, default=True)
@@ -70,6 +71,7 @@ def main(argv: list[str] | None = None) -> None:
         cost=float(args.cost),
         min_depth=float(args.min_depth),
         max_spread=float(args.max_spread),
+        high_since_start_cache_dir=args.high_since_start_cache_dir,
     )
     write_jsonl(args.candidates_output, report.get("candidates") or [])
     compact = {key: value for key, value in report.items() if key not in {"candidates", "watch_rows"}}

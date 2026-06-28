@@ -1,0 +1,2268 @@
+{
+  "counts_for_live_gate": false,
+  "live_order_path": false,
+  "paper_only": true,
+  "parsed_crypto_market_count": 38,
+  "rows": [
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-pumpfun-perform-an-airdrop-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Pump.fun perform an airdrop by December 31, 2026"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-hyperliquid-perform-an-airdrop-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Hyperliquid perform an airdrop by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-hyperliquid-perform-an-airdrop-by-december-31-2027-117",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Hyperliquid perform an airdrop by December 31, 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-hyperliquid-perform-an-airdrop-by-june-30-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Hyperliquid perform an airdrop by June 30, 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-usdc-hit-50-of-usdt-market-cap-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will USDC hit 50% of USDT market cap by December 31, 2026?"
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-hit-150k-by-june-30-2026",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 150000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-hit-150k-by-december-31-2026",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 150000.0
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-el-salvador-hold-1b-of-btc-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_semantics",
+      "title": "Will El Salvador hold $1b+ of BTC by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-abstract-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Abstract launch a token by December 31, 2026"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-abstract-launch-a-token-by-september-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Abstract launch a token by September 30, 2026"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-abstract-launch-a-token-by-march-31-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Abstract launch a token by March 31, 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-abstract-launch-a-token-by-september-30-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Abstract launch a token by September 30, 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-abstract-launch-a-token-by-december-31-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Abstract launch a token by December 31, 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-abstract-launch-a-token-by-june-30-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Abstract launch a token by June 30, 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-axiom-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Axiom launch a token by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-axiom-launch-a-token-by-december-31-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Axiom launch a token by December 31, 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-base-launch-a-token-by-december-31-2026-154",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Base launch a token by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-base-launch-a-token-by-june-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Base launch a token by June 30, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-base-launch-a-token-by-september-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Base launch a token by September 30, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-base-launch-a-token-by-december-31-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Base launch a token by December 31, 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-base-launch-a-token-by-june-30-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Base launch a token by June 30, 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ostium-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ostium launch a token by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-felix-protocol-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Felix Protocol launch a token by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-metamask-launch-a-token-by-june-30",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will MetaMask launch a token by June 30?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-metamask-launch-a-token-by-september-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will MetaMask launch a token by September 30, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-metamask-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will MetaMask launch a token by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "opensea-fdv-above-1b-one-day-after-launch-426-422-754-756-879-328-494",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Opensea FDV above $1B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "opensea-fdv-above-500m-one-day-after-launch-221-468-166-873-514-375-468-384",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Opensea FDV above $500M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "opensea-fdv-above-3b-one-day-after-launch-786-419-967-433-241-436",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Opensea FDV above $3B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "opensea-fdv-above-5b-one-day-after-launch-919-666-825-992-543-333",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Opensea FDV above $5B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "opensea-fdv-above-2b-one-day-after-launch-771-639-367-482-177-837",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Opensea FDV above $2B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "opensea-fdv-above-100m-one-day-after-launch-172-151-588-987",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Opensea FDV above $100M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "opensea-fdv-above-100m-one-day-after-launch-676-675-854-745-536",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Opensea FDV above $100M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "opensea-fdv-above-300m-one-day-after-launch-444-132-763-296",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Opensea FDV above $300M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-prjx-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will prjx launch a token by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-prjx-launch-a-token-by-december-31-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will prjx launch a token by December 31, 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ink-fdv-above-1b-one-day-after-launch-289-587-241",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ink FDV above $1B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ink-fdv-above-500m-one-day-after-launch-253-778",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ink FDV above $500M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ink-fdv-above-2b-one-day-after-launch-664-291-334",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ink FDV above $2B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ink-fdv-above-3b-one-day-after-launch-699-259-755",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ink FDV above $3B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ink-fdv-above-250m-one-day-after-launch-949-437",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ink FDV above $250M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ink-fdv-above-100m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ink FDV above $100M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-knots-flip-bitcoin-core-before-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_semantics",
+      "title": "Will knots flip bitcoin core before 2027?"
+    },
+    {
+      "category": "bitcoin",
+      "live_order_path": false,
+      "market_slug": "another-sp-500-company-buys-bitcoin-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "non_threshold_crypto_market",
+      "title": "Another S&P 500 Company buys Bitcoin by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "us-national-bitcoin-reserve-before-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "non_threshold_crypto_market",
+      "title": "US national Bitcoin reserve before 2027?"
+    },
+    {
+      "category": "ethereum",
+      "live_order_path": false,
+      "market_slug": "us-national-ethereum-reserve-before-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "non_threshold_crypto_market",
+      "title": "US national Ethereum reserve before 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "metamask-fdv-above-700m-one-day-after-launch-696-977-652-246-632",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Metamask FDV above $700M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "metamask-fdv-above-1b-one-day-after-launch-978-851-628-634",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Metamask FDV above $1B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "metamask-fdv-above-3b-one-day-after-launch-363-663-664-569-222",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Metamask FDV above $3B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "metamask-fdv-above-2b-one-day-after-launch-222-955-573-228",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Metamask FDV above $2B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "metamask-fdv-above-4b-one-day-after-launch-851-782-477-258",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Metamask FDV above $4B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "metamask-fdv-above-300m-one-day-after-launch-747-257",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Metamask FDV above $300M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "metamask-fdv-above-500m-one-day-after-launch-584-889-774",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Metamask FDV above $500M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "metamask-fdv-above-100m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Metamask FDV above $100M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-variational-launch-a-token-by-december-31-2026-577-621",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Variational launch a token by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-variational-launch-a-token-by-june-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Variational launch a token by June 30, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-variational-launch-a-token-by-september-30-2026-873",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Variational launch a token by September 30, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "consensys-ipo-closing-market-cap-above-1b",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Consensys IPO closing market cap above $1B?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "consensys-ipo-closing-market-cap-above-2b",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Consensys IPO closing market cap above $2B?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "consensys-ipo-closing-market-cap-above-3b",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Consensys IPO closing market cap above $3B?"
+    },
+    {
+      "category": "bitcoin",
+      "live_order_path": false,
+      "market_slug": "bitcoin-more-valuable-than-any-company-before-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "non_threshold_crypto_market",
+      "title": "Bitcoin more valuable than any company before 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-spark-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Spark launch a token by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-spark-launch-a-token-by-december-31-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Spark launch a token by December 31, 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-a-new-country-buy-bitcoin-by-december-31-2026-135",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_semantics",
+      "title": "Will a new country buy Bitcoin by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-a-new-country-buy-bitcoin-by-june-30-2026-493",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_semantics",
+      "title": "Will a new country buy Bitcoin by June 30, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-gmgn-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will GMGN launch a token by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-gmgn-launch-a-token-by-december-31-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will GMGN launch a token by December 31, 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "hyperbeat-fdv-above-50m-one-day-after-launch-143",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Hyperbeat FDV above $50M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "hyperbeat-fdv-above-200m-one-day-after-launch-176",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Hyperbeat FDV above $200M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "hyperbeat-fdv-above-400m-one-day-after-launch-423",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Hyperbeat FDV above $400M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "hyperbeat-fdv-above-100m-one-day-after-launch-126",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Hyperbeat FDV above $100M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "hyperbeat-fdv-above-300m-one-day-after-launch-156",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Hyperbeat FDV above $300M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "hyperbeat-fdv-above-25m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Hyperbeat FDV above $25M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "hyperbeat-fdv-above-10m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Hyperbeat FDV above $10M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-extended-launch-a-token-by-september-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Extended launch a token by September 30 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-extended-launch-a-token-by-june-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Extended launch a token by June 30 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-extended-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Extended launch a token by December 31 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-arc-launch-a-token-by-june-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Arc launch a token by June 30 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-arc-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Arc launch a token by December 31 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-arc-launch-a-token-by-september-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Arc launch a token by September 30 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-arc-launch-a-token-by-june-30-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Arc launch a token by June 30 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-arc-launch-a-token-by-december-31-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Arc launch a token by December 31 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-pacifica-launch-a-token-by-september-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Pacifica launch a token by September 30 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-pacifica-launch-a-token-by-june-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Pacifica launch a token by June 30 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-pacifica-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Pacifica launch a token by December 31 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ventuals-launch-a-token-by-june-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ventuals launch a token by June 30 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ventuals-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ventuals launch a token by December 31 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ventuals-launch-a-token-by-september-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ventuals launch a token by September 30 2026?"
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-200000-by-december-31-2026-752-232-389",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 200000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-180000-by-december-31-2026-629-622-598",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 180000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-160000-by-december-31-2026-934-934-164",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 160000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-140000-by-december-31-2026-131-829-299",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 140000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-120000-by-december-31-2026-625-425-562",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 120000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-100000-by-december-31-2026-571-361-361",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 100000.0
+    },
+    {
+      "category": "bitcoin",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-dip-to-45000-by-december-31-2026-674-923-755-971-998-525-926-245-316-517-544-589-965-923-986-841-815-224-586-231-289",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Bitcoin dip to $45,000 by December 31, 2026?"
+    },
+    {
+      "category": "bitcoin",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-dip-to-25000-by-december-31-2026-948-243-253-666-115-787-981-282-573-719-186-417-762-754-486-851-278-145-417",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Bitcoin dip to $25,000 by December 31, 2026?"
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-190000-by-december-31-2026-936-485-627",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 190000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-170000-by-december-31-2026-335-688-943",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 170000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-150000-by-december-31-2026-557-246-971",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 150000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-130000-by-december-31-2026-756-151-855",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 130000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-110000-by-december-31-2026-658-339-969",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 110000.0
+    },
+    {
+      "category": "bitcoin",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-dip-to-55000-by-december-31-2026-527-627-868-745-188-361-314-673-612-946-821-624-855-557-684-381-884-939-182",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Bitcoin dip to $55,000 by December 31, 2026?"
+    },
+    {
+      "category": "bitcoin",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-dip-to-35000-by-december-31-2026-744-877-748-219-467-465-646-211-122-947-537-552-555-361-972-954-635-887-657",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Bitcoin dip to $35,000 by December 31, 2026?"
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-250000-by-december-31-2026-579-442",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 250000.0
+    },
+    {
+      "category": "bitcoin",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-dip-to-15000-by-december-31-2026-416-954-417-853-885-363-335-458-585-275-615-269-479-379-516-218-918-374-598",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Bitcoin dip to $15,000 by December 31, 2026?"
+    },
+    {
+      "category": "bitcoin",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-dip-to-50000-by-december-31-2026-454-325-222-878-949-487-451-853",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Bitcoin dip to $50,000 by December 31, 2026?"
+    },
+    {
+      "category": "bitcoin",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-dip-to-40000-by-december-31-2026-593-522-842-874-931-776-991-167",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Bitcoin dip to $40,000 by December 31, 2026?"
+    },
+    {
+      "category": "bitcoin",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-dip-to-30000-by-december-31-2026-971-191-116-343-999-758-299",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Bitcoin dip to $30,000 by December 31, 2026?"
+    },
+    {
+      "category": "bitcoin",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-dip-to-20000-by-december-31-2026-121-885-178-397-354-236-731",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Bitcoin dip to $20,000 by December 31, 2026?"
+    },
+    {
+      "category": "bitcoin",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-dip-to-10000-by-december-31-2026-888-644-567-258-946-853-325-494",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Bitcoin dip to $10,000 by December 31, 2026?"
+    },
+    {
+      "category": "bitcoin",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-dip-to-5000-by-december-31-2026-jy3n-991-141-345-117-196-482-674-487",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Bitcoin dip to $5,000 by December 31, 2026?"
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-90000-by-december-31-2026-113-862-581-343",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 90000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-500000-by-december-31-2026-864",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 500000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-1000000-by-december-31-2026-946",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 1000000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-80000-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 80000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-95000-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 95000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-75000-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 75000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-70000-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 70000.0
+    },
+    {
+      "asset": "BTC",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-85000-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 85000.0
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-10000-by-december-31-2026",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 10000.0
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-7500-by-december-31-2026",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 7500.0
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-6500-by-december-31-2026",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 6500.0
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-5500-by-december-31-2026",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 5500.0
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-4500-by-december-31-2026",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 4500.0
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-3500-by-december-31-2026",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 3500.0
+    },
+    {
+      "category": "ethereum",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-dip-to-1000-by-december-31-2026-273-175",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Ethereum dip to $1,000 by December 31, 2026?"
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-8000-by-december-31-2026",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 8000.0
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-7000-by-december-31-2026",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 7000.0
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-6000-by-december-31-2026",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 6000.0
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-5000-by-december-31-2026",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 5000.0
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-4000-by-december-31-2026",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 4000.0
+    },
+    {
+      "category": "ethereum",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-dip-to-1500-by-december-31-2026-865-787",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Ethereum dip to $1,500 by December 31, 2026?"
+    },
+    {
+      "category": "ethereum",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-dip-to-800-by-december-31-2026-568",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "ambiguous_threshold",
+      "title": "Will Ethereum dip to $800 by December 31, 2026?"
+    },
+    {
+      "category": "ethereum",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-dip-to-600-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "malformed_title",
+      "title": "Will Ethereum dip to $600 by December 31, 2026?"
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-2500-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 2500.0
+    },
+    {
+      "category": "ethereum",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-dip-to-1250-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "malformed_title",
+      "title": "Will Ethereum dip to $1,250 by December 31, 2026?"
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-2000-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 2000.0
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-2750-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 2750.0
+    },
+    {
+      "category": "ethereum",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-dip-to-500-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "malformed_title",
+      "title": "Will Ethereum dip to $500 by December 31, 2026?"
+    },
+    {
+      "category": "ethereum",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-dip-to-700-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "malformed_title",
+      "title": "Will Ethereum dip to $700 by December 31, 2026?"
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-3000-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 3000.0
+    },
+    {
+      "asset": "ETH",
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-2250-by-december-31-2026-from-june-8",
+      "paper_only": true,
+      "parsed": true,
+      "reason": null,
+      "semantics_type": "touch_barrier",
+      "threshold": 2250.0
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ethena-reach-0pt52-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ethena reach $0.52 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ethena-reach-0pt40-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ethena reach $0.40 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ethena-reach-0pt32-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ethena reach $0.32 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ethena-reach-1pt20-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ethena reach $1.20 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ethena-reach-0pt60-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ethena reach $0.60 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ethena-reach-0pt48-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ethena reach $0.48 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ethena-dip-to-0pt04-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ethena dip to $0.04 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ethena-reach-0pt70-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ethena reach $0.70 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ethena-reach-0pt44-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ethena reach $0.44 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ethena-reach-1pt00-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ethena reach $1.00 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ethena-reach-0pt80-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ethena reach $0.80 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-ethena-reach-0pt36-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Ethena reach $0.36 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-chainlink-dip-to-4-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Chainlink dip to $4 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-chainlink-reach-24-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Chainlink reach $24 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-chainlink-reach-20-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Chainlink reach $20 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-chainlink-reach-16-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Chainlink reach $16 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-chainlink-reach-26-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Chainlink reach $26 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-chainlink-reach-22-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Chainlink reach $22 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-chainlink-reach-18-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Chainlink reach $18 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-chainlink-dip-to-6-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Chainlink dip to $6 by December 31, 2026?"
+    },
+    {
+      "category": "crypto_prices",
+      "live_order_path": false,
+      "market_slug": "will-aster-reach-2pt00-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Aster reach $2.00 by December 31, 2026?"
+    },
+    {
+      "category": "crypto_prices",
+      "live_order_path": false,
+      "market_slug": "will-aster-reach-1pt60-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Aster reach $1.60 by December 31, 2026?"
+    },
+    {
+      "category": "crypto_prices",
+      "live_order_path": false,
+      "market_slug": "will-aster-dip-to-0pt40-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Aster dip to $0.40 by December 31, 2026?"
+    },
+    {
+      "category": "crypto_prices",
+      "live_order_path": false,
+      "market_slug": "will-aster-reach-2pt20-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Aster reach $2.20 by December 31, 2026?"
+    },
+    {
+      "category": "crypto_prices",
+      "live_order_path": false,
+      "market_slug": "will-aster-reach-1pt80-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Aster reach $1.80 by December 31, 2026?"
+    },
+    {
+      "category": "crypto_prices",
+      "live_order_path": false,
+      "market_slug": "will-aster-reach-1pt40-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Aster reach $1.40 by December 31, 2026?"
+    },
+    {
+      "category": "crypto_prices",
+      "live_order_path": false,
+      "market_slug": "will-aster-dip-to-0pt20-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Aster dip to $0.20 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-plasma-reach-0pt24-by-december-31-2026-779-911-453-977-147",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Plasma reach $0.24 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-plasma-reach-0pt40-by-december-31-2026-567-872",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Plasma reach $0.40 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-plasma-reach-0pt60-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Plasma reach $0.60 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-plasma-reach-0pt30-by-december-31-2026-224-945-571",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Plasma reach $0.30 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-plasma-reach-0pt50-by-december-31-2026-722",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Plasma reach $0.50 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-plasma-reach-2pt20-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Plasma reach $2.20 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-plasma-reach-1pt80-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Plasma reach $1.80 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-plasma-reach-1pt40-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Plasma reach $1.40 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-plasma-reach-2pt00-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Plasma reach $2.00 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-plasma-reach-1pt60-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Plasma reach $1.60 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-plasma-reach-1pt20-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Plasma reach $1.20 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-uni-reach-14pt00-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will UNI reach $14.00 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-uni-reach-8pt00-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will UNI reach $8.00 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-uni-reach-15pt50-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will UNI reach $15.50 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-uni-reach-9pt50-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will UNI reach $9.50 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-uni-reach-11pt00-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will UNI reach $11.00 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-uni-reach-12pt50-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will UNI reach $12.50 by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-tempo-launch-a-token-by-september-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Tempo launch a token by September 30, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-tempo-launch-a-token-by-june-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Tempo launch a token by June 30, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-tempo-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Tempo launch a token by December 31, 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-tempo-launch-a-token-by-december-31-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Tempo launch a token by December 31, 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ostium-fdv-above-700m-one-day-after-launch-515-395-926",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ostium FDV above $700M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ostium-fdv-above-2b-one-day-after-launch-284-572-681",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ostium FDV above $2B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ostium-fdv-above-1b-one-day-after-launch-133-944-452",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ostium FDV above $1B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ostium-fdv-above-4b-one-day-after-launch-739-685-752",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ostium FDV above $4B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ostium-fdv-above-3b-one-day-after-launch-987-535-683",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ostium FDV above $3B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ostium-fdv-above-500m-one-day-after-launch-834-581",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ostium FDV above $500M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ostium-fdv-above-300m-one-day-after-launch-722",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ostium FDV above $300M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ostium-fdv-above-100m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ostium FDV above $100M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "ostium-fdv-above-200m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Ostium FDV above $200M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-replace-sha-256-before-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "non_threshold_crypto_market",
+      "title": "Will Bitcoin replace SHA-256 before 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "makina-fdv-above-100m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Makina FDV above $100M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "makina-fdv-above-300m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Makina FDV above $300M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "makina-fdv-above-80m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Makina FDV above $80M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "makina-fdv-above-200m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Makina FDV above $200M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "reya-fdv-above-1b-one-day-after-launch-348-347",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Reya FDV above $1B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "reya-fdv-above-200m-one-day-after-launch-645-575",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Reya FDV above $200M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "reya-fdv-above-400m-one-day-after-launch-589-277",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Reya FDV above $400M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "reya-fdv-above-150m-one-day-after-launch-514-746",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Reya FDV above $150M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "reya-fdv-above-300m-one-day-after-launch-389-467",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Reya FDV above $300M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "reya-fdv-above-70m-one-day-after-launch-874",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Reya FDV above $70M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-theo-launch-a-token-by-september-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Theo launch a token by September 30 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-theo-launch-a-token-by-june-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Theo launch a token by June 30 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-theo-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Theo launch a token by December 31 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "theo-fdv-above-300m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Theo FDV above $300M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "theo-fdv-above-1b-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Theo FDV above $1B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "theo-fdv-above-100m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Theo FDV above $100M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "theo-fdv-above-700m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Theo FDV above $700M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "pacifica-fdv-above-1b-one-day-after-launch-995",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Pacifica FDV above $1B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "pacifica-fdv-above-500m-one-day-after-launch-171",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Pacifica FDV above $500M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "pacifica-fdv-above-3b-one-day-after-launch-755",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Pacifica FDV above $3B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "pacifica-fdv-above-2b-one-day-after-launch-382",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Pacifica FDV above $2B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "pacifica-fdv-above-800m-one-day-after-launch-685",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Pacifica FDV above $800M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "pacifica-fdv-above-300m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Pacifica FDV above $300M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "extended-fdv-above-800m-one-day-after-launch-299-255-178",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Extended FDV above $800M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "extended-fdv-above-2b-one-day-after-launch-692-597-187",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Extended FDV above $2B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "extended-fdv-above-500m-one-day-after-launch-711-975-248",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Extended FDV above $500M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "extended-fdv-above-1b-one-day-after-launch-166-135-747",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Extended FDV above $1B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "extended-fdv-above-3b-one-day-after-launch-437-271-658",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Extended FDV above $3B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "extended-fdv-above-300m-one-day-after-launch-351-333",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Extended FDV above $300M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "extended-fdv-above-150m-one-day-after-launch-452",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Extended FDV above $150M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "felix-protocol-fdv-above-50m-one-day-after-launch-488",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Felix Protocol FDV above $50M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "felix-protocol-fdv-above-25m-one-day-after-launch",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Felix Protocol FDV above $25M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "felix-protocol-fdv-above-100m-one-day-after-launch-274-973",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Felix Protocol FDV above $100M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "felix-protocol-fdv-above-500m-one-day-after-launch-477-288",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Felix Protocol FDV above $500M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "felix-protocol-fdv-above-1b-one-day-after-launch-736-797",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Felix Protocol FDV above $1B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "felix-protocol-fdv-above-300m-one-day-after-launch-953-129",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Felix Protocol FDV above $300M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "felix-protocol-fdv-above-800m-one-day-after-launch-892-997",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Felix Protocol FDV above $800M one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "felix-protocol-fdv-above-2b-one-day-after-launch-398-145",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Felix Protocol FDV above $2B one day after launch?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-fomo-launch-a-token-by-december-31-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Fomo launch a token by December 31 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-fomo-launch-a-token-by-june-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Fomo launch a token by June 30 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-fomo-launch-a-token-by-september-30-2026",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Fomo launch a token by September 30 2026?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "will-fomo-launch-a-token-by-december-31-2027",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Will Fomo launch a token by December 31 2027?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "microstrategy-delisted-from-msci-index-by-december-31",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Microstrategy delisted from MSCI index by December 31?"
+    },
+    {
+      "category": "crypto",
+      "live_order_path": false,
+      "market_slug": "microstrategy-delisted-from-msci-index-by-june-30",
+      "paper_only": true,
+      "parsed": false,
+      "reason": "unsupported_asset",
+      "title": "Microstrategy delisted from MSCI index by June 30?"
+    }
+  ],
+  "scanned_crypto_market_count": 244,
+  "schema_version": "polyweather_polymarket_alpha_crypto_parse_coverage_report.v1",
+  "scope": "polymarket_only",
+  "unparseable_crypto_market_count": 206,
+  "unparseable_reason_counts": [
+    {
+      "count": 14,
+      "reason": "ambiguous_threshold"
+    },
+    {
+      "count": 4,
+      "reason": "malformed_title"
+    },
+    {
+      "count": 5,
+      "reason": "non_threshold_crypto_market"
+    },
+    {
+      "count": 179,
+      "reason": "unsupported_asset"
+    },
+    {
+      "count": 4,
+      "reason": "unsupported_semantics"
+    }
+  ]
+}

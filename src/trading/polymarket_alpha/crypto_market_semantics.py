@@ -58,7 +58,28 @@ def classify_crypto_semantics(market: Dict[str, Any]) -> str:
     return "ambiguous"
 
 
-def parse_start_time(market: Dict[str, Any], *, generated_at: Optional[str] = None) -> Optional[str]:
+def classify_crypto_parse_gap(market: Dict[str, Any]) -> str:
+    text = market_rule_text(market).lower()
+    has_asset = bool(re.search(r"\b(btc|bitcoin|eth|ethereum)\b", text))
+    if not has_asset:
+        return "unsupported_asset"
+    has_threshold_word = bool(re.search(r"\b(reach|hit|above|over|below|under|greater than|less than|price|target)\b", text))
+    has_currency_number = bool(re.search(r"\$\s*[0-9]", text))
+    if not has_threshold_word and not has_currency_number:
+        return "non_threshold_crypto_market"
+    threshold_numbers = re.findall(r"\$?\s*([0-9]{1,3}(?:,[0-9]{3})+(?:\.\d+)?|[0-9]{3,8}(?:\.\d+)?)\s*(?:k|m)?\b", text)
+    if not threshold_numbers:
+        return "missing_threshold"
+    if len(set(threshold_numbers)) > 3:
+        return "ambiguous_threshold"
+    if classify_crypto_semantics(market) == "ambiguous":
+        return "unsupported_semantics"
+    if not re.search(r"\b(by|before|on|at)\b", text):
+        return "date_parse_failed"
+    return "malformed_title"
+
+
+def parse_start_time(market: Dict[str, Any], *, generated_at: Optional[str] = None, end_time: Optional[str] = None) -> Optional[str]:
     for field in ("start_time", "created_at", "createdAt", "creation_time", "created"):
         parsed = _parse_utc(market.get(field))
         if parsed is not None:
@@ -96,16 +117,28 @@ def parse_start_time(market: Dict[str, Any], *, generated_at: Optional[str] = No
     month = month_lookup.get(month_name)
     if month is None:
         return None
-    year = None
-    for candidate in (market.get("end_time"), generated_at):
-        parsed = _parse_utc(candidate)
-        if parsed is not None:
-            year = parsed.year
-            break
-    if year is None:
-        year = datetime.now(timezone.utc).year
+    end_dt = _parse_utc(end_time or market.get("end_time"))
+    generated_dt = _parse_utc(generated_at)
+    candidate_years: List[int] = []
+    if generated_dt is not None:
+        candidate_years.append(generated_dt.year)
+    if end_dt is not None:
+        candidate_years.extend([end_dt.year, end_dt.year - 1])
+    candidate_years.append(datetime.now(timezone.utc).year)
+    seen: set[int] = set()
+    for year in candidate_years:
+        if year in seen:
+            continue
+        seen.add(year)
+        try:
+            candidate_dt = datetime(int(year), int(month), int(day_text), tzinfo=timezone.utc)
+        except ValueError:
+            continue
+        if end_dt is None or candidate_dt <= end_dt:
+            return _iso(candidate_dt)
     try:
-        return _iso(datetime(int(year), int(month), int(day_text), tzinfo=timezone.utc))
+        fallback_year = (end_dt.year - 1) if end_dt is not None else datetime.now(timezone.utc).year
+        return _iso(datetime(int(fallback_year), int(month), int(day_text), tzinfo=timezone.utc))
     except ValueError:
         return None
 
@@ -140,7 +173,7 @@ def build_crypto_semantics_audit_report(
                 "resolution_rule_text": market_rule_text(market),
                 "parsed_asset": fill.get("asset"),
                 "parsed_threshold": fill.get("threshold"),
-                "parsed_start_time": parse_start_time(market, generated_at=generated_at),
+                "parsed_start_time": parse_start_time(market, generated_at=generated_at, end_time=fill.get("target_time") or market.get("end_time")),
                 "parsed_end_time": fill.get("target_time") or market.get("end_time"),
                 "semantics_type": semantics,
                 "side": fill.get("side"),
@@ -162,6 +195,11 @@ def build_crypto_semantics_audit_report(
         "touch_barrier_count": len([row for row in rows if row.get("semantics_type") == "touch_barrier"]),
         "semantics_mismatch_count": len([row for row in rows if row.get("semantics_match") is False]),
         "invalidated_due_semantics_count": len([row for row in rows if row.get("action") != "keep"]),
+        "invalidated_fill_count": len([row for row in rows if row.get("action") != "keep"]),
+        "valid_fill_count": len([row for row in rows if row.get("action") == "keep"]),
+        "invalidated_reason": "semantics_mismatch_touch_barrier"
+        if any(row.get("action") == "reprice_with_barrier_model" for row in rows)
+        else None,
         "rows": rows,
     }
 
@@ -186,6 +224,7 @@ __all__ = [
     "SCHEMA_VERSION",
     "build_crypto_semantics_audit_report",
     "classify_crypto_semantics",
+    "classify_crypto_parse_gap",
     "load_jsonl",
     "market_rule_text",
     "parse_start_time",
