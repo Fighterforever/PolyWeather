@@ -56,6 +56,8 @@ def build_program_arguments(args: argparse.Namespace) -> list[str]:
         program.extend(["--include-settlement-source", source])
     for station in _as_list(args.include_station_codes, default=["LTAC", "UUWW"]):
         program.extend(["--include-station-code", station])
+    for slug in _as_list(args.include_market_slugs, default=[]):
+        program.extend(["--include-market-slug", slug])
     if args.allow_partial_official_truth:
         program.append("--allow-partial-official-truth")
     if args.fetch_external_official_values:
@@ -154,6 +156,7 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     parser.add_argument("--done-file", default="evidence/.due_pipeline_metar_ltac_uuww.done")
     parser.add_argument("--include-station-code", action="append", dest="include_station_codes", default=None)
     parser.add_argument("--include-settlement-source", action="append", dest="include_settlement_sources", default=None)
+    parser.add_argument("--include-market-slug", action="append", dest="include_market_slugs", default=None)
     parser.add_argument("--confirm", default=DEFAULT_CONFIRM)
     parser.add_argument("--allow-partial-official-truth", action="store_true", default=True)
     parser.add_argument("--no-allow-partial-official-truth", action="store_false", dest="allow_partial_official_truth")

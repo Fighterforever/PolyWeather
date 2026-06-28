@@ -17,6 +17,7 @@ def _settlement(
     bucket_type: str = "ge",
     threshold: float = 28.0,
     station_code: str = "RKSI",
+    settlement_source: str = "metar",
 ) -> dict:
     return {
         "p_model": 0.72,
@@ -34,7 +35,7 @@ def _settlement(
             "city_display_name": city.title(),
             "station_code": station_code,
             "station_label": station_code,
-            "settlement_source": "metar",
+            "settlement_source": settlement_source,
             "target_date": "2026-06-27",
             "timezone": "UTC+09:00",
             "metric": "daily_high_temperature",
@@ -1743,3 +1744,69 @@ def test_market_signal_targeted_queue_prioritizes_non_dust_when_available():
         {"price_bucket": "price_lt_0_005", "count": 2},
         {"price_bucket": "price_ge_0_03", "count": 1},
     ]
+
+
+def test_alpha_evidence_mode_blocks_dust_eq_and_unsupported_sources():
+    dust = {
+        "id": "dust",
+        "market_slug": "dust",
+        "market_family": "temperature",
+        "side": "yes",
+        "active": True,
+        "closed": False,
+        "tradable": True,
+        "accepting_orders": True,
+        "price": 0.001,
+        "spread": 0.001,
+        "execution_liquidity": 1500,
+        "edge_percent": 18.0,
+        "model_probability": 0.20,
+        "best_ask": 0.001,
+        "ask_depth_usdc_3c": 10,
+        **_settlement(bucket_type="ge", threshold=28.0),
+    }
+    eq = {
+        **dust,
+        "id": "eq",
+        "market_slug": "eq",
+        "price": 0.30,
+        "best_ask": 0.30,
+        **_settlement(bucket_type="eq", threshold=28.0),
+    }
+    noaa = {
+        **dust,
+        "id": "noaa",
+        "market_slug": "noaa",
+        "price": 0.30,
+        "best_ask": 0.30,
+        **_settlement(bucket_type="ge", threshold=28.0, settlement_source="noaa"),
+    }
+    metar = {
+        **dust,
+        "id": "metar",
+        "market_slug": "metar",
+        "price": 0.30,
+        "best_ask": 0.30,
+        **_settlement(bucket_type="ge", threshold=28.0, settlement_source="metar"),
+    }
+
+    report = build_weather_market_signal_report(
+        {"rows": [dust, eq, noaa, metar]},
+        config=WeatherMarketSignalConfig(
+            min_price=0.001,
+            min_liquidity=1.0,
+            min_edge_percent=1.0,
+            max_spread=0.03,
+            min_ask_depth_usdc_3c=1.0,
+            require_alpha_evidence_eligible=True,
+            require_order_book=False,
+        ),
+        include_assessments=True,
+    )
+    blockers_by_id = {row["row_id"]: set(row["blockers"]) for row in report["assessments"]}
+
+    assert "dust_price_bucket_not_alpha" in blockers_by_id["dust"]
+    assert "eq_exact_not_alpha" in blockers_by_id["eq"]
+    assert "unsupported_official_source_not_alpha" in blockers_by_id["noaa"]
+    assert blockers_by_id["metar"] == set()
+    assert report["alpha_candidate_source_counts"]["non_dust_threshold"] == 1

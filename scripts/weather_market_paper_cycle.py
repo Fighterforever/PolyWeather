@@ -55,6 +55,7 @@ from src.trading.weather_market_signal import (  # noqa: E402
     build_weather_market_signal_report,
 )
 from src.trading.weather_model_coverage import build_weather_model_coverage_report  # noqa: E402
+from src.trading.weather_observation_lock_signal import build_observation_lock_signal_report  # noqa: E402
 from src.trading.weather_paper_journal import (  # noqa: E402
     DEFAULT_PAPER_JOURNAL_DIR,
     markout_open_paper_fills,
@@ -709,9 +710,15 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
             suppress_saturated_partition_risk_rules=bool(suppress_saturated_partition_risk_rules),
             saturated_risk_rule_min_coverage=float(args.saturated_risk_rule_min_coverage),
             partition_saturated_risk_rule_min_coverage=float(args.partition_saturated_risk_rule_min_coverage),
+            require_alpha_evidence_eligible=production_profile,
         ),
         risk_rules=risk_rules_payload.get("rules") or [],
         risk_rule_mode=args.risk_rule_mode,
+        generated_at=generated_at,
+    )
+    observation_lock_report = build_observation_lock_signal_report(
+        payload.get("rows") or [],
+        observations=[],
         generated_at=generated_at,
     )
     current_signal_report_dir = args.current_signal_report_dir or str(
@@ -1226,6 +1233,18 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
         strict_gate_queue_dir=strict_gate_queue_dir,
         orderbook_archive_dir=args.orderbook_archive_dir,
     )
+    signal_alpha_counts = (
+        signal_report.get("alpha_candidate_source_counts")
+        if isinstance(signal_report.get("alpha_candidate_source_counts"), dict)
+        else {}
+    )
+    strict_reject_count = int((strict_gate_queue_journal or {}).get("record_count") or signal_alpha_counts.get("strict_reject_queue") or 0)
+    alpha_candidate_source_counts = {
+        "observation_lock": int((observation_lock_report.get("summary") or {}).get("candidate_count") or 0),
+        "non_dust_threshold": int(signal_alpha_counts.get("non_dust_threshold") or 0),
+        "strict_reject_queue": strict_reject_count,
+        "dust_diagnostic": int(signal_alpha_counts.get("dust_diagnostic") or 0),
+    }
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at,
@@ -1393,6 +1412,13 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
         "orderbook_archive_coverage": orderbook_archive_coverage,
         "current_signal_snapshot": current_signal_snapshot,
         "strict_gate_queue_journal": strict_gate_queue_journal,
+        "observation_lock_signal": {
+            "summary": observation_lock_report.get("summary"),
+            "paper_only": True,
+            "counts_for_live_gate": False,
+            "live_order_path": False,
+        },
+        "alpha_candidate_source_counts": alpha_candidate_source_counts,
         "live_evidence_bundle_hint": live_evidence_bundle_hint,
         "model_coverage": model_coverage,
         "temperature_opportunity": temperature_opportunity,

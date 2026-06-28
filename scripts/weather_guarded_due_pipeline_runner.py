@@ -143,6 +143,7 @@ def _summary_base(args: argparse.Namespace, *, now: datetime, status: str) -> Di
         "done_file": str(args.done_file),
         "include_settlement_source": list(args.include_settlement_sources or []),
         "include_station_code": list(args.include_station_codes or []),
+        "include_market_slug": list(args.include_market_slugs or []),
     }
 
 
@@ -291,6 +292,7 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     parser.add_argument("--done-file", required=True)
     parser.add_argument("--include-station-code", action="append", dest="include_station_codes", default=[])
     parser.add_argument("--include-settlement-source", action="append", dest="include_settlement_sources", default=[])
+    parser.add_argument("--include-market-slug", action="append", dest="include_market_slugs", default=[])
     parser.add_argument("--confirm", required=True)
     parser.add_argument("--allow-partial-official-truth", action="store_true")
     parser.add_argument("--fetch-external-official-values", action="store_true")

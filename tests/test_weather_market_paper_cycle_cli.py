@@ -574,6 +574,14 @@ def test_weather_market_paper_cycle_production_profile_sets_live_like_defaults(m
     assert output["effective_profile"]["strict_gate_queue_enabled"] is True
     assert output["effective_profile"]["strict_gate_queue_dir"] == "/tmp/weather-paper/strict_gate_queues"
     assert output["effective_profile"]["strict_gate_queue_max_dust_records_per_queue"] == 2
+    assert output["alpha_candidate_source_counts"] == {
+        "observation_lock": 0,
+        "non_dust_threshold": 0,
+        "strict_reject_queue": 0,
+        "dust_diagnostic": 0,
+    }
+    assert output["observation_lock_signal"]["paper_only"] is True
+    assert output["observation_lock_signal"]["live_order_path"] is False
     assert output["live_evidence_bundle_hint"]["schema_version"] == (
         "polyweather_weather_live_evidence_bundle_hint.v1"
     )
@@ -694,6 +702,7 @@ def test_weather_market_paper_cycle_production_profile_sets_live_like_defaults(m
     assert calls["signal_config"].saturated_risk_rule_min_coverage == 0.8
     assert calls["signal_config"].partition_saturated_risk_rule_min_coverage == 0.8
     assert calls["signal_config"].max_quarantine == 30
+    assert calls["signal_config"].require_alpha_evidence_eligible is True
     assert calls["signal_config"].quarantine_near_miss_categories == (
         "edge",
         "spread",

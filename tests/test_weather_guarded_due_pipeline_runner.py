@@ -31,6 +31,8 @@ def _args(tmp_path, *, now_utc="2026-06-28T03:06:00Z"):
             "UUWW",
             "--include-settlement-source",
             "metar",
+            "--include-market-slug",
+            "highest-temperature-in-moscow-on-june-29-2026-23corhigher",
             "--confirm",
             "PAPER_ONLY_ARCHIVED_ORDERBOOK_REFRESH",
             "--allow-partial-official-truth",
@@ -55,6 +57,7 @@ def test_guarded_due_runner_before_due_writes_pending_without_pipeline(tmp_path)
     assert pending["status"] == "pending"
     assert pending["live_order_path"] is False
     assert pending["run_after_utc"] == "2026-06-28T03:05:00Z"
+    assert pending["include_market_slug"] == ["highest-temperature-in-moscow-on-june-29-2026-23corhigher"]
 
 
 def test_guarded_due_runner_after_due_calls_pipeline_with_subset_args(tmp_path):

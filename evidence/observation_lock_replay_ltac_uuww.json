@@ -1,0 +1,171 @@
+{
+  "by_bucket_type": [],
+  "by_station": [
+    {
+      "count": 22,
+      "station_code": "LTAC"
+    },
+    {
+      "count": 22,
+      "station_code": "LTFM"
+    },
+    {
+      "count": 22,
+      "station_code": "UUWW"
+    }
+  ],
+  "cannot_replay_lock_without_intraday_timeline": true,
+  "counts_for_live_gate": false,
+  "generated_at": "2026-06-28T04:15:38Z",
+  "live_order_path": false,
+  "locked_candidate_count": 0,
+  "locked_candidate_resolved_pnl_cents": null,
+  "missing_intraday_count": 66,
+  "missing_intraday_observation_points": [
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "106409007486307815566410424879516752167053337910197610378693734956599808355389"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "63477645564765456677792344474211924447233434167959020815412543896668604639935"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-25c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "75900895757783603886779806726169888736795967509684079521694509883021828657775"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-25c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "68572836254732526441900802505726445773202701406056157456089511161411906634929"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-26c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "70502583924414344836254176556784081335229184804693244660063034003153281914647"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-26c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "13218266393582822529836956910026809969891410988660668768280027560011791516065"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-27c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "56368765109437434969796428940464801701357499696397276873067467397269254732468"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-27c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "16617666799727151967108757299055364325117701119235127812703017701478903281023"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-28c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "19047088119718562621256438702367953088260212953386233382164505800478749143587"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-28c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "15762328329362658766276764296069614114025454717137238495964321851630504414492"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-29c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "9369256929701975512078209702855163989767685447986522971056431184833129576305"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-29c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "107618791896569559162605370334577371856233109303589570323688495310063921721369"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-30c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "59693844857236004331012472631898540163356723793930058110107440413027130953652"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-30c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "112009405199416361311806097890287963467057098184468553744608304249497125538182"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-31c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "2902400200465448399688662615563815405032810685351652960994095252819741399842"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-31c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "17666022665795578573274669630958319858695538466187430362090852801594543871417"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-32c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "75837744212624560947806255974642836164180072725085507446029356458065512907439"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-32c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "72462200469931690717227105161858801871113339222785537154649274529470078004291"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-33c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "35626682011854267383056262524873453206240522884999533645794524625963416810697"
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-33c",
+      "settlement_source": "metar",
+      "station_code": "LTAC",
+      "target_date": "2026-06-27",
+      "token_id": "38042781746361830798595409209928156466514880468408833243633244964723232891088"
+    }
+  ],
+  "no_lookahead": false,
+  "paper_only": true,
+  "replayable_count": 0,
+  "rows": [],
+  "schema_version": "polyweather_weather_observation_lock_replay.v1"
+}

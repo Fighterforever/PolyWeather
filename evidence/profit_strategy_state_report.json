@@ -1,0 +1,65 @@
+{
+  "artifacts": {
+    "non_dust_due_plan": "evidence/non_dust_unresolved_due_plan_ltac_uuww.json",
+    "non_dust_due_runner_install_report": "evidence/non_dust_uuww_due_runner_install_report.json",
+    "observation_lock_replay": "evidence/observation_lock_replay_ltac_uuww.json",
+    "observation_lock_signal_report": "evidence/observation_lock_signal_report.json"
+  },
+  "can_tiny_live": false,
+  "counts_for_live_gate": false,
+  "current_failed_strategies": {
+    "archived_overlap_diagnostic": {
+      "reason": "archived overlap replay was diagnostic-only and previously negative; not an alpha path",
+      "status": "negative"
+    },
+    "dust_tail_near_lock": {
+      "reason": "negative resolved PnL all came from dust bucket; diagnostic-only, not live evidence",
+      "resolved_pnl_cents": -0.8,
+      "status": "failed"
+    }
+  },
+  "killed_paths": [
+    "eq_exact_live",
+    "dust_tail_live",
+    "maker_inferred_live"
+  ],
+  "live_order_path": false,
+  "new_candidate_strategies": {
+    "non_dust_threshold_cdf": {
+      "allowed_bucket_types": [
+        "ge",
+        "le"
+      ],
+      "excluded": [
+        "eq",
+        "price_lt_0_005",
+        "unsupported_official_source"
+      ],
+      "status": "implemented_filter_pending_non_dust_resolution"
+    },
+    "observation_lock_alpha": {
+      "current_candidate_count": 0,
+      "intraday_observations_exist": false,
+      "replay_blocker": "cannot_replay_lock_without_intraday_timeline",
+      "signal_report": "evidence/observation_lock_signal_report.json",
+      "status": "implemented_scanner_needs_intraday_observations"
+    }
+  },
+  "next_actions": [
+    "collect intraday METAR observation snapshots with available_at for UUWW/LTAC and future stations",
+    "run non-dust UUWW due check on 2026-06-30T03:05Z",
+    "evaluate observation-lock candidates only with no-lookahead intraday timeline and non-dust executable price"
+  ],
+  "paper_only": true,
+  "schema_version": "polyweather_profit_strategy_state.v1",
+  "unresolved_strategies": {
+    "non_dust_tail_threshold_ge": {
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-23corhigher",
+      "next_non_dust_due_time": "2026-06-30T02:59:59Z",
+      "run_after_utc": "2026-06-30T03:05:00Z",
+      "status": "pending_due",
+      "summary_output": "evidence/due_pipeline_non_dust_uuww_after_due.json",
+      "token_id": "37558803415910171580264743940982364976255246575423901696378057384864203714268"
+    }
+  }
+}

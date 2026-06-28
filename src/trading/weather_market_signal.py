@@ -64,6 +64,9 @@ class WeatherMarketSignalConfig:
     require_settlement_spec: bool = True
     require_ev_safe: bool = True
     min_ev_safe: float = 0.0
+    require_alpha_evidence_eligible: bool = False
+    supported_alpha_settlement_sources: Tuple[str, ...] = ("metar",)
+    require_intraday_observation_for_lock_strategy: bool = False
 
 
 def _price_from_row(row: Dict[str, Any]) -> Optional[float]:
@@ -275,6 +278,28 @@ def assess_weather_market_row(
         elif ev_safe <= config.min_ev_safe:
             blockers.append("ev_safe_below_min")
 
+    settlement_source = str((settlement_spec or {}).get("settlement_source") or "").strip().lower()
+    if config.require_alpha_evidence_eligible and market_family == "temperature":
+        price_bucket = _price_bucket_for_value(price)
+        supported_sources = {
+            str(value).strip().lower()
+            for value in config.supported_alpha_settlement_sources
+            if str(value).strip()
+        }
+        if price_bucket == "price_lt_0_005":
+            blockers.append("dust_price_bucket_not_alpha")
+        if bucket_type == "eq":
+            blockers.append("eq_exact_not_alpha")
+        elif bucket_type not in {"ge", "le"}:
+            blockers.append("unsupported_bucket_type_not_alpha")
+        if settlement_source and supported_sources and settlement_source not in supported_sources:
+            blockers.append("unsupported_official_source_not_alpha")
+        if config.require_intraday_observation_for_lock_strategy:
+            latest_observation = _first_text(row, ("latest_observation_at", "latest_observed_at"))
+            metar_status = row.get("metar_status") if isinstance(row.get("metar_status"), dict) else {}
+            if not latest_observation and metar_status.get("available_for_today") is not True:
+                blockers.append("no_intraday_observation_for_lock_strategy")
+
     if liquidity is None:
         blockers.append("missing_liquidity")
     elif liquidity < config.min_liquidity:
@@ -368,6 +393,7 @@ def assess_weather_market_row(
         "ev_safe": ev_safe,
         "model_probability": model_probability,
         "market_probability": _first_float(row, ("market_probability",)),
+        "price_bucket": _price_bucket_for_value(price),
         "market_implied_yes_price": _first_float(row, ("market_implied_yes_price",)),
         "market_implied_side_price": _first_float(row, ("market_implied_side_price",)),
         "market_implied_de_vig_yes_probability": _first_float(row, ("market_implied_de_vig_yes_probability",)),
@@ -432,6 +458,33 @@ def _candidate_rank_key(item: Dict[str, Any]) -> Tuple[float, float, float, floa
         -(float(spread) if spread is not None else 999.0),
         float(liquidity) if liquidity is not None else -1.0,
     )
+
+
+def _is_non_dust_threshold_alpha(item: Dict[str, Any]) -> bool:
+    return (
+        item.get("decision") == "candidate"
+        and str(item.get("bucket_type") or "").lower() in {"ge", "le"}
+        and str(item.get("price_bucket") or "") in {"price_ge_0_03", "price_0_005_to_0_03"}
+        and str(item.get("settlement_source") or "").lower() == "metar"
+        and "dust_price_bucket_not_alpha" not in set(item.get("blockers") or [])
+        and "eq_exact_not_alpha" not in set(item.get("blockers") or [])
+        and "unsupported_official_source_not_alpha" not in set(item.get("blockers") or [])
+    )
+
+
+def alpha_candidate_source_counts(
+    assessments: Iterable[Dict[str, Any]],
+    *,
+    observation_lock_count: int = 0,
+    strict_reject_queue_count: int = 0,
+) -> Dict[str, int]:
+    rows = [item for item in assessments if isinstance(item, dict)]
+    return {
+        "observation_lock": max(0, int(observation_lock_count)),
+        "non_dust_threshold": len([item for item in rows if _is_non_dust_threshold_alpha(item)]),
+        "strict_reject_queue": max(0, int(strict_reject_queue_count)),
+        "dust_diagnostic": len([item for item in rows if str(item.get("price_bucket") or "") == "price_lt_0_005"]),
+    }
 
 
 def _reason_counts(items: Iterable[Dict[str, Any]], key: str) -> List[Dict[str, Any]]:
@@ -1344,6 +1397,7 @@ def _sample_for_diagnostics(item: Dict[str, Any]) -> Dict[str, Any]:
         "edge_percent": item.get("edge_percent"),
         "model_probability": item.get("model_probability"),
         "market_probability": item.get("market_probability"),
+        "price_bucket": item.get("price_bucket"),
         "ev_safe": item.get("ev_safe"),
         "strategy_id": item.get("strategy_id"),
         "execution_style": item.get("execution_style"),
@@ -1469,6 +1523,10 @@ def build_weather_market_signal_report(
     )
     candidate_gap_report = build_candidate_gap_report(assessments)
     strict_gate_diagnostics = build_strict_gate_diagnostics(assessments)
+    source_counts = alpha_candidate_source_counts(
+        assessments,
+        strict_reject_queue_count=int(strict_gate_diagnostics.get("live_eligible_reject_count") or 0),
+    )
     coverage_diagnostics = {
         "market_family_counts": _count_by_field(assessments, "market_family", key_name="market_family"),
         "quarantine_by_market_family": _count_by_field(
@@ -1588,6 +1646,7 @@ def build_weather_market_signal_report(
             "live_authorization_pct": 0,
             "live_blockers": live_blockers,
         },
+        "alpha_candidate_source_counts": source_counts,
         "candidates": ranked_candidates,
         "watch": ranked_watch,
         "quarantine": ranked_quarantine,
