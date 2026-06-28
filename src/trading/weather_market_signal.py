@@ -450,9 +450,12 @@ def _reason_counts(items: Iterable[Dict[str, Any]], key: str) -> List[Dict[str, 
 
 def _non_risk_blockers(item: Dict[str, Any]) -> List[str]:
     risk_hits = {str(reason) for reason in item.get("risk_rule_hits") or []}
+    blockers = item.get("blockers")
+    if blockers is None and item.get("non_risk_blockers") is not None:
+        blockers = item.get("non_risk_blockers")
     return [
         str(reason)
-        for reason in item.get("blockers") or []
+        for reason in blockers or []
         if str(reason) not in risk_hits
     ]
 
@@ -939,10 +942,70 @@ def _strict_gate_queue_item(
     return sample
 
 
+def _price_bucket_for_value(value: Any) -> str:
+    price = _safe_float(value)
+    if price is None:
+        return "price_unknown"
+    if float(price) < 0.005:
+        return "price_lt_0_005"
+    if float(price) < 0.03:
+        return "price_0_005_to_0_03"
+    return "price_ge_0_03"
+
+
+def _item_price_bucket(item: Dict[str, Any]) -> str:
+    explicit = str(item.get("price_bucket") or "").strip()
+    if explicit:
+        return explicit
+    for field in ("price", "ask", "q_effective", "market_probability"):
+        if item.get(field) is not None:
+            return _price_bucket_for_value(item.get(field))
+    return "price_unknown"
+
+
+def _queue_sort_key(item: Dict[str, Any]) -> Tuple[int, float, float, float, str]:
+    price_rank = {
+        "price_ge_0_03": 0,
+        "price_0_005_to_0_03": 1,
+        "price_lt_0_005": 2,
+        "price_unknown": 3,
+    }.get(str(item.get("price_bucket") or "price_unknown"), 3)
+    ev_safe = _safe_float(item.get("ev_safe"))
+    ask_depth = _safe_float(item.get("ask_depth_usdc_3c") or item.get("liquidity"))
+    spread = _safe_float(item.get("spread"))
+    return (
+        price_rank,
+        -float(ev_safe) if ev_safe is not None else 999.0,
+        -float(ask_depth) if ask_depth is not None else 999.0,
+        float(spread) if spread is not None else 999.0,
+        str(item.get("market_slug") or ""),
+    )
+
+
+def _limit_targeted_queue_items(
+    items: Iterable[Dict[str, Any]],
+    *,
+    max_items: int,
+    max_dust_items: int = 2,
+) -> List[Dict[str, Any]]:
+    selected: List[Dict[str, Any]] = []
+    dust_seen = 0
+    for item in sorted([row for row in items if isinstance(row, dict)], key=_queue_sort_key):
+        if len(selected) >= max(0, int(max_items)):
+            break
+        if item.get("price_bucket") == "price_lt_0_005":
+            if dust_seen >= max(0, int(max_dust_items)):
+                continue
+            dust_seen += 1
+        selected.append(item)
+    return selected
+
+
 def _strict_gate_targeted_paper_queues(
     live_rejected: Iterable[Dict[str, Any]],
     *,
     max_items_per_queue: int = 10,
+    max_dust_items_per_queue: int = 2,
 ) -> Dict[str, Any]:
     rows = [item for item in live_rejected if isinstance(item, dict)]
     queue_defs = {
@@ -1008,14 +1071,18 @@ def _strict_gate_targeted_paper_queues(
             )
 
     for queue in queues.values():
-        queue["items"] = sorted(
+        for item in queue["items"]:
+            item["price_bucket"] = _item_price_bucket(item)
+            item["alpha_evidence_eligible"] = item["price_bucket"] != "price_lt_0_005"
+        queue["items"] = _limit_targeted_queue_items(
             queue["items"],
-            key=lambda item: (
-                -float(item.get("ev_safe") or -999.0),
-                -float(item.get("edge_percent") or 0.0),
-                float(item.get("spread") or 999.0),
-            ),
-        )[: max(0, int(max_items_per_queue))]
+            max_items=max_items_per_queue,
+            max_dust_items=max_dust_items_per_queue,
+        )
+        queue["queue_by_price_bucket"] = _count_items(
+            [str(item.get("price_bucket") or "price_unknown") for item in queue["items"]],
+            key_name="price_bucket",
+        )
     return queues
 
 

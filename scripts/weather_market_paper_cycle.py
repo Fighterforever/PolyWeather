@@ -221,6 +221,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="With --production-profile, do not persist strict-gate targeted queue records.",
     )
     parser.add_argument("--strict-gate-queue-max-records-per-queue", type=int, default=10)
+    parser.add_argument("--strict-gate-queue-max-dust-records-per-queue", type=int, default=2)
     parser.add_argument("--paper-journal-profile", default="paper-cycle")
     parser.add_argument("--paper-max-fills", type=int, default=10)
     parser.add_argument("--paper-include-watch", action="store_true")
@@ -735,6 +736,7 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
             generated_at=generated_at,
             source="weather_market_paper_cycle",
             max_records_per_queue=max(0, int(args.strict_gate_queue_max_records_per_queue)),
+            max_dust_records_per_queue=max(0, int(args.strict_gate_queue_max_dust_records_per_queue)),
         )
     paper_journal = write_paper_journal(
         signal_report,
@@ -1350,6 +1352,10 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
             "strict_gate_queue_max_records_per_queue": max(
                 0,
                 int(args.strict_gate_queue_max_records_per_queue),
+            ),
+            "strict_gate_queue_max_dust_records_per_queue": max(
+                0,
+                int(args.strict_gate_queue_max_dust_records_per_queue),
             ),
             "live_evidence_bundle_hint": live_evidence_bundle_hint,
             "temperature_taker_max_items": int(args.temperature_taker_max_items),

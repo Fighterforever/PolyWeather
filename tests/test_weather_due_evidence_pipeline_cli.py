@@ -554,3 +554,80 @@ def test_due_pipeline_surfaces_no_fill_diagnostics(tmp_path):
     assert diagnostics["queue_record_count"] == 1
     assert diagnostics["replay_candidate_count"] == 1
     assert diagnostics["top_no_fill_reasons"][0]["reason"] == "no_visible_orderbook"
+
+
+def test_alpha_conclusion_negative_dust_only_keeps_non_dust_unresolved():
+    strict = {
+        "resolved_fill_count": 8,
+        "by_price_bucket": [
+            {
+                "price_bucket": "price_lt_0_005",
+                "fill_count": 8,
+                "resolved_count": 8,
+                "resolved_pnl_cents": -0.8,
+            },
+            {
+                "price_bucket": "price_ge_0_03",
+                "fill_count": 3,
+                "resolved_count": 0,
+                "resolved_pnl_cents": None,
+            },
+        ],
+        "replay": {"fill_count": 11, "resolved_pnl_cents": -0.8},
+    }
+
+    details = pipeline_cli._alpha_conclusion_details(
+        strict,
+        {"probability_score_sample_count": 22, "resolved_pnl_sample_count": 22},
+    )
+
+    assert details["alpha_conclusion"] == "alpha_failed_negative_dust_only_resolved_pnl"
+    assert details["non_dust_alpha_status"] == "unresolved"
+    assert details["non_dust_resolved_count"] == 0
+    assert details["dust_resolved_pnl_cents"] == -0.8
+
+
+def test_alpha_conclusion_non_dust_negative():
+    strict = {
+        "resolved_fill_count": 2,
+        "by_price_bucket": [
+            {
+                "price_bucket": "price_ge_0_03",
+                "fill_count": 2,
+                "resolved_count": 2,
+                "resolved_pnl_cents": -12.0,
+            }
+        ],
+        "replay": {"fill_count": 2, "resolved_pnl_cents": -12.0},
+    }
+
+    details = pipeline_cli._alpha_conclusion_details(
+        strict,
+        {"probability_score_sample_count": 2, "resolved_pnl_sample_count": 2},
+    )
+
+    assert details["alpha_conclusion"] == "non_dust_alpha_failed"
+    assert details["non_dust_alpha_status"] == "negative"
+
+
+def test_alpha_conclusion_dust_positive_not_live_eligible():
+    strict = {
+        "resolved_fill_count": 5,
+        "by_price_bucket": [
+            {
+                "price_bucket": "price_lt_0_005",
+                "fill_count": 5,
+                "resolved_count": 5,
+                "resolved_pnl_cents": 10.0,
+            }
+        ],
+        "replay": {"fill_count": 5, "resolved_pnl_cents": 10.0},
+    }
+
+    details = pipeline_cli._alpha_conclusion_details(
+        strict,
+        {"probability_score_sample_count": 5, "resolved_pnl_sample_count": 5},
+    )
+
+    assert details["alpha_conclusion"] == "dust_tail_positive_not_live_eligible"
+    assert details["non_dust_alpha_status"] == "missing"

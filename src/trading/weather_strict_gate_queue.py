@@ -16,6 +16,9 @@ from src.trading.weather_paper_journal import (
 
 STRICT_GATE_QUEUE_SCHEMA_VERSION = "polyweather_weather_strict_gate_queue.v1"
 DEFAULT_STRICT_GATE_QUEUE_DIR = DEFAULT_PAPER_JOURNAL_DIR / "strict_gate_queues"
+DUST_PRICE_BUCKET = "price_lt_0_005"
+MID_PRICE_BUCKET = "price_0_005_to_0_03"
+NON_DUST_PRICE_BUCKET = "price_ge_0_03"
 
 
 def default_strict_gate_queue_dir(journal_dir: str | Path = DEFAULT_PAPER_JOURNAL_DIR) -> Path:
@@ -40,6 +43,27 @@ def _queue_items(signal_report: Dict[str, Any]) -> Iterable[tuple[str, Dict[str,
             if isinstance(item, dict):
                 rows.append((str(queue_name), queue, item))
     return rows
+
+
+def price_bucket_for_value(value: Any) -> str:
+    price = _safe_float(value)
+    if price is None:
+        return "price_unknown"
+    if float(price) < 0.005:
+        return DUST_PRICE_BUCKET
+    if float(price) < 0.03:
+        return MID_PRICE_BUCKET
+    return NON_DUST_PRICE_BUCKET
+
+
+def _item_price_bucket(item: Dict[str, Any]) -> str:
+    explicit = str(item.get("price_bucket") or "").strip()
+    if explicit:
+        return explicit
+    for field in ("price", "ask", "q_effective", "market_probability"):
+        if item.get(field) is not None:
+            return price_bucket_for_value(item.get(field))
+    return "price_unknown"
 
 
 def _record_from_queue_item(
@@ -94,6 +118,8 @@ def _record_from_queue_item(
         "execution_style": item.get("execution_style"),
         "strategy_live_eligible": item.get("strategy_live_eligible"),
         "price": _safe_float(item.get("price")),
+        "price_bucket": _item_price_bucket(item),
+        "alpha_evidence_eligible": _item_price_bucket(item) != DUST_PRICE_BUCKET,
         "bid": _safe_float(item.get("bid")),
         "ask": _safe_float(item.get("ask")),
         "spread": _safe_float(item.get("spread")),
@@ -118,23 +144,62 @@ def _record_from_queue_item(
     }
 
 
+def _record_sort_key(record: Dict[str, Any]) -> tuple:
+    price_bucket = str(record.get("price_bucket") or "price_unknown")
+    price_rank = {
+        NON_DUST_PRICE_BUCKET: 0,
+        MID_PRICE_BUCKET: 1,
+        DUST_PRICE_BUCKET: 2,
+        "price_unknown": 3,
+    }.get(price_bucket, 3)
+    ev_safe = _safe_float(record.get("ev_safe"))
+    ask_depth = _safe_float(record.get("ask_depth_usdc_3c") or record.get("liquidity"))
+    spread = _safe_float(record.get("spread"))
+    return (
+        price_rank,
+        -float(ev_safe) if ev_safe is not None else 999.0,
+        -float(ask_depth) if ask_depth is not None else 999.0,
+        float(spread) if spread is not None else 999.0,
+        str(record.get("market_slug") or ""),
+    )
+
+
+def _select_queue_records(
+    records: List[Dict[str, Any]],
+    *,
+    max_records: Optional[int],
+    max_dust_records: Optional[int],
+) -> List[Dict[str, Any]]:
+    sorted_records = sorted(records, key=_record_sort_key)
+    limit = None if max_records is None else max(0, int(max_records))
+    dust_limit = None if max_dust_records is None else max(0, int(max_dust_records))
+    selected: List[Dict[str, Any]] = []
+    dust_seen = 0
+    for record in sorted_records:
+        if limit is not None and len(selected) >= limit:
+            break
+        if record.get("price_bucket") == DUST_PRICE_BUCKET:
+            if dust_limit is not None and dust_seen >= dust_limit:
+                continue
+            dust_seen += 1
+        selected.append(record)
+    return selected
+
+
 def build_strict_gate_queue_records(
     signal_report: Dict[str, Any],
     *,
     generated_at: Optional[str] = None,
     source: str = "paper_cycle",
     max_records_per_queue: Optional[int] = None,
+    max_dust_records_per_queue: Optional[int] = 2,
 ) -> List[Dict[str, Any]]:
     if not isinstance(signal_report, dict):
         raise TypeError("signal_report must be a dict")
     generated_at = generated_at or str(signal_report.get("generated_at") or utc_now_iso())
-    per_queue_seen: Dict[str, int] = {}
-    records: List[Dict[str, Any]] = []
+    records_by_queue: Dict[str, List[Dict[str, Any]]] = {}
     for queue_name, queue, item in _queue_items(signal_report):
-        seen = per_queue_seen.get(queue_name, 0)
-        if max_records_per_queue is not None and seen >= max(0, int(max_records_per_queue)):
-            continue
-        records.append(
+        records_by_queue.setdefault(queue_name, []).append(
             _record_from_queue_item(
                 signal_report,
                 queue_name=queue_name,
@@ -144,7 +209,15 @@ def build_strict_gate_queue_records(
                 source=source,
             )
         )
-        per_queue_seen[queue_name] = seen + 1
+    records: List[Dict[str, Any]] = []
+    for queue_name in sorted(records_by_queue):
+        records.extend(
+            _select_queue_records(
+                records_by_queue[queue_name],
+                max_records=max_records_per_queue,
+                max_dust_records=max_dust_records_per_queue,
+            )
+        )
     return records
 
 
@@ -159,6 +232,22 @@ def _queue_counts(records: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
     ]
 
 
+def _queue_price_bucket_counts(records: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    counts: Dict[tuple[str, str], int] = {}
+    for record in records:
+        queue_name = str(record.get("queue_name") or "unknown")
+        bucket = str(record.get("price_bucket") or "price_unknown")
+        key = (queue_name, bucket)
+        counts[key] = counts.get(key, 0) + 1
+    return [
+        {"queue_name": queue_name, "price_bucket": bucket, "count": count}
+        for (queue_name, bucket), count in sorted(
+            counts.items(),
+            key=lambda pair: (pair[0][0], pair[0][1]),
+        )
+    ]
+
+
 def write_strict_gate_queue_journal(
     signal_report: Dict[str, Any],
     *,
@@ -166,6 +255,7 @@ def write_strict_gate_queue_journal(
     generated_at: Optional[str] = None,
     source: str = "paper_cycle",
     max_records_per_queue: Optional[int] = None,
+    max_dust_records_per_queue: Optional[int] = 2,
 ) -> Dict[str, Any]:
     generated_at = generated_at or str(signal_report.get("generated_at") or utc_now_iso())
     queue_root = Path(queue_dir)
@@ -187,6 +277,7 @@ def write_strict_gate_queue_journal(
         generated_at=generated_at,
         source=source,
         max_records_per_queue=max_records_per_queue,
+        max_dust_records_per_queue=max_dust_records_per_queue,
     )
     _write_json_atomic(
         snapshot_path,
@@ -210,6 +301,8 @@ def write_strict_gate_queue_journal(
         "records_path": str(records_path),
         "record_count": written,
         "queue_counts": _queue_counts(records),
+        "queue_by_price_bucket": _queue_price_bucket_counts(records),
+        "max_dust_records_per_queue": max_dust_records_per_queue,
         "paper_only": True,
         "counts_for_live_gate": False,
     }
@@ -233,6 +326,7 @@ def summarize_strict_gate_queue_journal(
         "manifest_count": len(manifest),
         "record_count": len(records),
         "queue_counts": _queue_counts(records),
+        "queue_by_price_bucket": _queue_price_bucket_counts(records),
         "paper_only": True,
         "counts_for_live_gate": False,
     }

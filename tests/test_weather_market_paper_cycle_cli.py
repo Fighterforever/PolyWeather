@@ -573,6 +573,7 @@ def test_weather_market_paper_cycle_production_profile_sets_live_like_defaults(m
     assert output["current_signal_snapshot"]["candidate_count"] == 0
     assert output["effective_profile"]["strict_gate_queue_enabled"] is True
     assert output["effective_profile"]["strict_gate_queue_dir"] == "/tmp/weather-paper/strict_gate_queues"
+    assert output["effective_profile"]["strict_gate_queue_max_dust_records_per_queue"] == 2
     assert output["live_evidence_bundle_hint"]["schema_version"] == (
         "polyweather_weather_live_evidence_bundle_hint.v1"
     )

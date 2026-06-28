@@ -313,10 +313,12 @@ def _performance_summary(replay: Dict[str, Any]) -> Dict[str, Any]:
         key_name="price_bucket",
     )
     for row in by_price_bucket:
-        row["live_gate_excluded"] = row.get("price_bucket") == "price_lt_0_005"
+        is_dust = row.get("price_bucket") == "price_lt_0_005"
+        row["diagnostic_only"] = bool(is_dust)
+        row["live_gate_excluded"] = is_dust
         row["live_gate_excluded_reason"] = (
             "dust_price_bucket_diagnostic_only"
-            if row.get("live_gate_excluded")
+            if is_dust
             else None
         )
     return {

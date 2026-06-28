@@ -128,3 +128,99 @@ def test_write_strict_gate_queue_journal_round_trips_manifest_and_summary(tmp_pa
     assert manifest[-1]["run_id"] == result["run_id"]
     assert summary["record_count"] == 2
     assert summary["manifest_count"] == 1
+    assert summary["queue_by_price_bucket"] == [
+        {"queue_name": "ev_calibration", "price_bucket": "price_ge_0_03", "count": 1},
+        {"queue_name": "risk_rule_review", "price_bucket": "price_unknown", "count": 1},
+    ]
+
+
+def test_strict_gate_queue_prioritizes_non_dust_rows():
+    report = _signal_report()
+    items = []
+    for index in range(5):
+        item = dict(report["strict_gate_diagnostics"]["targeted_paper_queues"]["ev_calibration"]["items"][0])
+        item.update(
+            {
+                "market_slug": f"dust-{index}",
+                "token_id": f"dust-token-{index}",
+                "price": 0.001,
+                "ask": 0.001,
+                "q_effective": 0.001,
+                "ev_safe": 0.5,
+                "ask_depth_usdc_3c": 100,
+            }
+        )
+        items.append(item)
+    non_dust = dict(items[0])
+    non_dust.update(
+        {
+            "market_slug": "non-dust",
+            "token_id": "non-dust-token",
+            "price": 0.25,
+            "ask": 0.25,
+            "q_effective": 0.25,
+            "ev_safe": -0.1,
+            "ask_depth_usdc_3c": 10,
+        }
+    )
+    report["strict_gate_diagnostics"]["targeted_paper_queues"]["ev_calibration"]["items"] = [*items, non_dust]
+
+    records = build_strict_gate_queue_records(
+        report,
+        generated_at="2026-06-27T00:00:00Z",
+        max_records_per_queue=4,
+        max_dust_records_per_queue=2,
+    )
+
+    ev_records = [row for row in records if row["queue_name"] == "ev_calibration"]
+    assert ev_records[0]["market_slug"] == "non-dust"
+    assert ev_records[0]["price_bucket"] == "price_ge_0_03"
+    assert ev_records[0]["alpha_evidence_eligible"] is True
+
+
+def test_strict_gate_queue_limits_dust_tail_records():
+    report = _signal_report()
+    base = report["strict_gate_diagnostics"]["targeted_paper_queues"]["ev_calibration"]["items"][0]
+    report["strict_gate_diagnostics"]["targeted_paper_queues"]["ev_calibration"]["items"] = [
+        {
+            **base,
+            "market_slug": f"dust-{index}",
+            "token_id": f"dust-token-{index}",
+            "price": 0.001,
+            "ask": 0.001,
+            "q_effective": 0.001,
+        }
+        for index in range(6)
+    ]
+
+    records = build_strict_gate_queue_records(
+        report,
+        generated_at="2026-06-27T00:00:00Z",
+        max_records_per_queue=10,
+        max_dust_records_per_queue=2,
+    )
+
+    ev_records = [row for row in records if row["queue_name"] == "ev_calibration"]
+    assert len(ev_records) == 2
+    assert {row["price_bucket"] for row in ev_records} == {"price_lt_0_005"}
+    assert {row["alpha_evidence_eligible"] for row in ev_records} == {False}
+
+
+def test_evidence_profile_collects_price_ge_0_03_when_available():
+    report = _signal_report()
+    base = report["strict_gate_diagnostics"]["targeted_paper_queues"]["ev_calibration"]["items"][0]
+    report["strict_gate_diagnostics"]["targeted_paper_queues"]["ev_calibration"]["items"] = [
+        {**base, "market_slug": "dust", "token_id": "dust-token", "price": 0.001, "ask": 0.001},
+        {**base, "market_slug": "normal", "token_id": "normal-token", "price": 0.12, "ask": 0.12},
+    ]
+
+    records = build_strict_gate_queue_records(
+        report,
+        generated_at="2026-06-27T00:00:00Z",
+        max_records_per_queue=10,
+        max_dust_records_per_queue=2,
+    )
+
+    ev_records = [row for row in records if row["queue_name"] == "ev_calibration"]
+    assert any(row["price_bucket"] == "price_ge_0_03" for row in ev_records)
+    assert ev_records[0]["market_slug"] == "normal"

@@ -35,7 +35,7 @@ from src.trading.weather_live_evidence_bundle import (  # noqa: E402
 )
 from src.trading.weather_live_readiness import build_live_readiness_report  # noqa: E402
 from src.trading.weather_orderbook_archive_coverage import build_orderbook_closed_token_coverage_report  # noqa: E402
-from src.trading.weather_paper_journal import DEFAULT_PAPER_JOURNAL_DIR, load_jsonl  # noqa: E402
+from src.trading.weather_paper_journal import DEFAULT_PAPER_JOURNAL_DIR, _safe_float, load_jsonl  # noqa: E402
 from src.trading.weather_settlement_calibration import build_settlement_calibration_report  # noqa: E402
 from src.trading.weather_settlement_truth_audit import build_settlement_truth_audit_report  # noqa: E402
 from src.trading.weather_strict_gate_queue import default_strict_gate_queue_dir  # noqa: E402
@@ -343,32 +343,125 @@ def _unresolved_token_rows(records: Iterable[Dict[str, Any]], *, limit: int = 10
     return rows
 
 
-def _alpha_conclusion(strict_report: Dict[str, Any], calibration_report: Dict[str, Any]) -> str:
+def _price_bucket_rows(strict_report: Dict[str, Any]) -> list[Dict[str, Any]]:
+    rows = strict_report.get("by_price_bucket") or (
+        (strict_report.get("performance_summary") or {}).get("by_price_bucket")
+        if isinstance(strict_report.get("performance_summary"), dict)
+        else []
+    )
+    return [row for row in rows or [] if isinstance(row, dict)]
+
+
+def _sum_bucket_pnl(rows: Iterable[Dict[str, Any]]) -> Optional[float]:
+    values = [
+        float(value)
+        for row in rows
+        for value in [_safe_float(row.get("resolved_pnl_cents"))]
+        if value is not None
+    ]
+    return round(sum(values), 6) if values else None
+
+
+def _alpha_conclusion_details(strict_report: Dict[str, Any], calibration_report: Dict[str, Any]) -> Dict[str, Any]:
     replay = strict_report.get("replay") if isinstance(strict_report.get("replay"), dict) else {}
+    price_buckets = _price_bucket_rows(strict_report)
+    dust_rows = [row for row in price_buckets if row.get("price_bucket") == "price_lt_0_005"]
+    non_dust_rows = [row for row in price_buckets if row.get("price_bucket") != "price_lt_0_005"]
+    dust_resolved_count = sum(int(row.get("resolved_count") or 0) for row in dust_rows)
+    non_dust_fill_count = sum(int(row.get("fill_count") or 0) for row in non_dust_rows)
+    non_dust_resolved_count = sum(int(row.get("resolved_count") or 0) for row in non_dust_rows)
+    non_dust_pnl = _sum_bucket_pnl(non_dust_rows)
+    dust_pnl = _sum_bucket_pnl(dust_rows)
+    if non_dust_resolved_count <= 0 and non_dust_fill_count > 0:
+        non_dust_status = "unresolved"
+    elif non_dust_pnl is None:
+        non_dust_status = "missing"
+    elif non_dust_pnl < 0.0:
+        non_dust_status = "negative"
+    elif non_dust_pnl > 0.0:
+        non_dust_status = "positive"
+    else:
+        non_dust_status = "flat"
     resolved_fill_count = int(strict_report.get("resolved_fill_count") or 0)
     resolved_pnl_cents = replay.get("resolved_pnl_cents")
     probability_score_count = int(calibration_report.get("probability_score_sample_count") or 0)
     resolved_pnl_sample_count = int(calibration_report.get("resolved_pnl_sample_count") or 0)
+    fill_count = int(replay.get("fill_count") or 0)
+    archived_fill_count = 0
     if resolved_fill_count <= 0:
-        return "inconclusive_waiting_for_resolution_or_backfill"
+        conclusion = "inconclusive_waiting_for_resolution_or_backfill"
+        return {
+            "alpha_conclusion": conclusion,
+            "non_dust_alpha_status": non_dust_status,
+            "non_dust_fill_count": non_dust_fill_count,
+            "non_dust_resolved_count": non_dust_resolved_count,
+            "non_dust_resolved_pnl_cents": non_dust_pnl,
+            "dust_resolved_count": dust_resolved_count,
+            "dust_resolved_pnl_cents": dust_pnl,
+        }
     try:
         pnl = float(resolved_pnl_cents)
     except (TypeError, ValueError):
-        return "inconclusive_waiting_for_resolution_or_backfill"
-    if pnl < 0.0:
-        return "alpha_failed_negative_resolved_pnl"
-    if pnl > 0.0 and probability_score_count <= 0:
-        return "pnl_positive_but_uncalibrated"
-    if (
+        pnl = None
+    if pnl is None:
+        conclusion = "inconclusive_waiting_for_resolution_or_backfill"
+    elif non_dust_resolved_count > 0 and non_dust_pnl is not None and non_dust_pnl < 0.0:
+        conclusion = "non_dust_alpha_failed"
+    elif pnl < 0.0 and dust_resolved_count > 0 and non_dust_resolved_count == 0:
+        conclusion = "alpha_failed_negative_dust_only_resolved_pnl"
+    elif pnl < 0.0:
+        conclusion = "alpha_failed_negative_resolved_pnl"
+    elif (
+        non_dust_resolved_count > 0
+        and non_dust_pnl is not None
+        and non_dust_pnl > 0.0
+        and probability_score_count <= 0
+    ):
+        conclusion = "non_dust_pnl_positive_but_uncalibrated"
+    elif (
+        pnl > 0.0
+        and dust_pnl is not None
+        and dust_pnl > 0.0
+        and (non_dust_pnl is None or non_dust_pnl <= 0.0)
+    ):
+        conclusion = "dust_tail_positive_not_live_eligible"
+    elif (
+        non_dust_resolved_count > 0
+        and non_dust_pnl is not None
+        and non_dust_pnl > 0.0
+        and probability_score_count > 0
+        and resolved_pnl_sample_count > 0
+        and calibration_report.get("hard_conclusion") == "settlement_calibration_ready_diagnostic_only"
+    ):
+        conclusion = "non_dust_alpha_candidate_paper_only_review"
+    elif pnl > 0.0 and probability_score_count <= 0:
+        conclusion = "pnl_positive_but_uncalibrated"
+    elif (
         pnl > 0.0
         and probability_score_count > 0
         and resolved_pnl_sample_count > 0
         and calibration_report.get("hard_conclusion") == "settlement_calibration_ready_diagnostic_only"
     ):
-        return "alpha_candidate_paper_only_review"
-    if pnl > 0.0:
-        return "pnl_positive_but_uncalibrated"
-    return "inconclusive_zero_resolved_pnl"
+        conclusion = "alpha_candidate_paper_only_review"
+    elif pnl > 0.0:
+        conclusion = "pnl_positive_but_uncalibrated"
+    else:
+        conclusion = "inconclusive_zero_resolved_pnl"
+    return {
+        "alpha_conclusion": conclusion,
+        "non_dust_alpha_status": non_dust_status,
+        "non_dust_fill_count": non_dust_fill_count,
+        "non_dust_resolved_count": non_dust_resolved_count,
+        "non_dust_resolved_pnl_cents": non_dust_pnl,
+        "dust_resolved_count": dust_resolved_count,
+        "dust_resolved_pnl_cents": dust_pnl,
+        "strict_fill_count": fill_count,
+        "archived_fill_count": archived_fill_count,
+    }
+
+
+def _alpha_conclusion(strict_report: Dict[str, Any], calibration_report: Dict[str, Any]) -> str:
+    return str(_alpha_conclusion_details(strict_report, calibration_report).get("alpha_conclusion"))
 
 
 def _readiness_compact(report: Dict[str, Any]) -> Dict[str, Any]:
@@ -649,7 +742,8 @@ def build_due_evidence_pipeline_report(
         generated_at=effective_generated_at,
     )
     replay = strict_report.get("replay") if isinstance(strict_report.get("replay"), dict) else {}
-    alpha_conclusion = _alpha_conclusion(strict_report, calibration_report)
+    alpha_details = _alpha_conclusion_details(strict_report, calibration_report)
+    alpha_conclusion = str(alpha_details.get("alpha_conclusion") or "inconclusive_waiting_for_resolution_or_backfill")
     payload_diagnostics = (
         targeted_backfill_result.get("payload_diagnostics")
         if isinstance(targeted_backfill_result, dict)
@@ -770,6 +864,8 @@ def build_due_evidence_pipeline_report(
         },
         "historical_evidence_input": historical_evidence_input,
         "alpha_conclusion": alpha_conclusion,
+        "non_dust_alpha_status": alpha_details.get("non_dust_alpha_status"),
+        "alpha_conclusion_details": alpha_details,
         "resolved_pnl_unavailable_reason": resolved_pnl_unavailable_reason,
         "next_polymarket_resolution_check_after": next_polymarket_resolution_check_after,
         "unresolved_tokens": unresolved_tokens,

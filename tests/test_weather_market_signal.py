@@ -5,6 +5,7 @@ import json
 from scripts import weather_market_signal_report as signal_cli
 from src.trading.weather_market_signal import (
     WeatherMarketSignalConfig,
+    _strict_gate_targeted_paper_queues,
     assess_weather_market_row,
     build_weather_market_signal_report,
 )
@@ -1692,3 +1693,53 @@ def test_config_can_allow_missing_order_book_as_watch_not_reject():
     assert assessment["decision"] == "watch"
     assert assessment["blockers"] == []
     assert assessment["warnings"] == ["missing_spread"]
+
+
+def test_market_signal_targeted_queue_prioritizes_non_dust_when_available():
+    rows = []
+    for index in range(5):
+        rows.append(
+            {
+                "decision": "reject",
+                "market_slug": f"dust-{index}",
+                "token_id": f"dust-token-{index}",
+                "side": "yes",
+                "price": 0.001,
+                "ask": 0.001,
+                "q_effective": 0.001,
+                "ev_safe": 0.50,
+                "edge_percent": 10.0,
+                "ask_depth_usdc_3c": 100,
+                "non_risk_blockers": ["ev_safe_below_min"],
+                "non_risk_blocker_categories": ["edge"],
+                "strategy_id": "near_lock",
+            }
+        )
+    rows.append(
+        {
+            "decision": "reject",
+            "market_slug": "non-dust",
+            "token_id": "non-dust-token",
+            "side": "yes",
+            "price": 0.25,
+            "ask": 0.25,
+            "q_effective": 0.25,
+            "ev_safe": -0.01,
+            "edge_percent": 1.0,
+            "ask_depth_usdc_3c": 5,
+            "non_risk_blockers": ["ev_safe_below_min"],
+            "non_risk_blocker_categories": ["edge"],
+            "strategy_id": "tail_threshold",
+        }
+    )
+
+    queues = _strict_gate_targeted_paper_queues(rows, max_items_per_queue=10, max_dust_items_per_queue=2)
+    ev_items = queues["ev_calibration"]["items"]
+
+    assert ev_items[0]["market_slug"] == "non-dust"
+    assert ev_items[0]["price_bucket"] == "price_ge_0_03"
+    assert len([row for row in ev_items if row["price_bucket"] == "price_lt_0_005"]) == 2
+    assert queues["ev_calibration"]["queue_by_price_bucket"] == [
+        {"price_bucket": "price_lt_0_005", "count": 2},
+        {"price_bucket": "price_ge_0_03", "count": 1},
+    ]

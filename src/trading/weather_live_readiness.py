@@ -53,6 +53,7 @@ MIN_MEAN_MARKOUT_CENTS = 0.0
 MIN_RESOLVED_TOTAL_PNL_CENTS = 0.0
 MIN_REPLAY_RESOLVED_PNL_CENTS = 0.0
 MIN_SETTLEMENT_MEAN_RESOLVED_PNL_PER_SHARE = 0.0
+DUST_PRICE_BUCKET = "price_lt_0_005"
 
 
 def _record_key(record: Dict[str, Any], fallback_prefix: str, index: int) -> str:
@@ -927,7 +928,7 @@ def _compact_strict_gate_replay_report(report: Optional[Dict[str, Any]]) -> Opti
         if isinstance(report.get("performance_summary"), dict)
         else {}
     )
-    return {
+    compact = {
         "schema_version": report.get("schema_version"),
         "hard_conclusion": report.get("hard_conclusion"),
         "paper_only": report.get("paper_only"),
@@ -979,6 +980,119 @@ def _compact_strict_gate_replay_report(report: Optional[Dict[str, Any]]) -> Opti
         },
         "queue_summary": (report.get("queue_summary") or [])[:10],
         "resolved_outcome_source_counts": report.get("resolved_outcome_source_counts") or [],
+    }
+    compact["replay_live_gate_evidence"] = _strict_replay_live_gate_evidence(compact)
+    return compact
+
+
+def _strict_replay_price_bucket_rows(strict_gate_replay_summary: Optional[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    if not isinstance(strict_gate_replay_summary, dict):
+        return []
+    rows = (
+        strict_gate_replay_summary.get("by_price_bucket")
+        or ((strict_gate_replay_summary.get("performance_summary") or {}).get("by_price_bucket"))
+        or []
+    )
+    return [row for row in rows if isinstance(row, dict)]
+
+
+def _strict_replay_live_gate_evidence(strict_gate_replay_summary: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    if not isinstance(strict_gate_replay_summary, dict):
+        return {
+            "schema_version": "polyweather_weather_replay_live_gate_evidence.v1",
+            "source": "missing_strict_gate_replay",
+            "has_price_bucket_breakdown": False,
+            "non_dust_fill_count": 0,
+            "non_dust_resolved_fill_count": 0,
+            "non_dust_unresolved_fill_count": 0,
+            "non_dust_resolved_pnl_cents": None,
+            "dust_fill_count": 0,
+            "dust_resolved_fill_count": 0,
+            "dust_resolved_pnl_cents": None,
+            "resolved_evidence_is_dust_only": False,
+            "replay_positive_only_in_dust_price_bucket": False,
+            "non_dust_alpha_status": "missing_replay",
+        }
+    rows = _strict_replay_price_bucket_rows(strict_gate_replay_summary)
+    replay_pnl = _safe_float(strict_gate_replay_summary.get("resolved_pnl_cents"))
+    total_fill_count = int(strict_gate_replay_summary.get("fill_count") or 0)
+    resolved_value = strict_gate_replay_summary.get("resolved_fill_count")
+    if resolved_value is None and strict_gate_replay_summary.get("missing_resolution_count") is not None:
+        resolved_value = max(0, total_fill_count - int(strict_gate_replay_summary.get("missing_resolution_count") or 0))
+    total_resolved_count = int(resolved_value or 0)
+    if not rows:
+        unresolved = max(0, total_fill_count - total_resolved_count)
+        status = "unresolved" if unresolved else ("positive" if (replay_pnl or 0.0) > 0 else "negative" if replay_pnl is not None and replay_pnl < 0 else "missing")
+        return {
+            "schema_version": "polyweather_weather_replay_live_gate_evidence.v1",
+            "source": "fallback_no_price_bucket_breakdown",
+            "has_price_bucket_breakdown": False,
+            "non_dust_fill_count": total_fill_count,
+            "non_dust_resolved_fill_count": total_resolved_count,
+            "non_dust_unresolved_fill_count": unresolved,
+            "non_dust_resolved_pnl_cents": replay_pnl,
+            "dust_fill_count": 0,
+            "dust_resolved_fill_count": 0,
+            "dust_resolved_pnl_cents": None,
+            "resolved_evidence_is_dust_only": False,
+            "replay_positive_only_in_dust_price_bucket": False,
+            "non_dust_alpha_status": status,
+        }
+
+    dust_rows = [row for row in rows if row.get("price_bucket") == DUST_PRICE_BUCKET]
+    non_dust_rows = [row for row in rows if row.get("price_bucket") != DUST_PRICE_BUCKET]
+
+    def summed_int(key: str, source_rows: List[Dict[str, Any]]) -> int:
+        return sum(int(row.get(key) or 0) for row in source_rows)
+
+    def summed_pnl(source_rows: List[Dict[str, Any]]) -> Optional[float]:
+        values = [
+            float(value)
+            for row in source_rows
+            for value in [_safe_float(row.get("resolved_pnl_cents"))]
+            if value is not None
+        ]
+        return round(sum(values), 6) if values else None
+
+    non_dust_fill_count = summed_int("fill_count", non_dust_rows)
+    non_dust_resolved_count = summed_int("resolved_count", non_dust_rows)
+    dust_fill_count = summed_int("fill_count", dust_rows)
+    dust_resolved_count = summed_int("resolved_count", dust_rows)
+    non_dust_pnl = summed_pnl(non_dust_rows)
+    dust_pnl = summed_pnl(dust_rows)
+    total_resolved_from_buckets = non_dust_resolved_count + dust_resolved_count
+    resolved_evidence_is_dust_only = total_resolved_from_buckets > 0 and non_dust_resolved_count == 0
+    replay_positive_only_in_dust = bool(
+        replay_pnl is not None
+        and replay_pnl > 0.0
+        and dust_pnl is not None
+        and dust_pnl > 0.0
+        and (non_dust_pnl is None or non_dust_pnl <= 0.0)
+    )
+    if non_dust_resolved_count <= 0 and non_dust_fill_count > 0:
+        non_dust_status = "unresolved"
+    elif non_dust_pnl is None:
+        non_dust_status = "missing"
+    elif non_dust_pnl < 0.0:
+        non_dust_status = "negative"
+    elif non_dust_pnl > 0.0:
+        non_dust_status = "positive"
+    else:
+        non_dust_status = "flat"
+    return {
+        "schema_version": "polyweather_weather_replay_live_gate_evidence.v1",
+        "source": "price_bucket_breakdown",
+        "has_price_bucket_breakdown": True,
+        "non_dust_fill_count": non_dust_fill_count,
+        "non_dust_resolved_fill_count": non_dust_resolved_count,
+        "non_dust_unresolved_fill_count": max(0, non_dust_fill_count - non_dust_resolved_count),
+        "non_dust_resolved_pnl_cents": non_dust_pnl,
+        "dust_fill_count": dust_fill_count,
+        "dust_resolved_fill_count": dust_resolved_count,
+        "dust_resolved_pnl_cents": dust_pnl,
+        "resolved_evidence_is_dust_only": resolved_evidence_is_dust_only,
+        "replay_positive_only_in_dust_price_bucket": replay_positive_only_in_dust,
+        "non_dust_alpha_status": non_dust_status,
     }
 
 
@@ -1137,15 +1251,8 @@ def _build_hard_gate_summary(
         blockers=resolved_blockers,
     )
 
-    replay_price_buckets_for_live = [
-        row
-        for row in (
-            (strict_gate_replay_summary or {}).get("by_price_bucket")
-            or ((strict_gate_replay_summary or {}).get("performance_summary") or {}).get("by_price_bucket")
-            or []
-        )
-        if isinstance(row, dict)
-    ]
+    replay_price_buckets_for_live = _strict_replay_price_bucket_rows(strict_gate_replay_summary)
+    replay_live_gate_evidence = _strict_replay_live_gate_evidence(strict_gate_replay_summary)
     replay_pnl_for_live = (
         _safe_float((strict_gate_replay_summary or {}).get("resolved_pnl_cents"))
         if isinstance(strict_gate_replay_summary, dict)
@@ -1166,10 +1273,13 @@ def _build_hard_gate_summary(
         and int(row.get("resolved_count") or 0) > 0
     ]
     dust_only_positive_replay_pnl = bool(
-        replay_pnl_for_live is not None
-        and replay_pnl_for_live > 0.0
-        and dust_positive_pnl_for_live
-        and not non_dust_positive_pnl_for_live
+        replay_live_gate_evidence.get("replay_positive_only_in_dust_price_bucket")
+        or (
+            replay_pnl_for_live is not None
+            and replay_pnl_for_live > 0.0
+            and dust_positive_pnl_for_live
+            and not non_dust_positive_pnl_for_live
+        )
     )
 
     ledger_groups = evidence_ledger.get("groups") if isinstance(evidence_ledger.get("groups"), list) else []
@@ -1227,19 +1337,20 @@ def _build_hard_gate_summary(
         replay_blockers.append("strict_gate_replay_report_missing")
     else:
         replay_conclusion = str(strict_gate_replay_summary.get("hard_conclusion") or "")
-        fill_count = int(strict_gate_replay_summary.get("fill_count") or 0)
-        missing_resolution_count = int(strict_gate_replay_summary.get("missing_resolution_count") or 0)
+        total_fill_count = int(strict_gate_replay_summary.get("fill_count") or 0)
+        fill_count = int(replay_live_gate_evidence.get("non_dust_fill_count") or 0)
+        missing_resolution_count = int(replay_live_gate_evidence.get("non_dust_unresolved_fill_count") or 0)
         missed_fill_count = int(strict_gate_replay_summary.get("missed_fill_count") or 0)
         no_visible_orderbook_count = int(strict_gate_replay_summary.get("no_visible_orderbook_count") or 0)
         resolved_fill_count = int(
-            strict_gate_replay_summary.get("resolved_fill_count")
-            if strict_gate_replay_summary.get("resolved_fill_count") is not None
+            replay_live_gate_evidence.get("non_dust_resolved_fill_count")
+            if replay_live_gate_evidence.get("non_dust_resolved_fill_count") is not None
             else max(0, fill_count - missing_resolution_count)
         )
         positive_ev_negative_count = int(
             strict_gate_replay_summary.get("positive_ev_safe_but_negative_pnl_count") or 0
         )
-        replay_pnl_cents = _safe_float(strict_gate_replay_summary.get("resolved_pnl_cents"))
+        replay_pnl_cents = _safe_float(replay_live_gate_evidence.get("non_dust_resolved_pnl_cents"))
         if replay_conclusion != "strict_gate_replay_ready_for_ev_audit":
             replay_blockers.append(replay_conclusion or "strict_gate_replay_not_ready")
         if fill_count < MIN_REPLAY_FILLS:
@@ -1258,7 +1369,9 @@ def _build_hard_gate_summary(
             replay_blockers.append("strict_gate_replay_resolved_pnl_missing")
         elif replay_pnl_cents < MIN_REPLAY_RESOLVED_PNL_CENTS:
             replay_blockers.append("strict_gate_replay_resolved_pnl_negative")
-        if positive_ev_negative_count > 0:
+        if replay_live_gate_evidence.get("resolved_evidence_is_dust_only") is True:
+            replay_blockers.append("strict_gate_replay_resolved_evidence_dust_only")
+        if positive_ev_negative_count > 0 and replay_live_gate_evidence.get("resolved_evidence_is_dust_only") is not True:
             replay_blockers.append("strict_gate_replay_positive_ev_safe_negative_pnl")
         if strict_gate_replay_summary.get("brier_score") is None:
             replay_blockers.append("strict_gate_replay_brier_score_missing")
@@ -1266,10 +1379,11 @@ def _build_hard_gate_summary(
             replay_blockers.append("strict_gate_replay_log_loss_missing")
         price_buckets = replay_price_buckets_for_live
         if dust_only_positive_replay_pnl:
-            replay_blockers.append("strict_gate_replay_positive_pnl_only_from_dust_price_bucket")
+            replay_blockers.append("replay_positive_only_in_dust_price_bucket")
         replay_observed = {
             "hard_conclusion": replay_conclusion,
             "fill_count": fill_count,
+            "total_fill_count": total_fill_count,
             "resolved_fill_count": resolved_fill_count,
             "missed_fill_count": missed_fill_count,
             "missing_resolution_count": missing_resolution_count,
@@ -1280,6 +1394,7 @@ def _build_hard_gate_summary(
             "brier_score": strict_gate_replay_summary.get("brier_score"),
             "log_loss": strict_gate_replay_summary.get("log_loss"),
             "by_price_bucket": price_buckets,
+            "live_gate_price_bucket_evidence": replay_live_gate_evidence,
         }
     add_gate(
         "no_lookahead_replay",
