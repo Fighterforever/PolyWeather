@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from src.trading.polymarket_alpha.maker_shadow import build_maker_shadow_report
+from src.trading.polymarket_alpha.maker_shadow import build_maker_shadow_focus_report, build_maker_shadow_report
 
 
 def _market(**overrides):
@@ -58,3 +58,29 @@ def test_polymarket_maker_shadow_not_live_eligible():
 
     assert report["counts_for_live_gate"] is False
     assert all(row["live_order_path"] is False for row in report["quotes"])
+
+
+def test_polymarket_maker_shadow_focus_requires_focus_category_and_model_fair_value():
+    report = build_maker_shadow_focus_report(
+        active_markets=[_market()],
+        focus_report={"top_focus_categories": [{"category": "crypto", "recommendation": "focus_forward_paper"}]},
+        model_report={"model": {"crypto|0_35_0_65": {"p": 0.45, "sample_count": 100}}},
+        min_spread=0.03,
+        min_depth=10,
+        maker_margin=0.01,
+    )
+
+    assert report["quote_count"] == 2
+    assert report["quotes"][0]["strategy_id"] == "polymarket_alpha_maker_shadow_focus"
+    assert report["quotes"][0]["live_order_path"] is False
+
+
+def test_polymarket_maker_shadow_focus_blocks_without_model_fair_value():
+    report = build_maker_shadow_focus_report(
+        active_markets=[_market()],
+        focus_report={"top_focus_categories": [{"category": "crypto", "recommendation": "focus_forward_paper"}]},
+        model_report={"model": {}},
+    )
+
+    assert report["quote_count"] == 0
+    assert report["blocker_counts"]["missing_model_fair_value"] == 1

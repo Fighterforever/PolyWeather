@@ -1,0 +1,25 @@
+{
+  "artifact_paths": {
+    "fills": "evidence/polymarket_alpha/probability_edge_paper/fills.jsonl",
+    "watch_rows": "evidence/polymarket_alpha/probability_edge_paper/watch_rows.jsonl"
+  },
+  "blocker_counts": [
+    {
+      "count": 2258,
+      "reason": "category_not_focus_forward_paper"
+    },
+    {
+      "count": 3081,
+      "reason": "not_active"
+    }
+  ],
+  "candidate_count": 0,
+  "counts_for_live_gate": false,
+  "focus_categories": [],
+  "live_order_path": false,
+  "paper_fill_count": 0,
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_active_probability_edge.v1",
+  "scope": "polymarket_only",
+  "watch_row_count": 0
+}

@@ -1,0 +1,17 @@
+{
+  "artifact_paths": {
+    "markouts": "evidence/polymarket_alpha/probability_edge_paper/markouts.jsonl"
+  },
+  "by_category": [],
+  "by_model_source": [],
+  "counts_for_live_gate": false,
+  "fill_count": 0,
+  "live_order_path": false,
+  "markout_count": 0,
+  "markout_status": "no_forward_markout_yet",
+  "mean_markout": null,
+  "mean_markout_1h": null,
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_probability_edge_journal.v1.markout_report",
+  "scope": "polymarket_only"
+}

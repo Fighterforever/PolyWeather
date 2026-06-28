@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
+from src.trading.polymarket_alpha.probability_dataset import price_bucket
+
 
 SCHEMA_VERSION = "polyweather_polymarket_alpha_maker_shadow.v1"
 STRATEGY_ID = "polymarket_alpha_maker_shadow"
@@ -133,6 +135,152 @@ def build_maker_shadow_report(
     }
 
 
+def _focused_categories(focus_report: Dict[str, Any]) -> List[str]:
+    rows = focus_report.get("top_focus_categories") if isinstance(focus_report.get("top_focus_categories"), list) else []
+    return [
+        str(row.get("category"))
+        for row in rows
+        if isinstance(row, dict) and row.get("category") and row.get("recommendation") == "focus_forward_paper"
+    ]
+
+
+def _model_fair_value(category: str, price: float, model_report: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    model = model_report.get("model") if isinstance(model_report.get("model"), dict) else {}
+    for key in (f"{category}|{price_bucket(price)}", f"*|{price_bucket(price)}", f"{category}|*"):
+        value = model.get(key)
+        if isinstance(value, dict) and value.get("p") is not None and int(value.get("sample_count") or 0) > 0:
+            return {
+                "model_key": key,
+                "fair_value": float(value.get("p")),
+                "sample_count": int(value.get("sample_count") or 0),
+            }
+    return None
+
+
+def build_maker_shadow_focus_report(
+    *,
+    active_markets: Iterable[Dict[str, Any]],
+    focus_report: Dict[str, Any],
+    model_report: Dict[str, Any],
+    min_spread: float = 0.03,
+    min_depth: float = 10.0,
+    maker_margin: float = 0.01,
+) -> Dict[str, Any]:
+    top_categories = _focused_categories(focus_report)
+    top_set = set(top_categories)
+    quotes: List[Dict[str, Any]] = []
+    blocker_counts: Dict[str, int] = {}
+
+    def block(reason: str) -> None:
+        blocker_counts[reason] = blocker_counts.get(reason, 0) + 1
+
+    for row in active_markets:
+        if not isinstance(row, dict):
+            continue
+        category = str(row.get("category") or "uncategorized")
+        if not top_set or category not in top_set:
+            block("category_not_focus_forward_paper")
+            continue
+        if not row.get("active"):
+            block("not_active")
+            continue
+        market_books = _books(row)
+        if not market_books:
+            block("missing_orderbook")
+            continue
+        for token_id, book in market_books:
+            best_bid = _safe_float(book.get("best_bid"))
+            best_ask = _safe_float(book.get("best_ask"))
+            spread = _safe_float(book.get("spread"))
+            if best_ask is None or best_bid is None or spread is None:
+                block("missing_bid_ask")
+                continue
+            if best_ask < 0.005:
+                block("dust_price")
+                continue
+            if spread < float(min_spread):
+                block("spread_below_min")
+                continue
+            if _depth(book) < float(min_depth):
+                block("depth_below_min")
+                continue
+            mid = round((best_bid + best_ask) / 2.0, 8)
+            fair = _model_fair_value(category, mid, model_report)
+            if fair is None:
+                block("missing_model_fair_value")
+                continue
+            fair_value = round(float(fair["fair_value"]), 6)
+            quote_bid = round(fair_value - float(maker_margin), 6)
+            quote_ask = round(fair_value + float(maker_margin), 6)
+            emitted = False
+            if best_bid < quote_bid < best_ask:
+                emitted = True
+                quotes.append(
+                    {
+                        "strategy_id": f"{STRATEGY_ID}_focus",
+                        "category": category,
+                        "market_slug": row.get("market_slug"),
+                        "event_slug": row.get("event_slug"),
+                        "token_id": token_id,
+                        "quote_type": "maker_bid",
+                        "fair_value": fair_value,
+                        "quote_price": quote_bid,
+                        "current_best_bid": best_bid,
+                        "current_best_ask": best_ask,
+                        "spread": spread,
+                        "model_key": fair.get("model_key"),
+                        "model_sample_count": fair.get("sample_count"),
+                        "rebate_separate_from_core_markout": True,
+                        "paper_only": True,
+                        "counts_for_live_gate": False,
+                        "live_order_path": False,
+                    }
+                )
+            if best_bid < quote_ask < best_ask:
+                emitted = True
+                quotes.append(
+                    {
+                        "strategy_id": f"{STRATEGY_ID}_focus",
+                        "category": category,
+                        "market_slug": row.get("market_slug"),
+                        "event_slug": row.get("event_slug"),
+                        "token_id": token_id,
+                        "quote_type": "maker_ask",
+                        "fair_value": fair_value,
+                        "quote_price": quote_ask,
+                        "current_best_bid": best_bid,
+                        "current_best_ask": best_ask,
+                        "spread": spread,
+                        "model_key": fair.get("model_key"),
+                        "model_sample_count": fair.get("sample_count"),
+                        "rebate_separate_from_core_markout": True,
+                        "paper_only": True,
+                        "counts_for_live_gate": False,
+                        "live_order_path": False,
+                    }
+                )
+            if not emitted:
+                block("model_quote_not_inside_spread")
+    return {
+        "schema_version": f"{SCHEMA_VERSION}.focus",
+        "strategy_id": f"{STRATEGY_ID}_focus",
+        "scope": "polymarket_only",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+        "top_focus_categories": top_categories,
+        "quote_count": len(quotes),
+        "inferred_fill_count": 0,
+        "markout_count": 0,
+        "mean_markout_without_rebate": None,
+        "mean_markout_with_rebate": None,
+        "blocker_counts": dict(sorted(blocker_counts.items())),
+        "quotes": quotes,
+        "inferred_fills": [],
+        "markouts": [],
+    }
+
+
 def write_json(path: str | Path, payload: Dict[str, Any]) -> None:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -173,4 +321,13 @@ def load_jsonl(path: str | Path) -> List[Dict[str, Any]]:
     return rows
 
 
-__all__ = ["SCHEMA_VERSION", "STRATEGY_ID", "build_maker_shadow_report", "load_json", "load_jsonl", "write_json", "write_jsonl"]
+__all__ = [
+    "SCHEMA_VERSION",
+    "STRATEGY_ID",
+    "build_maker_shadow_focus_report",
+    "build_maker_shadow_report",
+    "load_json",
+    "load_jsonl",
+    "write_json",
+    "write_jsonl",
+]
