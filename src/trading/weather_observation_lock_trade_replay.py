@@ -126,6 +126,136 @@ def _proxy_summary(rows: List[Dict[str, Any]], field: str) -> List[Dict[str, Any
     return output
 
 
+def _average(values: Iterable[Any]) -> Optional[float]:
+    numbers = [_safe_float(value) for value in values]
+    numbers = [float(value) for value in numbers if value is not None]
+    if not numbers:
+        return None
+    return round(sum(numbers) / len(numbers), 6)
+
+
+def _attribution_group(rows: List[Dict[str, Any]], field: str, *, keys: Iterable[str]) -> List[Dict[str, Any]]:
+    keyed: Dict[str, List[Dict[str, Any]]] = {str(key): [] for key in keys}
+    for row in rows:
+        key = _text(row.get(field)) or "unknown"
+        keyed.setdefault(key, []).append(row)
+    output: List[Dict[str, Any]] = []
+    for key, group in keyed.items():
+        candidates = [row for row in group if row.get("approximate_hit_price") is not None]
+        pnl_rows = [row for row in candidates if row.get("trade_replay_pnl_cents") is not None]
+        output.append(
+            {
+                field: key,
+                "signal_count": len(
+                    {
+                        (
+                            row.get("market_slug"),
+                            row.get("token_id"),
+                            row.get("replay_time"),
+                        )
+                        for row in group
+                    }
+                ),
+                "trade_proxy_candidate_count": len(candidates),
+                "trade_proxy_pnl_cents": (
+                    round(sum(float(row.get("trade_replay_pnl_cents") or 0.0) for row in pnl_rows), 6)
+                    if pnl_rows
+                    else None
+                ),
+                "average_entry_price": _average(row.get("approximate_hit_price") for row in candidates),
+                "average_size_at_or_better": _average(row.get("size_at_or_better") for row in candidates),
+            }
+        )
+    return output
+
+
+def build_observation_lock_trade_proxy_attribution(
+    *,
+    replay_report: Dict[str, Any],
+) -> Dict[str, Any]:
+    rows = [row for row in replay_report.get("rows") or [] if isinstance(row, dict)]
+    summary = replay_report.get("summary") if isinstance(replay_report.get("summary"), dict) else {}
+    candidates = [row for row in rows if row.get("approximate_hit_price") is not None]
+    candidate_keys = [
+        (row.get("market_slug"), row.get("token_id"), row.get("replay_time"))
+        for row in candidates
+    ]
+    first_by_signal: Dict[Tuple[Any, Any, Any], Dict[str, Any]] = {}
+    window_order = {name: index for index, (name, _, _) in enumerate(WINDOWS)}
+    for row in candidates:
+        key = (row.get("market_slug"), row.get("token_id"), row.get("replay_time"))
+        current = first_by_signal.get(key)
+        if current is None or window_order.get(str(row.get("window")), 999) < window_order.get(str(current.get("window")), 999):
+            first_by_signal[key] = row
+    deduped = list(first_by_signal.values())
+    deduped_pnl_rows = [row for row in deduped if row.get("trade_replay_pnl_cents") is not None]
+    by_bucket = _attribution_group(rows, "bucket_type", keys=("eq", "ge", "le", "range"))
+    by_lock_state = _attribution_group(
+        rows,
+        "lock_state",
+        keys=sorted({_text(row.get("lock_state")) or "unknown" for row in rows}),
+    )
+    by_window = _attribution_group(rows, "window", keys=[name for name, _, _ in WINDOWS])
+    eq_row = next((row for row in by_bucket if row.get("bucket_type") == "eq"), {})
+    total_pnl = _safe_float(summary.get("trade_proxy_pnl_cents"))
+    eq_pnl = _safe_float(eq_row.get("trade_proxy_pnl_cents"))
+    eq_primary = bool(
+        eq_pnl is not None
+        and total_pnl is not None
+        and total_pnl != 0
+        and abs(eq_pnl) / abs(total_pnl) >= 0.5
+    )
+    top_rows = sorted(
+        candidates,
+        key=lambda row: float(row.get("trade_replay_pnl_cents") or 0.0),
+        reverse=True,
+    )[:20]
+    top_fields = [
+        "market_slug",
+        "token_id",
+        "bucket_type",
+        "lock_state",
+        "locked_side",
+        "replay_time",
+        "first_trade_at",
+        "window",
+        "approximate_hit_price",
+        "size_at_or_better",
+        "payout",
+        "trade_replay_pnl_cents",
+        "direction_confidence",
+        "can_count_as_real_pnl",
+        "can_count_as_trade_proxy",
+    ]
+    return {
+        "schema_version": f"{SCHEMA_VERSION}.attribution",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+        "global": {
+            "locked_signal_count": summary.get("locked_signal_count"),
+            "trade_proxy_candidate_count": len(candidates),
+            "trade_proxy_pnl_cents": summary.get("trade_proxy_pnl_cents"),
+            "unique_signal_count": len(set(candidate_keys)),
+            "unique_market_count": len({_text(row.get("market_slug")) for row in candidates if _text(row.get("market_slug"))}),
+            "duplicate_window_count": max(0, len(candidates) - len(set(candidate_keys))),
+        },
+        "by_bucket_type": by_bucket,
+        "by_lock_state": by_lock_state,
+        "by_window": by_window,
+        "top_contributing_rows": [{field: row.get(field) for field in top_fields} for row in top_rows],
+        "deduplicated": {
+            "deduped_trade_proxy_candidate_count": len(deduped),
+            "deduped_trade_proxy_pnl_cents": (
+                round(sum(float(row.get("trade_replay_pnl_cents") or 0.0) for row in deduped_pnl_rows), 6)
+                if deduped_pnl_rows
+                else None
+            ),
+        },
+        "eq_dead_no_lock_is_primary_proxy_alpha": eq_primary,
+    }
+
+
 def build_observation_lock_trade_replay_report(
     *,
     tradability_report: Dict[str, Any],
@@ -260,6 +390,9 @@ def build_observation_lock_trade_replay_report(
         "live_order_path": False,
         "summary": summary,
         "rows": rows,
+        "attribution": build_observation_lock_trade_proxy_attribution(
+            replay_report={"summary": summary, "rows": rows}
+        ),
     }
 
 
@@ -274,6 +407,7 @@ def load_json(path: str | Path) -> Dict[str, Any]:
 __all__ = [
     "SCHEMA_VERSION",
     "WINDOWS",
+    "build_observation_lock_trade_proxy_attribution",
     "build_observation_lock_trade_replay_report",
     "load_json",
     "write_json",

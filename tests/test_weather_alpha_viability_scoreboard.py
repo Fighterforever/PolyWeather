@@ -42,3 +42,24 @@ def test_alpha_viability_scoreboard_continues_positive_historical_proxy_for_forw
     assert "observation_lock_trade_proxy" in report["summary"]["continue_strategy_ids"]
     assert report["historical_trade_proxy_guidance"]["sampler_mode"] == "aggressive"
     assert report["historical_trade_proxy_guidance"]["prioritized_station_codes"] == ["UUWW"]
+
+
+def test_alpha_viability_scoreboard_adds_eq_dead_no_lock_strategy():
+    report = build_alpha_viability_scoreboard(
+        eq_dead_no_trade_replay_report={
+            "summary": {
+                "breached_eq_signal_count": 4,
+                "deduped_trade_proxy_candidate_count": 2,
+                "deduped_trade_proxy_pnl_cents": 12.0,
+                "by_station": [{"station_code": "UUWW", "trade_proxy_pnl_cents": 12.0}],
+                "by_time_to_close": [{"time_to_close_bucket": "gt_2h", "trade_proxy_pnl_cents": 12.0}],
+            }
+        },
+        eq_dead_no_sampler_report={"paper_fill_count": 0},
+        generated_at="2026-06-28T00:00:00Z",
+    )
+
+    row = _row(report, "eq_dead_no_lock")
+    assert row["status"] == "historical_proxy_positive_needs_forward_eq_dead_no_sampling"
+    assert "eq_dead_no_lock" in report["summary"]["continue_strategy_ids"]
+    assert row["live_eligible"] is False

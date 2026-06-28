@@ -491,7 +491,7 @@ def _market_reflection_state(
     min_executable_edge: float,
     min_dead_side_bid: float,
 ) -> str:
-    if locked_side not in {"YES", "NO"} or bucket_type not in {"ge", "le"}:
+    if locked_side not in {"YES", "NO"} or bucket_type not in {"ge", "le", "eq"}:
         return "not_locked"
     if (
         execution.get("executable_price_source_type") == "direct_locked_side_book"
@@ -623,7 +623,10 @@ def build_observation_lock_signal_row(
         upper_threshold=upper_threshold,
         official_current_high=obs["official_current_high"],
     )
-    lock_is_immutable = lock_state in {"ge_yes_locked", "le_yes_dead_no_locked"}
+    exact_dead_no_lock = bucket_type == "eq" and lock_state == "eq_yes_dead_no_locked" and locked_side == "NO"
+    eq_yes_prediction_forbidden = bucket_type == "eq" and not exact_dead_no_lock
+    strategy_id = "eq_dead_no_lock" if exact_dead_no_lock else "observation_lock"
+    lock_is_immutable = lock_state in {"ge_yes_locked", "le_yes_dead_no_locked", "eq_yes_dead_no_locked"}
     freshness = _freshness_fields(
         obs=obs,
         generated_at=generated_at or _now_iso(),
@@ -708,10 +711,14 @@ def build_observation_lock_signal_row(
         blockers.append("blocked_by_observation_anomaly")
     if price_bucket == DUST_PRICE_BUCKET:
         blockers.append("dust_price_bucket_not_alpha")
-    if bucket_type == "eq":
-        blockers.append("eq_exact_not_alpha")
+    if bucket_type == "eq" and not exact_dead_no_lock:
+        blockers.append("exact_yes_prediction_unstable")
+    if exact_dead_no_lock and execution.get("executable_price_source_type") != "direct_locked_side_book":
+        blockers.append("eq_dead_no_requires_direct_no_ask")
 
-    if bucket_type == "eq" or price_bucket == DUST_PRICE_BUCKET:
+    if bucket_type == "eq" and not exact_dead_no_lock:
+        decision = "shadow"
+    elif price_bucket == DUST_PRICE_BUCKET:
         decision = "shadow"
     elif not locked_side or lock_state in {"ge_not_locked", "le_not_locked", "range_not_locked", "eq_not_locked", "missing_intraday_observation", "unsupported_bucket"}:
         decision = "reject"
@@ -727,6 +734,11 @@ def build_observation_lock_signal_row(
         "paper_only": True,
         "counts_for_live_gate": False,
         "live_order_path": False,
+        "strategy_id": strategy_id,
+        "eq_yes_prediction_forbidden": bool(eq_yes_prediction_forbidden),
+        "exact_dead_no_lock_candidate": bool(exact_dead_no_lock and decision == "candidate"),
+        "live_gate_excluded_reason": "exact_dead_no_needs_forward_evidence" if exact_dead_no_lock else None,
+        "eq_yes_prediction_status": "forbidden_live" if eq_yes_prediction_forbidden else None,
         "market_slug": row.get("market_slug"),
         "token_id": row.get("token_id"),
         "orderbook_snapshot_id": row.get("orderbook_snapshot_id") or row.get("snapshot_id"),
@@ -789,6 +801,7 @@ def build_observation_lock_signal_report(
     min_executable_edge: float = 0.0,
     max_spread: float = 0.03,
     min_ask_depth: float = 1.0,
+    default_cost: float = 0.005,
     min_dead_side_bid: float = 0.005,
     min_dead_side_bid_depth: float = 1.0,
 ) -> Dict[str, Any]:
@@ -804,6 +817,7 @@ def build_observation_lock_signal_report(
             min_executable_edge=min_executable_edge,
             max_spread=max_spread,
             min_ask_depth=min_ask_depth,
+            default_cost=default_cost,
             min_dead_side_bid=min_dead_side_bid,
             min_dead_side_bid_depth=min_dead_side_bid_depth,
             market_side_index=market_side_index,
@@ -895,6 +909,15 @@ def build_observation_lock_signal_report(
     market_already_reflected_lock_count = len(
         [row for row in signal_rows if row.get("market_reflection_state") == "market_already_reflected_lock"]
     )
+    eq_dead_no_lock_count = len([row for row in signal_rows if row.get("strategy_id") == "eq_dead_no_lock"])
+    eq_dead_no_candidate_count = len(
+        [
+            row
+            for row in signal_rows
+            if row.get("strategy_id") == "eq_dead_no_lock" and row.get("decision") == "candidate"
+        ]
+    )
+    eq_yes_prediction_forbidden_count = len([row for row in signal_rows if row.get("eq_yes_prediction_forbidden")])
     visible_station_count = len(
         {
             str(row.get("station_code"))
@@ -926,6 +949,9 @@ def build_observation_lock_signal_report(
             "dead_side_capture_candidate_count": dead_side_capture_candidate_count,
             "dead_side_capture_positive_edge_count": dead_side_capture_positive_edge_count,
             "market_already_reflected_lock_count": market_already_reflected_lock_count,
+            "eq_dead_no_lock_count": eq_dead_no_lock_count,
+            "eq_dead_no_candidate_count": eq_dead_no_candidate_count,
+            "eq_yes_prediction_forbidden_count": eq_yes_prediction_forbidden_count,
             "candidate_count": decisions.get("candidate", 0),
             "watch_count": decisions.get("watch", 0),
             "shadow_count": decisions.get("shadow", 0),

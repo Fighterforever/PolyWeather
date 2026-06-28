@@ -25,6 +25,7 @@ DEFAULT_TRADE_TAPE = Path("evidence/historical_markets/polymarket_trade_tape.jso
 DEFAULT_CLOSED = Path("evidence/historical_markets/polymarket_closed_weather_markets.jsonl")
 DEFAULT_REPORT = Path("evidence/historical_replay/observation_lock_trade_replay_report.json")
 DEFAULT_ROWS = Path("evidence/historical_replay/observation_lock_trade_replay_rows.jsonl")
+DEFAULT_ATTRIBUTION = Path("evidence/historical_replay/observation_lock_trade_proxy_attribution.json")
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -34,6 +35,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--closed-markets", default=str(DEFAULT_CLOSED))
     parser.add_argument("--summary-output", default=str(DEFAULT_REPORT))
     parser.add_argument("--rows-output", default=str(DEFAULT_ROWS))
+    parser.add_argument("--attribution-output", default=str(DEFAULT_ATTRIBUTION))
     parser.add_argument("--generated-at", default=None)
     return parser.parse_args(argv)
 
@@ -48,6 +50,7 @@ def main(argv: list[str] | None = None) -> None:
     )
     write_json(args.summary_output, report)
     write_jsonl(args.rows_output, report["rows"])
+    write_json(args.attribution_output, report.get("attribution") or {})
     print(json.dumps(report["summary"], ensure_ascii=False, indent=2, sort_keys=True))
 
 

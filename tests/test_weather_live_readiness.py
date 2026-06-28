@@ -161,6 +161,27 @@ def test_readiness_report_blocks_empty_journal_without_current_signal(tmp_path):
     assert report["hard_conclusion"] == "只能继续 paper"
 
 
+def test_readiness_blocks_eq_dead_no_lock_candidate_without_separate_gate(tmp_path):
+    signal_report = {
+        "schema_version": "polyweather_weather_observation_lock_signal.v1",
+        "summary": {"candidate_count": 1, "watch_count": 0, "eq_dead_no_candidate_count": 1},
+        "rows": [
+            {
+                "strategy_id": "eq_dead_no_lock",
+                "decision": "candidate",
+                "counts_for_live_gate": False,
+                "live_gate_excluded_reason": "exact_dead_no_needs_forward_evidence",
+            }
+        ],
+    }
+
+    report = build_live_readiness_report(journal_dir=tmp_path, signal_report=signal_report)
+
+    assert report["signal"]["current_candidate_count"] == 1
+    assert report["live_gate"] is False
+    assert report["live_authorization_pct"] == 0
+
+
 def test_readiness_report_surfaces_negative_markout_and_missing_resolution(tmp_path):
     _append_jsonl(tmp_path / "paper_fills.jsonl", [_fill(1)])
     _append_jsonl(tmp_path / "markouts.jsonl", [_markout(1, markout_cents=-0.1)])

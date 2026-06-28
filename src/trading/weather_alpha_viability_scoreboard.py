@@ -67,6 +67,10 @@ def _main_blocker(status: str) -> str:
         "forward_paper_positive": "paper_only_review_required",
         "no_observed_executable_opportunity": "no_trade_proxy_or_forward_fill",
         "historical_proxy_positive_needs_forward_execution_sampling": "needs_forward_paper_execution_sampling",
+        "historical_proxy_positive_needs_forward_eq_dead_no_sampling": "needs_forward_eq_dead_no_sampling",
+        "forward_paper_positive": "paper_only_review_required",
+        "alpha_candidate_paper_only_review": "paper_only_review_required",
+        "waiting_for_exact_breach_liquidity": "no_current_exact_breach_liquidity",
         "historical_proxy_nonpositive_or_unclear": "historical_trade_proxy_not_positive",
     }.get(status, "insufficient_evidence")
 
@@ -78,6 +82,9 @@ def _next_action(status: str) -> str:
         "forward_paper_positive": "paper_only_review_no_live_gate",
         "no_observed_executable_opportunity": "pause_or_reduce_sampler_frequency",
         "historical_proxy_positive_needs_forward_execution_sampling": "focus_forward_paper_sampler_on_positive_station_window",
+        "historical_proxy_positive_needs_forward_eq_dead_no_sampling": "focus_forward_paper_sampler_on_eq_dead_no_lock",
+        "alpha_candidate_paper_only_review": "paper_only_review_no_live_gate",
+        "waiting_for_exact_breach_liquidity": "keep_eq_dead_no_sampler_running_until_direct_no_ask_appears",
         "historical_proxy_nonpositive_or_unclear": "pause_strategy_or_require_new_tradeability_filter",
     }.get(status, "collect_targeted_evidence")
 
@@ -148,6 +155,10 @@ def build_alpha_viability_scoreboard(
     archived_overlap_replay_report: Dict[str, Any] | None = None,
     observation_lock_tradability_report: Dict[str, Any] | None = None,
     observation_lock_trade_replay_report: Dict[str, Any] | None = None,
+    eq_dead_no_trade_replay_report: Dict[str, Any] | None = None,
+    eq_dead_no_sampler_report: Dict[str, Any] | None = None,
+    eq_dead_no_markout_report: Dict[str, Any] | None = None,
+    eq_dead_no_resolved_audit_report: Dict[str, Any] | None = None,
     threshold_latency_trade_replay_report: Dict[str, Any] | None = None,
     active_sampler_report: Dict[str, Any] | None = None,
     non_dust_due_runner_status: Dict[str, Any] | None = None,
@@ -158,6 +169,10 @@ def build_alpha_viability_scoreboard(
     archived = _compact(archived_overlap_replay_report or {})
     tradability = _summary(observation_lock_tradability_report or {})
     ol_trade = _summary(observation_lock_trade_replay_report or {})
+    eq_trade = _summary(eq_dead_no_trade_replay_report or {})
+    eq_sampler = _compact(eq_dead_no_sampler_report or {})
+    eq_markout = _compact(eq_dead_no_markout_report or {})
+    eq_audit = _compact(eq_dead_no_resolved_audit_report or {})
     tl_trade = _summary(threshold_latency_trade_replay_report or {})
     active = _summary(active_sampler_report or {})
     due = _compact(non_dust_due_runner_status or {})
@@ -165,6 +180,10 @@ def build_alpha_viability_scoreboard(
     strict_resolved_pnl = _safe_float(strict.get("resolved_pnl_cents"))
     archived_resolved_pnl = _safe_float(archived.get("resolved_pnl_cents"))
     ol_proxy_pnl = _safe_float(ol_trade.get("trade_proxy_pnl_cents"))
+    eq_proxy_pnl = _safe_float(eq_trade.get("deduped_trade_proxy_pnl_cents") or eq_trade.get("trade_proxy_pnl_cents"))
+    eq_forward_fill_count = _safe_int(eq_sampler.get("paper_fill_count") or eq_sampler.get("fill_count"))
+    eq_markout_mean = _safe_float(eq_markout.get("mean_markout_cents"))
+    eq_resolved_pnl = _safe_float(eq_audit.get("resolved_pnl_cents"))
     tl_proxy_pnl = _safe_float(tl_trade.get("trade_proxy_pnl_cents"))
     active_fill_count = _safe_int(active.get("paper_fill_count") or active.get("fill_count"))
     active_resolved_pnl = _safe_float(active.get("resolved_pnl_cents"))
@@ -221,6 +240,33 @@ def build_alpha_viability_scoreboard(
             non_dust_only=True,
         )
     )
+    if eq_resolved_pnl is not None and eq_resolved_pnl > 0:
+        eq_status = "alpha_candidate_paper_only_review"
+    elif eq_resolved_pnl is not None and eq_resolved_pnl < 0:
+        eq_status = "failed_negative_resolved_pnl"
+    elif eq_forward_fill_count > 0 and (eq_markout_mean is None or eq_markout_mean >= 0):
+        eq_status = "forward_paper_positive_pending_resolution"
+    elif _safe_int(eq_trade.get("deduped_trade_proxy_candidate_count") or eq_trade.get("trade_proxy_candidate_count")) > 0 and eq_proxy_pnl is not None and eq_proxy_pnl > 0:
+        eq_status = "historical_proxy_positive_needs_forward_eq_dead_no_sampling"
+    elif _safe_int(eq_sampler.get("executable_candidate_count")) == 0:
+        eq_status = "waiting_for_exact_breach_liquidity"
+    else:
+        eq_status = "historical_proxy_nonpositive_or_unclear"
+    rows.append(
+        _row(
+            strategy_id="eq_dead_no_lock",
+            status=eq_status,
+            signal_count=_safe_int(eq_trade.get("breached_eq_signal_count") or eq_sampler.get("breached_eq_count")),
+            executable_proxy_count=_safe_int(eq_trade.get("deduped_trade_proxy_candidate_count") or eq_sampler.get("executable_candidate_count")),
+            forward_paper_fill_count=eq_forward_fill_count,
+            resolved_fill_count=_safe_int(eq_audit.get("resolved_fill_count")),
+            resolved_pnl_cents=eq_resolved_pnl,
+            trade_proxy_pnl_cents=eq_proxy_pnl,
+            non_dust_only=True,
+            main_blocker=_main_blocker(eq_status) if eq_status not in {"waiting_for_exact_breach_liquidity"} else "no_current_direct_no_liquidity",
+            next_action=_next_action(eq_status),
+        )
+    )
     tl_status = _status(
         trade_proxy_candidate_count=_safe_int(tl_trade.get("trade_proxy_candidate_count")),
         trade_proxy_pnl_cents=tl_proxy_pnl,
@@ -268,7 +314,12 @@ def build_alpha_viability_scoreboard(
     continue_strategies = [
         row["strategy_id"]
         for row in rows
-        if row["status"] in {"historical_proxy_positive_needs_forward_execution_sampling", "forward_paper_positive_pending_resolution"}
+        if row["status"] in {
+            "historical_proxy_positive_needs_forward_execution_sampling",
+            "historical_proxy_positive_needs_forward_eq_dead_no_sampling",
+            "forward_paper_positive_pending_resolution",
+            "alpha_candidate_paper_only_review",
+        }
     ]
     pause_strategies = [
         row["strategy_id"]
@@ -278,8 +329,17 @@ def build_alpha_viability_scoreboard(
     ]
     ol_guidance = _positive_station_guidance(observation_lock_trade_replay_report or {})
     tl_guidance = _positive_station_guidance(threshold_latency_trade_replay_report or {})
-    prioritized_station_codes = sorted(set(ol_guidance["prioritized_station_codes"] + tl_guidance["prioritized_station_codes"]))
-    prioritized_windows = sorted(set(ol_guidance["prioritized_time_to_close_windows"] + tl_guidance["prioritized_time_to_close_windows"]))
+    eq_guidance = _positive_station_guidance(eq_dead_no_trade_replay_report or {})
+    prioritized_station_codes = sorted(
+        set(ol_guidance["prioritized_station_codes"] + tl_guidance["prioritized_station_codes"] + eq_guidance["prioritized_station_codes"])
+    )
+    prioritized_windows = sorted(
+        set(
+            ol_guidance["prioritized_time_to_close_windows"]
+            + tl_guidance["prioritized_time_to_close_windows"]
+            + eq_guidance["prioritized_time_to_close_windows"]
+        )
+    )
     if continue_strategies:
         sampler_mode = "aggressive"
     elif any(_safe_int(row.get("executable_proxy_count")) > 0 for row in rows):
@@ -343,6 +403,27 @@ def update_profit_strategy_state_report(
     updated["live_order_path"] = False
     updated["historical_trade_proxy_guidance"] = scoreboard.get("historical_trade_proxy_guidance")
     updated["alpha_viability_scoreboard_summary"] = scoreboard.get("summary")
+    active = updated.setdefault("active_alpha_research", {})
+    if isinstance(active, dict):
+        rows = {row.get("strategy_id"): row for row in scoreboard.get("rows") or [] if isinstance(row, dict)}
+        eq_row = rows.get("eq_dead_no_lock") or {}
+        active["eq_dead_no_lock"] = {
+            "status": eq_row.get("status") or "waiting_for_exact_breach_liquidity",
+            "paper_only": True,
+            "counts_for_live_gate": False,
+            "live_order_path": False,
+            "trade_proxy_pnl_cents": eq_row.get("trade_proxy_pnl_cents"),
+            "forward_paper_fill_count": eq_row.get("forward_paper_fill_count"),
+            "next_action": eq_row.get("next_action"),
+            "report_path": "evidence/eq_dead_no/eq_dead_no_execution_sampler_report.json",
+            "historical_replay_path": "evidence/eq_dead_no/eq_dead_no_trade_replay_report.json",
+        }
+        threshold = active.get("threshold_latency")
+        threshold_row = rows.get("threshold_latency_forward_paper") or {}
+        if isinstance(threshold, dict) and int(threshold_row.get("forward_paper_fill_count") or 0) <= 0:
+            threshold["status"] = "reduced_frequency_no_current_candidate"
+            threshold["next_action"] = "keep_observation_logging_reduce_execution_sampling_until_new_evidence"
+            threshold["live_order_path"] = False
     return updated
 
 

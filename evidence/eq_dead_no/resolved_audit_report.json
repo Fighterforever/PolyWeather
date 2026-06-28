@@ -1,0 +1,14 @@
+{
+  "audit_count": 0,
+  "counts_for_live_gate": false,
+  "fill_count": 0,
+  "live_order_path": false,
+  "paper_only": true,
+  "paths": {
+    "resolved_audits": "evidence/eq_dead_no/resolved_audits.jsonl"
+  },
+  "resolved_fill_count": 0,
+  "resolved_pnl_cents": null,
+  "schema_version": "polyweather_eq_dead_no_resolved_audit_report.v1",
+  "unresolved_fill_count": 0
+}

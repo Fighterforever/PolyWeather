@@ -100,13 +100,58 @@ def test_ge_bucket_not_locked_below_threshold():
     assert "observation_not_locked" in row["blockers"]
 
 
-def test_eq_dead_yes_is_shadow_only_not_candidate():
-    report = _report([_row(bucket_type="eq", threshold=27, best_bid=0.20)], [_obs(28)])
+def test_eq_yes_prediction_remains_forbidden():
+    report = _report([_row(bucket_type="eq", threshold=27, best_bid=0.20)], [_obs(27)])
 
     row = _first(report)
-    assert row["lock_state"] == "eq_yes_dead_no_locked"
+    assert row["lock_state"] == "eq_not_locked"
     assert row["decision"] == "shadow"
-    assert "eq_exact_not_alpha" in row["blockers"]
+    assert row["eq_yes_prediction_forbidden"] is True
+    assert row["eq_yes_prediction_status"] == "forbidden_live"
+    assert "exact_yes_prediction_unstable" in row["blockers"]
+
+
+def test_eq_dead_no_lock_can_be_paper_candidate():
+    rows = [
+        _row(bucket_type="eq", threshold=27, side="yes", token_id="yes-token", market_slug="eq-market"),
+        _row(bucket_type="eq", threshold=27, side="no", token_id="no-token", market_slug="eq-market", best_ask=0.8),
+    ]
+    report = _report(rows, [_obs(28)])
+    row = [item for item in report["rows"] if item["token_id"] == "no-token"][0]
+
+    assert row["lock_state"] == "eq_yes_dead_no_locked"
+    assert row["locked_side"] == "NO"
+    assert row["strategy_id"] == "eq_dead_no_lock"
+    assert row["decision"] == "candidate"
+    assert row["exact_dead_no_lock_candidate"] is True
+    assert row["eq_yes_prediction_forbidden"] is False
+    assert row["live_gate_excluded_reason"] == "exact_dead_no_needs_forward_evidence"
+
+
+def test_eq_dead_no_lock_requires_direct_no_ask():
+    report = _report([_row(bucket_type="eq", threshold=27, side="yes", token_id="yes-token", best_bid=0.2)], [_obs(28)])
+    row = _first(report)
+
+    assert row["lock_state"] == "eq_yes_dead_no_locked"
+    assert row["locked_side"] == "NO"
+    assert row["strategy_id"] == "eq_dead_no_lock"
+    assert row["decision"] == "watch"
+    assert "eq_dead_no_requires_direct_no_ask" in row["blockers"]
+
+
+def test_eq_dead_no_lock_not_counted_for_live_gate():
+    rows = [
+        _row(bucket_type="eq", threshold=27, side="yes", token_id="yes-token", market_slug="eq-market"),
+        _row(bucket_type="eq", threshold=27, side="no", token_id="no-token", market_slug="eq-market", best_ask=0.8),
+    ]
+    report = _report(rows, [_obs(28)])
+    row = [item for item in report["rows"] if item["token_id"] == "no-token"][0]
+
+    assert row["decision"] == "candidate"
+    assert row["counts_for_live_gate"] is False
+    assert row["live_order_path"] is False
+    assert report["counts_for_live_gate"] is False
+    assert report["live_order_path"] is False
 
 
 def test_dust_price_locked_signal_is_shadow_only():

@@ -1,0 +1,30 @@
+{
+  "breached_eq_count": 0,
+  "candidate_samples": [],
+  "counts_for_live_gate": false,
+  "direct_no_book_count": 0,
+  "exclude_dust": true,
+  "executable_candidate_count": 0,
+  "generated_at": "2026-06-28T08:07:35Z",
+  "live_order_path": false,
+  "max_entry_price": 0.95,
+  "no_ask_available_count": 0,
+  "orderbook_snapshot_count": 0,
+  "orderbook_snapshot_written_count": 0,
+  "paper_fill_count": 0,
+  "paper_fill_written_count": 0,
+  "paper_only": true,
+  "paths": {
+    "orderbook_snapshots": "evidence/eq_dead_no/orderbook_snapshots.jsonl",
+    "paper_fills": "evidence/eq_dead_no/paper_fills.jsonl",
+    "signal_report": "evidence/eq_dead_no/eq_dead_no_signal_report.json",
+    "watch_rows": "evidence/eq_dead_no/watch_rows.jsonl"
+  },
+  "price_band_counts": [],
+  "reject_reason_counts": [],
+  "scanned_eq_rows": 198,
+  "schema_version": "polyweather_eq_dead_no_execution_sampler.v1",
+  "top_watch_samples": [],
+  "watch_count": 0,
+  "watch_rows_written_count": 0
+}

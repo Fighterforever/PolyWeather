@@ -1,6 +1,6 @@
 {
   "counts_for_live_gate": false,
-  "generated_at": "2026-06-28T08:00:00Z",
+  "generated_at": "2026-06-28T09:00:00Z",
   "historical_trade_proxy_guidance": {
     "guidance_reason": "positive_trade_proxy_found",
     "prioritized_station_codes": [
@@ -81,6 +81,21 @@
       "trade_proxy_pnl_cents": 94.002355
     },
     {
+      "executable_proxy_count": 11,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "main_blocker": "needs_forward_eq_dead_no_sampling",
+      "next_action": "focus_forward_paper_sampler_on_eq_dead_no_lock",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 55,
+      "status": "historical_proxy_positive_needs_forward_eq_dead_no_sampling",
+      "strategy_id": "eq_dead_no_lock",
+      "trade_proxy_pnl_cents": 48.502355
+    },
+    {
       "executable_proxy_count": 0,
       "forward_paper_fill_count": 0,
       "live_eligible": false,
@@ -129,7 +144,8 @@
   "schema_version": "polyweather_alpha_viability_scoreboard.v1",
   "summary": {
     "continue_strategy_ids": [
-      "observation_lock_trade_proxy"
+      "observation_lock_trade_proxy",
+      "eq_dead_no_lock"
     ],
     "counts_for_live_gate": false,
     "live_order_path": false,
@@ -141,7 +157,7 @@
       "threshold_latency_trade_proxy",
       "threshold_latency_forward_paper"
     ],
-    "strategy_count": 7,
+    "strategy_count": 8,
     "wait_strategy_ids": [
       "non_dust_threshold_cdf"
     ]

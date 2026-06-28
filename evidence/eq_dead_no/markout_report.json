@@ -1,0 +1,15 @@
+{
+  "available_markout_count": 0,
+  "counts_for_live_gate": false,
+  "fill_count": 0,
+  "live_order_path": false,
+  "markout_row_count": 0,
+  "mean_markout_cents": null,
+  "missing_snapshot_count": 0,
+  "paper_only": true,
+  "paths": {
+    "markouts": "evidence/eq_dead_no/markouts.jsonl"
+  },
+  "schema_version": "polyweather_eq_dead_no_markout_report.v1",
+  "status": "ready_waiting_for_paper_fills"
+}
