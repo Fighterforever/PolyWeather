@@ -36,6 +36,8 @@ DEFAULT_DUE = Path("evidence/non_dust_uuww_due_verdict.json")
 DEFAULT_BUCKET_FAMILY_ARBITRAGE = Path("evidence/bucket_family/basket_arbitrage_report.json")
 DEFAULT_BUCKET_FAMILY_LP_ARBITRAGE = Path("evidence/bucket_family/lp_arbitrage_report.json")
 DEFAULT_BUCKET_FAMILY_HISTORICAL = Path("evidence/bucket_family/basket_historical_replay_report.json")
+DEFAULT_MAKER_SHADOW_V2 = Path("evidence/maker_shadow_v2/report.json")
+DEFAULT_STATION_CONFUSION = Path("evidence/station_confusion/station_confusion_edge_report.json")
 DEFAULT_PROFIT_STATE = Path("evidence/profit_strategy_state_report.json")
 
 
@@ -57,6 +59,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--bucket-family-arbitrage-report", default=str(DEFAULT_BUCKET_FAMILY_ARBITRAGE))
     parser.add_argument("--bucket-family-lp-arbitrage-report", default=str(DEFAULT_BUCKET_FAMILY_LP_ARBITRAGE))
     parser.add_argument("--bucket-family-historical-replay-report", default=str(DEFAULT_BUCKET_FAMILY_HISTORICAL))
+    parser.add_argument("--maker-shadow-v2-report", default=str(DEFAULT_MAKER_SHADOW_V2))
+    parser.add_argument("--station-confusion-edge-report", default=str(DEFAULT_STATION_CONFUSION))
     parser.add_argument("--summary-output", default=str(DEFAULT_SCOREBOARD))
     parser.add_argument("--profit-strategy-state-output", default=str(DEFAULT_PROFIT_STATE))
     parser.add_argument("--generated-at", default=None)
@@ -82,6 +86,8 @@ def main(argv: list[str] | None = None) -> None:
         bucket_family_arbitrage_report=load_json(args.bucket_family_arbitrage_report),
         bucket_family_lp_arbitrage_report=load_json(args.bucket_family_lp_arbitrage_report),
         bucket_family_historical_replay_report=load_json(args.bucket_family_historical_replay_report),
+        maker_shadow_v2_report=load_json(args.maker_shadow_v2_report),
+        station_confusion_edge_report=load_json(args.station_confusion_edge_report),
         generated_at=args.generated_at,
     )
     write_json(args.summary_output, scoreboard)

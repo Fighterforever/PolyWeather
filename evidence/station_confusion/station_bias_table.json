@@ -1,0 +1,12 @@
+{
+  "counts_for_live_gate": false,
+  "generated_at": "2026-06-28T13:21:49Z",
+  "live_order_path": false,
+  "paired_rows": [],
+  "paper_only": true,
+  "platform": "polymarket",
+  "schema_version": "polyweather_station_bias_table.v1",
+  "station_bias_sample_count": 0,
+  "station_biases": [],
+  "strategy_id": "station_confusion_edge"
+}

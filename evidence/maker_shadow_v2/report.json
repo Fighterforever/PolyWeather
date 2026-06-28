@@ -1,0 +1,27 @@
+{
+  "adverse_selection_count": 0,
+  "by_bucket_type": [],
+  "by_price_bucket": [],
+  "by_station": [],
+  "counts_for_live_gate": false,
+  "estimated_rebate_cents": 0.0,
+  "generated_at": "2026-06-28T13:20:33Z",
+  "inferred_fill_count": 0,
+  "live_order_path": false,
+  "markout_count": 0,
+  "mean_markout_with_rebate": null,
+  "mean_markout_without_rebate": null,
+  "no_candidate_reason_counts": {
+    "bucket_not_ge_le": 198,
+    "dust_price": 7,
+    "missing_orderbook": 3,
+    "spread_below_min": 30,
+    "station_anomaly": 2
+  },
+  "paper_only": true,
+  "platform": "polymarket",
+  "quote_count": 0,
+  "schema_version": "polyweather_maker_shadow_v2.v1",
+  "stale_quote_count": 0,
+  "strategy_id": "maker_shadow_v2"
+}

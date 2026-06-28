@@ -16,8 +16,10 @@ def test_alpha_viability_scoreboard_pauses_strategy_without_trade_proxy_or_forwa
     )
 
     assert _row(report, "observation_lock_trade_proxy")["status"] == "collapsed_into_eq_dead_no_or_paused"
-    assert _row(report, "threshold_latency")["status"] == "paused_no_candidate"
+    assert _row(report, "threshold_latency")["status"] == "paused"
     assert report["summary"]["live_should_pause"] is True
+    assert report["scope"] == "polymarket_only"
+    assert all(row["platform"] == "polymarket" for row in report["rows"])
     assert report["live_order_path"] is False
 
 
@@ -66,7 +68,7 @@ def test_alpha_viability_scoreboard_keeps_eq_dead_no_monitoring_when_expanded_no
     )
 
     row = _row(report, "eq_dead_no_lock")
-    assert row["status"] == "eq_dead_no_proxy_not_robust_keep_monitoring_only"
+    assert row["status"] == "monitoring_only_not_robust"
     assert "eq_dead_no_lock" in report["summary"]["pause_strategy_ids"]
     assert row["live_eligible"] is False
 
@@ -145,7 +147,7 @@ def test_alpha_viability_scoreboard_adds_bucket_family_structural_rows():
     no = _row(report, "bucket_family_buy_all_no")
     mono = _row(report, "monotonic_threshold_pair")
     assert yes["status"] == "structural_arbitrage_forward_paper_started"
-    assert no["status"] == "no_current_structural_arbitrage"
+    assert no["status"] == "low_frequency_monitor_no_current_edge"
     assert mono["status"] == "structural_arbitrage_forward_paper_started"
     assert yes["live_eligible"] is False
     assert "bucket_family_buy_all_yes" in report["summary"]["continue_strategy_ids"]
@@ -208,5 +210,49 @@ def test_alpha_viability_scoreboard_waits_non_dust_when_no_structural_arbitrage(
         generated_at="2026-06-28T00:00:00Z",
     )
 
-    assert _row(report, "bucket_family_payoff_matrix_arbitrage")["status"] == "no_current_structural_arbitrage"
+    assert _row(report, "bucket_family_payoff_matrix_arbitrage")["status"] == "low_frequency_monitor_no_current_edge"
     assert report["summary"]["live_push_verdict"] == "wait_non_dust_due_only"
+
+
+def test_alpha_viability_scoreboard_adds_polymarket_only_maker_and_station_rows():
+    report = build_alpha_viability_scoreboard(
+        maker_shadow_v2_report={
+            "quote_count": 12,
+            "inferred_fill_count": 3,
+            "mean_markout_without_rebate": -0.2,
+            "mean_markout_with_rebate": -0.1,
+        },
+        station_confusion_edge_report={
+            "station_bias_sample_count": 5,
+            "candidate_count": 1,
+            "top_station_biases": [{"station_code": "UUWW", "historical_bias_mean": 2.0}],
+        },
+        non_dust_due_runner_status={"status": "waiting_due"},
+        generated_at="2026-06-28T00:00:00Z",
+    )
+
+    maker = _row(report, "maker_shadow_v2")
+    station = _row(report, "station_confusion_edge")
+    assert maker["status"] == "active_shadow_testing"
+    assert maker["forward_paper_fill_count"] == 3
+    assert station["status"] == "active_research"
+    assert station["signal_count"] == 1
+    assert report["summary"]["maker_shadow_v2"]["quote_count"] == 12
+    assert report["summary"]["station_confusion_edge"]["top_station_biases"][0]["station_code"] == "UUWW"
+    assert report["summary"]["live_push_status"] == "wait_non_dust_due_and_collect_polymarket_only_shadow_evidence"
+    assert report["live_order_path"] is False
+
+
+def test_alpha_viability_scoreboard_continues_maker_research_after_positive_shadow_sample():
+    report = build_alpha_viability_scoreboard(
+        maker_shadow_v2_report={
+            "quote_count": 50,
+            "inferred_fill_count": 30,
+            "mean_markout_without_rebate": 0.15,
+        },
+        generated_at="2026-06-28T00:00:00Z",
+    )
+
+    assert report["summary"]["live_push_status"] == "continue_paper_maker_research"
+    assert "maker_shadow_v2" in report["summary"]["continue_research_strategy_ids"]
+    assert report["live_order_path"] is False

@@ -1,0 +1,20 @@
+{
+  "active_candidate_count": 0,
+  "candidate_count": 0,
+  "counts_for_live_gate": false,
+  "generated_at": "2026-06-28T13:21:49Z",
+  "live_order_path": false,
+  "no_candidate_reason_counts": {
+    "ask_depth_below_min": 1,
+    "bias_sample_too_small": 10,
+    "bucket_not_ge_le": 198,
+    "dust_price": 10,
+    "side_not_yes_shadow": 21
+  },
+  "paper_only": true,
+  "platform": "polymarket",
+  "schema_version": "polyweather_station_confusion_edge.v1",
+  "station_bias_sample_count": 0,
+  "strategy_id": "station_confusion_edge",
+  "top_station_biases": []
+}

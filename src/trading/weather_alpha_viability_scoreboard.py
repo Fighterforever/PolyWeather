@@ -78,6 +78,12 @@ def _main_blocker(status: str) -> str:
         "waiting_for_exact_breach_liquidity": "no_current_exact_breach_liquidity",
         "historical_proxy_nonpositive_or_unclear": "historical_trade_proxy_not_positive",
         "structural_lp_arbitrage_forward_paper_started": "structural_lp_candidate_found_paper_only",
+        "active_shadow_testing": "collect_maker_shadow_markouts_without_live_orders",
+        "active_research": "collect_station_confusion_forward_evidence",
+        "low_frequency_monitor_no_current_edge": "no_current_structural_edge",
+        "monitoring_only_not_robust": "conservative_proxy_not_positive_after_outlier_removal",
+        "paused": "strategy_paused_low_value",
+        "killed": "strategy_killed_by_negative_or_reflected_evidence",
     }.get(status, "insufficient_evidence")
 
 
@@ -101,6 +107,12 @@ def _next_action(status: str) -> str:
         "no_current_structural_arbitrage": "keep_low_frequency_bucket_family_sampler_running",
         "historical_structural_edge_needs_forward_sampling": "forward_sample_bucket_family_arbitrage_with_real_orderbooks",
         "structural_lp_arbitrage_forward_paper_started": "write_lp_basket_paper_fills_and_track_resolution",
+        "active_shadow_testing": "collect_30_plus_inferred_fills_and_markouts_paper_only",
+        "active_research": "collect_station_confusion_forward_fills_paper_only",
+        "low_frequency_monitor_no_current_edge": "monitor_at_low_frequency_only",
+        "monitoring_only_not_robust": "keep_monitoring_only_no_frequency_increase",
+        "paused": "pause_sampler_or_run_at_reduced_frequency",
+        "killed": "do_not_continue_without_new_edge_hypothesis",
     }.get(status, "collect_targeted_evidence")
 
 
@@ -118,9 +130,11 @@ def _row(
     official_truth_coverage: Optional[float] = None,
     main_blocker: Optional[str] = None,
     next_action: Optional[str] = None,
+    platform: str = "polymarket",
 ) -> Dict[str, Any]:
     return {
         "strategy_id": strategy_id,
+        "platform": platform,
         "status": status,
         "signal_count": int(signal_count),
         "executable_proxy_count": int(executable_proxy_count),
@@ -133,6 +147,7 @@ def _row(
         "main_blocker": main_blocker or _main_blocker(status),
         "next_action": next_action or _next_action(status),
         "live_eligible": False,
+        "live_order_path": False,
     }
 
 
@@ -156,16 +171,16 @@ def _structural_status(
     if historical_approximate_count > 0 and historical_depth_count <= 0:
         return "historical_structural_edge_needs_forward_sampling"
     if family_count > 0:
-        return "no_current_structural_arbitrage"
-    return "no_current_structural_arbitrage"
+        return "low_frequency_monitor_no_current_edge"
+    return "low_frequency_monitor_no_current_edge"
 
 
 def _structural_lp_status(*, candidate_count: int, family_count: int) -> str:
     if candidate_count > 0:
         return "structural_lp_arbitrage_forward_paper_started"
     if family_count > 0:
-        return "no_current_structural_arbitrage"
-    return "no_current_structural_arbitrage"
+        return "low_frequency_monitor_no_current_edge"
+    return "low_frequency_monitor_no_current_edge"
 
 
 def _positive_station_guidance(report: Dict[str, Any]) -> Dict[str, Any]:
@@ -206,6 +221,8 @@ def build_alpha_viability_scoreboard(
     bucket_family_arbitrage_report: Dict[str, Any] | None = None,
     bucket_family_lp_arbitrage_report: Dict[str, Any] | None = None,
     bucket_family_historical_replay_report: Dict[str, Any] | None = None,
+    maker_shadow_v2_report: Dict[str, Any] | None = None,
+    station_confusion_edge_report: Dict[str, Any] | None = None,
     generated_at: Optional[str] = None,
 ) -> Dict[str, Any]:
     generated_at = generated_at or utc_now_iso()
@@ -222,6 +239,8 @@ def build_alpha_viability_scoreboard(
     bucket_arbitrage = _compact(bucket_family_arbitrage_report or {})
     bucket_lp = _compact(bucket_family_lp_arbitrage_report or {})
     bucket_historical = _compact(bucket_family_historical_replay_report or {})
+    maker_shadow = _compact(maker_shadow_v2_report or {})
+    station_confusion = _compact(station_confusion_edge_report or {})
 
     strict_resolved_pnl = _safe_float(strict.get("resolved_pnl_cents"))
     ol_proxy_pnl = _safe_float(ol_trade.get("trade_proxy_pnl_cents"))
@@ -269,13 +288,39 @@ def build_alpha_viability_scoreboard(
         "eq_dead_no_proxy_not_robust_keep_monitoring_only",
         "eq_dead_no_proxy_robust_enough_for_forward_sampling",
     }:
-        eq_status = expanded_status
+        eq_status = "monitoring_only_not_robust" if expanded_status == "eq_dead_no_proxy_not_robust_keep_monitoring_only" else expanded_status
     elif eq_robust_present and eq_proxy_robust:
         eq_status = "eq_dead_no_proxy_robust_enough_for_forward_sampling"
     else:
-        eq_status = "eq_dead_no_proxy_not_robust_keep_monitoring_only"
+        eq_status = "monitoring_only_not_robust"
 
     rows = [
+        _row(
+            strategy_id="maker_shadow_v2",
+            status="active_shadow_testing",
+            signal_count=_safe_int(maker_shadow.get("quote_count")),
+            executable_proxy_count=_safe_int(maker_shadow.get("quote_count")),
+            forward_paper_fill_count=_safe_int(maker_shadow.get("inferred_fill_count")),
+            trade_proxy_pnl_cents=_safe_float(maker_shadow.get("mean_markout_without_rebate")),
+            non_dust_only=True,
+            main_blocker="maker_inferred_fills_are_diagnostic_only",
+            next_action="collect_30_plus_inferred_fills_and_markouts_paper_only",
+        ),
+        _row(
+            strategy_id="station_confusion_edge",
+            status="active_research",
+            signal_count=_safe_int(station_confusion.get("candidate_count") or station_confusion.get("active_candidate_count")),
+            executable_proxy_count=_safe_int(station_confusion.get("candidate_count") or station_confusion.get("active_candidate_count")),
+            forward_paper_fill_count=_safe_int(station_confusion.get("forward_paper_fill_count")),
+            trade_proxy_pnl_cents=_safe_float(station_confusion.get("mean_markout_cents")),
+            non_dust_only=True,
+            main_blocker=(
+                "station_confusion_candidate_found_paper_only"
+                if _safe_int(station_confusion.get("candidate_count") or station_confusion.get("active_candidate_count")) > 0
+                else "no_current_station_confusion_candidate"
+            ),
+            next_action="collect_station_confusion_forward_fills_paper_only",
+        ),
         _row(
             strategy_id="bucket_family_buy_all_yes",
             status=_structural_status(
@@ -374,8 +419,8 @@ def build_alpha_viability_scoreboard(
             resolved_pnl_cents=eq_resolved_pnl,
             trade_proxy_pnl_cents=expanded_conservative_pnl if expanded_conservative_pnl is not None else (eq_conservative_pnl if eq_conservative_pnl is not None else eq_proxy_pnl),
             non_dust_only=True,
-            main_blocker="proxy_not_positive_after_outlier_removal" if eq_status == "eq_dead_no_proxy_not_robust_keep_monitoring_only" else "needs_forward_paper_execution_sampling",
-            next_action="keep_monitoring_only_no_frequency_increase" if eq_status == "eq_dead_no_proxy_not_robust_keep_monitoring_only" else "forward_sample_supported_exact_breaches_paper_only",
+            main_blocker="proxy_not_positive_after_outlier_removal" if eq_status == "monitoring_only_not_robust" else "needs_forward_paper_execution_sampling",
+            next_action="keep_monitoring_only_no_frequency_increase" if eq_status == "monitoring_only_not_robust" else "forward_sample_supported_exact_breaches_paper_only",
         )
     eq_row.update(
         {
@@ -415,7 +460,7 @@ def build_alpha_viability_scoreboard(
             ),
             _row(
                 strategy_id="threshold_latency",
-                status="paused_no_candidate",
+                status="paused",
                 signal_count=_safe_int(tl_trade.get("update_event_count") or active.get("candidate_count") or active.get("watch_count")),
                 executable_proxy_count=_safe_int(tl_trade.get("trade_proxy_candidate_count")),
                 forward_paper_fill_count=active_fill_count,
@@ -427,14 +472,14 @@ def build_alpha_viability_scoreboard(
             ),
             _row(
                 strategy_id="post_lock_ge_le",
-                status="killed_market_already_reflected",
+                status="killed",
                 non_dust_only=True,
                 main_blocker="market_already_reflected_observation",
                 next_action="do_not_continue",
             ),
             _row(
                 strategy_id="dust_tail_near_lock",
-                status="killed_negative_dust_only",
+                status="killed",
                 signal_count=_safe_int(strict.get("replay_candidate_count")),
                 executable_proxy_count=_safe_int(strict.get("fill_count")),
                 resolved_fill_count=_safe_int(strict.get("resolved_fill_count")),
@@ -445,7 +490,7 @@ def build_alpha_viability_scoreboard(
             ),
             _row(
                 strategy_id="maker_inferred",
-                status="killed_diagnostic_only",
+                status="killed",
                 non_dust_only=False,
                 main_blocker="inferred_fill_not_real_execution_evidence",
                 next_action="do_not_continue_without_quote_lifecycle",
@@ -461,15 +506,17 @@ def build_alpha_viability_scoreboard(
     wait_strategies = [
         row["strategy_id"]
         for row in rows
-        if row["status"] in {"waiting_due", "single_positive_needs_more", "no_current_structural_arbitrage"}
+        if row["status"] in {"waiting_due", "single_positive_needs_more", "low_frequency_monitor_no_current_edge"}
     ]
     pause_strategies = [
         row["strategy_id"]
         for row in rows
         if row["status"] in {
             "eq_dead_no_proxy_not_robust_keep_monitoring_only",
+            "monitoring_only_not_robust",
             "collapsed_into_eq_dead_no_or_paused",
             "paused_no_candidate",
+            "paused",
         }
     ]
     kill_strategies = [
@@ -480,6 +527,7 @@ def build_alpha_viability_scoreboard(
             "killed_market_already_reflected",
             "killed_negative_dust_only",
             "killed_diagnostic_only",
+            "killed",
         }
     ]
     structural_continue = [
@@ -491,6 +539,22 @@ def build_alpha_viability_scoreboard(
         }
     ]
     continue_strategies = sorted(set(continue_strategies + structural_continue))
+    continue_research_strategies = [
+        row["strategy_id"]
+        for row in rows
+        if row["status"] in {
+            "active_shadow_testing",
+            "active_research",
+            "eq_dead_no_proxy_robust_enough_for_forward_sampling",
+            "structural_arbitrage_forward_paper_started",
+            "structural_lp_arbitrage_forward_paper_started",
+        }
+    ]
+    low_frequency_monitor_strategies = [
+        row["strategy_id"]
+        for row in rows
+        if row["status"] in {"low_frequency_monitor_no_current_edge", "monitoring_only_not_robust"}
+    ]
     ol_guidance = _positive_station_guidance(observation_lock_trade_replay_report or {})
     tl_guidance = _positive_station_guidance(threshold_latency_trade_replay_report or {})
     eq_guidance = _positive_station_guidance(eq_dead_no_trade_replay_report or {})
@@ -510,10 +574,10 @@ def build_alpha_viability_scoreboard(
         sampler_mode = "reduced"
     else:
         sampler_mode = "paused"
-    if non_dust_status == "failed" and eq_status == "eq_dead_no_proxy_not_robust_keep_monitoring_only":
+    if non_dust_status == "failed" and eq_status == "monitoring_only_not_robust":
         live_should_pause = True
         reason = "all_current_weather_alpha_paths_failed_or_unproven"
-    elif eq_status == "eq_dead_no_proxy_not_robust_keep_monitoring_only" and non_dust_status != "single_positive_needs_more":
+    elif eq_status == "monitoring_only_not_robust" and non_dust_status != "single_positive_needs_more":
         live_should_pause = True
         reason = "waiting_for_non_dust_due_and_eq_dead_no_not_robust"
     elif not continue_strategies:
@@ -533,16 +597,41 @@ def build_alpha_viability_scoreboard(
         live_push_verdict = "structural_lp_arbitrage_forward_paper_started"
     else:
         live_push_verdict = "structural_arbitrage_forward_paper_started"
+    maker_inferred_count = _safe_int(maker_shadow.get("inferred_fill_count"))
+    maker_mean_without_rebate = _safe_float(maker_shadow.get("mean_markout_without_rebate"))
+    station_candidate_count = _safe_int(station_confusion.get("candidate_count") or station_confusion.get("active_candidate_count"))
+    station_forward_fills = _safe_int(station_confusion.get("forward_paper_fill_count"))
+    station_markout = _safe_float(station_confusion.get("mean_markout_cents") or station_confusion.get("mean_markout_without_rebate"))
+    if maker_inferred_count >= 30 and maker_mean_without_rebate is not None and maker_mean_without_rebate > 0:
+        live_push_status = "continue_paper_maker_research"
+        next_go_no_go_trigger = "maker_shadow_v2_mean_markout_without_rebate_positive_over_30_inferred_fills"
+    elif station_forward_fills > 0 and station_markout is not None and station_markout > 0:
+        live_push_status = "continue_station_confusion_paper_research"
+        next_go_no_go_trigger = "station_confusion_forward_markout_positive"
+    elif non_dust_status == "failed" and maker_inferred_count <= 0 and station_candidate_count <= 0:
+        live_push_status = "pause_polymarket_weather_live_push"
+        next_go_no_go_trigger = "new_polymarket_only_non_dust_edge_required"
+    elif non_dust_status == "waiting_due":
+        live_push_status = "wait_non_dust_due_and_collect_polymarket_only_shadow_evidence"
+        next_go_no_go_trigger = "non_dust_uuww_due_verdict_or_maker_station_forward_evidence"
+    else:
+        live_push_status = "continue_polymarket_only_paper_research"
+        next_go_no_go_trigger = "maker_or_station_confusion_positive_forward_evidence"
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at,
+        "scope": "polymarket_only",
         "paper_only": True,
         "counts_for_live_gate": False,
         "live_order_path": False,
         "rows": rows,
         "summary": {
             "strategy_count": len(rows),
+            "scope": "polymarket_only",
             "continue_strategy_ids": continue_strategies,
+            "continue_research_strategy_ids": sorted(set(continue_research_strategies)),
+            "low_frequency_monitor_strategy_ids": sorted(set(low_frequency_monitor_strategies)),
+            "killed_strategy_ids": kill_strategies,
             "wait_strategy_ids": wait_strategies,
             "pause_strategy_ids": pause_strategies,
             "kill_strategy_ids": kill_strategies,
@@ -550,6 +639,8 @@ def build_alpha_viability_scoreboard(
             "reason": reason,
             "alpha_viability_final_verdict": reason,
             "live_push_verdict": live_push_verdict,
+            "live_push_status": live_push_status,
+            "next_go_no_go_trigger": next_go_no_go_trigger,
             "live_order_path": False,
             "counts_for_live_gate": False,
             "eq_dead_no_proxy_robustness": {
@@ -573,6 +664,20 @@ def build_alpha_viability_scoreboard(
             "eq_dead_no_forward_paper_fill_count": eq_forward_fill_count,
             "eq_dead_no_current_status": eq_status,
             "non_dust_threshold_cdf_status": non_dust_status,
+            "maker_shadow_v2": {
+                "quote_count": _safe_int(maker_shadow.get("quote_count")),
+                "inferred_fill_count": maker_inferred_count,
+                "markout_count": _safe_int(maker_shadow.get("markout_count")),
+                "mean_markout_without_rebate": maker_mean_without_rebate,
+                "mean_markout_with_rebate": _safe_float(maker_shadow.get("mean_markout_with_rebate")),
+                "adverse_selection_count": _safe_int(maker_shadow.get("adverse_selection_count")),
+            },
+            "station_confusion_edge": {
+                "station_bias_sample_count": _safe_int(station_confusion.get("station_bias_sample_count")),
+                "candidate_count": station_candidate_count,
+                "active_candidate_count": _safe_int(station_confusion.get("active_candidate_count")),
+                "top_station_biases": station_confusion.get("top_station_biases") if isinstance(station_confusion.get("top_station_biases"), list) else [],
+            },
             "bucket_family_structural_arbitrage": {
                 "family_count": _safe_int(bucket_arbitrage.get("family_count")),
                 "partition_family_count": _safe_int(bucket_arbitrage.get("partition_family_count")),
@@ -629,16 +734,64 @@ def update_profit_strategy_state_report(
     updated = dict(existing_report) if isinstance(existing_report, dict) else {}
     updated["schema_version"] = updated.get("schema_version") or "polyweather_profit_strategy_state.v1"
     updated["generated_at"] = generated_at or utc_now_iso()
+    updated["scope"] = "polymarket_only"
     updated["paper_only"] = True
     updated["counts_for_live_gate"] = False
     updated["live_order_path"] = False
     updated["historical_trade_proxy_guidance"] = scoreboard.get("historical_trade_proxy_guidance")
     updated["alpha_viability_scoreboard_summary"] = scoreboard.get("summary")
+    updated["launchd_sampling_policy"] = {
+        "scope": "polymarket_only",
+        "keep": [
+            "com.polyweather.intraday-observation-collector",
+            "com.polyweather.bucket-family-arbitrage-sampler",
+            "com.polyweather.eq-dead-no-sampler",
+            "com.polyweather.non-dust-uuww-due-pipeline",
+        ],
+        "reduced_or_paused": {
+            "com.polyweather.threshold-latency-sampler": {
+                "target_start_interval_seconds": 300,
+                "status": "paused_or_300s_low_value_sampler",
+            },
+            "com.polyweather.observation-lock-execution-sampler": {
+                "target_start_interval_seconds": 300,
+                "status": "paused_or_300s_low_value_sampler",
+            },
+        },
+        "do_not_delete_evidence": True,
+        "live_order_path": False,
+    }
     active = updated.setdefault("active_alpha_research", {})
     if isinstance(active, dict):
         rows = {row.get("strategy_id"): row for row in scoreboard.get("rows") or [] if isinstance(row, dict)}
+        maker_row = rows.get("maker_shadow_v2") or {}
+        station_row = rows.get("station_confusion_edge") or {}
+        active["maker_shadow_v2"] = {
+            "platform": "polymarket",
+            "status": maker_row.get("status") or "active_shadow_testing",
+            "paper_only": True,
+            "counts_for_live_gate": False,
+            "live_order_path": False,
+            "quote_count": maker_row.get("signal_count"),
+            "inferred_fill_count": maker_row.get("forward_paper_fill_count"),
+            "mean_markout_without_rebate": maker_row.get("trade_proxy_pnl_cents"),
+            "next_action": maker_row.get("next_action"),
+            "report_path": "evidence/maker_shadow_v2/report.json",
+        }
+        active["station_confusion_edge"] = {
+            "platform": "polymarket",
+            "status": station_row.get("status") or "active_research",
+            "paper_only": True,
+            "counts_for_live_gate": False,
+            "live_order_path": False,
+            "candidate_count": station_row.get("signal_count"),
+            "forward_paper_fill_count": station_row.get("forward_paper_fill_count"),
+            "next_action": station_row.get("next_action"),
+            "report_path": "evidence/station_confusion/station_confusion_edge_report.json",
+        }
         eq_row = rows.get("eq_dead_no_lock") or {}
         active["eq_dead_no_lock"] = {
+            "platform": "polymarket",
             "status": eq_row.get("status") or "waiting_for_exact_breach_liquidity",
             "paper_only": True,
             "counts_for_live_gate": False,
@@ -660,8 +813,9 @@ def update_profit_strategy_state_report(
         threshold = active.get("threshold_latency")
         threshold_row = rows.get("threshold_latency") or {}
         if isinstance(threshold, dict) and int(threshold_row.get("forward_paper_fill_count") or 0) <= 0:
-            threshold["status"] = "reduced_frequency_no_current_candidate"
-            threshold["next_action"] = "keep_observation_logging_reduce_execution_sampling_until_new_evidence"
+            threshold["platform"] = "polymarket"
+            threshold["status"] = "paused"
+            threshold["next_action"] = "pause_or_run_at_300s_only_until_new_evidence"
             threshold["live_order_path"] = False
         bucket_rows = {
             key: rows.get(key) or {}
@@ -682,7 +836,8 @@ def update_profit_strategy_state_report(
                 }
                 for row in bucket_rows.values()
             )
-            else "no_current_structural_arbitrage",
+            else "low_frequency_monitor_no_current_edge",
+            "platform": "polymarket",
             "paper_only": True,
             "counts_for_live_gate": False,
             "live_order_path": False,

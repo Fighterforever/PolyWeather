@@ -168,8 +168,8 @@ def test_market_to_signal_rows_marks_not_accepting_orders_as_not_tradable():
     client = PolymarketReadonlyClient(session=FakeSession({}))
     event = {
         "id": "event-1",
-        "title": "Highest temperature in Seoul on June 28?",
-        "slug": "highest-temperature-in-seoul-on-june-28-2026",
+        "title": "Highest temperature in Seoul on December 28?",
+        "slug": "highest-temperature-in-seoul-on-december-28-2026",
         "active": True,
         "closed": False,
         "enableOrderBook": True,
@@ -198,22 +198,22 @@ def test_market_to_signal_rows_marks_not_accepting_orders_as_not_tradable():
 def test_build_weather_market_payload_filters_and_reads_clob_books():
     event = {
         "id": "event-1",
-        "title": "Highest temperature in Seoul on June 28?",
-        "slug": "highest-temperature-in-seoul-on-june-28-2026",
+        "title": "Highest temperature in Seoul on December 28?",
+        "slug": "highest-temperature-in-seoul-on-december-28-2026",
         "active": True,
         "closed": False,
         "enableOrderBook": True,
-        "endDate": "2026-06-28T12:00:00Z",
+        "endDate": "2026-12-28T12:00:00Z",
         "markets": [
             {
                 "id": "market-1",
-                "question": "Will the highest temperature in Seoul be 28C or above on June 28?",
-                "slug": "highest-temperature-in-seoul-on-june-28-2026-28c-or-above",
+                "question": "Will the highest temperature in Seoul be 28C or above on December 28?",
+                "slug": "highest-temperature-in-seoul-on-december-28-2026-28c-or-above",
                 "active": True,
                 "closed": False,
                 "enableOrderBook": True,
                 "acceptingOrders": True,
-                "endDate": "2026-06-28T12:00:00Z",
+                "endDate": "2026-12-28T12:00:00Z",
                 "outcomes": '["Yes", "No"]',
                 "outcomePrices": '["0.31", "0.69"]',
                 "clobTokenIds": '["yes-token", "no-token"]',
