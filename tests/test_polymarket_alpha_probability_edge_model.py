@@ -44,6 +44,7 @@ def test_leave_family_out_no_leakage():
     assert set(report["split"]["train_families"]).isdisjoint(set(report["split"]["validate_families"]))
     assert report["train_row_count"] == 2
     assert report["validate_row_count"] == 2
+    assert report["unique_resolved_event_family_count"] == 4
     assert report["overall"]["brier_improvement"] > 0
 
 

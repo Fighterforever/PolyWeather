@@ -53,6 +53,7 @@ def main(argv: list[str] | None = None) -> None:
         json.dumps(
             {
                 "input_resolved_row_count": report.get("input_resolved_row_count"),
+                "unique_resolved_event_family_count": report.get("unique_resolved_event_family_count"),
                 "validate_row_count": report.get("validate_row_count"),
                 "candidate_count": report.get("candidate_count"),
                 "hard_conclusion": report.get("hard_conclusion"),

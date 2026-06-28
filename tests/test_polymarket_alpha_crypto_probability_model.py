@@ -38,6 +38,18 @@ def test_parse_btc_threshold_market():
     assert parsed["threshold"] == 100000.0
 
 
+def test_parse_crypto_threshold_rejects_date_only_numbers():
+    parsed = parse_crypto_threshold_market(
+        _market(
+            market_slug="will-a-new-country-buy-bitcoin-by-june-30-2026",
+            title="Will a new country buy Bitcoin by June 30, 2026?",
+            question="Will a new country buy Bitcoin by June 30, 2026?",
+        )
+    )
+
+    assert parsed is None
+
+
 def test_lognormal_probability_monotonic_with_threshold():
     low = lognormal_probability_above(spot=50000, threshold=40000, annual_vol=0.5, years=0.5)
     high = lognormal_probability_above(spot=50000, threshold=100000, annual_vol=0.5, years=0.5)
@@ -56,7 +68,10 @@ def test_crypto_candidate_requires_executable_ask():
     assert report["parsed_crypto_market_count"] == 1
     assert report["model_ready_count"] == 1
     assert report["candidate_count"] == 0
-    assert report["gap_reasons"][0]["reason"] == "missing_executable_yes_bid_ask"
+    reasons = {row["reason"] for row in report["gap_reasons"]}
+    assert "yes_token_not_found_or_orderbook_missing" in reasons
+    assert report["executable_price_available_count"] == 0
+    assert report["top_10_near_misses"][0]["side"] in {"YES", "NO"}
 
 
 def test_crypto_gap_when_price_source_missing():
@@ -70,3 +85,19 @@ def test_crypto_gap_when_price_source_missing():
     assert report["model_ready_count"] == 0
     assert report["candidate_count"] == 0
     assert report["gap_reasons"][0]["reason"] == "missing_btc_spot_price"
+
+
+def test_crypto_report_has_executable_near_miss_when_ev_is_low():
+    report = build_crypto_probability_edge_report(
+        active_markets=[_market()],
+        spot_prices={"BTC": 50000},
+        generated_at="2026-06-29T00:00:00Z",
+        min_edge=0.50,
+    )
+
+    assert report["parsed_crypto_market_count"] == 1
+    assert report["model_ready_count"] == 1
+    assert report["executable_price_available_count"] == 1
+    assert report["candidate_count"] == 0
+    assert report["top_10_near_misses"][0]["best_ask"] is not None
+    assert report["top_10_near_misses"][0]["blocker"] in {"ev_below_min", "no_ask_depth", "spread_too_wide"}

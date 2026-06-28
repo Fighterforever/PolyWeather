@@ -1,8 +1,8 @@
 {
   "counts_for_live_gate": false,
-  "final_next_focus": "expand_mid_price_decision_snapshot_family_coverage",
+  "final_next_focus": "probability_edge_forward_paper_markout",
   "live_order_path": false,
-  "live_push_status": "no_probability_edge_yet",
+  "live_push_status": "collect_forward_markouts",
   "model_oos_positive_categories": [],
   "paper_only": true,
   "rows": [
@@ -22,15 +22,15 @@
       "strategy_id": "probability_edge_model"
     },
     {
-      "candidate_count": 0,
+      "candidate_count": 7,
       "category": "focus_categories",
       "counts_for_live_gate": false,
       "live_eligible": false,
       "live_order_path": false,
-      "main_blocker": "no_active_executable_probability_edge_candidate",
+      "main_blocker": "forward_paper_candidates_found",
       "markout_count": 0,
       "next_action": "track markout and resolved audit; unresolved PnL stays null",
-      "paper_fill_count": 0,
+      "paper_fill_count": 7,
       "paper_only": true,
       "platform": "polymarket",
       "resolved_pnl_cents": null,
@@ -115,10 +115,10 @@
   "schema_version": "polyweather_polymarket_alpha_viability_scoreboard.v1",
   "scope": "polymarket_only",
   "summary": {
-    "final_next_focus": "expand_mid_price_decision_snapshot_family_coverage",
-    "forward_paper_fill_count": 0,
+    "final_next_focus": "probability_edge_forward_paper_markout",
+    "forward_paper_fill_count": 7,
     "live_order_path": false,
-    "live_push_status": "no_probability_edge_yet",
+    "live_push_status": "collect_forward_markouts",
     "maker_shadow_focus_quote_count": 0,
     "maker_shadow_quote_count": 6,
     "markout_mean": null,

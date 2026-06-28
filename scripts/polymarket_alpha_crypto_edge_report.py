@@ -34,6 +34,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--btc-spot", type=float, default=None)
     parser.add_argument("--eth-spot", type=float, default=None)
     parser.add_argument("--fetch-binance-spot", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--fetch-orderbooks", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--max-orderbook-tokens", type=int, default=200)
     parser.add_argument("--btc-vol", type=float, default=0.55)
     parser.add_argument("--eth-vol", type=float, default=0.70)
     parser.add_argument("--generated-at", default=None)
@@ -60,6 +62,8 @@ def main(argv: list[str] | None = None) -> None:
         spot_prices=spot_prices,
         annual_vols={"BTC": float(args.btc_vol), "ETH": float(args.eth_vol)},
         generated_at=args.generated_at,
+        fetch_orderbooks=bool(args.fetch_orderbooks),
+        max_orderbook_tokens=int(args.max_orderbook_tokens),
         min_edge=float(args.min_edge),
         cost=float(args.cost),
         min_depth=float(args.min_depth),
@@ -74,6 +78,7 @@ def main(argv: list[str] | None = None) -> None:
             {
                 "parsed_crypto_market_count": report.get("parsed_crypto_market_count"),
                 "model_ready_count": report.get("model_ready_count"),
+                "executable_price_available_count": report.get("executable_price_available_count"),
                 "candidate_count": report.get("candidate_count"),
                 "live_order_path": report.get("live_order_path"),
             },

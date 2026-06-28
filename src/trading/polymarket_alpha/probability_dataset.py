@@ -84,8 +84,23 @@ def write_json(path: str | Path, payload: Dict[str, Any]) -> None:
     target.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True, default=str), encoding="utf-8")
 
 
-def _token_specs(markets: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
-    specs: Dict[str, Dict[str, Any]] = {}
+def _resolved_payout_from_terminal_price(market: Dict[str, Any], terminal_price: Optional[float]) -> Optional[float]:
+    if market.get("resolved") and terminal_price is not None:
+        if terminal_price >= 0.999:
+            return 1.0
+        if terminal_price <= 0.001:
+            return 0.0
+    return None
+
+
+def _side_key(value: Any) -> str:
+    return str(value or "").strip().lower()
+
+
+def build_resolved_outcome_lookup(markets: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Dict[str, Any]]]:
+    by_token: Dict[str, Dict[str, Any]] = {}
+    by_market_outcome: Dict[str, Dict[str, Any]] = {}
+    by_condition_outcome: Dict[str, Dict[str, Any]] = {}
     for market in markets:
         if not isinstance(market, dict):
             continue
@@ -97,13 +112,80 @@ def _token_specs(markets: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]
             if not token:
                 continue
             terminal_price = _safe_float(outcome_prices[index]) if index < len(outcome_prices) else None
-            resolved_payout = None
-            if market.get("resolved") and terminal_price is not None:
-                if terminal_price >= 0.999:
-                    resolved_payout = 1.0
-                elif terminal_price <= 0.001:
-                    resolved_payout = 0.0
-            specs[token] = {
+            payout = _resolved_payout_from_terminal_price(market, terminal_price)
+            if payout is None:
+                continue
+            outcome_label = str(outcomes[index]) if index < len(outcomes) else None
+            payload = {
+                "resolved_payout": payout,
+                "market_slug": market.get("market_slug"),
+                "market_id": market.get("market_id"),
+                "condition_id": market.get("condition_id"),
+                "token_id": token,
+                "outcome_label": outcome_label,
+                "repair_source": "resolved_market_terminal_outcome_price",
+            }
+            by_token[token] = payload
+            if market.get("market_id") and outcome_label:
+                by_market_outcome[f"{market.get('market_id')}|{_side_key(outcome_label)}"] = payload
+            if market.get("condition_id") and outcome_label:
+                by_condition_outcome[f"{market.get('condition_id')}|{_side_key(outcome_label)}"] = payload
+            if outcome_label and _side_key(outcome_label) in {"yes", "no"}:
+                side = _side_key(outcome_label)
+                if market.get("market_id"):
+                    by_market_outcome[f"{market.get('market_id')}|{side}"] = payload
+                if market.get("condition_id"):
+                    by_condition_outcome[f"{market.get('condition_id')}|{side}"] = payload
+    return {"by_token": by_token, "by_market_outcome": by_market_outcome, "by_condition_outcome": by_condition_outcome}
+
+
+def _repair_resolved_payout(spec: Dict[str, Any], lookup: Dict[str, Dict[str, Dict[str, Any]]]) -> Optional[Dict[str, Any]]:
+    token_match = lookup.get("by_token", {}).get(str(spec.get("token_id") or ""))
+    if token_match:
+        return token_match
+    outcome = _side_key(spec.get("outcome_label"))
+    if spec.get("market_id") and outcome:
+        match = lookup.get("by_market_outcome", {}).get(f"{spec.get('market_id')}|{outcome}")
+        if match:
+            return match
+    if spec.get("condition_id") and outcome:
+        match = lookup.get("by_condition_outcome", {}).get(f"{spec.get('condition_id')}|{outcome}")
+        if match:
+            return match
+    return None
+
+
+def _merge_spec(existing: Dict[str, Any], incoming: Dict[str, Any]) -> Dict[str, Any]:
+    if existing.get("resolved_payout") is not None and incoming.get("resolved_payout") is None:
+        merged = dict(incoming)
+        merged["resolved"] = True
+        merged["resolved_payout"] = existing.get("resolved_payout")
+        merged["resolution_repair_source"] = existing.get("resolution_repair_source") or "preserved_existing_resolved_payout"
+        return merged
+    if incoming.get("resolved_payout") is not None:
+        return incoming
+    return incoming
+
+
+def _token_specs(markets: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    market_rows = [market for market in markets if isinstance(market, dict)]
+    resolved_lookup = build_resolved_outcome_lookup(market_rows)
+    specs: Dict[str, Dict[str, Any]] = {}
+    repair_attempted_count = 0
+    repair_success_count = 0
+    for market in market_rows:
+        if not isinstance(market, dict):
+            continue
+        outcomes = market.get("outcomes") if isinstance(market.get("outcomes"), list) else []
+        token_ids = market.get("token_ids") if isinstance(market.get("token_ids"), list) else []
+        outcome_prices = market.get("outcome_prices") if isinstance(market.get("outcome_prices"), list) else []
+        for index, token_id in enumerate(token_ids):
+            token = _text(token_id)
+            if not token:
+                continue
+            terminal_price = _safe_float(outcome_prices[index]) if index < len(outcome_prices) else None
+            resolved_payout = _resolved_payout_from_terminal_price(market, terminal_price)
+            incoming = {
                 "market_id": market.get("market_id"),
                 "condition_id": market.get("condition_id"),
                 "market_slug": market.get("market_slug"),
@@ -121,6 +203,16 @@ def _token_specs(markets: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]
                 "resolved_payout": resolved_payout,
                 "orderbooks": market.get("orderbooks") if isinstance(market.get("orderbooks"), dict) else {},
             }
+            if incoming.get("resolved_payout") is None:
+                repair_attempted_count += 1
+                repair = _repair_resolved_payout(incoming, resolved_lookup)
+                if repair and repair.get("resolved_payout") is not None:
+                    repair_success_count += 1
+                    incoming["resolved"] = True
+                    incoming["resolved_payout"] = repair.get("resolved_payout")
+                    incoming["resolution_repair_source"] = repair.get("repair_source")
+            specs[token] = _merge_spec(specs[token], incoming) if token in specs else incoming
+    setattr(_token_specs, "last_repair_summary", {"repair_attempted_count": repair_attempted_count, "repair_success_count": repair_success_count})
     return specs
 
 
@@ -470,6 +562,11 @@ def build_probability_dataset(
     for row in rows:
         category_event_families[str(row.get("category") or "uncategorized")].add(str(row.get("event_family_id") or ""))
     unique_event_families = {str(row.get("event_family_id") or "") for row in rows if row.get("event_family_id")}
+    unique_resolved_event_families = {
+        str(row.get("event_family_id") or "")
+        for row in rows
+        if row.get("resolved") and row.get("event_family_id")
+    }
     unique_markets = {str(row.get("market_slug") or row.get("market_id") or "") for row in rows if row.get("market_slug") or row.get("market_id")}
     mid_training_count = len([row for row in rows if row.get("is_mid_price_training_row")])
     extreme_price_count = len([row for row in rows if row.get("is_extreme_price_row")])
@@ -483,6 +580,7 @@ def build_probability_dataset(
         "snapshot_row_count": len(rows),
         "resolved_snapshot_count": len([row for row in rows if row.get("resolved")]),
         "unique_event_family_count": len(unique_event_families),
+        "unique_resolved_event_family_count": len(unique_resolved_event_families),
         "unique_market_count": len(unique_markets),
         "mid_price_training_row_count": mid_training_count,
         "extreme_price_row_count": extreme_price_count,
@@ -500,6 +598,8 @@ def build_probability_dataset(
         "missing_price_count": int(gaps.get("missing_price", 0) + gaps.get("missing_active_orderbook_price", 0)),
         "no_lookahead_violation_count": 0,
         "no_lookahead_blocked_after_close_count": int(gaps.get("no_lookahead_after_close", 0)),
+        "repair_attempted_count": int(getattr(_token_specs, "last_repair_summary", {}).get("repair_attempted_count", 0)),
+        "repair_success_count": int(getattr(_token_specs, "last_repair_summary", {}).get("repair_success_count", 0)),
         "gap_counts": [{"reason": key, "count": count} for key, count in sorted(gaps.items())],
     }
     return {"rows": sorted(rows, key=lambda row: (row.get("timestamp") or "", row.get("market_slug") or "")), "manifest": manifest}
@@ -508,6 +608,7 @@ def build_probability_dataset(
 __all__ = [
     "SCHEMA_VERSION",
     "build_probability_dataset",
+    "build_resolved_outcome_lookup",
     "fetch_price_history_for_closed_markets",
     "load_jsonl",
     "price_bucket",

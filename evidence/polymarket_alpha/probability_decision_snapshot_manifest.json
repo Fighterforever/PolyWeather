@@ -925,6 +925,8 @@
   "no_lookahead_blocked_after_close_count": 0,
   "no_lookahead_violation_count": 0,
   "paper_only": true,
+  "repair_attempted_count": 10367,
+  "repair_success_count": 0,
   "resolved_row_count": 29,
   "resolved_snapshot_count": 29,
   "row_count": 5150,
@@ -932,5 +934,6 @@
   "scope": "polymarket_only",
   "snapshot_row_count": 5150,
   "unique_event_family_count": 797,
-  "unique_market_count": 2567
+  "unique_market_count": 2567,
+  "unique_resolved_event_family_count": 8
 }

@@ -91,6 +91,11 @@ def scan_active_probability_edges(
     watch_rows: List[Dict[str, Any]] = []
     blockers: Counter[str] = Counter()
 
+    crypto_blockers = [
+        {"reason": row.get("reason"), "count": row.get("count")}
+        for row in ((crypto_report or {}).get("blocker_counts") or (crypto_report or {}).get("gap_reasons") or [])
+        if isinstance(row, dict)
+    ]
     crypto_candidates = [
         {**row, "priority_rank": 1}
         for row in ((crypto_report or {}).get("candidates") or [])
@@ -98,11 +103,59 @@ def scan_active_probability_edges(
     ]
     candidates.extend(crypto_candidates)
     model_ready = int((crypto_report or {}).get("model_ready_count") or len(crypto_candidates))
+    lane_reports: Dict[str, Dict[str, Any]] = {
+        "crypto_model_lane": {
+            "scanned_count": int((crypto_report or {}).get("parsed_crypto_market_count") or 0),
+            "model_ready_count": int((crypto_report or {}).get("model_ready_count") or 0),
+            "executable_price_available_count": int((crypto_report or {}).get("executable_price_available_count") or 0),
+            "candidate_count": len(crypto_candidates),
+            "paper_fill_count": len(crypto_candidates),
+            "blocker_counts": crypto_blockers,
+            "top_watch_rows": ((crypto_report or {}).get("top_10_near_misses") or [])[:10],
+            "top_candidates": crypto_candidates[:10],
+            "live_order_path": False,
+        },
+        "global_oos_model_lane": {
+            "scanned_count": len(active),
+            "model_ready_count": 0,
+            "executable_price_available_count": 0,
+            "candidate_count": 0,
+            "paper_fill_count": 0,
+            "blocker_counts": [],
+            "top_watch_rows": [],
+            "top_candidates": [],
+            "live_order_path": False,
+        },
+        "maker_focus_lane": {
+            "scanned_count": 0,
+            "model_ready_count": 0,
+            "executable_price_available_count": 0,
+            "candidate_count": 0,
+            "paper_fill_count": 0,
+            "blocker_counts": [{"reason": "maker_focus_report_not_input_to_probability_scanner", "count": 1}],
+            "top_watch_rows": [],
+            "top_candidates": [],
+            "live_order_path": False,
+        },
+        "structural_lane": {
+            "scanned_count": 0,
+            "model_ready_count": 0,
+            "executable_price_available_count": 0,
+            "candidate_count": 0,
+            "paper_fill_count": 0,
+            "blocker_counts": [{"reason": "structural_report_not_input_to_probability_scanner", "count": 1}],
+            "top_watch_rows": [],
+            "top_candidates": [],
+            "live_order_path": False,
+        },
+    }
 
     if not _model_oos_passed(model_report):
         blockers["global_oos_model_not_passed"] += len(active)
+        lane_reports["global_oos_model_lane"]["blocker_counts"] = [{"reason": "global_oos_model_not_passed", "count": len(active)}]
     else:
         model_ready += len(active)
+        lane_reports["global_oos_model_lane"]["model_ready_count"] = len(active)
         for market in active:
             category = str(market.get("category") or "uncategorized")
             if focus and category not in focus:
@@ -169,8 +222,24 @@ def scan_active_probability_edges(
                 watch_rows.append(watch)
                 if ev_safe >= float(min_edge):
                     candidates.append({**watch, "priority_rank": 2})
+                    lane_reports["global_oos_model_lane"]["top_candidates"].append(watch)
                 else:
                     blockers["ev_below_min"] += 1
+                lane_reports["global_oos_model_lane"]["top_watch_rows"].append(watch)
+        lane_reports["global_oos_model_lane"]["candidate_count"] = len(lane_reports["global_oos_model_lane"]["top_candidates"])
+        lane_reports["global_oos_model_lane"]["paper_fill_count"] = lane_reports["global_oos_model_lane"]["candidate_count"]
+        lane_reports["global_oos_model_lane"]["executable_price_available_count"] = len(watch_rows)
+        lane_reports["global_oos_model_lane"]["blocker_counts"] = [
+            {"reason": key, "count": count}
+            for key, count in sorted(blockers.items())
+            if key != "global_oos_model_not_passed"
+        ]
+        lane_reports["global_oos_model_lane"]["top_watch_rows"] = lane_reports["global_oos_model_lane"]["top_watch_rows"][:10]
+        lane_reports["global_oos_model_lane"]["top_candidates"] = sorted(
+            lane_reports["global_oos_model_lane"]["top_candidates"],
+            key=lambda row: float(row.get("EV_safe") or -1e9),
+            reverse=True,
+        )[:10]
     candidates = sorted(candidates, key=lambda row: (int(row.get("priority_rank") or 99), -float(row.get("EV_safe") or -1e9)))
     return {
         "schema_version": SCHEMA_VERSION,
@@ -184,6 +253,7 @@ def scan_active_probability_edges(
         "candidate_count": len(candidates),
         "paper_fill_count": len(candidates),
         "by_model_source": _source_counts(candidates),
+        "lane_reports": lane_reports,
         "focus_categories": sorted(focus),
         "watch_row_count": len(watch_rows),
         "blocker_counts": [{"reason": key, "count": count} for key, count in sorted(blockers.items())],

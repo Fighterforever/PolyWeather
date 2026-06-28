@@ -75,3 +75,28 @@ def test_probability_dataset_marks_extreme_rows_outside_mid_training_set():
     assert report["manifest"]["extreme_price_row_count"] == 1
     assert report["manifest"]["mid_price_training_row_count"] == 0
     assert report["rows"][0]["is_extreme_price_row"] is True
+
+
+def test_probability_dataset_repairs_resolved_payout_by_market_outcome():
+    active = _market(
+        resolved=False,
+        token_ids=["active-yes", "active-no"],
+        outcome_prices=[0.45, 0.55],
+    )
+    closed = _market(
+        resolved=True,
+        token_ids=["closed-yes", "closed-no"],
+        outcome_prices=[1.0, 0.0],
+    )
+
+    report = build_probability_dataset(
+        active_markets=[active],
+        closed_markets=[closed],
+        price_history_rows=[
+            {"token_id": "active-yes", "timestamp": "2026-01-01T00:00:00Z", "price": 0.4},
+        ],
+    )
+
+    assert report["manifest"]["repair_success_count"] >= 1
+    assert report["manifest"]["resolved_snapshot_count"] >= 1
+    assert report["rows"][0]["resolved_payout"] == 1.0

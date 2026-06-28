@@ -2,23 +2,189 @@
   "artifact_paths": {
     "crypto_probability_candidates": "evidence/polymarket_alpha/crypto_probability_candidates.jsonl"
   },
-  "candidate_count": 0,
-  "counts_for_live_gate": false,
-  "gap_reasons": [
+  "blocker_counts": [
     {
-      "count": 41,
-      "reason": "missing_executable_yes_bid_ask"
+      "count": 31,
+      "reason": "ev_below_min"
     },
     {
-      "count": 203,
+      "count": 206,
+      "reason": "unparseable_crypto_threshold"
+    }
+  ],
+  "candidate_count": 7,
+  "counts_for_live_gate": false,
+  "executable_price_available_count": 38,
+  "gap_reasons": [
+    {
+      "count": 31,
+      "reason": "ev_below_min"
+    },
+    {
+      "count": 206,
       "reason": "unparseable_crypto_threshold"
     }
   ],
   "generated_at": "2026-06-29T00:00:00Z",
   "live_order_path": false,
-  "model_ready_count": 41,
+  "model_ready_count": 38,
+  "orderbook_fetch_attempt_count": 76,
+  "orderbook_fetch_error_count": 0,
+  "orderbook_fetch_success_count": 76,
   "paper_only": true,
-  "parsed_crypto_market_count": 41,
+  "parsed_crypto_market_count": 38,
   "schema_version": "polyweather_polymarket_alpha_crypto_probability_model.v1",
-  "scope": "polymarket_only"
+  "scope": "polymarket_only",
+  "top_10_near_misses": [
+    {
+      "EV_safe": 0.29706513,
+      "best_ask": 0.34,
+      "blocker": null,
+      "depth": 38.0067,
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-70000-by-december-31-2026-from-june-8",
+      "p_lcb": 0.64706513,
+      "p_model": 0.72706513,
+      "p_ucb": 0.80706513,
+      "paper_only": true,
+      "side": "NO",
+      "spread": 0.02,
+      "token_id": "107869950127184141743772429738701578723770582686430100389837827512148691029625"
+    },
+    {
+      "EV_safe": 0.23828894,
+      "best_ask": 0.44,
+      "blocker": null,
+      "depth": 319.7,
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-2000-by-december-31-2026-from-june-8",
+      "p_lcb": 0.68828894,
+      "p_model": 0.76828894,
+      "p_ucb": 0.84828894,
+      "paper_only": true,
+      "side": "NO",
+      "spread": 0.01,
+      "token_id": "13459637939763634103007307837939459511365621080734600736144271212022143514074"
+    },
+    {
+      "EV_safe": 0.18218288,
+      "best_ask": 0.51,
+      "blocker": null,
+      "depth": 756.5511,
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-75000-by-december-31-2026-from-june-8",
+      "p_lcb": 0.70218288,
+      "p_model": 0.78218288,
+      "p_ucb": 0.86218288,
+      "paper_only": true,
+      "side": "NO",
+      "spread": 0.02,
+      "token_id": "71940078455524699585822697954608343130226662273950516751010200431921477907081"
+    },
+    {
+      "EV_safe": 0.11367746,
+      "best_ask": 0.63,
+      "blocker": null,
+      "depth": 147.0024,
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-2250-by-december-31-2026-from-june-8",
+      "p_lcb": 0.75367746,
+      "p_model": 0.83367746,
+      "p_ucb": 0.91367746,
+      "paper_only": true,
+      "side": "NO",
+      "spread": 0.06,
+      "token_id": "75767057196104451335097184946894439687652715504519850448748624238938964839517"
+    },
+    {
+      "EV_safe": 0.08738288,
+      "best_ask": 0.65,
+      "blocker": null,
+      "depth": 579.9086,
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-80000-by-december-31-2026-from-june-8",
+      "p_lcb": 0.74738288,
+      "p_model": 0.82738288,
+      "p_ucb": 0.90738288,
+      "paper_only": true,
+      "side": "NO",
+      "spread": 0.02,
+      "token_id": "97935576048470682856410770515093410471930345625703730314648450517169216708534"
+    },
+    {
+      "EV_safe": 0.0509064,
+      "best_ask": 0.74,
+      "blocker": null,
+      "depth": 24.245,
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-2500-by-december-31-2026-from-june-8",
+      "p_lcb": 0.8009064,
+      "p_model": 0.8809064,
+      "p_ucb": 0.9609064,
+      "paper_only": true,
+      "side": "NO",
+      "spread": 0.01,
+      "token_id": "12694342104106134400136235068219949004989501834673366967379953191482730849518"
+    },
+    {
+      "EV_safe": 0.02394087,
+      "best_ask": 0.75,
+      "blocker": null,
+      "depth": 1226.114,
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-85000-by-december-31-2026-from-june-8",
+      "p_lcb": 0.78394087,
+      "p_model": 0.86394087,
+      "p_ucb": 0.94394087,
+      "paper_only": true,
+      "side": "NO",
+      "spread": 0.02,
+      "token_id": "36452998529349325427775896197542954466076820131251505400349046929712654983843"
+    },
+    {
+      "EV_safe": -0.00680537,
+      "best_ask": 0.81,
+      "blocker": "ev_below_min",
+      "depth": 1190.4419,
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-90000-by-december-31-2026-113-862-581-343",
+      "p_lcb": 0.81319463,
+      "p_model": 0.89319463,
+      "p_ucb": 0.97319463,
+      "paper_only": true,
+      "side": "NO",
+      "spread": 0.01,
+      "token_id": "89935193776001764234914810530894985625350942201527563326613427606200761992090"
+    },
+    {
+      "EV_safe": -0.0153187,
+      "best_ask": 0.84,
+      "blocker": "ev_below_min",
+      "depth": 1152.7945,
+      "live_order_path": false,
+      "market_slug": "will-ethereum-reach-2750-by-december-31-2026-from-june-8",
+      "p_lcb": 0.8346813,
+      "p_model": 0.9146813,
+      "p_ucb": 0.9946813,
+      "paper_only": true,
+      "side": "NO",
+      "spread": 0.01,
+      "token_id": "104897339568513284027804924284247001079403049058871548601061742642185480744261"
+    },
+    {
+      "EV_safe": -0.021,
+      "best_ask": 0.011,
+      "blocker": "ev_below_min",
+      "depth": 724.50057,
+      "live_order_path": false,
+      "market_slug": "will-bitcoin-reach-1000000-by-december-31-2026-946",
+      "p_lcb": 0.0,
+      "p_model": 0.0,
+      "p_ucb": 0.08,
+      "paper_only": true,
+      "side": "YES",
+      "spread": 0.001,
+      "token_id": "18571303954259773157233385333455041418270179723020753158306812650937565180666"
+    }
+  ]
 }

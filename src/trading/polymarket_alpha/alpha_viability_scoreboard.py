@@ -99,6 +99,8 @@ def build_alpha_viability_scoreboard(
         live_push_status = "tiny_live_review_candidate"
     elif markout_mean is not None and markout_mean > 0:
         live_push_status = "continue_forward_paper"
+    elif forward_paper_fill_count > 0:
+        live_push_status = "collect_forward_markouts"
     elif model_positive_categories and forward_paper_fill_count <= 0:
         live_push_status = "wait_for_forward_candidates"
     elif not model_positive_categories:

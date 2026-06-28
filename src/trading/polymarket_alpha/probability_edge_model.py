@@ -372,6 +372,7 @@ def build_probability_edge_model_report(
         and _safe_float(row.get("price_mid")) is not None
         and _safe_float(row.get("resolved_payout")) is not None
     ]
+    unique_resolved_event_family_count = len({_family_id(row) for row in resolved if _family_id(row)})
     mid_rows = [row for row in resolved if _is_mid_training_row(row)]
     train, validate, split_info = _family_split(mid_rows, train_fraction=train_fraction)
     bins = _fit_bins(train)
@@ -412,6 +413,7 @@ def build_probability_edge_model_report(
         "sklearn_available": False,
         "input_row_count": len(materialized),
         "input_resolved_row_count": len(resolved),
+        "unique_resolved_event_family_count": unique_resolved_event_family_count,
         "mid_price_training_row_count": len(mid_rows),
         "train_row_count": len(train),
         "validate_row_count": len(validate),

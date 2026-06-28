@@ -53,3 +53,25 @@ def test_polymarket_alpha_viability_tracks_probability_edge_factory_status():
     assert report["summary"]["top_focus_categories"] == ["crypto"]
     assert report["summary"]["maker_shadow_focus_quote_count"] == 1
     assert report["live_order_path"] is False
+
+
+def test_polymarket_alpha_viability_collects_markouts_when_active_crypto_fills_exist():
+    report = build_alpha_viability_scoreboard(
+        opportunity_density_report={"top_categories": [{"category": "crypto"}]},
+        payoff_arbitrage_report={"structural_candidate_count": 0, "candidates": []},
+        maker_shadow_report={"quote_count": 0, "inferred_fill_count": 0},
+        rule_confusion_report={"candidate_count": 0},
+        probability_edge_model_report={
+            "candidate_count": 0,
+            "by_category": [],
+            "oos_blocker_reason": "need_at_least_two_event_families_for_leave_family_out",
+        },
+        active_probability_edge_report={"candidate_count": 9, "paper_fill_count": 9},
+        probability_markout_report={"markout_count": 0, "mean_markout": None},
+        probability_resolved_audit_report={"resolved_fill_count": 0, "resolved_pnl_cents": None},
+    )
+
+    assert report["summary"]["forward_paper_fill_count"] == 9
+    assert report["summary"]["live_push_status"] == "collect_forward_markouts"
+    assert report["summary"]["final_next_focus"] == "probability_edge_forward_paper_markout"
+    assert report["live_order_path"] is False

@@ -74,6 +74,8 @@ def test_active_probability_edge_scanner_blocks_when_global_oos_not_passed():
     blockers = {row["reason"]: row["count"] for row in report["blocker_counts"]}
     assert blockers["global_oos_model_not_passed"] == 1
     assert report["candidate_count"] == 0
+    assert report["lane_reports"]["global_oos_model_lane"]["blocker_counts"][0]["reason"] == "global_oos_model_not_passed"
+    assert report["lane_reports"]["crypto_model_lane"]["blocker_counts"] == []
 
 
 def test_active_probability_edge_scanner_prioritizes_crypto_candidates():
@@ -95,6 +97,8 @@ def test_active_probability_edge_scanner_prioritizes_crypto_candidates():
     assert report["candidate_count"] == 1
     assert report["candidates"][0]["model_source"] == "crypto_lognormal_threshold_model"
     assert report["by_model_source"] == [{"model_source": "crypto_lognormal_threshold_model", "count": 1}]
+    assert report["lane_reports"]["crypto_model_lane"]["candidate_count"] == 1
+    assert report["lane_reports"]["global_oos_model_lane"]["candidate_count"] == 0
 
 
 def test_active_probability_edge_scanner_keeps_politics_neutral_stats_only():
@@ -106,3 +110,62 @@ def test_active_probability_edge_scanner_keeps_politics_neutral_stats_only():
 
     assert report["candidate_count"] == 1
     assert report["candidates"][0]["neutral_political_stats_only"] is True
+
+
+def test_active_scanner_crypto_lane_runs_even_when_global_oos_not_passed():
+    report = scan_active_probability_edges(
+        active_markets=[_market(category="sports")],
+        model_report=_model(False),
+        crypto_report={
+            "parsed_crypto_market_count": 2,
+            "model_ready_count": 2,
+            "executable_price_available_count": 1,
+            "candidate_count": 0,
+            "blocker_counts": [{"reason": "ev_below_min", "count": 2}],
+            "top_10_near_misses": [{"market_slug": "btc", "EV_safe": -0.01}],
+        },
+    )
+
+    crypto_lane = report["lane_reports"]["crypto_model_lane"]
+    global_lane = report["lane_reports"]["global_oos_model_lane"]
+    assert crypto_lane["scanned_count"] == 2
+    assert crypto_lane["model_ready_count"] == 2
+    assert crypto_lane["executable_price_available_count"] == 1
+    assert crypto_lane["blocker_counts"][0]["reason"] == "ev_below_min"
+    assert global_lane["blocker_counts"][0]["reason"] == "global_oos_model_not_passed"
+
+
+def test_active_scanner_reports_lane_specific_blockers():
+    report = scan_active_probability_edges(
+        active_markets=[_market()],
+        model_report=_model(True),
+        crypto_report={
+            "parsed_crypto_market_count": 1,
+            "model_ready_count": 1,
+            "executable_price_available_count": 0,
+            "gap_reasons": [{"reason": "yes_no_ask_depth", "count": 1}],
+        },
+        min_depth=1000,
+    )
+
+    crypto_blockers = {row["reason"]: row["count"] for row in report["lane_reports"]["crypto_model_lane"]["blocker_counts"]}
+    global_blockers = {row["reason"]: row["count"] for row in report["lane_reports"]["global_oos_model_lane"]["blocker_counts"]}
+    assert crypto_blockers["yes_no_ask_depth"] == 1
+    assert global_blockers["depth_insufficient"] == 1
+
+
+def test_active_scanner_crypto_missing_ask_not_global_oos():
+    report = scan_active_probability_edges(
+        active_markets=[_market(category="crypto")],
+        model_report=_model(False),
+        crypto_report={
+            "parsed_crypto_market_count": 1,
+            "model_ready_count": 1,
+            "executable_price_available_count": 0,
+            "blocker_counts": [{"reason": "yes_no_ask_depth", "count": 1}],
+        },
+    )
+
+    crypto_blockers = {row["reason"]: row["count"] for row in report["lane_reports"]["crypto_model_lane"]["blocker_counts"]}
+    assert crypto_blockers["yes_no_ask_depth"] == 1
+    assert report["lane_reports"]["global_oos_model_lane"]["blocker_counts"][0]["reason"] == "global_oos_model_not_passed"
