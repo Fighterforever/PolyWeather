@@ -1,36 +1,126 @@
 {
   "active_alpha_research": {
+    "historical_tradability_triage": {
+      "approximate_negative_edge_count": 96,
+      "approximate_positive_edge_count": 9,
+      "counts_for_live_gate": false,
+      "executable_depth_available_count": 0,
+      "live_order_path": false,
+      "locked_signal_count": 105,
+      "missing_price_count": 0,
+      "pnl_semantics": "approximate_price_only; no real taker PnL unless executable_depth_available_count > 0",
+      "price_available_count": 105,
+      "report_path": "evidence/historical_replay/observation_lock_tradability_report.json",
+      "status": "complete",
+      "triage_rows_path": "evidence/historical_replay/observation_lock_locked_signal_triage.jsonl"
+    },
     "non_dust_threshold_cdf": {
       "run_after_utc": "2026-06-30T03:05:00Z",
       "runner_label": "com.polyweather.non-dust-uuww-due-pipeline",
-      "status": "pending_non_dust_due"
+      "status": "pending_due"
     },
     "observation_lock_alpha": {
-      "candidate_count": 0,
+      "active_sampler_installed": true,
+      "active_sampler_last_run_status": "no_current_candidate",
+      "approximate_positive_edge_count": 9,
+      "executable_depth_available_count": 0,
       "live_order_path": false,
       "locked_signal_count": 105,
-      "missing_historical_price_count": 105,
-      "replay_market_count": 836,
-      "replay_signal_count": 1793,
+      "missing_price_count": 0,
+      "observation_lock_paper_fill_count": 0,
+      "price_available_count": 105,
+      "remaining_blocker": "no active executable non-dust observation-lock candidate; top reject reasons: executable_edge_not_positive=240, not_observation_locked=238, observation_not_locked=238, bucket_type_not_sampled=198, eq_exact_not_alpha=198",
       "resolved_pnl_cents": null,
-      "status": "historical_lock_signals_found_but_missing_executable_price"
+      "status": "active_execution_sampling"
+    },
+    "observation_lock_execution_sampler": {
+      "counts_for_live_gate": false,
+      "executable_candidate_count": 0,
+      "generated_at": "2026-06-28T05:46:20Z",
+      "install_report_path": "evidence/observation_lock_sampler_launchd_install_report.json",
+      "last_run_status": "no_current_candidate",
+      "live_order_path": false,
+      "locked_count": 66,
+      "metar_freshness_status": "fresh_candidates_required",
+      "missing_intraday_observation_count": 174,
+      "paper_fill_count": 0,
+      "reject_reason_counts": [
+        {
+          "count": 240,
+          "reason": "executable_edge_not_positive"
+        },
+        {
+          "count": 238,
+          "reason": "not_observation_locked"
+        },
+        {
+          "count": 238,
+          "reason": "observation_not_locked"
+        },
+        {
+          "count": 198,
+          "reason": "bucket_type_not_sampled"
+        },
+        {
+          "count": 198,
+          "reason": "eq_exact_not_alpha"
+        },
+        {
+          "count": 174,
+          "reason": "missing_intraday_available_at"
+        },
+        {
+          "count": 174,
+          "reason": "missing_intraday_observation"
+        },
+        {
+          "count": 66,
+          "reason": "stale_intraday_observation"
+        },
+        {
+          "count": 66,
+          "reason": "unsupported_official_source_not_alpha"
+        },
+        {
+          "count": 48,
+          "reason": "spread_too_wide"
+        },
+        {
+          "count": 36,
+          "reason": "dust_price"
+        },
+        {
+          "count": 36,
+          "reason": "dust_price_bucket_not_alpha"
+        }
+      ],
+      "remaining_blocker": "no active executable non-dust observation-lock candidate; top reject reasons: executable_edge_not_positive=240, not_observation_locked=238, observation_not_locked=238, bucket_type_not_sampled=198, eq_exact_not_alpha=198",
+      "report_path": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
+      "runner_label": "com.polyweather.observation-lock-execution-sampler",
+      "scanned_row_count": 240,
+      "stale_intraday_observation_count": 66,
+      "start_interval_seconds": 300,
+      "status": "installed_running"
     }
   },
   "artifacts": {
     "intraday_launchd_install_report": "evidence/intraday_observation_launchd_install_report.json",
     "intraday_observation_collector": "evidence/official_observations/intraday_observations.jsonl",
+    "observation_lock_execution_sampler_report": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
+    "observation_lock_locked_signal_triage": "evidence/historical_replay/observation_lock_locked_signal_triage.jsonl",
     "observation_lock_paper_journal": "evidence/observation_lock_paper/fills.jsonl",
+    "observation_lock_sampler_launchd_install_report": "evidence/observation_lock_sampler_launchd_install_report.json",
     "observation_lock_signal_report": "evidence/observation_lock_signal_report.json",
+    "observation_lock_tradability_report": "evidence/historical_replay/observation_lock_tradability_report.json",
     "profit_strategy_state_report": "evidence/profit_strategy_state_report.json"
   },
   "counts_for_live_gate": false,
   "data_collection": {
     "intraday_observation_collector_installed": true,
     "latest_observation_at_by_station": {
-      "EGLC": "2026-06-28T04:20:00Z",
-      "LTAC": "2026-06-28T04:20:00Z",
-      "RKSI": "2026-06-28T04:30:00Z",
-      "UUWW": "2026-06-28T04:30:00Z"
+      "EGLC": "2026-06-28T05:20:00Z",
+      "LTAC": "2026-06-28T05:20:00Z",
+      "UUWW": "2026-06-28T05:31:00Z"
     },
     "manifest": "evidence/official_observations/manifest.json",
     "missing_station_reasons": [
@@ -42,7 +132,7 @@
       }
     ],
     "observation_count": 400,
-    "station_count": 4
+    "station_count": 3
   },
   "failed_paths": {
     "archived_overlap_diagnostic": {
@@ -54,16 +144,17 @@
       "status": "failed"
     }
   },
+  "final_conclusion": "observation_lock_alpha_ready_for_execution_sampling_but_no_current_candidate",
   "killed_paths": [
     "eq_exact_live",
     "dust_tail_live",
     "maker_inferred_live"
   ],
-  "latest_focus": "web_first_historical_alpha_backfill",
+  "latest_focus": "observation_lock_active_execution_sampling",
   "live": {
     "can_tiny_live": false,
     "live_order_path": false,
-    "reason": "no historical executable-depth resolved PnL; live paths remain hard-disabled"
+    "reason": "paper-only active execution sampling is running; live remains hard-disabled until resolved non-dust paper evidence exists"
   },
   "live_order_path": false,
   "paper_only": true,

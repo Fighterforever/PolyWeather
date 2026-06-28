@@ -1,0 +1,251 @@
+{
+  "candidate_samples": [],
+  "counts_for_live_gate": false,
+  "executable_candidate_count": 0,
+  "generated_at": "2026-06-28T05:46:20Z",
+  "intraday_visible_station_count": 3,
+  "live_order_path": false,
+  "locked_count": 66,
+  "max_staleness_minutes": 10.0,
+  "metar_freshness_status": "fresh_candidates_required",
+  "orderbook_snapshot_count": 0,
+  "orderbook_snapshot_written_count": 0,
+  "paper_fill_count": 0,
+  "paper_fill_written_count": 0,
+  "paper_only": true,
+  "paths": {
+    "orderbook_snapshots": "evidence/observation_lock_execution/orderbook_snapshots.jsonl",
+    "paper_fills": "evidence/observation_lock_execution/paper_fills.jsonl",
+    "signal_report": "evidence/observation_lock_execution/latest_signal_report.json"
+  },
+  "reject_reason_counts": [
+    {
+      "count": 240,
+      "reason": "executable_edge_not_positive"
+    },
+    {
+      "count": 238,
+      "reason": "not_observation_locked"
+    },
+    {
+      "count": 238,
+      "reason": "observation_not_locked"
+    },
+    {
+      "count": 198,
+      "reason": "bucket_type_not_sampled"
+    },
+    {
+      "count": 198,
+      "reason": "eq_exact_not_alpha"
+    },
+    {
+      "count": 174,
+      "reason": "missing_intraday_available_at"
+    },
+    {
+      "count": 174,
+      "reason": "missing_intraday_observation"
+    },
+    {
+      "count": 66,
+      "reason": "stale_intraday_observation"
+    },
+    {
+      "count": 66,
+      "reason": "unsupported_official_source_not_alpha"
+    },
+    {
+      "count": 48,
+      "reason": "spread_too_wide"
+    },
+    {
+      "count": 36,
+      "reason": "dust_price"
+    },
+    {
+      "count": 36,
+      "reason": "dust_price_bucket_not_alpha"
+    },
+    {
+      "count": 24,
+      "reason": "ask_depth_too_low"
+    },
+    {
+      "count": 24,
+      "reason": "missing_spread"
+    },
+    {
+      "count": 13,
+      "reason": "missing_executable_price"
+    }
+  ],
+  "scanned_row_count": 240,
+  "schema_version": "polyweather_observation_lock_execution_sampler.v1",
+  "top_watch_samples": [
+    {
+      "anomaly_flags": [],
+      "ask_depth": 0.0,
+      "best_ask": 0.001,
+      "best_bid": null,
+      "blockers": [
+        "ask_depth_too_low",
+        "executable_edge_not_positive",
+        "missing_executable_price",
+        "missing_spread"
+      ],
+      "bucket_type": "le",
+      "counts_for_live_gate": false,
+      "decision": "watch",
+      "executable_edge": null,
+      "execution_sampler_reject_reasons": [
+        "ask_depth_too_low",
+        "executable_edge_not_positive",
+        "missing_executable_price",
+        "missing_spread",
+        "stale_intraday_observation"
+      ],
+      "intraday_observation_count": 196,
+      "latest_available_at": "2026-06-28T05:24:16Z",
+      "latest_observation_at": "2026-06-28T05:20:00Z",
+      "live_order_path": false,
+      "lock_state": "le_yes_dead_no_locked",
+      "locked_probability": 1.0,
+      "locked_side": "NO",
+      "market_close_time": "2026-06-28T12:00:00Z",
+      "market_slug": "highest-temperature-in-london-on-june-28-2026-22corbelow",
+      "no_lookahead": true,
+      "observation_window_end_time": "2026-06-28T23:59:59Z",
+      "official_current_high": 23.0,
+      "orderbook_snapshot_id": null,
+      "paper_only": true,
+      "price_bucket": "price_unknown",
+      "price_semantics": "synthetic_no_from_yes_bid",
+      "q_effective": null,
+      "schema_version": "polyweather_weather_observation_lock_signal.v1",
+      "settlement_source": "metar",
+      "settlement_spec": {
+        "bucket_type": "le",
+        "city": "london",
+        "city_display_name": "London",
+        "end_time": "2026-06-28T12:00:00Z",
+        "event_slug": "highest-temperature-in-london-on-june-28-2026",
+        "market_close_time": "2026-06-28T12:00:00Z",
+        "market_family": "temperature",
+        "market_id": "2688106",
+        "market_slug": "highest-temperature-in-london-on-june-28-2026-22corbelow",
+        "metric": "daily_high_temperature",
+        "observation_window_end_time": "2026-06-28T23:59:59Z",
+        "platform": "polymarket",
+        "question": "Will the highest temperature in London be 22°C or below on June 28?",
+        "rounding": "integer_nearest",
+        "rule_hash": "c488ad23c8586509cde9",
+        "rule_text": "Will the highest temperature in London be 22°C or below on June 28? Settlement station: London City 机场 (London).",
+        "schema_version": "polyweather_weather_settlement_spec.v1",
+        "settlement_due_time": "2026-06-29T05:59:59Z",
+        "settlement_grace_hours": 6.0,
+        "settlement_source": "metar",
+        "settlement_url": null,
+        "station_code": "EGLC",
+        "station_label": "London City 机场",
+        "status": "supported",
+        "target_date": "2026-06-28",
+        "threshold": 22.0,
+        "timezone": "UTC+00:00",
+        "unit": "C",
+        "unsupported_reasons": [],
+        "upper_threshold": null
+      },
+      "side": "NO",
+      "spread": null,
+      "station_code": "EGLC",
+      "target_date": "2026-06-28",
+      "threshold": 22.0,
+      "token_id": "43353552025157739830367178578470051066407213035306606553282223819647828202711",
+      "token_side": "YES",
+      "upper_threshold": null
+    },
+    {
+      "anomaly_flags": [],
+      "ask_depth": 0.0,
+      "best_ask": null,
+      "best_bid": 0.999,
+      "blockers": [
+        "ask_depth_too_low",
+        "executable_edge_not_positive",
+        "missing_executable_price",
+        "missing_spread"
+      ],
+      "bucket_type": "le",
+      "counts_for_live_gate": false,
+      "decision": "watch",
+      "executable_edge": null,
+      "execution_sampler_reject_reasons": [
+        "ask_depth_too_low",
+        "executable_edge_not_positive",
+        "missing_executable_price",
+        "missing_spread",
+        "stale_intraday_observation"
+      ],
+      "intraday_observation_count": 196,
+      "latest_available_at": "2026-06-28T05:24:16Z",
+      "latest_observation_at": "2026-06-28T05:20:00Z",
+      "live_order_path": false,
+      "lock_state": "le_yes_dead_no_locked",
+      "locked_probability": 1.0,
+      "locked_side": "NO",
+      "market_close_time": "2026-06-28T12:00:00Z",
+      "market_slug": "highest-temperature-in-london-on-june-28-2026-22corbelow",
+      "no_lookahead": true,
+      "observation_window_end_time": "2026-06-28T23:59:59Z",
+      "official_current_high": 23.0,
+      "orderbook_snapshot_id": null,
+      "paper_only": true,
+      "price_bucket": "price_unknown",
+      "price_semantics": "direct_token_best_ask",
+      "q_effective": null,
+      "schema_version": "polyweather_weather_observation_lock_signal.v1",
+      "settlement_source": "metar",
+      "settlement_spec": {
+        "bucket_type": "le",
+        "city": "london",
+        "city_display_name": "London",
+        "end_time": "2026-06-28T12:00:00Z",
+        "event_slug": "highest-temperature-in-london-on-june-28-2026",
+        "market_close_time": "2026-06-28T12:00:00Z",
+        "market_family": "temperature",
+        "market_id": "2688106",
+        "market_slug": "highest-temperature-in-london-on-june-28-2026-22corbelow",
+        "metric": "daily_high_temperature",
+        "observation_window_end_time": "2026-06-28T23:59:59Z",
+        "platform": "polymarket",
+        "question": "Will the highest temperature in London be 22°C or below on June 28?",
+        "rounding": "integer_nearest",
+        "rule_hash": "c488ad23c8586509cde9",
+        "rule_text": "Will the highest temperature in London be 22°C or below on June 28? Settlement station: London City 机场 (London).",
+        "schema_version": "polyweather_weather_settlement_spec.v1",
+        "settlement_due_time": "2026-06-29T05:59:59Z",
+        "settlement_grace_hours": 6.0,
+        "settlement_source": "metar",
+        "settlement_url": null,
+        "station_code": "EGLC",
+        "station_label": "London City 机场",
+        "status": "supported",
+        "target_date": "2026-06-28",
+        "threshold": 22.0,
+        "timezone": "UTC+00:00",
+        "unit": "C",
+        "unsupported_reasons": [],
+        "upper_threshold": null
+      },
+      "side": "NO",
+      "spread": null,
+      "station_code": "EGLC",
+      "target_date": "2026-06-28",
+      "threshold": 22.0,
+      "token_id": "15969655164157246803553264702139901405906414034898034085190085965389586542751",
+      "token_side": "NO",
+      "upper_threshold": null
+    }
+  ]
+}

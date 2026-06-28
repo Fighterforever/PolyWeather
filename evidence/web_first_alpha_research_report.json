@@ -1,7 +1,7 @@
 {
   "blockers": [
-    "historical Polymarket prices are not executable orderbook depth",
-    "observation-lock needs nonzero executable-price fills before PnL can count",
+    "historical Polymarket price history is approximate only, not executable orderbook depth",
+    "active sampler has not found a current non-dust positive executable-edge candidate",
     "non-dust threshold path still waits for due runner resolution"
   ],
   "counts_for_live_gate": false,
@@ -43,32 +43,18 @@
     }
   },
   "execution_sampling": {
-    "archived_row_count": 19,
+    "active_sampler_installed": true,
+    "active_sampler_last_run_status": "no_current_candidate",
     "counts_for_live_gate": false,
-    "exclude_dust_execution_sampling": true,
-    "generated_at": "2026-06-28T04:57:36Z",
     "live_order_path": false,
-    "max_execution_sampling_tokens": 20,
-    "paper_only": true,
-    "reject_counts": [
-      {
-        "count": 198,
-        "reason": "not_threshold_bucket"
-      },
-      {
-        "count": 47,
-        "reason": "dust_price"
-      },
-      {
-        "count": 44,
-        "reason": "not_near_due_48h"
-      }
-    ],
-    "schema_version": "polyweather_minimal_execution_sampling_manifest.v1",
-    "source_row_count": 240
+    "observation_lock_paper_fill_count": 0,
+    "observation_lock_sampler_report": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
+    "remaining_blocker": "no active executable non-dust observation-lock candidate; top reject reasons: executable_edge_not_positive=240, not_observation_locked=238, observation_not_locked=238, bucket_type_not_sampled=198, eq_exact_not_alpha=198",
+    "status": "installed_running"
   },
+  "final_conclusion": "observation_lock_alpha_ready_for_execution_sampling_but_no_current_candidate",
   "historical_non_dust_threshold_replay": "pending_non_dust_uuww_due_runner",
-  "historical_observation_lock_alpha": "no_resolved_executable_price_for_observation_lock",
+  "historical_observation_lock_alpha": "historical_locked_signal_tradability_triage_complete",
   "historical_observation_lock_replay": {
     "brier_score": null,
     "by_bucket_type": [
@@ -254,14 +240,97 @@
     "resolved_pnl_cents": null,
     "schema_version": "polyweather_observation_lock_historical_replay.v1.summary"
   },
+  "historical_observation_lock_tradability": {
+    "approximate_negative_edge_count": 96,
+    "approximate_positive_edge_count": 9,
+    "counts_for_live_gate": false,
+    "executable_depth_available_count": 0,
+    "live_order_path": false,
+    "locked_signal_count": 105,
+    "missing_price_count": 0,
+    "pnl_semantics": "approximate_price_only; no real taker PnL unless executable_depth_available_count > 0",
+    "price_available_count": 105,
+    "report_path": "evidence/historical_replay/observation_lock_tradability_report.json",
+    "status": "complete",
+    "triage_rows_path": "evidence/historical_replay/observation_lock_locked_signal_triage.jsonl"
+  },
   "live_order_path": false,
-  "next_action": "collect targeted executable orderbook depth only for non-dust ge/le supported-source markets while continuing web/API backfills",
+  "next_action": "continue five-minute observation-lock execution sampling with fresh METAR and archive orderbook before any paper fill",
+  "observation_lock_execution_sampler": {
+    "counts_for_live_gate": false,
+    "executable_candidate_count": 0,
+    "generated_at": "2026-06-28T05:46:20Z",
+    "install_report_path": "evidence/observation_lock_sampler_launchd_install_report.json",
+    "last_run_status": "no_current_candidate",
+    "live_order_path": false,
+    "locked_count": 66,
+    "metar_freshness_status": "fresh_candidates_required",
+    "missing_intraday_observation_count": 174,
+    "paper_fill_count": 0,
+    "reject_reason_counts": [
+      {
+        "count": 240,
+        "reason": "executable_edge_not_positive"
+      },
+      {
+        "count": 238,
+        "reason": "not_observation_locked"
+      },
+      {
+        "count": 238,
+        "reason": "observation_not_locked"
+      },
+      {
+        "count": 198,
+        "reason": "bucket_type_not_sampled"
+      },
+      {
+        "count": 198,
+        "reason": "eq_exact_not_alpha"
+      },
+      {
+        "count": 174,
+        "reason": "missing_intraday_available_at"
+      },
+      {
+        "count": 174,
+        "reason": "missing_intraday_observation"
+      },
+      {
+        "count": 66,
+        "reason": "stale_intraday_observation"
+      },
+      {
+        "count": 66,
+        "reason": "unsupported_official_source_not_alpha"
+      },
+      {
+        "count": 48,
+        "reason": "spread_too_wide"
+      },
+      {
+        "count": 36,
+        "reason": "dust_price"
+      },
+      {
+        "count": 36,
+        "reason": "dust_price_bucket_not_alpha"
+      }
+    ],
+    "remaining_blocker": "no active executable non-dust observation-lock candidate; top reject reasons: executable_edge_not_positive=240, not_observation_locked=238, observation_not_locked=238, bucket_type_not_sampled=198, eq_exact_not_alpha=198",
+    "report_path": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
+    "runner_label": "com.polyweather.observation-lock-execution-sampler",
+    "scanned_row_count": 240,
+    "stale_intraday_observation_count": 66,
+    "start_interval_seconds": 300,
+    "status": "installed_running"
+  },
   "paper_only": true,
   "schema_version": "polyweather_web_first_alpha_research_report.v1",
   "self_sampling_still_required": [
-    "pre-resolution executable orderbook depth",
-    "slippage and missed-fill measurement",
-    "maker quote lifecycle if maker execution is reconsidered"
+    "active pre-resolution executable orderbook depth",
+    "paper fill markout and missed-fill measurement",
+    "resolved settlement calibration for non-dust observation-lock fills"
   ],
   "web_api_backfill_sources": [
     "aviationweather_metar_history",
