@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
+from src.trading.polymarket_alpha.crypto_market_semantics import classify_crypto_semantics, parse_start_time
 from src.trading.polymarket_alpha.probability_dataset import write_json, write_jsonl
 from src.trading.polymarket_readonly import PolymarketReadonlyClient
 
@@ -113,6 +114,43 @@ def lognormal_probability_above(*, spot: float, threshold: float, annual_vol: fl
     return 0.5 * (1.0 + math.erf(z / math.sqrt(2.0)))
 
 
+def first_passage_probability_upper(*, spot: float, threshold: float, annual_vol: float, years: float) -> float:
+    if spot <= 0 or threshold <= 0:
+        return 0.5
+    if spot >= threshold:
+        return 1.0
+    sigma_t = max(1e-6, float(annual_vol) * math.sqrt(max(1e-8, float(years))))
+    z = math.log(float(threshold) / float(spot)) / sigma_t
+    return max(0.0, min(1.0, 2.0 * (1.0 - 0.5 * (1.0 + math.erf(z / math.sqrt(2.0))))))
+
+
+def fetch_binance_high_since_start(asset: str, start_time: str, end_time: str) -> Optional[float]:
+    start_dt = _parse_utc(start_time)
+    end_dt = _parse_utc(end_time)
+    if start_dt is None or end_dt is None or end_dt <= start_dt:
+        return None
+    symbol = f"{asset.upper()}USDT"
+    start_ms = int(start_dt.timestamp() * 1000)
+    end_ms = int(end_dt.timestamp() * 1000)
+    url = (
+        "https://api.binance.com/api/v3/klines"
+        f"?symbol={symbol}&interval=1h&startTime={start_ms}&endTime={end_ms}&limit=1000"
+    )
+    try:
+        with urllib.request.urlopen(url, timeout=12) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except Exception:
+        return None
+    highs = []
+    if isinstance(payload, list):
+        for row in payload:
+            if isinstance(row, list) and len(row) > 2:
+                high = _safe_float(row[2])
+                if high is not None:
+                    highs.append(high)
+    return max(highs) if highs else None
+
+
 def _token_for_outcome(market: Dict[str, Any], outcome: str) -> Optional[str]:
     wanted = str(outcome or "").strip().lower()
     for label, token_id in (market.get("token_id_by_outcome") or {}).items():
@@ -203,8 +241,10 @@ def _candidate_from_probability(
     market: Dict[str, Any],
     parsed: Dict[str, Any],
     p_yes: float,
-    p_lcb: float,
-    p_ucb: float,
+    p_yes_lcb: float,
+    p_yes_ucb: float,
+    probability_semantics: str,
+    probability_details: Optional[Dict[str, Any]],
     min_edge: float,
     cost: float,
     min_depth: float,
@@ -212,22 +252,37 @@ def _candidate_from_probability(
 ) -> tuple[Optional[Dict[str, Any]], Optional[str], List[Dict[str, Any]], bool]:
     side_rows: List[Dict[str, Any]] = []
     executable_available = False
+    p_no = 1.0 - p_yes
+    p_no_lcb = max(0.0, 1.0 - p_yes_ucb)
+    p_no_ucb = min(1.0, 1.0 - p_yes_lcb)
     for side in ("YES", "NO"):
         quote, gap = _side_quote(market, side)
         side_p = p_yes if side == "YES" else 1.0 - p_yes
-        side_lcb = p_lcb if side == "YES" else 1.0 - p_ucb
+        side_lcb = p_yes_lcb if side == "YES" else p_no_lcb
+        side_ucb = p_yes_ucb if side == "YES" else p_no_ucb
         row = {
             "market_slug": market.get("market_slug"),
             "token_id": _token_for_outcome(market, side),
             "side": side,
+            "p_yes_model": round(p_yes, 8),
+            "p_yes_lcb": round(p_yes_lcb, 8),
+            "p_yes_ucb": round(p_yes_ucb, 8),
+            "p_no_model": round(p_no, 8),
+            "p_no_lcb": round(p_no_lcb, 8),
+            "p_no_ucb": round(p_no_ucb, 8),
+            "p_trade_model": round(side_p, 8),
+            "p_trade_lcb": round(side_lcb, 8),
+            "p_trade_ucb": round(side_ucb, 8),
             "p_model": round(side_p, 8),
             "p_lcb": round(side_lcb, 8),
-            "p_ucb": round(p_ucb if side == "YES" else 1.0 - p_lcb, 8),
+            "p_ucb": round(side_ucb, 8),
             "best_ask": None,
             "spread": None,
             "depth": None,
             "EV_safe": None,
             "blocker": gap or None,
+            "probability_semantics": probability_semantics,
+            **(probability_details or {}),
         }
         if quote:
             row.update({
@@ -269,14 +324,26 @@ def _candidate_from_probability(
         "threshold": parsed.get("threshold"),
         "target_time": parsed.get("target_time"),
         "p_model": round(p_yes, 8),
-        "p_lcb": round(p_lcb, 8),
-        "p_ucb": round(p_ucb, 8),
+        "p_lcb": round(p_yes_lcb, 8),
+        "p_ucb": round(p_yes_ucb, 8),
+        "p_yes_model": round(p_yes, 8),
+        "p_yes_lcb": round(p_yes_lcb, 8),
+        "p_yes_ucb": round(p_yes_ucb, 8),
+        "p_no_model": round(p_no, 8),
+        "p_no_lcb": round(p_no_lcb, 8),
+        "p_no_ucb": round(p_no_ucb, 8),
+        "p_trade_model": best.get("p_trade_model"),
+        "p_trade_lcb": best.get("p_trade_lcb"),
+        "p_trade_ucb": best.get("p_trade_ucb"),
         "market_price": market_price,
         "best_ask": q_effective,
         "q_effective": q_effective,
         "cost": cost,
         "EV_safe": round(float(best.get("EV_safe")), 8),
         "model_source": "crypto_lognormal_threshold_model",
+        "probability_semantics": probability_semantics,
+        **(probability_details or {}),
+        "orderbook_snapshot": _book_for_outcome(market, side),
         "confidence": 0.35,
         "orderbook_snapshot_id": None,
         "paper_only": True,
@@ -298,6 +365,7 @@ def build_crypto_probability_edge_report(
     cost: float = 0.01,
     min_depth: float = 10.0,
     max_spread: float = 0.15,
+    high_since_start_fetcher: Optional[Any] = None,
 ) -> Dict[str, Any]:
     generated_dt = _parse_utc(generated_at) if generated_at else datetime.now(timezone.utc)
     generated_at = generated_dt.isoformat().replace("+00:00", "Z")
@@ -345,28 +413,102 @@ def build_crypto_probability_edge_report(
             gaps["missing_target_time"] += 1
             continue
         years = max(1 / 365, (target - generated_dt).total_seconds() / (365.0 * 86400.0))
-        p_above = lognormal_probability_above(
+        annual_vol = float(annual_vols.get(asset, 0.60))
+        p_yes_terminal_above = lognormal_probability_above(
             spot=spot,
             threshold=float(parsed["threshold"]),
-            annual_vol=float(annual_vols.get(asset, 0.60)),
+            annual_vol=annual_vol,
             years=years,
         )
-        p_yes = p_above if parsed.get("direction") == "above" else 1.0 - p_above
+        p_yes_terminal = p_yes_terminal_above if parsed.get("direction") == "above" else 1.0 - p_yes_terminal_above
+        semantics_type = classify_crypto_semantics(market)
+        start_time = parse_start_time(market, generated_at=generated_at)
+        high_since_start = None
+        high_verified = False
+        probability_semantics = semantics_type if semantics_type != "ambiguous" else "ambiguous"
+        p_yes_touch = None
+        if semantics_type == "touch_barrier":
+            probability_semantics = "touch_barrier"
+            if spot >= float(parsed["threshold"]):
+                high_since_start = spot
+                high_verified = True
+                p_yes_touch = 1.0
+            elif start_time:
+                fetcher = high_since_start_fetcher or fetch_binance_high_since_start
+                high_since_start = _safe_float(fetcher(asset, start_time, generated_at))
+                high_verified = high_since_start is not None
+                if high_since_start is not None and high_since_start >= float(parsed["threshold"]):
+                    p_yes_touch = 1.0
+            if p_yes_touch is None:
+                p_yes_touch = first_passage_probability_upper(
+                    spot=spot,
+                    threshold=float(parsed["threshold"]),
+                    annual_vol=annual_vol,
+                    years=years,
+                )
+            if not high_verified:
+                gaps["high_since_start_unverified"] += 1
+        elif semantics_type == "ambiguous":
+            gaps["ambiguous_crypto_market_semantics"] += 1
+        p_yes = p_yes_touch if semantics_type == "touch_barrier" else p_yes_terminal
         haircut = 0.08
         p_lcb = max(0.0, p_yes - haircut)
         p_ucb = min(1.0, p_yes + haircut)
         model_ready_count += 1
-        candidate, gap, side_rows, executable_available = _candidate_from_probability(
-            market=market,
-            parsed=parsed,
-            p_yes=p_yes,
-            p_lcb=p_lcb,
-            p_ucb=p_ucb,
-            min_edge=float(min_edge),
-            cost=float(cost),
-            min_depth=float(min_depth),
-            max_spread=float(max_spread),
-        )
+        probability_details = {
+            "semantics_type": semantics_type,
+            "current_model_semantics": probability_semantics,
+            "p_yes_terminal": round(p_yes_terminal, 8),
+            "p_yes_touch": round(p_yes_touch, 8) if p_yes_touch is not None else None,
+            "p_no_touch": round(1.0 - p_yes_touch, 8) if p_yes_touch is not None else None,
+            "probability_semantics": probability_semantics,
+            "historical_high_since_start": high_since_start,
+            "high_since_start_verified": high_verified,
+            "parsed_start_time": start_time,
+        }
+        if semantics_type == "touch_barrier" and not high_verified:
+            candidate = None
+            gap = "high_since_start_unverified"
+            side_rows = []
+            executable_available = any(_side_quote(market, side)[0] is not None for side in ("YES", "NO"))
+            for side in ("YES", "NO"):
+                quote, quote_gap = _side_quote(market, side)
+                side_rows.append(
+                    {
+                        "market_slug": market.get("market_slug"),
+                        "token_id": _token_for_outcome(market, side),
+                        "side": side,
+                        "p_yes_model": round(p_yes, 8),
+                        "p_yes_lcb": round(p_lcb, 8),
+                        "p_yes_ucb": round(p_ucb, 8),
+                        "p_no_model": round(1.0 - p_yes, 8),
+                        "p_no_lcb": round(max(0.0, 1.0 - p_ucb), 8),
+                        "p_no_ucb": round(min(1.0, 1.0 - p_lcb), 8),
+                        "p_trade_model": round(p_yes if side == "YES" else 1.0 - p_yes, 8),
+                        "p_trade_lcb": round(p_lcb if side == "YES" else max(0.0, 1.0 - p_ucb), 8),
+                        "p_trade_ucb": round(p_ucb if side == "YES" else min(1.0, 1.0 - p_lcb), 8),
+                        "best_ask": quote.get("best_ask") if quote else None,
+                        "spread": quote.get("spread") if quote else None,
+                        "depth": quote.get("depth") if quote else None,
+                        "EV_safe": None,
+                        "blocker": gap or quote_gap,
+                        **probability_details,
+                    }
+                )
+        else:
+            candidate, gap, side_rows, executable_available = _candidate_from_probability(
+                market=market,
+                parsed=parsed,
+                p_yes=p_yes,
+                p_yes_lcb=p_lcb,
+                p_yes_ucb=p_ucb,
+                probability_semantics=probability_semantics,
+                probability_details=probability_details,
+                min_edge=float(min_edge),
+                cost=float(cost),
+                min_depth=float(min_depth),
+                max_spread=float(max_spread),
+            )
         if executable_available:
             executable_price_available_count += 1
         for side_row in side_rows:
@@ -378,6 +520,15 @@ def build_crypto_probability_edge_report(
                     "p_model": side_row.get("p_model"),
                     "p_lcb": side_row.get("p_lcb"),
                     "p_ucb": side_row.get("p_ucb"),
+                    "p_yes_model": side_row.get("p_yes_model"),
+                    "p_yes_lcb": side_row.get("p_yes_lcb"),
+                    "p_yes_ucb": side_row.get("p_yes_ucb"),
+                    "p_no_model": side_row.get("p_no_model"),
+                    "p_no_lcb": side_row.get("p_no_lcb"),
+                    "p_no_ucb": side_row.get("p_no_ucb"),
+                    "p_trade_model": side_row.get("p_trade_model"),
+                    "p_trade_lcb": side_row.get("p_trade_lcb"),
+                    "p_trade_ucb": side_row.get("p_trade_ucb"),
                     "best_ask": side_row.get("best_ask"),
                     "spread": side_row.get("spread"),
                     "depth": side_row.get("depth"),
@@ -385,6 +536,10 @@ def build_crypto_probability_edge_report(
                     "blocker": side_row.get("blocker"),
                     "paper_only": True,
                     "live_order_path": False,
+                    "semantics_type": side_row.get("semantics_type"),
+                    "probability_semantics": side_row.get("probability_semantics"),
+                    "historical_high_since_start": side_row.get("historical_high_since_start"),
+                    "high_since_start_verified": side_row.get("high_since_start_verified"),
                 }
             )
         watch_rows.append({
@@ -397,6 +552,13 @@ def build_crypto_probability_edge_report(
             "p_model": round(p_yes, 8),
             "p_lcb": round(p_lcb, 8),
             "p_ucb": round(p_ucb, 8),
+            "p_yes_terminal": probability_details.get("p_yes_terminal"),
+            "p_yes_touch": probability_details.get("p_yes_touch"),
+            "p_no_touch": probability_details.get("p_no_touch"),
+            "probability_semantics": probability_semantics,
+            "semantics_type": semantics_type,
+            "historical_high_since_start": high_since_start,
+            "high_since_start_verified": high_verified,
             "gap": gap,
             "executable_price_available": executable_available,
             "paper_only": True,
@@ -429,6 +591,9 @@ def build_crypto_probability_edge_report(
         "orderbook_fetch_success_count": len(orderbook_fetch_summary.get("fetched", {})),
         "orderbook_fetch_error_count": len(orderbook_fetch_summary.get("errors", {})),
         "top_10_near_misses": near_misses[:10],
+        "touch_barrier_candidate_count": len([row for row in candidates if row.get("semantics_type") == "touch_barrier"]),
+        "terminal_candidate_count": len([row for row in candidates if row.get("semantics_type") in {"terminal_above", "terminal_below", "close_above", "close_below"}]),
+        "invalidated_due_semantics_count": int(gaps.get("high_since_start_unverified", 0) + gaps.get("ambiguous_crypto_market_semantics", 0)),
         "watch_rows": watch_rows,
         "candidates": candidates,
     }
@@ -454,7 +619,9 @@ __all__ = [
     "SCHEMA_VERSION",
     "build_crypto_probability_edge_report",
     "fetch_binance_spot",
+    "fetch_binance_high_since_start",
     "fetch_missing_orderbooks_for_markets",
+    "first_passage_probability_upper",
     "load_jsonl",
     "lognormal_probability_above",
     "parse_crypto_threshold_market",

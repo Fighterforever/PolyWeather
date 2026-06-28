@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from src.trading.polymarket_alpha.crypto_probability_model import (
     build_crypto_probability_edge_report,
+    first_passage_probability_upper,
     lognormal_probability_above,
     parse_crypto_threshold_market,
 )
@@ -55,6 +56,93 @@ def test_lognormal_probability_monotonic_with_threshold():
     high = lognormal_probability_above(spot=50000, threshold=100000, annual_vol=0.5, years=0.5)
 
     assert low > high
+
+
+def test_touch_probability_greater_than_terminal_probability():
+    terminal = lognormal_probability_above(spot=50000, threshold=70000, annual_vol=0.6, years=0.5)
+    touch = first_passage_probability_upper(spot=50000, threshold=70000, annual_vol=0.6, years=0.5)
+
+    assert touch > terminal
+
+
+def test_no_probability_zero_if_barrier_already_touched():
+    report = build_crypto_probability_edge_report(
+        active_markets=[
+            _market(
+                market_slug="will-bitcoin-reach-70000-by-december-31-2026-from-june-8",
+                title="Will Bitcoin reach $70,000 by December 31, 2026?",
+                question="Will Bitcoin reach $70,000 by December 31, 2026?",
+                description="This resolves Yes if any Binance candle High is at least $70,000 after market creation.",
+                token_id_by_outcome={"Yes": "yes-token", "No": "no-token"},
+                token_ids=["yes-token", "no-token"],
+                orderbooks={
+                    "yes-token": {"best_bid": 0.98, "best_ask": 0.99, "spread": 0.01, "ask_depth_usdc_3c": 100},
+                    "no-token": {"best_bid": 0.01, "best_ask": 0.02, "spread": 0.01, "ask_depth_usdc_3c": 100},
+                },
+            )
+        ],
+        spot_prices={"BTC": 80000},
+        generated_at="2026-06-29T00:00:00Z",
+        min_edge=0.001,
+    )
+
+    assert report["model_ready_count"] == 1
+    assert report["candidate_count"] == 0
+    no_row = next(row for row in report["top_10_near_misses"] if row["side"] == "NO")
+    assert no_row["p_no_lcb"] == 0.0
+
+
+def test_no_fill_if_high_since_start_unverified_for_touch_market():
+    report = build_crypto_probability_edge_report(
+        active_markets=[
+            _market(
+                market_slug="will-bitcoin-reach-70000-by-december-31-2026-from-june-8",
+                title="Will Bitcoin reach $70,000 by December 31, 2026?",
+                question="Will Bitcoin reach $70,000 by December 31, 2026?",
+                description="This resolves Yes if any Binance candle High is at least $70,000 after market creation.",
+                token_id_by_outcome={"Yes": "yes-token", "No": "no-token"},
+                token_ids=["yes-token", "no-token"],
+                orderbooks={
+                    "yes-token": {"best_bid": 0.4, "best_ask": 0.45, "spread": 0.05, "ask_depth_usdc_3c": 100},
+                    "no-token": {"best_bid": 0.5, "best_ask": 0.55, "spread": 0.05, "ask_depth_usdc_3c": 100},
+                },
+            )
+        ],
+        spot_prices={"BTC": 60000},
+        generated_at="2026-06-29T00:00:00Z",
+        high_since_start_fetcher=lambda asset, start, end: None,
+    )
+
+    assert report["candidate_count"] == 0
+    reasons = {row["reason"]: row["count"] for row in report["gap_reasons"]}
+    assert reasons["high_since_start_unverified"] >= 1
+
+
+def test_no_side_ev_uses_touch_probability():
+    report = build_crypto_probability_edge_report(
+        active_markets=[
+            _market(
+                market_slug="will-bitcoin-reach-70000-by-december-31-2026-from-june-8",
+                title="Will Bitcoin reach $70,000 by December 31, 2026?",
+                question="Will Bitcoin reach $70,000 by December 31, 2026?",
+                description="This resolves Yes if any Binance candle High is at least $70,000 after market creation.",
+                token_id_by_outcome={"Yes": "yes-token", "No": "no-token"},
+                token_ids=["yes-token", "no-token"],
+                orderbooks={
+                    "yes-token": {"best_bid": 0.35, "best_ask": 0.4, "spread": 0.05, "ask_depth_usdc_3c": 100},
+                    "no-token": {"best_bid": 0.55, "best_ask": 0.6, "spread": 0.05, "ask_depth_usdc_3c": 100},
+                },
+            )
+        ],
+        spot_prices={"BTC": 60000},
+        generated_at="2026-06-29T00:00:00Z",
+        high_since_start_fetcher=lambda asset, start, end: 65000,
+        min_edge=0.0,
+    )
+
+    no_row = next(row for row in report["top_10_near_misses"] if row["side"] == "NO")
+    assert no_row["probability_semantics"] == "touch_barrier"
+    assert no_row["p_trade_lcb"] == no_row["p_no_lcb"]
 
 
 def test_crypto_candidate_requires_executable_ask():

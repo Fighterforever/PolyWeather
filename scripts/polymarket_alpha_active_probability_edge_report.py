@@ -18,6 +18,7 @@ from src.trading.polymarket_alpha.active_probability_edge_scanner import (  # no
     write_json,
     write_jsonl,
 )
+from src.trading.polymarket_alpha.probability_edge_journal import build_probability_edge_fills_with_snapshots  # noqa: E402
 
 
 DEFAULT_ROOT = Path("evidence/polymarket_alpha")
@@ -40,6 +41,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--summary-output", default=str(DEFAULT_REPORT))
     parser.add_argument("--fills-output", default=str(DEFAULT_PAPER / "fills.jsonl"))
     parser.add_argument("--watch-rows-output", default=str(DEFAULT_PAPER / "watch_rows.jsonl"))
+    parser.add_argument("--orderbook-snapshots-output", default=str(DEFAULT_PAPER / "orderbook_snapshots.jsonl"))
+    parser.add_argument("--generated-at", default=None)
     parser.add_argument("--min-edge", type=float, default=0.02)
     parser.add_argument("--min-depth", type=float, default=10.0)
     parser.add_argument("--max-spread", type=float, default=0.15)
@@ -53,8 +56,9 @@ def main(argv: list[str] | None = None) -> None:
     crypto_candidates = load_jsonl(args.crypto_candidates)
     if crypto_candidates:
         crypto_report["candidates"] = crypto_candidates
+    active_markets = load_jsonl(args.active_markets)
     report = scan_active_probability_edges(
-        active_markets=load_jsonl(args.active_markets),
+        active_markets=active_markets,
         model_report=load_json(args.model_report),
         focus_report=load_json(args.focus_report),
         crypto_report=crypto_report,
@@ -63,11 +67,21 @@ def main(argv: list[str] | None = None) -> None:
         max_spread=float(args.max_spread),
         cost=float(args.cost),
     )
-    write_jsonl(args.fills_output, report.get("candidates") or [])
+    journal = build_probability_edge_fills_with_snapshots(
+        candidates=report.get("candidates") or [],
+        active_markets=active_markets,
+        recorded_at=args.generated_at,
+    )
+    write_jsonl(args.orderbook_snapshots_output, journal.get("orderbook_snapshots") or [])
+    write_jsonl(args.fills_output, journal.get("fills") or [])
     write_jsonl(args.watch_rows_output, report.get("watch_rows") or [])
+    report["paper_fill_count"] = len(journal.get("fills") or [])
+    report["candidate_count"] = len(journal.get("fills") or [])
+    report["orderbook_snapshot_id_null_count"] = journal.get("orderbook_snapshot_id_null_count")
     report["artifact_paths"] = {
         "fills": str(args.fills_output),
         "watch_rows": str(args.watch_rows_output),
+        "orderbook_snapshots": str(args.orderbook_snapshots_output),
     }
     write_json(args.summary_output, {key: value for key, value in report.items() if key not in {"candidates", "watch_rows"}})
     print(

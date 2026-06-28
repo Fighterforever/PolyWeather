@@ -24,6 +24,7 @@ DEFAULT_ROOT = Path("evidence/polymarket_alpha")
 DEFAULT_ACTIVE = DEFAULT_ROOT / "active_markets_snapshot.jsonl"
 DEFAULT_REPORT = DEFAULT_ROOT / "crypto_probability_edge_report.json"
 DEFAULT_CANDIDATES = DEFAULT_ROOT / "crypto_probability_candidates.jsonl"
+DEFAULT_SEMANTICS_AUDIT = DEFAULT_ROOT / "crypto_semantics_audit_report.json"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -31,6 +32,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--active-markets", default=str(DEFAULT_ACTIVE))
     parser.add_argument("--summary-output", default=str(DEFAULT_REPORT))
     parser.add_argument("--candidates-output", default=str(DEFAULT_CANDIDATES))
+    parser.add_argument("--semantics-audit", default=str(DEFAULT_SEMANTICS_AUDIT))
     parser.add_argument("--btc-spot", type=float, default=None)
     parser.add_argument("--eth-spot", type=float, default=None)
     parser.add_argument("--fetch-binance-spot", action=argparse.BooleanOptionalAction, default=True)
@@ -71,6 +73,17 @@ def main(argv: list[str] | None = None) -> None:
     )
     write_jsonl(args.candidates_output, report.get("candidates") or [])
     compact = {key: value for key, value in report.items() if key not in {"candidates", "watch_rows"}}
+    semantics_audit = {}
+    audit_path = Path(args.semantics_audit)
+    if audit_path.exists():
+        try:
+            parsed = json.loads(audit_path.read_text(encoding="utf-8"))
+            semantics_audit = parsed if isinstance(parsed, dict) else {}
+        except json.JSONDecodeError:
+            semantics_audit = {}
+    compact["old_candidate_count"] = semantics_audit.get("fill_count")
+    compact["repriced_candidate_count"] = report.get("candidate_count")
+    compact["pre_reprice_invalidated_due_semantics_count"] = semantics_audit.get("invalidated_due_semantics_count")
     compact["artifact_paths"] = {"crypto_probability_candidates": str(args.candidates_output)}
     write_json(args.summary_output, compact)
     print(

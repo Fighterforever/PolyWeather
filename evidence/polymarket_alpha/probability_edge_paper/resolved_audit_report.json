@@ -5,7 +5,7 @@
   "by_category": [],
   "by_model_source": [],
   "counts_for_live_gate": false,
-  "fill_count": 7,
+  "fill_count": 0,
   "live_order_path": false,
   "mean_resolved_pnl_cents": null,
   "paper_only": true,
@@ -13,5 +13,5 @@
   "resolved_pnl_cents": null,
   "schema_version": "polyweather_polymarket_alpha_probability_edge_journal.v1.resolved_audit_report",
   "scope": "polymarket_only",
-  "unresolved_fill_count": 7
+  "unresolved_fill_count": 0
 }

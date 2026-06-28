@@ -189,11 +189,20 @@ def scan_active_probability_edges(
                 pred = _predict({**market, "token_id": token_id, "spread": spread}, model_report, price)
                 p_lcb = float(pred["p_lcb"])
                 p_ucb = float(pred["p_ucb"])
-                yes_ev = p_lcb - best_ask - float(cost)
+                p_yes_model = float(pred["p"])
+                p_yes_lcb = p_lcb
+                p_yes_ucb = p_ucb
+                p_no_model = 1.0 - p_yes_model
+                p_no_lcb = max(0.0, 1.0 - p_yes_ucb)
+                p_no_ucb = min(1.0, 1.0 - p_yes_lcb)
+                yes_ev = p_yes_lcb - best_ask - float(cost)
                 no_ask = 1.0 - best_bid
-                no_ev = (1.0 - p_ucb) - no_ask - float(cost)
+                no_ev = p_no_lcb - no_ask - float(cost)
                 side = "YES" if yes_ev >= no_ev else "NO"
                 ev_safe = yes_ev if side == "YES" else no_ev
+                p_trade_model = p_yes_model if side == "YES" else p_no_model
+                p_trade_lcb = p_yes_lcb if side == "YES" else p_no_lcb
+                p_trade_ucb = p_yes_ucb if side == "YES" else p_no_ucb
                 watch = {
                     "market_slug": market.get("market_slug"),
                     "token_id": token_id,
@@ -203,6 +212,15 @@ def scan_active_probability_edges(
                     "p_model": round(float(pred["p"]), 8),
                     "p_lcb": round(p_lcb, 8),
                     "p_ucb": round(p_ucb, 8),
+                    "p_yes_model": round(p_yes_model, 8),
+                    "p_yes_lcb": round(p_yes_lcb, 8),
+                    "p_yes_ucb": round(p_yes_ucb, 8),
+                    "p_no_model": round(p_no_model, 8),
+                    "p_no_lcb": round(p_no_lcb, 8),
+                    "p_no_ucb": round(p_no_ucb, 8),
+                    "p_trade_model": round(p_trade_model, 8),
+                    "p_trade_lcb": round(p_trade_lcb, 8),
+                    "p_trade_ucb": round(p_trade_ucb, 8),
                     "market_price": price,
                     "best_ask": best_ask if side == "YES" else no_ask,
                     "q_effective": best_ask if side == "YES" else no_ask,

@@ -169,3 +169,58 @@ def test_active_scanner_crypto_missing_ask_not_global_oos():
     crypto_blockers = {row["reason"]: row["count"] for row in report["lane_reports"]["crypto_model_lane"]["blocker_counts"]}
     assert crypto_blockers["yes_no_ask_depth"] == 1
     assert report["lane_reports"]["global_oos_model_lane"]["blocker_counts"][0]["reason"] == "global_oos_model_not_passed"
+
+
+def test_no_side_ev_uses_no_lcb():
+    market = _market(
+        orderbooks={
+            "yes-token": {
+                "best_bid": 0.8,
+                "best_ask": 0.85,
+                "spread": 0.05,
+                "ask_depth_usdc_3c": 100,
+            }
+        }
+    )
+    model = _model(True)
+    model["model"]["bins"]["global|0_65_0_85|*|*"] = {"p": 0.2, "p_lcb": 0.15, "p_ucb": 0.25, "sample_count": 100}
+    report = scan_active_probability_edges(active_markets=[market], model_report=model, min_edge=0.01, cost=0.01)
+
+    candidate = report["candidates"][0]
+    assert candidate["side"] == "NO"
+    assert candidate["p_trade_lcb"] == candidate["p_no_lcb"]
+    assert candidate["EV_safe"] == round(candidate["p_no_lcb"] - candidate["q_effective"] - candidate["cost"], 8)
+
+
+def test_yes_side_ev_uses_yes_lcb():
+    report = scan_active_probability_edges(active_markets=[_market()], model_report=_model(True), min_edge=0.05, cost=0.01)
+
+    candidate = report["candidates"][0]
+    assert candidate["side"] == "YES"
+    assert candidate["p_trade_lcb"] == candidate["p_yes_lcb"]
+    assert candidate["EV_safe"] == round(candidate["p_yes_lcb"] - candidate["q_effective"] - candidate["cost"], 8)
+
+
+def test_fill_schema_includes_trade_probability_fields():
+    crypto_candidate = {
+        "market_slug": "btc-over-100k",
+        "token_id": "yes-token",
+        "category": "crypto",
+        "model_source": "crypto_lognormal_threshold_model",
+        "EV_safe": 0.03,
+        "p_trade_lcb": 0.7,
+        "p_yes_lcb": 0.7,
+        "p_no_lcb": 0.2,
+        "paper_only": True,
+        "live_order_path": False,
+    }
+    report = scan_active_probability_edges(
+        active_markets=[_market(category="sports")],
+        model_report=_model(False),
+        crypto_report={"candidates": [crypto_candidate]},
+    )
+
+    candidate = report["candidates"][0]
+    assert candidate["p_trade_lcb"] == 0.7
+    assert "p_yes_lcb" in candidate
+    assert "p_no_lcb" in candidate
