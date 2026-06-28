@@ -1,20 +1,137 @@
 {
+  "active_eq_row_count": 198,
+  "active_station_scan_manifest": {
+    "active_eq_row_count": 198,
+    "active_supported_metar_station_count": 3,
+    "collected_station_count": 3,
+    "collection_gap_by_station": [],
+    "counts_for_live_gate": false,
+    "live_order_path": false,
+    "paper_only": true,
+    "requested_station_codes": [
+      "EGLC",
+      "LTAC",
+      "UUWW"
+    ],
+    "rows_by_station": [
+      {
+        "row_count": 36,
+        "station_code": "EGLC"
+      },
+      {
+        "row_count": 54,
+        "station_code": "LTAC"
+      },
+      {
+        "row_count": 54,
+        "station_code": "UUWW"
+      }
+    ],
+    "schema_version": "polyweather_active_supported_metar_station_manifest.v1",
+    "station_codes": [
+      "EGLC",
+      "LTAC",
+      "UUWW"
+    ],
+    "unsupported_eq_rows_by_source": [
+      {
+        "row_count": 54,
+        "settlement_source": "noaa"
+      }
+    ]
+  },
+  "active_supported_metar_station_count": 3,
+  "auto_active_supported_stations": true,
   "breached_eq_count": 0,
   "candidate_samples": [],
   "counts_for_live_gate": false,
   "direct_no_book_count": 0,
   "exclude_dust": true,
   "executable_candidate_count": 0,
-  "generated_at": "2026-06-28T08:07:35Z",
+  "explicit_station_codes_fallback": [
+    "LTAC",
+    "UUWW",
+    "EGLC"
+  ],
+  "generated_at": "2026-06-28T08:45:53Z",
   "live_order_path": false,
   "max_entry_price": 0.95,
+  "nearest_breach_watchlist": {
+    "counts_for_live_gate": false,
+    "generated_at": "2026-06-28T08:45:53Z",
+    "live_order_path": false,
+    "paper_only": true,
+    "schema_version": "polyweather_eq_dead_no_nearest_breach_watchlist.v1",
+    "watchlist_count": 25
+  },
   "no_ask_available_count": 0,
+  "opportunity_funnel": {
+    "ask_depth_sufficient_rows": 0,
+    "blocker_counts": [
+      {
+        "blocker": "ask_depth_too_low",
+        "count": 198
+      },
+      {
+        "blocker": "missing_no_ask",
+        "count": 198
+      },
+      {
+        "blocker": "missing_no_book",
+        "count": 198
+      },
+      {
+        "blocker": "not_breached",
+        "count": 198
+      },
+      {
+        "blocker": "missing_intraday",
+        "count": 144
+      },
+      {
+        "blocker": "price_too_high",
+        "count": 54
+      },
+      {
+        "blocker": "unsupported_source",
+        "count": 54
+      },
+      {
+        "blocker": "not_eq",
+        "count": 42
+      },
+      {
+        "blocker": "dust_price",
+        "count": 20
+      }
+    ],
+    "breached_eq_rows": 0,
+    "counts_for_live_gate": false,
+    "direct_no_book_rows": 0,
+    "exact_bucket_rows": 198,
+    "executable_candidate_rows": 0,
+    "generated_at": "2026-06-28T08:45:53Z",
+    "intraday_available_rows": 54,
+    "live_order_path": false,
+    "no_ask_available_rows": 0,
+    "non_dust_rows": 0,
+    "paper_fill_rows": 0,
+    "paper_only": true,
+    "price_le_0_95_rows": 0,
+    "schema_version": "polyweather_eq_dead_no_opportunity_funnel.v1",
+    "supported_source_rows": 144,
+    "temperature_rows": 240,
+    "total_active_rows": 240
+  },
   "orderbook_snapshot_count": 0,
   "orderbook_snapshot_written_count": 0,
   "paper_fill_count": 0,
   "paper_fill_written_count": 0,
   "paper_only": true,
   "paths": {
+    "active_station_scan_manifest": "evidence/eq_dead_no/active_eq_station_scan_manifest.json",
+    "nearest_breach_watchlist": "evidence/eq_dead_no/eq_dead_no_nearest_breach_watchlist.json",
+    "opportunity_funnel": "evidence/eq_dead_no/eq_dead_no_opportunity_funnel.json",
     "orderbook_snapshots": "evidence/eq_dead_no/orderbook_snapshots.jsonl",
     "paper_fills": "evidence/eq_dead_no/paper_fills.jsonl",
     "signal_report": "evidence/eq_dead_no/eq_dead_no_signal_report.json",
@@ -22,8 +139,18 @@
   },
   "price_band_counts": [],
   "reject_reason_counts": [],
+  "requested_station_codes": [
+    "EGLC",
+    "LTAC",
+    "UUWW"
+  ],
   "scanned_eq_rows": 198,
   "schema_version": "polyweather_eq_dead_no_execution_sampler.v1",
+  "station_codes": [
+    "EGLC",
+    "LTAC",
+    "UUWW"
+  ],
   "top_watch_samples": [],
   "watch_count": 0,
   "watch_rows_written_count": 0

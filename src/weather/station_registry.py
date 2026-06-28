@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from typing import Any, Dict, Optional
+from collections import Counter
+from typing import Any, Dict, Iterable, Optional
 
 from src.data_collection.city_registry import CITY_REGISTRY
 
@@ -75,4 +76,61 @@ def station_registry_snapshot() -> Dict[str, Dict[str, Any]]:
         for city in CITY_REGISTRY
         for spec in [station_for_city(city)]
         if spec is not None
+    }
+
+
+def _row_dict(value: Any) -> Dict[str, Any]:
+    return value if isinstance(value, dict) else {}
+
+
+def _first_text_from_row(row: Dict[str, Any], field: str) -> str:
+    spec = _row_dict(row.get("settlement_spec"))
+    bucket = _row_dict(row.get("market_bucket"))
+    fields = (field,)
+    if field == "station_code":
+        fields = ("station_code", "settlement_station_code")
+    for source in (row, spec, bucket):
+        for candidate_field in fields:
+            text = _text(source.get(candidate_field))
+            if text:
+                return text
+    return ""
+
+
+def active_supported_metar_station_manifest(rows: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
+    source_rows = [row for row in rows if isinstance(row, dict)]
+    eq_rows = [
+        row
+        for row in source_rows
+        if _first_text_from_row(row, "bucket_type").lower() == "eq"
+        and _first_text_from_row(row, "station_code").upper()
+    ]
+    supported_rows = [
+        row
+        for row in eq_rows
+        if (_first_text_from_row(row, "settlement_source") or _text(row.get("settlement_source"))).lower() == "metar"
+    ]
+    rows_by_station = Counter(_first_text_from_row(row, "station_code").upper() for row in supported_rows)
+    station_codes = sorted(code for code in rows_by_station if code)
+    unsupported_by_source = Counter(
+        (_first_text_from_row(row, "settlement_source") or "missing").lower()
+        for row in eq_rows
+        if (_first_text_from_row(row, "settlement_source") or "").lower() != "metar"
+    )
+    return {
+        "schema_version": "polyweather_active_supported_metar_station_manifest.v1",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+        "active_eq_row_count": len(eq_rows),
+        "active_supported_metar_station_count": len(station_codes),
+        "station_codes": station_codes,
+        "rows_by_station": [
+            {"station_code": station, "row_count": count}
+            for station, count in sorted(rows_by_station.items())
+        ],
+        "unsupported_eq_rows_by_source": [
+            {"settlement_source": source, "row_count": count}
+            for source, count in sorted(unsupported_by_source.items())
+        ],
     }

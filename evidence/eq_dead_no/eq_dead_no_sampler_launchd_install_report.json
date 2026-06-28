@@ -1,6 +1,29 @@
 {
+  "auto_active_supported_stations": true,
   "collect_intraday_before_scan": true,
   "commands": [
+    {
+      "command": [
+        "launchctl",
+        "bootstrap",
+        "gui/501",
+        "/Users/leeyoma/Library/LaunchAgents/com.polyweather.eq-dead-no-sampler.plist"
+      ],
+      "returncode": 5,
+      "stderr": "Bootstrap failed: 5: Input/output error\nTry re-running the command as root for richer errors.\n",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "launchctl",
+        "bootout",
+        "gui/501",
+        "/Users/leeyoma/Library/LaunchAgents/com.polyweather.eq-dead-no-sampler.plist"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
     {
       "command": [
         "launchctl",
@@ -35,6 +58,11 @@
     }
   ],
   "counts_for_live_gate": false,
+  "explicit_station_codes_fallback": [
+    "LTAC",
+    "UUWW",
+    "EGLC"
+  ],
   "installed": true,
   "label": "com.polyweather.eq-dead-no-sampler",
   "launchctl_status_check_command": "launchctl print gui/501/com.polyweather.eq-dead-no-sampler",
@@ -50,6 +78,7 @@
     "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/scripts/weather_eq_dead_no_execution_sampler.py",
     "--paper-only",
     "--collect-intraday-before-scan",
+    "--auto-active-supported-stations",
     "--intraday-observation-path",
     "evidence/official_observations/intraday_observations.jsonl",
     "--intraday-manifest-path",

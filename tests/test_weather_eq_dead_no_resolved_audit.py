@@ -14,6 +14,14 @@ def test_eq_dead_no_resolved_audit_keeps_unresolved_pnl_null():
     assert report["rows"][0]["resolved_pnl_cents"] is None
 
 
+def test_eq_dead_no_resolved_audit_waits_for_paper_fills_when_empty():
+    report = build_eq_dead_no_resolved_audit_report(fills=[], closed_markets=[])
+
+    assert report["status"] == "ready_waiting_for_paper_fills"
+    assert report["fill_count"] == 0
+    assert report["resolved_pnl_cents"] is None
+
+
 def test_eq_dead_no_resolved_audit_scores_no_winning_token():
     report = build_eq_dead_no_resolved_audit_report(
         fills=[{"fill_id": "fill-1", "market_slug": "m", "token_id": "no-token", "entry_price": 0.8}],

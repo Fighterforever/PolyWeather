@@ -68,6 +68,11 @@ def _main_blocker(status: str) -> str:
         "no_observed_executable_opportunity": "no_trade_proxy_or_forward_fill",
         "historical_proxy_positive_needs_forward_execution_sampling": "needs_forward_paper_execution_sampling",
         "historical_proxy_positive_needs_forward_eq_dead_no_sampling": "needs_forward_eq_dead_no_sampling",
+        "eq_dead_no_historical_proxy_positive_waiting_for_forward_breach": "waiting_for_exact_breach_liquidity",
+        "eq_dead_no_proxy_not_robust_reduce_priority": "conservative_proxy_not_positive_after_outlier_removal",
+        "eq_dead_no_forward_paper_started": "awaiting_forward_markout_and_resolution",
+        "eq_dead_no_forward_markout_positive_pending_resolution": "awaiting_resolution_audit",
+        "eq_dead_no_alpha_candidate_paper_only_review": "paper_only_review_required",
         "forward_paper_positive": "paper_only_review_required",
         "alpha_candidate_paper_only_review": "paper_only_review_required",
         "waiting_for_exact_breach_liquidity": "no_current_exact_breach_liquidity",
@@ -83,6 +88,11 @@ def _next_action(status: str) -> str:
         "no_observed_executable_opportunity": "pause_or_reduce_sampler_frequency",
         "historical_proxy_positive_needs_forward_execution_sampling": "focus_forward_paper_sampler_on_positive_station_window",
         "historical_proxy_positive_needs_forward_eq_dead_no_sampling": "focus_forward_paper_sampler_on_eq_dead_no_lock",
+        "eq_dead_no_historical_proxy_positive_waiting_for_forward_breach": "run_aggressive_eq_dead_no_forward_sampler_until_supported_exact_breach",
+        "eq_dead_no_proxy_not_robust_reduce_priority": "reduce_priority_until_new_proxy_sample_remains_positive_without_outliers",
+        "eq_dead_no_forward_paper_started": "run_markout_and_resolved_audit_for_eq_dead_no_fills",
+        "eq_dead_no_forward_markout_positive_pending_resolution": "continue_forward_paper_until_resolution_audit",
+        "eq_dead_no_alpha_candidate_paper_only_review": "paper_only_review_no_live_gate",
         "alpha_candidate_paper_only_review": "paper_only_review_no_live_gate",
         "waiting_for_exact_breach_liquidity": "keep_eq_dead_no_sampler_running_until_direct_no_ask_appears",
         "historical_proxy_nonpositive_or_unclear": "pause_strategy_or_require_new_tradeability_filter",
@@ -156,6 +166,7 @@ def build_alpha_viability_scoreboard(
     observation_lock_tradability_report: Dict[str, Any] | None = None,
     observation_lock_trade_replay_report: Dict[str, Any] | None = None,
     eq_dead_no_trade_replay_report: Dict[str, Any] | None = None,
+    eq_dead_no_proxy_robustness_report: Dict[str, Any] | None = None,
     eq_dead_no_sampler_report: Dict[str, Any] | None = None,
     eq_dead_no_markout_report: Dict[str, Any] | None = None,
     eq_dead_no_resolved_audit_report: Dict[str, Any] | None = None,
@@ -170,6 +181,7 @@ def build_alpha_viability_scoreboard(
     tradability = _summary(observation_lock_tradability_report or {})
     ol_trade = _summary(observation_lock_trade_replay_report or {})
     eq_trade = _summary(eq_dead_no_trade_replay_report or {})
+    eq_robust = _compact(eq_dead_no_proxy_robustness_report or {})
     eq_sampler = _compact(eq_dead_no_sampler_report or {})
     eq_markout = _compact(eq_dead_no_markout_report or {})
     eq_audit = _compact(eq_dead_no_resolved_audit_report or {})
@@ -181,6 +193,11 @@ def build_alpha_viability_scoreboard(
     archived_resolved_pnl = _safe_float(archived.get("resolved_pnl_cents"))
     ol_proxy_pnl = _safe_float(ol_trade.get("trade_proxy_pnl_cents"))
     eq_proxy_pnl = _safe_float(eq_trade.get("deduped_trade_proxy_pnl_cents") or eq_trade.get("trade_proxy_pnl_cents"))
+    eq_conservative_count = _safe_int(eq_robust.get("conservative_candidate_count"))
+    eq_conservative_pnl = _safe_float(eq_robust.get("conservative_proxy_pnl_cents"))
+    eq_conservative_without_top_1 = _safe_float(eq_robust.get("conservative_proxy_pnl_without_top_1"))
+    eq_proxy_robust = bool(eq_robust.get("conservative_proxy_positive_after_outlier_removal"))
+    eq_robust_present = bool(eq_robust)
     eq_forward_fill_count = _safe_int(eq_sampler.get("paper_fill_count") or eq_sampler.get("fill_count"))
     eq_markout_mean = _safe_float(eq_markout.get("mean_markout_cents"))
     eq_resolved_pnl = _safe_float(eq_audit.get("resolved_pnl_cents"))
@@ -241,32 +258,52 @@ def build_alpha_viability_scoreboard(
         )
     )
     if eq_resolved_pnl is not None and eq_resolved_pnl > 0:
-        eq_status = "alpha_candidate_paper_only_review"
+        eq_status = "eq_dead_no_alpha_candidate_paper_only_review"
     elif eq_resolved_pnl is not None and eq_resolved_pnl < 0:
         eq_status = "failed_negative_resolved_pnl"
+    elif eq_forward_fill_count > 0 and eq_markout_mean is not None and eq_markout_mean > 0:
+        eq_status = "eq_dead_no_forward_markout_positive_pending_resolution"
     elif eq_forward_fill_count > 0 and (eq_markout_mean is None or eq_markout_mean >= 0):
-        eq_status = "forward_paper_positive_pending_resolution"
+        eq_status = "eq_dead_no_forward_paper_started"
+    elif eq_robust_present and eq_conservative_count > 0 and not eq_proxy_robust:
+        eq_status = "eq_dead_no_proxy_not_robust_reduce_priority"
+    elif eq_robust_present and eq_proxy_robust and _safe_int(eq_sampler.get("breached_eq_count")) <= 0:
+        eq_status = "eq_dead_no_historical_proxy_positive_waiting_for_forward_breach"
+    elif eq_robust_present and eq_proxy_robust:
+        eq_status = "historical_proxy_positive_needs_forward_eq_dead_no_sampling"
     elif _safe_int(eq_trade.get("deduped_trade_proxy_candidate_count") or eq_trade.get("trade_proxy_candidate_count")) > 0 and eq_proxy_pnl is not None and eq_proxy_pnl > 0:
         eq_status = "historical_proxy_positive_needs_forward_eq_dead_no_sampling"
     elif _safe_int(eq_sampler.get("executable_candidate_count")) == 0:
         eq_status = "waiting_for_exact_breach_liquidity"
     else:
         eq_status = "historical_proxy_nonpositive_or_unclear"
-    rows.append(
-        _row(
+    eq_row = _row(
             strategy_id="eq_dead_no_lock",
             status=eq_status,
             signal_count=_safe_int(eq_trade.get("breached_eq_signal_count") or eq_sampler.get("breached_eq_count")),
-            executable_proxy_count=_safe_int(eq_trade.get("deduped_trade_proxy_candidate_count") or eq_sampler.get("executable_candidate_count")),
+            executable_proxy_count=eq_conservative_count
+            or _safe_int(eq_trade.get("deduped_trade_proxy_candidate_count") or eq_sampler.get("executable_candidate_count")),
             forward_paper_fill_count=eq_forward_fill_count,
             resolved_fill_count=_safe_int(eq_audit.get("resolved_fill_count")),
             resolved_pnl_cents=eq_resolved_pnl,
-            trade_proxy_pnl_cents=eq_proxy_pnl,
+            trade_proxy_pnl_cents=eq_conservative_pnl if eq_conservative_pnl is not None else eq_proxy_pnl,
             non_dust_only=True,
             main_blocker=_main_blocker(eq_status) if eq_status not in {"waiting_for_exact_breach_liquidity"} else "no_current_direct_no_liquidity",
             next_action=_next_action(eq_status),
         )
+    eq_row.update(
+        {
+            "eq_dead_no_proxy_robustness": eq_robust or None,
+            "conservative_proxy_candidate_count": eq_conservative_count,
+            "conservative_proxy_pnl_cents": eq_conservative_pnl,
+            "conservative_proxy_pnl_without_top_1": eq_conservative_without_top_1,
+            "active_eq_station_count": _safe_int(eq_sampler.get("active_supported_metar_station_count")),
+            "active_breached_eq_count": _safe_int(eq_sampler.get("breached_eq_count")),
+            "eq_dead_no_forward_paper_fill_count": eq_forward_fill_count,
+            "eq_dead_no_current_status": eq_status,
+        }
     )
+    rows.append(eq_row)
     tl_status = _status(
         trade_proxy_candidate_count=_safe_int(tl_trade.get("trade_proxy_candidate_count")),
         trade_proxy_pnl_cents=tl_proxy_pnl,
@@ -319,12 +356,21 @@ def build_alpha_viability_scoreboard(
             "historical_proxy_positive_needs_forward_eq_dead_no_sampling",
             "forward_paper_positive_pending_resolution",
             "alpha_candidate_paper_only_review",
+            "eq_dead_no_historical_proxy_positive_waiting_for_forward_breach",
+            "eq_dead_no_forward_paper_started",
+            "eq_dead_no_forward_markout_positive_pending_resolution",
+            "eq_dead_no_alpha_candidate_paper_only_review",
         }
     ]
     pause_strategies = [
         row["strategy_id"]
         for row in rows
-        if row["status"] in {"failed_negative_resolved_pnl", "no_observed_executable_opportunity", "historical_proxy_nonpositive_or_unclear"}
+        if row["status"] in {
+            "failed_negative_resolved_pnl",
+            "no_observed_executable_opportunity",
+            "historical_proxy_nonpositive_or_unclear",
+            "eq_dead_no_proxy_not_robust_reduce_priority",
+        }
         or row["strategy_id"] in {"dust_tail_near_lock", "archived_overlap_diagnostic"}
     ]
     ol_guidance = _positive_station_guidance(observation_lock_trade_replay_report or {})
@@ -365,6 +411,17 @@ def build_alpha_viability_scoreboard(
             "live_should_pause": not bool(continue_strategies),
             "live_order_path": False,
             "counts_for_live_gate": False,
+            "eq_dead_no_proxy_robustness": {
+                "conservative_proxy_candidate_count": eq_conservative_count,
+                "conservative_proxy_pnl_cents": eq_conservative_pnl,
+                "conservative_proxy_pnl_without_top_1": eq_conservative_without_top_1,
+                "conservative_proxy_positive_after_outlier_removal": eq_proxy_robust,
+                "direction_confidence_filtered_pnl_cents": _safe_float(eq_robust.get("high_confidence_pnl_cents")),
+            },
+            "active_eq_station_count": _safe_int(eq_sampler.get("active_supported_metar_station_count")),
+            "active_breached_eq_count": _safe_int(eq_sampler.get("breached_eq_count")),
+            "eq_dead_no_forward_paper_fill_count": eq_forward_fill_count,
+            "eq_dead_no_current_status": eq_status,
         },
         "historical_trade_proxy_guidance": {
             "sampler_mode": sampler_mode,
@@ -413,6 +470,14 @@ def update_profit_strategy_state_report(
             "counts_for_live_gate": False,
             "live_order_path": False,
             "trade_proxy_pnl_cents": eq_row.get("trade_proxy_pnl_cents"),
+            "eq_dead_no_proxy_robustness": eq_row.get("eq_dead_no_proxy_robustness"),
+            "conservative_proxy_candidate_count": eq_row.get("conservative_proxy_candidate_count"),
+            "conservative_proxy_pnl_cents": eq_row.get("conservative_proxy_pnl_cents"),
+            "conservative_proxy_pnl_without_top_1": eq_row.get("conservative_proxy_pnl_without_top_1"),
+            "active_eq_station_count": eq_row.get("active_eq_station_count"),
+            "active_breached_eq_count": eq_row.get("active_breached_eq_count"),
+            "eq_dead_no_forward_paper_fill_count": eq_row.get("eq_dead_no_forward_paper_fill_count"),
+            "eq_dead_no_current_status": eq_row.get("eq_dead_no_current_status"),
             "forward_paper_fill_count": eq_row.get("forward_paper_fill_count"),
             "next_action": eq_row.get("next_action"),
             "report_path": "evidence/eq_dead_no/eq_dead_no_execution_sampler_report.json",

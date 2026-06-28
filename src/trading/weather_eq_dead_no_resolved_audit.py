@@ -91,6 +91,7 @@ def build_eq_dead_no_resolved_audit_report(
         "paper_only": True,
         "counts_for_live_gate": False,
         "live_order_path": False,
+        "status": "ready_waiting_for_paper_fills" if not fill_rows else "evaluated",
         "fill_count": len(fill_rows),
         "audit_count": len(audits),
         "resolved_fill_count": len(resolved),

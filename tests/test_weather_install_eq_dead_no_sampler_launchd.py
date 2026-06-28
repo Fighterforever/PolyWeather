@@ -39,6 +39,7 @@ def test_eq_dead_no_launchd_plist_runs_sampler_every_60_seconds(tmp_path):
     assert "scripts/weather_eq_dead_no_execution_sampler.py" in program[1]
     assert "--paper-only" in program
     assert "--collect-intraday-before-scan" in program
+    assert "--auto-active-supported-stations" in program
     assert "--exclude-dust" in program
     assert "--max-entry-price" in program
     assert "0.95" in program
@@ -51,3 +52,4 @@ def test_eq_dead_no_program_arguments_include_default_stations(tmp_path):
     assert "LTAC" in program
     assert "UUWW" in program
     assert "EGLC" in program
+    assert "--auto-active-supported-stations" in program

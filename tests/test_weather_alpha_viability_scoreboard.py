@@ -63,3 +63,32 @@ def test_alpha_viability_scoreboard_adds_eq_dead_no_lock_strategy():
     assert row["status"] == "historical_proxy_positive_needs_forward_eq_dead_no_sampling"
     assert "eq_dead_no_lock" in report["summary"]["continue_strategy_ids"]
     assert row["live_eligible"] is False
+
+
+def test_alpha_viability_scoreboard_uses_eq_dead_no_robustness_status():
+    report = build_alpha_viability_scoreboard(
+        eq_dead_no_trade_replay_report={
+            "summary": {
+                "breached_eq_signal_count": 4,
+                "deduped_trade_proxy_candidate_count": 2,
+                "deduped_trade_proxy_pnl_cents": 12.0,
+            }
+        },
+        eq_dead_no_proxy_robustness_report={
+            "summary": {
+                "conservative_candidate_count": 2,
+                "conservative_proxy_pnl_cents": 9.0,
+                "conservative_proxy_pnl_without_top_1": 3.0,
+                "conservative_proxy_positive_after_outlier_removal": True,
+                "high_confidence_pnl_cents": 9.0,
+            }
+        },
+        eq_dead_no_sampler_report={"paper_fill_count": 0, "breached_eq_count": 0, "active_supported_metar_station_count": 4},
+        generated_at="2026-06-28T00:00:00Z",
+    )
+
+    row = _row(report, "eq_dead_no_lock")
+    assert row["status"] == "eq_dead_no_historical_proxy_positive_waiting_for_forward_breach"
+    assert row["conservative_proxy_candidate_count"] == 2
+    assert report["summary"]["eq_dead_no_current_status"] == row["status"]
+    assert report["summary"]["active_eq_station_count"] == 4

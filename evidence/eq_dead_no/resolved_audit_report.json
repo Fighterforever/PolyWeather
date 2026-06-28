@@ -10,5 +10,6 @@
   "resolved_fill_count": 0,
   "resolved_pnl_cents": null,
   "schema_version": "polyweather_eq_dead_no_resolved_audit_report.v1",
+  "status": "ready_waiting_for_paper_fills",
   "unresolved_fill_count": 0
 }

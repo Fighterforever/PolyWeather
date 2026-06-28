@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from src.weather.station_registry import station_for_city, station_registry_snapshot
+from src.weather.station_registry import active_supported_metar_station_manifest, station_for_city, station_registry_snapshot
 from src.weather.weather_observations import (
     build_station_forecast_snapshot,
     build_station_observation_snapshot,
@@ -21,6 +21,42 @@ def test_station_registry_maps_city_to_settlement_station():
     assert station.settlement_source == "metar"
     assert station.timezone == "UTC+09:00"
     assert "seoul" in station_registry_snapshot()
+
+
+def test_active_supported_metar_station_manifest_extracts_exact_supported_rows():
+    manifest = active_supported_metar_station_manifest(
+        [
+            {
+                "market_slug": "m1",
+                "settlement_spec": {
+                    "bucket_type": "eq",
+                    "station_code": "UUWW",
+                    "settlement_source": "metar",
+                },
+            },
+            {
+                "market_slug": "m2",
+                "settlement_spec": {
+                    "bucket_type": "eq",
+                    "station_code": "LTFM",
+                    "settlement_source": "noaa",
+                },
+            },
+            {
+                "market_slug": "m3",
+                "settlement_spec": {
+                    "bucket_type": "ge",
+                    "station_code": "LTAC",
+                    "settlement_source": "metar",
+                },
+            },
+        ]
+    )
+
+    assert manifest["active_eq_row_count"] == 2
+    assert manifest["active_supported_metar_station_count"] == 1
+    assert manifest["station_codes"] == ["UUWW"]
+    assert manifest["unsupported_eq_rows_by_source"] == [{"settlement_source": "noaa", "row_count": 1}]
 
 
 def test_weather_snapshot_requires_available_at_for_replay_safety():
