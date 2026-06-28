@@ -154,6 +154,9 @@ def test_station_confusion_bias_backfill_builds_minimal_active_station_table():
     assert pair["sample_count"] == 3
     assert pair["station_minus_city_bias_mean"] == 2.0
     assert pair["gap_reason"] == "bias_sample_too_small"
+    assert report["min_required_sample_count"] == 10
+    assert report["station_confusion_status"] == "research_only_insufficient_bias_samples"
+    assert report["station_level_gap_reasons"][0]["gap_reason"] == "bias_sample_too_small"
 
 
 def test_station_confusion_bias_backfill_reports_station_level_gap_reason():
@@ -182,3 +185,5 @@ def test_station_confusion_bias_backfill_reports_station_level_gap_reason():
     assert report["station_bias_sample_count"] == 0
     assert report["station_pairs"][0]["gap_reason"] == "missing_station_and_city_grid_history"
     assert report["status"] == "station_confusion_data_unavailable_reduce_priority"
+    assert report["station_confusion_status"] == "research_only_insufficient_bias_samples"
+    assert report["station_level_gap_reasons"][0]["gap_reason"] == "missing_station_and_city_grid_history"

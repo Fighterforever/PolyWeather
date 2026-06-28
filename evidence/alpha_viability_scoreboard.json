@@ -1,6 +1,6 @@
 {
   "counts_for_live_gate": false,
-  "generated_at": "2026-06-28T13:49:36Z",
+  "generated_at": "2026-06-28T14:09:08Z",
   "historical_trade_proxy_guidance": {
     "guidance_reason": "no_historical_trade_proxy_edge",
     "prioritized_station_codes": [
@@ -320,7 +320,9 @@
     ],
     "maker_shadow_v2": {
       "adverse_selection_count": 0,
-      "funnel_opportunity_status": "maker_shadow_no_current_opportunity_density",
+      "funnel_actual_window_minutes": 0.0,
+      "funnel_opportunity_status": "maker_shadow_current_snapshot_no_quote",
+      "funnel_rolling_window_sufficient": false,
       "funnel_total_inferred_fill_count": 0,
       "funnel_total_quote_count": 0,
       "inferred_fill_count": 0,
@@ -342,7 +344,83 @@
       "active_candidate_count": 0,
       "alpha_conclusion": "station_confusion_data_unavailable_reduce_priority",
       "candidate_count": 0,
+      "min_required_sample_count": 10,
       "station_bias_sample_count": 4,
+      "station_confusion_status": "research_only_insufficient_bias_samples",
+      "station_level_gap_reasons": [
+        {
+          "city": "ankara",
+          "gap_reason": "bias_sample_too_small",
+          "sample_count": 1,
+          "settlement_source": "metar",
+          "source_coverage": {
+            "city_grid_sample_count": 3,
+            "paired_sample_count": 1,
+            "station_sample_count": 4
+          },
+          "station_code": "LTAC"
+        },
+        {
+          "city": "istanbul",
+          "gap_reason": "missing_station_history",
+          "sample_count": 0,
+          "settlement_source": "noaa",
+          "source_coverage": {
+            "city_grid_sample_count": 3,
+            "paired_sample_count": 0,
+            "station_sample_count": 0
+          },
+          "station_code": "LTFM"
+        },
+        {
+          "city": "london",
+          "gap_reason": "bias_sample_too_small",
+          "sample_count": 1,
+          "settlement_source": "metar",
+          "source_coverage": {
+            "city_grid_sample_count": 3,
+            "paired_sample_count": 1,
+            "station_sample_count": 4
+          },
+          "station_code": "EGLC"
+        },
+        {
+          "city": "moscow",
+          "gap_reason": "bias_sample_too_small",
+          "sample_count": 1,
+          "settlement_source": "metar",
+          "source_coverage": {
+            "city_grid_sample_count": 3,
+            "paired_sample_count": 1,
+            "station_sample_count": 4
+          },
+          "station_code": "UUWW"
+        },
+        {
+          "city": "paris",
+          "gap_reason": "missing_station_history",
+          "sample_count": 0,
+          "settlement_source": "aeroweb",
+          "source_coverage": {
+            "city_grid_sample_count": 4,
+            "paired_sample_count": 0,
+            "station_sample_count": 0
+          },
+          "station_code": "LFPB"
+        },
+        {
+          "city": "seoul",
+          "gap_reason": "bias_sample_too_small",
+          "sample_count": 1,
+          "settlement_source": "metar",
+          "source_coverage": {
+            "city_grid_sample_count": 4,
+            "paired_sample_count": 1,
+            "station_sample_count": 3
+          },
+          "station_code": "RKSI"
+        }
+      ],
       "top_station_biases": [
         {
           "absolute_bias_mean": 5.2,

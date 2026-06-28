@@ -6,17 +6,93 @@
   "counts_for_live_gate": false,
   "generated_at": null,
   "live_order_path": false,
+  "min_required_sample_count": 10,
   "no_candidate_reason_counts": {
     "ask_depth_below_min": 1,
-    "bias_sample_too_small": 9,
+    "bias_sample_too_small": 8,
     "bucket_not_ge_le": 198,
-    "dust_price": 11,
+    "dust_price": 12,
     "side_not_yes_shadow": 21
   },
   "paper_only": true,
   "platform": "polymarket",
   "schema_version": "polyweather_station_confusion_edge.v1",
   "station_bias_sample_count": 4,
+  "station_confusion_status": "research_only_insufficient_bias_samples",
+  "station_level_gap_reasons": [
+    {
+      "city": "ankara",
+      "gap_reason": "bias_sample_too_small",
+      "sample_count": 1,
+      "settlement_source": "metar",
+      "source_coverage": {
+        "city_grid_sample_count": 3,
+        "paired_sample_count": 1,
+        "station_sample_count": 4
+      },
+      "station_code": "LTAC"
+    },
+    {
+      "city": "istanbul",
+      "gap_reason": "missing_station_history",
+      "sample_count": 0,
+      "settlement_source": "noaa",
+      "source_coverage": {
+        "city_grid_sample_count": 3,
+        "paired_sample_count": 0,
+        "station_sample_count": 0
+      },
+      "station_code": "LTFM"
+    },
+    {
+      "city": "london",
+      "gap_reason": "bias_sample_too_small",
+      "sample_count": 1,
+      "settlement_source": "metar",
+      "source_coverage": {
+        "city_grid_sample_count": 3,
+        "paired_sample_count": 1,
+        "station_sample_count": 4
+      },
+      "station_code": "EGLC"
+    },
+    {
+      "city": "moscow",
+      "gap_reason": "bias_sample_too_small",
+      "sample_count": 1,
+      "settlement_source": "metar",
+      "source_coverage": {
+        "city_grid_sample_count": 3,
+        "paired_sample_count": 1,
+        "station_sample_count": 4
+      },
+      "station_code": "UUWW"
+    },
+    {
+      "city": "paris",
+      "gap_reason": "missing_station_history",
+      "sample_count": 0,
+      "settlement_source": "aeroweb",
+      "source_coverage": {
+        "city_grid_sample_count": 4,
+        "paired_sample_count": 0,
+        "station_sample_count": 0
+      },
+      "station_code": "LFPB"
+    },
+    {
+      "city": "seoul",
+      "gap_reason": "bias_sample_too_small",
+      "sample_count": 1,
+      "settlement_source": "metar",
+      "source_coverage": {
+        "city_grid_sample_count": 4,
+        "paired_sample_count": 1,
+        "station_sample_count": 3
+      },
+      "station_code": "RKSI"
+    }
+  ],
   "strategy_id": "station_confusion_edge",
   "top_station_biases": [
     {

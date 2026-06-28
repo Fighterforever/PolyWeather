@@ -37,7 +37,7 @@ DEFAULT_BUCKET_FAMILY_ARBITRAGE = Path("evidence/bucket_family/basket_arbitrage_
 DEFAULT_BUCKET_FAMILY_LP_ARBITRAGE = Path("evidence/bucket_family/lp_arbitrage_report.json")
 DEFAULT_BUCKET_FAMILY_HISTORICAL = Path("evidence/bucket_family/basket_historical_replay_report.json")
 DEFAULT_MAKER_SHADOW_V2 = Path("evidence/maker_shadow_v2/report.json")
-DEFAULT_MAKER_SHADOW_V2_FUNNEL = Path("evidence/maker_shadow_v2/maker_shadow_v2_24h_funnel_report.json")
+DEFAULT_MAKER_SHADOW_V2_FUNNEL = Path("evidence/maker_shadow_v2/maker_shadow_v2_rolling_funnel_report.json")
 DEFAULT_STATION_CONFUSION = Path("evidence/station_confusion/station_confusion_edge_report.json")
 DEFAULT_PROFIT_STATE = Path("evidence/profit_strategy_state_report.json")
 

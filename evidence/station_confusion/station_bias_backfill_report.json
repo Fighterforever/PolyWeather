@@ -37,10 +37,86 @@
   "generated_at": null,
   "live_order_path": false,
   "max_station_pair_sample_count": 1,
+  "min_required_sample_count": 10,
   "paper_only": true,
   "platform": "polymarket",
   "schema_version": "polyweather_station_confusion_bias_backfill.v1",
   "station_bias_sample_count": 4,
+  "station_confusion_status": "research_only_insufficient_bias_samples",
+  "station_level_gap_reasons": [
+    {
+      "city": "ankara",
+      "gap_reason": "bias_sample_too_small",
+      "sample_count": 1,
+      "settlement_source": "metar",
+      "source_coverage": {
+        "city_grid_sample_count": 3,
+        "paired_sample_count": 1,
+        "station_sample_count": 4
+      },
+      "station_code": "LTAC"
+    },
+    {
+      "city": "istanbul",
+      "gap_reason": "missing_station_history",
+      "sample_count": 0,
+      "settlement_source": "noaa",
+      "source_coverage": {
+        "city_grid_sample_count": 3,
+        "paired_sample_count": 0,
+        "station_sample_count": 0
+      },
+      "station_code": "LTFM"
+    },
+    {
+      "city": "london",
+      "gap_reason": "bias_sample_too_small",
+      "sample_count": 1,
+      "settlement_source": "metar",
+      "source_coverage": {
+        "city_grid_sample_count": 3,
+        "paired_sample_count": 1,
+        "station_sample_count": 4
+      },
+      "station_code": "EGLC"
+    },
+    {
+      "city": "moscow",
+      "gap_reason": "bias_sample_too_small",
+      "sample_count": 1,
+      "settlement_source": "metar",
+      "source_coverage": {
+        "city_grid_sample_count": 3,
+        "paired_sample_count": 1,
+        "station_sample_count": 4
+      },
+      "station_code": "UUWW"
+    },
+    {
+      "city": "paris",
+      "gap_reason": "missing_station_history",
+      "sample_count": 0,
+      "settlement_source": "aeroweb",
+      "source_coverage": {
+        "city_grid_sample_count": 4,
+        "paired_sample_count": 0,
+        "station_sample_count": 0
+      },
+      "station_code": "LFPB"
+    },
+    {
+      "city": "seoul",
+      "gap_reason": "bias_sample_too_small",
+      "sample_count": 1,
+      "settlement_source": "metar",
+      "source_coverage": {
+        "city_grid_sample_count": 4,
+        "paired_sample_count": 1,
+        "station_sample_count": 3
+      },
+      "station_code": "RKSI"
+    }
+  ],
   "station_observation_normalized_count": 15,
   "station_pairs": [
     {

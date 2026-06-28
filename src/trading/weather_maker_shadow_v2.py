@@ -574,6 +574,19 @@ def _report_generated_at(report: Dict[str, Any]) -> str:
     return str(report.get("generated_at") or "")
 
 
+def _parse_utc_timestamp(value: Any) -> Optional[datetime]:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
 def _sum_report_int(reports: Sequence[Dict[str, Any]], field: str) -> int:
     return sum(_safe_int(report.get(field)) for report in reports if isinstance(report, dict))
 
@@ -623,10 +636,21 @@ def build_maker_shadow_v2_funnel_report(
     *,
     generated_at: Optional[str] = None,
     min_window_hours: float = 24.0,
+    min_run_count: int = 12,
+    min_required_window_hours: float = 6.0,
 ) -> Dict[str, Any]:
     generated_at = generated_at or utc_now_iso()
     materialized = [report for report in reports if isinstance(report, dict)]
     timestamps = sorted(value for report in materialized for value in [_report_generated_at(report)] if value)
+    parsed_timestamps = sorted(
+        parsed for parsed in (_parse_utc_timestamp(value) for value in timestamps) if parsed is not None
+    )
+    if len(parsed_timestamps) >= 2:
+        actual_window_minutes = round((parsed_timestamps[-1] - parsed_timestamps[0]).total_seconds() / 60.0, 6)
+    else:
+        actual_window_minutes = 0.0
+    min_window_minutes = round(float(min_required_window_hours) * 60.0, 6)
+    rolling_window_sufficient = len(materialized) >= int(min_run_count) and actual_window_minutes >= min_window_minutes
     markout_without: List[float] = []
     markout_with: List[float] = []
     for report in materialized:
@@ -640,7 +664,11 @@ def build_maker_shadow_v2_funnel_report(
     total_quote_count = _sum_report_int(materialized, "quote_count")
     total_inferred_fill_count = _sum_report_int(materialized, "inferred_fill_count")
     mean_without = _mean(markout_without)
-    if total_quote_count <= 0 and len(materialized) > 0:
+    if total_quote_count <= 0 and len(materialized) <= 1:
+        opportunity_status = "maker_shadow_current_snapshot_no_quote"
+    elif not rolling_window_sufficient:
+        opportunity_status = "maker_shadow_rolling_window_insufficient"
+    elif total_quote_count <= 0:
         opportunity_status = "maker_shadow_no_current_opportunity_density"
     elif total_inferred_fill_count > 0 and mean_without is not None and mean_without < 0:
         opportunity_status = "maker_shadow_negative_adverse_selection"
@@ -650,11 +678,17 @@ def build_maker_shadow_v2_funnel_report(
         opportunity_status = "maker_shadow_collect_more_shadow_evidence"
     total_scanned = _sum_report_int(materialized, "total_scanned_rows")
     return {
-        "schema_version": "polyweather_maker_shadow_v2_24h_funnel.v1",
+        "schema_version": "polyweather_maker_shadow_v2_rolling_funnel.v1",
         "strategy_id": STRATEGY_ID,
         "platform": "polymarket",
         "generated_at": generated_at,
         "window_hours": float(min_window_hours),
+        "rolling_window_label": "rolling_funnel_not_24h_conclusion",
+        "min_run_count": int(min_run_count),
+        "min_required_window_hours": float(min_required_window_hours),
+        "min_required_window_minutes": min_window_minutes,
+        "actual_window_minutes": actual_window_minutes,
+        "rolling_window_sufficient": rolling_window_sufficient,
         "paper_only": True,
         "counts_for_live_gate": False,
         "live_order_path": False,
@@ -669,6 +703,9 @@ def build_maker_shadow_v2_funnel_report(
         "total_quote_count": total_quote_count,
         "total_inferred_fill_count": total_inferred_fill_count,
         "total_markout_count": _sum_report_int(materialized, "markout_count"),
+        "quote_count": total_quote_count,
+        "inferred_fill_count": total_inferred_fill_count,
+        "markout_count": _sum_report_int(materialized, "markout_count"),
         "mean_markout_without_rebate": mean_without,
         "mean_markout_with_rebate": _mean(markout_with),
         "blocker_counts": _merge_counts(materialized, "blocker_counts"),
@@ -677,6 +714,7 @@ def build_maker_shadow_v2_funnel_report(
         "by_station": _aggregate_report_groups(materialized, "by_station"),
         "by_bucket_type": _aggregate_report_groups(materialized, "by_bucket_type"),
         "opportunity_status": opportunity_status,
+        "conclusion": opportunity_status,
     }
 
 

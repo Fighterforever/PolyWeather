@@ -229,6 +229,7 @@ def build_station_confusion_bias_backfill_report(
     station_observation_rows: List[Dict[str, Any]],
     city_grid_rows: List[Dict[str, Any]],
     generated_at: Optional[str] = None,
+    min_required_sample_count: int = 10,
 ) -> Dict[str, Any]:
     active_specs = active_station_specs(active_rows)
     station_rows = _station_final_high_rows(station_observation_rows, active_specs)
@@ -245,12 +246,28 @@ def build_station_confusion_bias_backfill_report(
         if key not in present:
             bias_table.setdefault("station_biases", []).append(pair)
     max_sample_count = max((int(row.get("sample_count") or 0) for row in pair_rows), default=0)
+    min_required = max(1, int(min_required_sample_count))
     if max_sample_count <= 0:
         status = "station_confusion_data_unavailable_reduce_priority"
-    elif max_sample_count < 10:
+    elif max_sample_count < min_required:
         status = "station_confusion_bias_sample_too_small"
     else:
         status = "station_confusion_bias_ready_for_scan"
+    if max_sample_count < min_required:
+        station_confusion_status = "research_only_insufficient_bias_samples"
+    else:
+        station_confusion_status = "research_only_bias_samples_ready"
+    station_level_gap_reasons = [
+        {
+            "station_code": row.get("station_code"),
+            "city": row.get("city"),
+            "settlement_source": row.get("settlement_source"),
+            "sample_count": int(row.get("sample_count") or 0),
+            "gap_reason": row.get("gap_reason") or "sample_ready",
+            "source_coverage": row.get("source_coverage") if isinstance(row.get("source_coverage"), dict) else {},
+        }
+        for row in pair_rows
+    ]
     return {
         "schema_version": "polyweather_station_confusion_bias_backfill.v1",
         "strategy_id": "station_confusion_edge",
@@ -261,13 +278,16 @@ def build_station_confusion_bias_backfill_report(
         "live_order_path": False,
         "active_station_count": len(active_specs),
         "active_station_specs": active_specs,
+        "min_required_sample_count": min_required,
         "station_observation_normalized_count": len(station_rows),
         "city_grid_normalized_count": len(city_rows),
         "station_bias_sample_count": int(bias_table.get("station_bias_sample_count") or 0),
         "max_station_pair_sample_count": max_sample_count,
         "station_pairs": pair_rows,
+        "station_level_gap_reasons": station_level_gap_reasons,
         "station_bias_table": bias_table,
         "status": status,
+        "station_confusion_status": station_confusion_status,
     }
 
 
@@ -305,6 +325,7 @@ def main(argv: Optional[list[str]] = None) -> None:
         station_observation_rows=load_jsonl(args.station_observations),
         city_grid_rows=load_jsonl(args.city_grid_observations),
         generated_at=args.generated_at,
+        min_required_sample_count=int(args.min_bias_sample_count),
     )
     bias_table = backfill.get("station_bias_table") if isinstance(backfill.get("station_bias_table"), dict) else {}
     candidates, reason_counts = scan_station_confusion_candidates(
@@ -325,12 +346,15 @@ def main(argv: Optional[list[str]] = None) -> None:
         "live_order_path": False,
         "station_bias_table": bias_table,
         "station_bias_sample_count": int(bias_table.get("station_bias_sample_count") or 0),
+        "min_required_sample_count": int(args.min_bias_sample_count),
         "top_station_biases": (bias_table.get("station_biases") or [])[:10],
         "candidate_count": len(candidates),
         "active_candidate_count": len(candidates),
         "candidates": candidates,
         "no_candidate_reason_counts": reason_counts,
         "bias_backfill_status": backfill.get("status"),
+        "station_confusion_status": backfill.get("station_confusion_status"),
+        "station_level_gap_reasons": backfill.get("station_level_gap_reasons"),
     }
     if len(candidates) > 0:
         edge_report["alpha_conclusion"] = "station_confusion_forward_paper_candidate_found"
@@ -347,6 +371,7 @@ def main(argv: Optional[list[str]] = None) -> None:
             {
                 "active_station_count": backfill.get("active_station_count"),
                 "station_bias_sample_count": bias_table.get("station_bias_sample_count"),
+                "station_confusion_status": backfill.get("station_confusion_status"),
                 "max_station_pair_sample_count": backfill.get("max_station_pair_sample_count"),
                 "candidate_count": len(candidates),
                 "alpha_conclusion": edge_report.get("alpha_conclusion"),

@@ -296,14 +296,26 @@ def build_alpha_viability_scoreboard(
     else:
         eq_status = "monitoring_only_not_robust"
 
+    maker_funnel_quote_count = _safe_int(maker_funnel.get("quote_count") or maker_funnel.get("total_quote_count"))
+    maker_funnel_inferred_count = _safe_int(
+        maker_funnel.get("inferred_fill_count") or maker_funnel.get("total_inferred_fill_count")
+    )
+    maker_shadow_quote_count = maker_funnel_quote_count or _safe_int(maker_shadow.get("quote_count"))
+    maker_shadow_inferred_count = maker_funnel_inferred_count or _safe_int(maker_shadow.get("inferred_fill_count"))
+    maker_mean_without_rebate_for_row = _safe_float(
+        maker_funnel.get("mean_markout_without_rebate")
+        if maker_funnel.get("mean_markout_without_rebate") is not None
+        else maker_shadow.get("mean_markout_without_rebate")
+    )
+
     rows = [
         _row(
             strategy_id="maker_shadow_v2",
             status="active_shadow_testing",
-            signal_count=_safe_int(maker_shadow.get("quote_count")),
-            executable_proxy_count=_safe_int(maker_shadow.get("quote_count")),
-            forward_paper_fill_count=_safe_int(maker_shadow.get("inferred_fill_count")),
-            trade_proxy_pnl_cents=_safe_float(maker_shadow.get("mean_markout_without_rebate")),
+            signal_count=maker_shadow_quote_count,
+            executable_proxy_count=maker_shadow_quote_count,
+            forward_paper_fill_count=maker_shadow_inferred_count,
+            trade_proxy_pnl_cents=maker_mean_without_rebate_for_row,
             non_dust_only=True,
             main_blocker="maker_inferred_fills_are_diagnostic_only",
             next_action="collect_30_plus_inferred_fills_and_markouts_paper_only",
@@ -599,17 +611,28 @@ def build_alpha_viability_scoreboard(
         live_push_verdict = "structural_lp_arbitrage_forward_paper_started"
     else:
         live_push_verdict = "structural_arbitrage_forward_paper_started"
-    maker_inferred_count = _safe_int(maker_funnel.get("total_inferred_fill_count") or maker_shadow.get("inferred_fill_count"))
+    maker_inferred_count = maker_shadow_inferred_count
     maker_mean_without_rebate = _safe_float(
         maker_funnel.get("mean_markout_without_rebate")
         if maker_funnel.get("mean_markout_without_rebate") is not None
         else maker_shadow.get("mean_markout_without_rebate")
     )
-    maker_opportunity_status = str(maker_funnel.get("opportunity_status") or "").strip()
+    maker_opportunity_status = str(maker_funnel.get("conclusion") or maker_funnel.get("opportunity_status") or "").strip()
     station_candidate_count = _safe_int(station_confusion.get("candidate_count") or station_confusion.get("active_candidate_count"))
     station_forward_fills = _safe_int(station_confusion.get("forward_paper_fill_count"))
     station_markout = _safe_float(station_confusion.get("mean_markout_cents") or station_confusion.get("mean_markout_without_rebate"))
     station_alpha_conclusion = str(station_confusion.get("alpha_conclusion") or "").strip()
+    station_confusion_status = str(station_confusion.get("station_confusion_status") or "").strip()
+    maker_no_positive_statuses = {
+        "maker_shadow_current_snapshot_no_quote",
+        "maker_shadow_rolling_window_insufficient",
+        "maker_shadow_no_current_opportunity_density",
+    }
+    station_no_positive_statuses = {
+        "station_confusion_data_unavailable_reduce_priority",
+        "station_confusion_no_current_edge",
+        "research_only_insufficient_bias_samples",
+    }
     if maker_opportunity_status == "maker_shadow_continue_paper_research" or (
         maker_inferred_count >= 30 and maker_mean_without_rebate is not None and maker_mean_without_rebate > 0
     ):
@@ -625,9 +648,8 @@ def build_alpha_viability_scoreboard(
         next_go_no_go_trigger = "collect_more_non_dust_forward_samples"
     elif (
         non_dust_status == "failed"
-        and maker_opportunity_status == "maker_shadow_no_current_opportunity_density"
-        and station_alpha_conclusion
-        in {"station_confusion_data_unavailable_reduce_priority", "station_confusion_no_current_edge"}
+        and maker_opportunity_status in maker_no_positive_statuses
+        and (station_alpha_conclusion in station_no_positive_statuses or station_confusion_status in station_no_positive_statuses)
     ):
         live_push_status = "pause_polymarket_weather_live_push"
         next_go_no_go_trigger = "new_polymarket_only_non_dust_edge_required"
@@ -692,14 +714,21 @@ def build_alpha_viability_scoreboard(
                 "mean_markout_with_rebate": _safe_float(maker_shadow.get("mean_markout_with_rebate")),
                 "adverse_selection_count": _safe_int(maker_shadow.get("adverse_selection_count")),
                 "funnel_opportunity_status": maker_opportunity_status or None,
-                "funnel_total_quote_count": _safe_int(maker_funnel.get("total_quote_count")),
-                "funnel_total_inferred_fill_count": _safe_int(maker_funnel.get("total_inferred_fill_count")),
+                "funnel_total_quote_count": maker_funnel_quote_count,
+                "funnel_total_inferred_fill_count": maker_funnel_inferred_count,
+                "funnel_actual_window_minutes": _safe_float(maker_funnel.get("actual_window_minutes")),
+                "funnel_rolling_window_sufficient": bool(maker_funnel.get("rolling_window_sufficient")),
             },
             "station_confusion_edge": {
                 "station_bias_sample_count": _safe_int(station_confusion.get("station_bias_sample_count")),
+                "min_required_sample_count": _safe_int(station_confusion.get("min_required_sample_count")),
+                "station_confusion_status": station_confusion.get("station_confusion_status"),
                 "candidate_count": station_candidate_count,
                 "active_candidate_count": _safe_int(station_confusion.get("active_candidate_count")),
                 "top_station_biases": station_confusion.get("top_station_biases") if isinstance(station_confusion.get("top_station_biases"), list) else [],
+                "station_level_gap_reasons": station_confusion.get("station_level_gap_reasons")
+                if isinstance(station_confusion.get("station_level_gap_reasons"), list)
+                else [],
                 "alpha_conclusion": station_alpha_conclusion or None,
             },
             "bucket_family_structural_arbitrage": {
@@ -764,6 +793,19 @@ def update_profit_strategy_state_report(
     updated["live_order_path"] = False
     updated["historical_trade_proxy_guidance"] = scoreboard.get("historical_trade_proxy_guidance")
     updated["alpha_viability_scoreboard_summary"] = scoreboard.get("summary")
+    summary = scoreboard.get("summary") if isinstance(scoreboard.get("summary"), dict) else {}
+    updated["polymarket_weather_live_push_decision"] = {
+        "scope": "polymarket_only",
+        "live_push_status": summary.get("live_push_status"),
+        "next_go_no_go_trigger": summary.get("next_go_no_go_trigger"),
+        "non_dust_threshold_cdf_status": summary.get("non_dust_threshold_cdf_status"),
+        "maker_shadow_v2": summary.get("maker_shadow_v2"),
+        "station_confusion_edge": summary.get("station_confusion_edge"),
+        "bucket_family_payoff_matrix_arbitrage": summary.get("bucket_family_payoff_matrix_arbitrage"),
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+    }
     updated["launchd_sampling_policy"] = {
         "scope": "polymarket_only",
         "keep": [
