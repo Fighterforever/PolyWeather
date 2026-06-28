@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from src.weather.weather_observations import (
+    OfficialIntradayObservationRepository,
     detect_station_observation_anomalies,
     observation_temperature_value,
 )
@@ -95,17 +96,23 @@ def _latest_observation(
         row
         for row in observations
         if _text(row.get("station_code")).upper() == station_code.upper()
-        and _text(row.get("target_date")) == target_date
-        and _text(row.get("source")).lower() == source
+        and _text(row.get("target_date") or row.get("target_date_local")) == target_date
+        and (
+            _text(row.get("settlement_source") or row.get("source")).lower() == source
+            or (source == "metar" and _text(row.get("source")).lower().startswith("aviationweather_metar"))
+        )
         and _text(row.get("snapshot_type") or "observation") == "observation"
     ]
     if replay_time:
         scoped = snapshots_available_for_replay(scoped, replay_time=replay_time)
     latest_at = None
+    latest_available_at = None
     current_high: Optional[float] = None
     for row in scoped:
         observed_at = _text(row.get("observed_at") or row.get("available_at")) or None
+        available_at = _text(row.get("available_at")) or None
         latest_at = max([value for value in (latest_at, observed_at) if value], default=None)
+        latest_available_at = max([value for value in (latest_available_at, available_at) if value], default=None)
         payload = row.get("payload") if isinstance(row.get("payload"), dict) else {}
         explicit_high = _safe_float(
             payload.get("official_current_high")
@@ -118,8 +125,10 @@ def _latest_observation(
     return {
         "rows": scoped,
         "latest_observation_at": latest_at,
+        "latest_available_at": latest_available_at,
         "official_current_high": current_high,
         "anomaly_flags": detect_station_observation_anomalies(scoped),
+        "observation_count": len(scoped),
     }
 
 
@@ -176,6 +185,7 @@ def build_observation_lock_signal_row(
     row: Dict[str, Any],
     *,
     observations: Iterable[Dict[str, Any]],
+    intraday_repository: Optional[OfficialIntradayObservationRepository] = None,
     generated_at: Optional[str] = None,
     min_executable_edge: float = 0.0,
     max_spread: float = 0.03,
@@ -188,13 +198,31 @@ def build_observation_lock_signal_row(
     station_code = _text(_first_text(row, ("station_code", "settlement_station_code")) or "").upper()
     settlement_source = _text(_first_text(row, ("settlement_source",)) or "").lower()
     target_date = _text(_first_text(row, ("target_date",)) or "")
-    obs = _latest_observation(
-        observations,
-        station_code=station_code,
-        target_date=target_date,
-        settlement_source=settlement_source,
-        replay_time=generated_at,
-    )
+    if intraday_repository is not None and station_code and target_date:
+        obs = intraday_repository.current_high_as_of(
+            station_code=station_code,
+            target_date=target_date,
+            replay_time=generated_at or _now_iso(),
+            settlement_source=settlement_source or "metar",
+        )
+        obs = {
+            "rows": [],
+            "latest_observation_at": obs.get("latest_observation_at"),
+            "latest_available_at": obs.get("latest_available_at"),
+            "official_current_high": obs.get("current_high_c"),
+            "anomaly_flags": obs.get("anomaly_flags") or [],
+            "quality_flags": obs.get("quality_flags") or [],
+            "observation_count": obs.get("observation_count") or 0,
+            "no_lookahead": obs.get("no_lookahead"),
+        }
+    else:
+        obs = _latest_observation(
+            observations,
+            station_code=station_code,
+            target_date=target_date,
+            settlement_source=settlement_source,
+            replay_time=generated_at,
+        )
     lock_state, locked_side, locked_probability = _lock_state(
         bucket_type=bucket_type,
         threshold=threshold,
@@ -258,6 +286,7 @@ def build_observation_lock_signal_row(
         "live_order_path": False,
         "market_slug": row.get("market_slug"),
         "token_id": row.get("token_id"),
+        "orderbook_snapshot_id": row.get("orderbook_snapshot_id") or row.get("snapshot_id"),
         "side": locked_side or _text(row.get("side") or row.get("outcome")).upper() or None,
         "token_side": _text(row.get("side") or row.get("outcome")).upper() or None,
         "price_semantics": execution["price_semantics"],
@@ -267,10 +296,14 @@ def build_observation_lock_signal_row(
         "station_code": station_code or None,
         "settlement_source": settlement_source or None,
         "target_date": target_date or None,
+        "settlement_spec": _spec(row) or None,
         "market_close_time": _first_text(row, ("market_close_time", "end_time", "end_date")),
         "observation_window_end_time": _first_text(row, ("observation_window_end_time",)),
         "latest_observation_at": obs["latest_observation_at"],
+        "latest_available_at": obs.get("latest_available_at"),
         "official_current_high": obs["official_current_high"],
+        "intraday_observation_count": obs.get("observation_count") or 0,
+        "no_lookahead": obs.get("no_lookahead", True),
         "lock_state": lock_state,
         "locked_side": locked_side,
         "locked_probability": locked_probability,
@@ -291,6 +324,7 @@ def build_observation_lock_signal_report(
     rows: Iterable[Dict[str, Any]],
     *,
     observations: Iterable[Dict[str, Any]] = (),
+    intraday_repository: Optional[OfficialIntradayObservationRepository] = None,
     generated_at: Optional[str] = None,
     min_executable_edge: float = 0.0,
     max_spread: float = 0.03,
@@ -301,6 +335,7 @@ def build_observation_lock_signal_report(
         build_observation_lock_signal_row(
             row,
             observations=observations,
+            intraday_repository=intraday_repository,
             generated_at=generated_at,
             min_executable_edge=min_executable_edge,
             max_spread=max_spread,
@@ -311,9 +346,25 @@ def build_observation_lock_signal_report(
     ]
     decisions: Dict[str, int] = {}
     locks: Dict[str, int] = {}
+    stations: Dict[str, int] = {}
+    buckets: Dict[str, int] = {}
+    blockers: Dict[str, int] = {}
     for row in signal_rows:
         decisions[str(row.get("decision") or "unknown")] = decisions.get(str(row.get("decision") or "unknown"), 0) + 1
         locks[str(row.get("lock_state") or "unknown")] = locks.get(str(row.get("lock_state") or "unknown"), 0) + 1
+        stations[str(row.get("station_code") or "unknown")] = stations.get(str(row.get("station_code") or "unknown"), 0) + 1
+        buckets[str(row.get("bucket_type") or "unknown")] = buckets.get(str(row.get("bucket_type") or "unknown"), 0) + 1
+        for blocker in row.get("blockers") or []:
+            blockers[str(blocker)] = blockers.get(str(blocker), 0) + 1
+    missing_intraday_count = len([row for row in signal_rows if row.get("lock_state") == "missing_intraday_observation"])
+    locked_count = len([row for row in signal_rows if str(row.get("lock_state") or "").endswith("_locked")])
+    visible_station_count = len(
+        {
+            str(row.get("station_code"))
+            for row in signal_rows
+            if int(row.get("intraday_observation_count") or 0) > 0 and str(row.get("station_code") or "")
+        }
+    )
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at,
@@ -321,7 +372,11 @@ def build_observation_lock_signal_report(
         "counts_for_live_gate": False,
         "live_order_path": False,
         "summary": {
+            "total_rows": len(signal_rows),
             "row_count": len(signal_rows),
+            "intraday_visible_station_count": visible_station_count,
+            "missing_intraday_count": missing_intraday_count,
+            "locked_count": locked_count,
             "candidate_count": decisions.get("candidate", 0),
             "watch_count": decisions.get("watch", 0),
             "shadow_count": decisions.get("shadow", 0),
@@ -334,6 +389,23 @@ def build_observation_lock_signal_report(
                 {"lock_state": key, "count": value}
                 for key, value in sorted(locks.items(), key=lambda pair: (-pair[1], pair[0]))
             ],
+            "by_station": [
+                {"station_code": key, "count": value}
+                for key, value in sorted(stations.items(), key=lambda pair: (-pair[1], pair[0]))
+            ],
+            "by_bucket_type": [
+                {"bucket_type": key, "count": value}
+                for key, value in sorted(buckets.items(), key=lambda pair: (-pair[1], pair[0]))
+            ],
+            "blocker_counts": [
+                {"blocker": key, "count": value}
+                for key, value in sorted(blockers.items(), key=lambda pair: (-pair[1], pair[0]))
+            ],
+            "candidate_samples": [
+                row
+                for row in signal_rows
+                if row.get("decision") == "candidate"
+            ][:10],
         },
         "rows": signal_rows,
     }

@@ -14,6 +14,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from src.trading.weather_observation_lock_signal import build_observation_lock_signal_report  # noqa: E402
 from src.trading.weather_paper_journal import load_jsonl, utc_now_iso  # noqa: E402
+from src.weather.weather_observations import OfficialIntradayObservationRepository  # noqa: E402
 
 
 def _read_json(path: Optional[str | Path]) -> Dict[str, Any]:
@@ -47,10 +48,13 @@ def build_report_from_args(args: argparse.Namespace) -> Dict[str, Any]:
     rows = _rows_from_payload(args.rows_json)
     if not rows and args.orderbook_archive_dir:
         rows = _archive_rows(args.orderbook_archive_dir)
-    observations = load_jsonl(args.observation_jsonl) if args.observation_jsonl else []
+    observation_path = args.intraday_observation_path or args.observation_jsonl
+    repository = OfficialIntradayObservationRepository(observation_path) if observation_path else None
+    observations = load_jsonl(args.observation_jsonl) if args.observation_jsonl and not repository else []
     return build_observation_lock_signal_report(
         rows,
         observations=observations,
+        intraday_repository=repository,
         generated_at=args.generated_at or utc_now_iso(),
         min_executable_edge=float(args.min_executable_edge),
         max_spread=float(args.max_spread),
@@ -63,7 +67,10 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     parser.add_argument("--rows-json", default=None, help="JSON payload with rows. If omitted, orderbook archive rows are used.")
     parser.add_argument("--orderbook-archive-dir", default="evidence/orderbook_archive")
     parser.add_argument("--observation-jsonl", default=None)
+    parser.add_argument("--intraday-observation-path", default=None)
     parser.add_argument("--generated-at", default=None)
+    parser.add_argument("--replay-time", dest="generated_at", default=None)
+    parser.add_argument("--paper-only", action="store_true", default=True)
     parser.add_argument("--min-executable-edge", type=float, default=0.0)
     parser.add_argument("--max-spread", type=float, default=0.03)
     parser.add_argument("--min-ask-depth", type=float, default=1.0)

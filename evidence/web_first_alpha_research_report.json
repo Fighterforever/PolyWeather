@@ -1,0 +1,273 @@
+{
+  "blockers": [
+    "historical Polymarket prices are not executable orderbook depth",
+    "observation-lock needs nonzero executable-price fills before PnL can count",
+    "non-dust threshold path still waits for due runner resolution"
+  ],
+  "counts_for_live_gate": false,
+  "data_source_coverage": {
+    "closed_polymarket_markets": {
+      "closed_temperature_market_count": 1343,
+      "closed_weather_market_count": 1373,
+      "replay_supported_market_count": 836,
+      "rows": 1373
+    },
+    "historical_alpha_dataset": {
+      "missing_field_counts": {
+        "forecast": 31,
+        "intraday": 1309,
+        "price": 1284,
+        "station_code": 31,
+        "target_date": 31
+      },
+      "row_count": 1373,
+      "rows": 1373
+    },
+    "historical_forecasts": {
+      "forecast_count": 124,
+      "gap_count": 0,
+      "rows": 124
+    },
+    "metar_history": {
+      "date_coverage_count": 12,
+      "gap_count": 33,
+      "observation_count": 400,
+      "rows": 400,
+      "station_count": 3
+    },
+    "price_history": {
+      "executable_depth_available": false,
+      "gap_count": 161,
+      "price_row_count": 5735,
+      "rows": 5735
+    }
+  },
+  "execution_sampling": {
+    "archived_row_count": 19,
+    "counts_for_live_gate": false,
+    "exclude_dust_execution_sampling": true,
+    "generated_at": "2026-06-28T04:57:36Z",
+    "live_order_path": false,
+    "max_execution_sampling_tokens": 20,
+    "paper_only": true,
+    "reject_counts": [
+      {
+        "count": 198,
+        "reason": "not_threshold_bucket"
+      },
+      {
+        "count": 47,
+        "reason": "dust_price"
+      },
+      {
+        "count": 44,
+        "reason": "not_near_due_48h"
+      }
+    ],
+    "schema_version": "polyweather_minimal_execution_sampling_manifest.v1",
+    "source_row_count": 240
+  },
+  "historical_non_dust_threshold_replay": "pending_non_dust_uuww_due_runner",
+  "historical_observation_lock_alpha": "no_resolved_executable_price_for_observation_lock",
+  "historical_observation_lock_replay": {
+    "brier_score": null,
+    "by_bucket_type": [
+      {
+        "bucket_type": "eq",
+        "count": 1254
+      },
+      {
+        "bucket_type": "range",
+        "count": 209
+      },
+      {
+        "bucket_type": "ge",
+        "count": 165
+      },
+      {
+        "bucket_type": "le",
+        "count": 165
+      }
+    ],
+    "by_price_bucket": [],
+    "by_station": [
+      {
+        "count": 385,
+        "station_code": "UUWW"
+      },
+      {
+        "count": 361,
+        "station_code": "LTAC"
+      },
+      {
+        "count": 300,
+        "station_code": "EGLC"
+      },
+      {
+        "count": 44,
+        "station_code": "RKSI"
+      },
+      {
+        "count": 33,
+        "station_code": "CYYZ"
+      },
+      {
+        "count": 33,
+        "station_code": "EDDM"
+      },
+      {
+        "count": 33,
+        "station_code": "EPWA"
+      },
+      {
+        "count": 33,
+        "station_code": "LEMD"
+      },
+      {
+        "count": 33,
+        "station_code": "LIMC"
+      },
+      {
+        "count": 33,
+        "station_code": "SBGR"
+      },
+      {
+        "count": 33,
+        "station_code": "VILK"
+      },
+      {
+        "count": 29,
+        "station_code": "SAEZ"
+      },
+      {
+        "count": 25,
+        "station_code": "KLGA"
+      },
+      {
+        "count": 22,
+        "station_code": "KATL"
+      },
+      {
+        "count": 22,
+        "station_code": "KAUS"
+      },
+      {
+        "count": 22,
+        "station_code": "KBKF"
+      },
+      {
+        "count": 22,
+        "station_code": "KDAL"
+      },
+      {
+        "count": 22,
+        "station_code": "KHOU"
+      },
+      {
+        "count": 22,
+        "station_code": "KLAX"
+      },
+      {
+        "count": 22,
+        "station_code": "KMIA"
+      },
+      {
+        "count": 22,
+        "station_code": "KORD"
+      },
+      {
+        "count": 22,
+        "station_code": "KSEA"
+      },
+      {
+        "count": 22,
+        "station_code": "KSFO"
+      },
+      {
+        "count": 22,
+        "station_code": "MMMX"
+      },
+      {
+        "count": 22,
+        "station_code": "NZWN"
+      },
+      {
+        "count": 22,
+        "station_code": "RJTT"
+      },
+      {
+        "count": 22,
+        "station_code": "WSSS"
+      },
+      {
+        "count": 22,
+        "station_code": "ZBAA"
+      },
+      {
+        "count": 22,
+        "station_code": "ZHHH"
+      },
+      {
+        "count": 22,
+        "station_code": "ZSPD"
+      },
+      {
+        "count": 22,
+        "station_code": "ZUCK"
+      },
+      {
+        "count": 22,
+        "station_code": "ZUUU"
+      }
+    ],
+    "by_time_to_close": [
+      {
+        "count": 858,
+        "time_to_close_bucket": "lt_30m"
+      },
+      {
+        "count": 814,
+        "time_to_close_bucket": "gt_2h"
+      },
+      {
+        "count": 121,
+        "time_to_close_bucket": "30m_to_2h"
+      }
+    ],
+    "candidate_count": 0,
+    "counts_for_live_gate": false,
+    "fill_count": 0,
+    "gap_count": 0,
+    "gap_samples": [],
+    "generated_at": "2026-06-28T04:55:56Z",
+    "live_order_path": false,
+    "locked_signal_count": 105,
+    "log_loss": null,
+    "missing_historical_executable_price": true,
+    "missing_historical_price_count": 105,
+    "missing_intraday_count": 803,
+    "no_lookahead_violation_count": 0,
+    "paper_only": true,
+    "replay_market_count": 836,
+    "replay_signal_count": 1793,
+    "resolved_fill_count": 0,
+    "resolved_pnl_cents": null,
+    "schema_version": "polyweather_observation_lock_historical_replay.v1.summary"
+  },
+  "live_order_path": false,
+  "next_action": "collect targeted executable orderbook depth only for non-dust ge/le supported-source markets while continuing web/API backfills",
+  "paper_only": true,
+  "schema_version": "polyweather_web_first_alpha_research_report.v1",
+  "self_sampling_still_required": [
+    "pre-resolution executable orderbook depth",
+    "slippage and missed-fill measurement",
+    "maker quote lifecycle if maker execution is reconsidered"
+  ],
+  "web_api_backfill_sources": [
+    "aviationweather_metar_history",
+    "polymarket_gamma_closed_events",
+    "polymarket_clob_prices_history",
+    "open_meteo_historical_forecast",
+    "kalshi_public_market_reference"
+  ]
+}

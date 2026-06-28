@@ -832,3 +832,46 @@ def test_weather_market_paper_cycle_expanded_weather_profile_scans_all_weather_f
     assert calls["polymarket"]["queries"] == ("temperature", "rain", "hurricane", "air quality")
     assert output["effective_profile"]["expanded_weather_profile"] is True
     assert output["effective_profile"]["polymarket_queries"] == ["temperature", "rain", "hurricane", "air quality"]
+
+
+def test_minimal_execution_sampling_filters_dust_and_eq():
+    sampled, manifest = cycle_cli._minimal_execution_sampling_payload(
+        {
+            "rows": [
+                {
+                    "token_id": "dust",
+                    "price": 0.001,
+                    "settlement_spec": {
+                        "bucket_type": "ge",
+                        "settlement_source": "metar",
+                        "settlement_due_time": "2026-06-29T00:00:00Z",
+                    },
+                },
+                {
+                    "token_id": "eq",
+                    "price": 0.5,
+                    "settlement_spec": {
+                        "bucket_type": "eq",
+                        "settlement_source": "metar",
+                        "settlement_due_time": "2026-06-29T00:00:00Z",
+                    },
+                },
+                {
+                    "token_id": "ok",
+                    "price": 0.5,
+                    "settlement_spec": {
+                        "bucket_type": "ge",
+                        "settlement_source": "metar",
+                        "settlement_due_time": "2026-06-29T00:00:00Z",
+                    },
+                },
+            ]
+        },
+        generated_at="2026-06-28T00:00:00Z",
+        max_tokens=10,
+        exclude_dust=True,
+    )
+
+    assert [row["token_id"] for row in sampled["rows"]] == ["ok"]
+    assert manifest["archived_row_count"] == 1
+    assert manifest["live_order_path"] is False

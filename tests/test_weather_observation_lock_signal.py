@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from src.trading.weather_observation_lock_signal import build_observation_lock_signal_report
-from src.weather.weather_observations import detect_station_observation_anomalies
+from src.weather.weather_observations import OfficialIntradayObservationRepository, detect_station_observation_anomalies
 
 
 def _row(
@@ -124,3 +124,48 @@ def test_observation_anomaly_blocks_candidate():
     assert row["lock_state"] == "ge_yes_locked"
     assert row["decision"] == "watch"
     assert "blocked_by_observation_anomaly" in row["blockers"]
+
+
+def test_non_dust_locked_signal_can_candidate_from_repository(tmp_path):
+    repo = OfficialIntradayObservationRepository(tmp_path / "intraday.jsonl")
+    repo.append(
+        [
+            {
+                **_obs(24, observed_at="2026-06-29T10:00:00Z"),
+                "source": "aviationweather_metar_recent_72h",
+                "settlement_source": "metar",
+                "target_date_local": "2026-06-29",
+                "temperature_c": 24,
+                "quality_flags": [],
+                "anomaly_flags": [],
+            }
+        ]
+    )
+
+    report = build_observation_lock_signal_report(
+        [_row(bucket_type="ge", threshold=23, best_ask=0.40)],
+        intraday_repository=repo,
+        generated_at="2026-06-29T10:06:00Z",
+    )
+
+    row = _first(report)
+    assert row["lock_state"] == "ge_yes_locked"
+    assert row["decision"] == "candidate"
+    assert row["latest_available_at"] == "2026-06-29T10:00:00Z"
+    assert report["summary"]["candidate_count"] == 1
+    assert report["summary"]["intraday_visible_station_count"] == 1
+
+
+def test_no_intraday_blocks_candidate_from_repository(tmp_path):
+    repo = OfficialIntradayObservationRepository(tmp_path / "intraday.jsonl")
+
+    report = build_observation_lock_signal_report(
+        [_row(bucket_type="ge", threshold=23, best_ask=0.40)],
+        intraday_repository=repo,
+        generated_at="2026-06-29T10:06:00Z",
+    )
+
+    row = _first(report)
+    assert row["lock_state"] == "missing_intraday_observation"
+    assert row["decision"] == "reject"
+    assert report["summary"]["missing_intraday_count"] == 1

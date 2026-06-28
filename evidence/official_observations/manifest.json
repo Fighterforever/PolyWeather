@@ -1,0 +1,24 @@
+{
+  "counts_for_live_gate": false,
+  "fetched_at": "2026-06-28T04:58:16Z",
+  "gaps": [],
+  "latest_observation_at_by_station": {
+    "EGLC": "2026-06-28T05:00:00Z",
+    "LTAC": "2026-06-28T05:00:00Z",
+    "UUWW": "2026-06-28T04:30:00Z"
+  },
+  "live_order_path": false,
+  "manifest_path": "evidence/official_observations/manifest.json",
+  "observation_count": 400,
+  "output_path": "evidence/official_observations/intraday_observations.jsonl",
+  "paper_only": true,
+  "schema_version": "polyweather_intraday_observation_manifest.v1",
+  "source": "aviationweather_metar_recent_72h",
+  "station_codes": [
+    "LTAC",
+    "UUWW",
+    "EGLC"
+  ],
+  "station_count": 3,
+  "written_count": 400
+}

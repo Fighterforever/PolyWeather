@@ -1,0 +1,244 @@
+{
+  "counts_for_live_gate": false,
+  "end_date": "2026-06-28",
+  "fetched_at": "2026-06-28T04:49:38Z",
+  "gap_count": 33,
+  "gaps": [
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "EGLC",
+      "target_date": "2026-06-14"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "LTAC",
+      "target_date": "2026-06-14"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "UUWW",
+      "target_date": "2026-06-14"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "EGLC",
+      "target_date": "2026-06-15"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "LTAC",
+      "target_date": "2026-06-15"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "UUWW",
+      "target_date": "2026-06-15"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "EGLC",
+      "target_date": "2026-06-16"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "LTAC",
+      "target_date": "2026-06-16"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "UUWW",
+      "target_date": "2026-06-16"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "EGLC",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "LTAC",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "UUWW",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "EGLC",
+      "target_date": "2026-06-18"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "LTAC",
+      "target_date": "2026-06-18"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "UUWW",
+      "target_date": "2026-06-18"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "EGLC",
+      "target_date": "2026-06-19"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "LTAC",
+      "target_date": "2026-06-19"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "UUWW",
+      "target_date": "2026-06-19"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "EGLC",
+      "target_date": "2026-06-20"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "LTAC",
+      "target_date": "2026-06-20"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "UUWW",
+      "target_date": "2026-06-20"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "EGLC",
+      "target_date": "2026-06-21"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "LTAC",
+      "target_date": "2026-06-21"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "UUWW",
+      "target_date": "2026-06-21"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "EGLC",
+      "target_date": "2026-06-22"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "LTAC",
+      "target_date": "2026-06-22"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "UUWW",
+      "target_date": "2026-06-22"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "EGLC",
+      "target_date": "2026-06-23"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "LTAC",
+      "target_date": "2026-06-23"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "UUWW",
+      "target_date": "2026-06-23"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "EGLC",
+      "target_date": "2026-06-24"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "LTAC",
+      "target_date": "2026-06-24"
+    },
+    {
+      "gap_reason": "missing_station_date_metar_rows",
+      "settlement_source": "metar",
+      "source": "aviationweather_metar_history",
+      "station_code": "UUWW",
+      "target_date": "2026-06-24"
+    }
+  ],
+  "live_order_path": false,
+  "paper_only": true,
+  "schema_version": "polyweather_metar_intraday_gap_report.v1",
+  "source": "aviationweather_metar_history",
+  "start_date": "2026-06-14"
+}

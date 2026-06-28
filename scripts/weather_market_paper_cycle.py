@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager
+from datetime import datetime, timezone
 import json
 import os
 import sys
@@ -55,6 +56,7 @@ from src.trading.weather_market_signal import (  # noqa: E402
     build_weather_market_signal_report,
 )
 from src.trading.weather_model_coverage import build_weather_model_coverage_report  # noqa: E402
+from src.trading.weather_observation_lock_journal import write_observation_lock_paper_journal  # noqa: E402
 from src.trading.weather_observation_lock_signal import build_observation_lock_signal_report  # noqa: E402
 from src.trading.weather_paper_journal import (  # noqa: E402
     DEFAULT_PAPER_JOURNAL_DIR,
@@ -94,12 +96,19 @@ from src.trading.weather_temperature_execution_experiment import (  # noqa: E402
     write_temperature_execution_quotes,
 )
 from src.trading.weather_temperature_opportunity import build_temperature_opportunity_report  # noqa: E402
+from src.weather.metar_intraday_collector import collect_metar_intraday_observations  # noqa: E402
+from src.weather.weather_observations import OfficialIntradayObservationRepository  # noqa: E402
+from src.weather.weather_sources import parse_utc  # noqa: E402
 
 
 SCHEMA_VERSION = "polyweather_weather_paper_cycle.v1"
 DEFAULT_QUARANTINE_JOURNAL_DIR = Path("data/trading/weather_quarantine_paper")
 DEFAULT_EQ_SHADOW_JOURNAL_DIR = Path("data/trading/weather_eq_shadow_paper")
 DEFAULT_POLYMARKET_ACTIVE_SCAN_LIMIT = 500
+DEFAULT_INTRADAY_OBSERVATION_DIR = Path("evidence/official_observations")
+DEFAULT_OBSERVATION_LOCK_SIGNAL_REPORT_DIR = Path("evidence/observation_lock_signals")
+DEFAULT_OBSERVATION_LOCK_PAPER_DIR = Path("evidence/observation_lock_paper")
+DEFAULT_EXECUTION_SAMPLING_DIR = Path("evidence/execution_sampling")
 
 
 def _subjournal_dir(paper_journal_dir: str | Path, name: str) -> str:
@@ -168,6 +177,111 @@ def _live_evidence_bundle_hint(
     }
 
 
+def _write_json_report(report_dir: str | Path, payload: Dict[str, Any], *, generated_at: str) -> Dict[str, Any]:
+    root = Path(report_dir)
+    root.mkdir(parents=True, exist_ok=True)
+    latest = root / "latest_signal_report.json"
+    latest.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
+    manifest = {
+        "schema_version": "polyweather_observation_lock_signal_snapshot.v1",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+        "generated_at": generated_at,
+        "report_path": str(latest),
+        "candidate_count": (payload.get("summary") or {}).get("candidate_count"),
+    }
+    with (root / "manifest.jsonl").open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(manifest, ensure_ascii=False, sort_keys=True) + "\n")
+    return manifest
+
+
+def _metar_station_codes_from_payload(payload: Dict[str, Any]) -> list[str]:
+    stations: set[str] = set()
+    for row in payload.get("rows") or []:
+        if not isinstance(row, dict):
+            continue
+        spec = row.get("settlement_spec") if isinstance(row.get("settlement_spec"), dict) else {}
+        source = str(row.get("settlement_source") or spec.get("settlement_source") or "").strip().lower()
+        station = str(row.get("settlement_station_code") or spec.get("station_code") or "").strip().upper()
+        if source == "metar" and station:
+            stations.add(station)
+    return sorted(stations)
+
+
+def _safe_float(value: Any) -> float | None:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _minimal_execution_sampling_payload(
+    payload: Dict[str, Any],
+    *,
+    generated_at: str,
+    max_tokens: int,
+    exclude_dust: bool,
+) -> tuple[Dict[str, Any], Dict[str, Any]]:
+    now = parse_utc(generated_at) or datetime.now(timezone.utc)
+    selected = []
+    seen_tokens: set[str] = set()
+    reject_counts: Dict[str, int] = {}
+    for row in payload.get("rows") or []:
+        if not isinstance(row, dict):
+            continue
+        token = str(row.get("token_id") or "").strip()
+        spec = row.get("settlement_spec") if isinstance(row.get("settlement_spec"), dict) else {}
+        bucket_type = str(row.get("bucket_type") or spec.get("bucket_type") or "").strip().lower()
+        source = str(row.get("settlement_source") or spec.get("settlement_source") or "").strip().lower()
+        price = _safe_float(row.get("best_ask") if row.get("best_ask") is not None else row.get("price"))
+        due = parse_utc(spec.get("settlement_due_time") or row.get("settlement_due_time") or row.get("end_date"))
+        blockers = []
+        if not token:
+            blockers.append("missing_token")
+        if bucket_type not in {"ge", "le"}:
+            blockers.append("not_threshold_bucket")
+        if source not in {"metar", "noaa", "wunderground", "aeroweb"}:
+            blockers.append("unsupported_official_source")
+        if exclude_dust and price is not None and price < 0.005:
+            blockers.append("dust_price")
+        if due is None or (due - now).total_seconds() > 48 * 3600:
+            blockers.append("not_near_due_48h")
+        if blockers:
+            for blocker in blockers:
+                reject_counts[blocker] = reject_counts.get(blocker, 0) + 1
+            continue
+        if token in seen_tokens:
+            continue
+        selected.append(row)
+        seen_tokens.add(token)
+        if len(selected) >= max(0, int(max_tokens)):
+            break
+    sampled = dict(payload)
+    sampled["rows"] = selected
+    sampled["diagnostics"] = {
+        **(payload.get("diagnostics") if isinstance(payload.get("diagnostics"), dict) else {}),
+        "minimal_execution_sampling": True,
+        "minimal_execution_sampling_rows": len(selected),
+    }
+    manifest = {
+        "schema_version": "polyweather_minimal_execution_sampling_manifest.v1",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+        "generated_at": generated_at,
+        "source_row_count": len([row for row in payload.get("rows") or [] if isinstance(row, dict)]),
+        "archived_row_count": len(selected),
+        "max_execution_sampling_tokens": max(0, int(max_tokens)),
+        "exclude_dust_execution_sampling": bool(exclude_dust),
+        "reject_counts": [
+            {"reason": key, "count": value}
+            for key, value in sorted(reject_counts.items(), key=lambda pair: (-pair[1], pair[0]))
+        ],
+    }
+    return sampled, manifest
+
+
 @contextmanager
 def _collector_patch_env(enable_collector_patch: bool):
     if enable_collector_patch:
@@ -223,6 +337,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--strict-gate-queue-max-records-per-queue", type=int, default=10)
     parser.add_argument("--strict-gate-queue-max-dust-records-per-queue", type=int, default=2)
+    parser.add_argument("--collect-intraday-observations", action="store_true")
+    parser.add_argument("--intraday-observation-dir", default=str(DEFAULT_INTRADAY_OBSERVATION_DIR))
+    parser.add_argument("--write-observation-lock-signals", action="store_true")
+    parser.add_argument("--observation-lock-signal-report-dir", default=str(DEFAULT_OBSERVATION_LOCK_SIGNAL_REPORT_DIR))
+    parser.add_argument("--observation-lock-paper-journal-dir", default=str(DEFAULT_OBSERVATION_LOCK_PAPER_DIR))
     parser.add_argument("--paper-journal-profile", default="paper-cycle")
     parser.add_argument("--paper-max-fills", type=int, default=10)
     parser.add_argument("--paper-include-watch", action="store_true")
@@ -411,6 +530,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--orderbook-archive-dir", default=str(DEFAULT_ORDERBOOK_ARCHIVE_DIR))
     parser.add_argument("--no-orderbook-archive", action="store_true")
     parser.add_argument("--orderbook-archive-taker-probe-size", type=float, default=1.0)
+    parser.add_argument("--minimal-execution-sampling", action="store_true")
+    parser.add_argument("--max-execution-sampling-tokens", type=int, default=40)
+    parser.add_argument("--exclude-dust-execution-sampling", action="store_true")
+    parser.add_argument(
+        "--execution-sampling-manifest",
+        default=str(DEFAULT_EXECUTION_SAMPLING_DIR / "minimal_orderbook_archive_manifest.json"),
+    )
     parser.add_argument(
         "--enable-collector-patch",
         action="store_true",
@@ -607,9 +733,24 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
             scan_payload = merge_scan_model_payloads(scan_payload, fallback_payload)
         payload = enrich_polymarket_payload_with_scan_models(payload, scan_payload)
     orderbook_archive = None
+    execution_sampling_manifest = None
+    archive_payload = payload
+    if bool(args.minimal_execution_sampling):
+        archive_payload, execution_sampling_manifest = _minimal_execution_sampling_payload(
+            payload,
+            generated_at=generated_at,
+            max_tokens=max(0, int(args.max_execution_sampling_tokens)),
+            exclude_dust=bool(args.exclude_dust_execution_sampling),
+        )
+        manifest_path = Path(args.execution_sampling_manifest)
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(
+            json.dumps(execution_sampling_manifest, ensure_ascii=False, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
     if not bool(args.no_orderbook_archive) and not bool(args.no_polymarket_order_books):
         orderbook_archive = write_orderbook_archive_from_payload(
-            payload,
+            archive_payload,
             archive_dir=args.orderbook_archive_dir,
             recorded_at=generated_at,
             taker_probe_size=float(args.orderbook_archive_taker_probe_size),
@@ -716,10 +857,82 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
         risk_rule_mode=args.risk_rule_mode,
         generated_at=generated_at,
     )
+    intraday_observation_manifest = None
+    intraday_observation_dir = Path(args.intraday_observation_dir)
+    intraday_observation_path = intraday_observation_dir / "intraday_observations.jsonl"
+    intraday_manifest_path = intraday_observation_dir / "manifest.json"
+    intraday_repository = OfficialIntradayObservationRepository(intraday_observation_path)
+    if bool(args.collect_intraday_observations):
+        station_codes = _metar_station_codes_from_payload(payload)
+        try:
+            intraday_collection = collect_metar_intraday_observations(
+                station_codes=station_codes,
+                fetched_at=generated_at,
+            )
+        except Exception as exc:
+            intraday_collection = {
+                "schema_version": "polyweather_metar_intraday_collection.v1",
+                "paper_only": True,
+                "counts_for_live_gate": False,
+                "live_order_path": False,
+                "fetched_at": generated_at,
+                "station_codes": station_codes,
+                "observations": [],
+                "observation_count": 0,
+                "station_count": 0,
+                "gaps": [
+                    {
+                        "station_code": station,
+                        "settlement_source": "metar",
+                        "gap_reason": "source_fetch_error",
+                        "gap_detail": str(exc),
+                    }
+                    for station in station_codes
+                ],
+            }
+        written_count = intraday_repository.append(intraday_collection.get("observations") or [])
+        latest_by_station: Dict[str, str] = {}
+        for row in intraday_collection.get("observations") or []:
+            station = str(row.get("station_code") or "").strip().upper()
+            observed_at = str(row.get("observed_at") or "").strip()
+            if station and observed_at:
+                latest_by_station[station] = max([value for value in (latest_by_station.get(station), observed_at) if value])
+        intraday_observation_manifest = {
+            "schema_version": "polyweather_intraday_observation_manifest.v1",
+            "paper_only": True,
+            "counts_for_live_gate": False,
+            "live_order_path": False,
+            "fetched_at": generated_at,
+            "output_path": str(intraday_observation_path),
+            "manifest_path": str(intraday_manifest_path),
+            "station_codes": station_codes,
+            "station_count": int(intraday_collection.get("station_count") or 0),
+            "observation_count": int(intraday_collection.get("observation_count") or 0),
+            "written_count": written_count,
+            "gaps": intraday_collection.get("gaps") or [],
+            "latest_observation_at_by_station": latest_by_station,
+        }
+        intraday_manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        intraday_manifest_path.write_text(
+            json.dumps(intraday_observation_manifest, ensure_ascii=False, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
     observation_lock_report = build_observation_lock_signal_report(
         payload.get("rows") or [],
-        observations=[],
+        intraday_repository=intraday_repository if intraday_observation_path.exists() else None,
         generated_at=generated_at,
+    )
+    observation_lock_signal_snapshot = None
+    if bool(args.write_observation_lock_signals) or bool(args.collect_intraday_observations):
+        observation_lock_signal_snapshot = _write_json_report(
+            args.observation_lock_signal_report_dir,
+            observation_lock_report,
+            generated_at=generated_at,
+        )
+    observation_lock_journal = write_observation_lock_paper_journal(
+        observation_lock_report,
+        journal_dir=args.observation_lock_paper_journal_dir,
+        recorded_at=generated_at,
     )
     current_signal_report_dir = args.current_signal_report_dir or str(
         default_current_signal_report_dir(args.paper_journal_dir)
@@ -1376,6 +1589,11 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
                 0,
                 int(args.strict_gate_queue_max_dust_records_per_queue),
             ),
+            "collect_intraday_observations": bool(args.collect_intraday_observations),
+            "intraday_observation_dir": str(args.intraday_observation_dir),
+            "write_observation_lock_signals": bool(args.write_observation_lock_signals),
+            "observation_lock_signal_report_dir": str(args.observation_lock_signal_report_dir),
+            "observation_lock_paper_journal_dir": str(args.observation_lock_paper_journal_dir),
             "live_evidence_bundle_hint": live_evidence_bundle_hint,
             "temperature_taker_max_items": int(args.temperature_taker_max_items),
             "temperature_taker_max_fills": int(args.temperature_taker_max_fills),
@@ -1409,15 +1627,19 @@ def build_cycle(args: argparse.Namespace) -> Dict[str, Any]:
         },
         "source_diagnostics": signal_report.get("source_diagnostics"),
         "orderbook_archive": orderbook_archive,
+        "execution_sampling_manifest": execution_sampling_manifest,
         "orderbook_archive_coverage": orderbook_archive_coverage,
         "current_signal_snapshot": current_signal_snapshot,
         "strict_gate_queue_journal": strict_gate_queue_journal,
         "observation_lock_signal": {
             "summary": observation_lock_report.get("summary"),
+            "snapshot": observation_lock_signal_snapshot,
+            "journal": observation_lock_journal,
             "paper_only": True,
             "counts_for_live_gate": False,
             "live_order_path": False,
         },
+        "intraday_observation_manifest": intraday_observation_manifest,
         "alpha_candidate_source_counts": alpha_candidate_source_counts,
         "live_evidence_bundle_hint": live_evidence_bundle_hint,
         "model_coverage": model_coverage,

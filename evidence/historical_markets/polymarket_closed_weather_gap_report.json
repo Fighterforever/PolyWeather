@@ -1,0 +1,4253 @@
+{
+  "counts_for_live_gate": false,
+  "errors": [],
+  "gap_count": 606,
+  "gaps": [
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "238668",
+      "market_slug": "will-a-major-hurricane-make-landfall-in-the-lower-48-states-before-september-15",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "238668",
+      "market_slug": "will-a-major-hurricane-make-landfall-in-the-lower-48-states-before-september-15",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "238668",
+      "market_slug": "will-a-major-hurricane-make-landfall-in-the-lower-48-states-before-september-15",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "238943",
+      "market_slug": "will-there-be-a-named-tropical-system-wanda-that-forms-before-november-1st-2021",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "238943",
+      "market_slug": "will-there-be-a-named-tropical-system-wanda-that-forms-before-november-1st-2021",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "238943",
+      "market_slug": "will-there-be-a-named-tropical-system-wanda-that-forms-before-november-1st-2021",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "246493",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-lower-48-states-by-july-15",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "246493",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-lower-48-states-by-july-15",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "246493",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-lower-48-states-by-july-15",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "243548",
+      "market_slug": "will-there-be-19-or-more-named-storms-during-the-2022-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "243548",
+      "market_slug": "will-there-be-19-or-more-named-storms-during-the-2022-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "243548",
+      "market_slug": "will-there-be-19-or-more-named-storms-during-the-2022-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "238697",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-lower-48-states-in-september",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "238697",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-lower-48-states-in-september",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "238697",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-lower-48-states-in-september",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "234234",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-us-lower-48-states-before-september-1",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "234234",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-us-lower-48-states-before-september-1",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "234234",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-us-lower-48-states-before-september-1",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "incomplete_token_id_by_outcome",
+      "market_id": "239139",
+      "market_slug": "will-the-high-temperature-in-new-yorks-central-park-be-60f-or-higher-on-november-2-2021",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "239139",
+      "market_slug": "will-the-high-temperature-in-new-yorks-central-park-be-60f-or-higher-on-november-2-2021",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "239139",
+      "market_slug": "will-the-high-temperature-in-new-yorks-central-park-be-60f-or-higher-on-november-2-2021",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "239698",
+      "market_slug": "will-it-snow-in-new-yorks-central-park-on-the-christmas-eve-dec-24",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "239698",
+      "market_slug": "will-it-snow-in-new-yorks-central-park-on-the-christmas-eve-dec-24",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "239698",
+      "market_slug": "will-it-snow-in-new-yorks-central-park-on-the-christmas-eve-dec-24",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1985819",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-13corbelow",
+      "station_code": "LFPB",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1985820",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-14c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1985821",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-15c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1985822",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-16c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1985823",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-17c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1985824",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-18c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1985825",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-19c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1985826",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-20c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1985827",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-21c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1985828",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-22c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1985829",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-23corhigher",
+      "station_code": "LFPB",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1965238",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-14corbelow",
+      "station_code": "LFPB",
+      "target_date": "2026-04-15"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1965239",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-15c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-15"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1965240",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-16c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-15"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1965241",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-17c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-15"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1965242",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-18c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-15"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1965243",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-19c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-15"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1965244",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-20c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-15"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1965245",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-21c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-15"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1965246",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-22c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-15"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1965247",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-23c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-15"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1965248",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-24corhigher",
+      "station_code": "LFPB",
+      "target_date": "2026-04-15"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "518008",
+      "market_slug": "will-it-rain-in-la-by-next-friday",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "518008",
+      "market_slug": "will-it-rain-in-la-by-next-friday",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "518008",
+      "market_slug": "will-it-rain-in-la-by-next-friday",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2472484",
+      "market_slug": "will-it-rain-in-denver-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "2472484",
+      "market_slug": "will-it-rain-in-denver-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "2472484",
+      "market_slug": "will-it-rain-in-denver-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2472463",
+      "market_slug": "will-it-rain-in-san-francisco-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "2472463",
+      "market_slug": "will-it-rain-in-san-francisco-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "2472463",
+      "market_slug": "will-it-rain-in-san-francisco-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2472462",
+      "market_slug": "will-it-rain-in-atlanta-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "2472462",
+      "market_slug": "will-it-rain-in-atlanta-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "2472462",
+      "market_slug": "will-it-rain-in-atlanta-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2472461",
+      "market_slug": "will-it-rain-in-dallas-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "2472461",
+      "market_slug": "will-it-rain-in-dallas-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "2472461",
+      "market_slug": "will-it-rain-in-dallas-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2472483",
+      "market_slug": "will-it-rain-in-boston-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "2472483",
+      "market_slug": "will-it-rain-in-boston-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "2472483",
+      "market_slug": "will-it-rain-in-boston-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2479428",
+      "market_slug": "will-it-rain-in-atlanta-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "2479428",
+      "market_slug": "will-it-rain-in-atlanta-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "2479428",
+      "market_slug": "will-it-rain-in-atlanta-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2479429",
+      "market_slug": "will-it-rain-in-san-francisco-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "2479429",
+      "market_slug": "will-it-rain-in-san-francisco-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "2479429",
+      "market_slug": "will-it-rain-in-san-francisco-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2479431",
+      "market_slug": "will-it-rain-in-denver-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "2479431",
+      "market_slug": "will-it-rain-in-denver-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "2479431",
+      "market_slug": "will-it-rain-in-denver-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2479430",
+      "market_slug": "will-it-rain-in-boston-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "2479430",
+      "market_slug": "will-it-rain-in-boston-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "2479430",
+      "market_slug": "will-it-rain-in-boston-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2479427",
+      "market_slug": "will-it-rain-in-dallas-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "2479427",
+      "market_slug": "will-it-rain-in-dallas-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "2479427",
+      "market_slug": "will-it-rain-in-dallas-on-june-10",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2472391",
+      "market_slug": "will-it-rain-in-central-park-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "2472391",
+      "market_slug": "will-it-rain-in-central-park-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "2472391",
+      "market_slug": "will-it-rain-in-central-park-on-june-9",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "534991",
+      "market_slug": "will-less-than-12-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "534991",
+      "market_slug": "will-less-than-12-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "534991",
+      "market_slug": "will-less-than-12-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "534992",
+      "market_slug": "will-between-12-and-15-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "534992",
+      "market_slug": "will-between-12-and-15-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "534992",
+      "market_slug": "will-between-12-and-15-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "534993",
+      "market_slug": "will-between-16-and-19-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "534993",
+      "market_slug": "will-between-16-and-19-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "534993",
+      "market_slug": "will-between-16-and-19-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "534994",
+      "market_slug": "will-between-20-and-23-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "534994",
+      "market_slug": "will-between-20-and-23-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "534994",
+      "market_slug": "will-between-20-and-23-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "534995",
+      "market_slug": "will-more-than-23-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "534995",
+      "market_slug": "will-more-than-23-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "534995",
+      "market_slug": "will-more-than-23-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "823568",
+      "market_slug": "named-storm-forms-before-hurricane-season-197",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "823568",
+      "market_slug": "named-storm-forms-before-hurricane-season-197",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "823568",
+      "market_slug": "named-storm-forms-before-hurricane-season-197",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "618039",
+      "market_slug": "will-hurricane-imelda-make-landfall-in-the-us",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "618039",
+      "market_slug": "will-hurricane-imelda-make-landfall-in-the-us",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "618039",
+      "market_slug": "will-hurricane-imelda-make-landfall-in-the-us",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "580856",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-us-by-september-30",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "580856",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-us-by-september-30",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "580856",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-us-by-september-30",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "239126",
+      "market_slug": "will-the-air-quality-index-in-los-angeles-be-60-or-higher-on-november-1st",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "239126",
+      "market_slug": "will-the-air-quality-index-in-los-angeles-be-60-or-higher-on-november-1st",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "239126",
+      "market_slug": "will-the-air-quality-index-in-los-angeles-be-60-or-higher-on-november-1st",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "239324",
+      "market_slug": "will-the-air-quality-index-in-los-angeles-be-65-or-higher-on-november-18th",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "239324",
+      "market_slug": "will-the-air-quality-index-in-los-angeles-be-65-or-higher-on-november-18th",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "239324",
+      "market_slug": "will-the-air-quality-index-in-los-angeles-be-65-or-higher-on-november-18th",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "251368",
+      "market_slug": "nyc-air-quality-index-above-165-on-june-8",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_settlement_spec",
+      "market_id": "251368",
+      "market_slug": "nyc-air-quality-index-above-165-on-june-8",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "unsupported_weather_family",
+      "market_id": "251368",
+      "market_slug": "nyc-air-quality-index-above-165-on-june-8",
+      "station_code": null,
+      "target_date": null
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679321",
+      "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-23corbelow",
+      "station_code": "LTFM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679322",
+      "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-24c",
+      "station_code": "LTFM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679323",
+      "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-25c",
+      "station_code": "LTFM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679324",
+      "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-26c",
+      "station_code": "LTFM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679325",
+      "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-27c",
+      "station_code": "LTFM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679326",
+      "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-28c",
+      "station_code": "LTFM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679327",
+      "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-29c",
+      "station_code": "LTFM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679328",
+      "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-30c",
+      "station_code": "LTFM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679329",
+      "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-31c",
+      "station_code": "LTFM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679330",
+      "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-32c",
+      "station_code": "LTFM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679331",
+      "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-33corhigher",
+      "station_code": "LTFM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1741251",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-8corbelow",
+      "station_code": "LTFM",
+      "target_date": "2026-03-31"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1741252",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-9c",
+      "station_code": "LTFM",
+      "target_date": "2026-03-31"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1741253",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-10c",
+      "station_code": "LTFM",
+      "target_date": "2026-03-31"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1741254",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-11c",
+      "station_code": "LTFM",
+      "target_date": "2026-03-31"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1741255",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-12c",
+      "station_code": "LTFM",
+      "target_date": "2026-03-31"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1741256",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-13c",
+      "station_code": "LTFM",
+      "target_date": "2026-03-31"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1741257",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-14c",
+      "station_code": "LTFM",
+      "target_date": "2026-03-31"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1741258",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-15c",
+      "station_code": "LTFM",
+      "target_date": "2026-03-31"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1741259",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-16c",
+      "station_code": "LTFM",
+      "target_date": "2026-03-31"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1741260",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-17c",
+      "station_code": "LTFM",
+      "target_date": "2026-03-31"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1741261",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-18corhigher",
+      "station_code": "LTFM",
+      "target_date": "2026-03-31"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1780650",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-10c",
+      "station_code": "LTFM",
+      "target_date": "2026-04-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1780653",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-13c",
+      "station_code": "LTFM",
+      "target_date": "2026-04-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1780652",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-12c",
+      "station_code": "LTFM",
+      "target_date": "2026-04-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1780655",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-15c",
+      "station_code": "LTFM",
+      "target_date": "2026-04-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1780659",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-19corhigher",
+      "station_code": "LTFM",
+      "target_date": "2026-04-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1780651",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-11c",
+      "station_code": "LTFM",
+      "target_date": "2026-04-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1780656",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-16c",
+      "station_code": "LTFM",
+      "target_date": "2026-04-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1780657",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-17c",
+      "station_code": "LTFM",
+      "target_date": "2026-04-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1780649",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-9corbelow",
+      "station_code": "LTFM",
+      "target_date": "2026-04-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1780654",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-14c",
+      "station_code": "LTFM",
+      "target_date": "2026-04-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1780658",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-18c",
+      "station_code": "LTFM",
+      "target_date": "2026-04-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679215",
+      "market_slug": "highest-temperature-in-paris-on-june-27-2026-37corbelow",
+      "station_code": "LFPB",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679216",
+      "market_slug": "highest-temperature-in-paris-on-june-27-2026-38c",
+      "station_code": "LFPB",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679217",
+      "market_slug": "highest-temperature-in-paris-on-june-27-2026-39c",
+      "station_code": "LFPB",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679218",
+      "market_slug": "highest-temperature-in-paris-on-june-27-2026-40c",
+      "station_code": "LFPB",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679219",
+      "market_slug": "highest-temperature-in-paris-on-june-27-2026-41c",
+      "station_code": "LFPB",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679220",
+      "market_slug": "highest-temperature-in-paris-on-june-27-2026-42c",
+      "station_code": "LFPB",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679221",
+      "market_slug": "highest-temperature-in-paris-on-june-27-2026-43c",
+      "station_code": "LFPB",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679222",
+      "market_slug": "highest-temperature-in-paris-on-june-27-2026-44c",
+      "station_code": "LFPB",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679223",
+      "market_slug": "highest-temperature-in-paris-on-june-27-2026-45c",
+      "station_code": "LFPB",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679224",
+      "market_slug": "highest-temperature-in-paris-on-june-27-2026-46c",
+      "station_code": "LFPB",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679225",
+      "market_slug": "highest-temperature-in-paris-on-june-27-2026-47corhigher",
+      "station_code": "LFPB",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1827105",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-14corbelow",
+      "station_code": "LFPB",
+      "target_date": "2026-04-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1827106",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-15c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1827107",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-16c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1827108",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-17c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1827109",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-18c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1827110",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-19c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1827111",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-20c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1827112",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-21c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1827113",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-22c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1827114",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-23c",
+      "station_code": "LFPB",
+      "target_date": "2026-04-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1827115",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-24corhigher",
+      "station_code": "LFPB",
+      "target_date": "2026-04-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678047",
+      "market_slug": "highest-temperature-in-busan-on-june-27-2026-22corbelow",
+      "station_code": "RKPK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678048",
+      "market_slug": "highest-temperature-in-busan-on-june-27-2026-23c",
+      "station_code": "RKPK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678049",
+      "market_slug": "highest-temperature-in-busan-on-june-27-2026-24c",
+      "station_code": "RKPK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678050",
+      "market_slug": "highest-temperature-in-busan-on-june-27-2026-25c",
+      "station_code": "RKPK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678051",
+      "market_slug": "highest-temperature-in-busan-on-june-27-2026-26c",
+      "station_code": "RKPK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678052",
+      "market_slug": "highest-temperature-in-busan-on-june-27-2026-27c",
+      "station_code": "RKPK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678053",
+      "market_slug": "highest-temperature-in-busan-on-june-27-2026-28c",
+      "station_code": "RKPK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678054",
+      "market_slug": "highest-temperature-in-busan-on-june-27-2026-29c",
+      "station_code": "RKPK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678055",
+      "market_slug": "highest-temperature-in-busan-on-june-27-2026-30c",
+      "station_code": "RKPK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678056",
+      "market_slug": "highest-temperature-in-busan-on-june-27-2026-31c",
+      "station_code": "RKPK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678057",
+      "market_slug": "highest-temperature-in-busan-on-june-27-2026-32corhigher",
+      "station_code": "RKPK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988701",
+      "market_slug": "highest-temperature-in-busan-on-april-17-2026-9corbelow",
+      "station_code": "RKPK",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988702",
+      "market_slug": "highest-temperature-in-busan-on-april-17-2026-10c",
+      "station_code": "RKPK",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988703",
+      "market_slug": "highest-temperature-in-busan-on-april-17-2026-11c",
+      "station_code": "RKPK",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988704",
+      "market_slug": "highest-temperature-in-busan-on-april-17-2026-12c",
+      "station_code": "RKPK",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988705",
+      "market_slug": "highest-temperature-in-busan-on-april-17-2026-13c",
+      "station_code": "RKPK",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988706",
+      "market_slug": "highest-temperature-in-busan-on-april-17-2026-14c",
+      "station_code": "RKPK",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988707",
+      "market_slug": "highest-temperature-in-busan-on-april-17-2026-15c",
+      "station_code": "RKPK",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988708",
+      "market_slug": "highest-temperature-in-busan-on-april-17-2026-16c",
+      "station_code": "RKPK",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988709",
+      "market_slug": "highest-temperature-in-busan-on-april-17-2026-17c",
+      "station_code": "RKPK",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988710",
+      "market_slug": "highest-temperature-in-busan-on-april-17-2026-18c",
+      "station_code": "RKPK",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988711",
+      "market_slug": "highest-temperature-in-busan-on-april-17-2026-19corhigher",
+      "station_code": "RKPK",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678036",
+      "market_slug": "highest-temperature-in-shenzhen-on-june-27-2026-25corbelow",
+      "station_code": "LFS",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678037",
+      "market_slug": "highest-temperature-in-shenzhen-on-june-27-2026-26c",
+      "station_code": "LFS",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678038",
+      "market_slug": "highest-temperature-in-shenzhen-on-june-27-2026-27c",
+      "station_code": "LFS",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678039",
+      "market_slug": "highest-temperature-in-shenzhen-on-june-27-2026-28c",
+      "station_code": "LFS",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678040",
+      "market_slug": "highest-temperature-in-shenzhen-on-june-27-2026-29c",
+      "station_code": "LFS",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678041",
+      "market_slug": "highest-temperature-in-shenzhen-on-june-27-2026-30c",
+      "station_code": "LFS",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678042",
+      "market_slug": "highest-temperature-in-shenzhen-on-june-27-2026-31c",
+      "station_code": "LFS",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678043",
+      "market_slug": "highest-temperature-in-shenzhen-on-june-27-2026-32c",
+      "station_code": "LFS",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678044",
+      "market_slug": "highest-temperature-in-shenzhen-on-june-27-2026-33c",
+      "station_code": "LFS",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678045",
+      "market_slug": "highest-temperature-in-shenzhen-on-june-27-2026-34c",
+      "station_code": "LFS",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678046",
+      "market_slug": "highest-temperature-in-shenzhen-on-june-27-2026-35corhigher",
+      "station_code": "LFS",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1690349",
+      "market_slug": "highest-temperature-in-shenzhen-on-march-27-2026-21corbelow",
+      "station_code": "LFS",
+      "target_date": "2026-03-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1690350",
+      "market_slug": "highest-temperature-in-shenzhen-on-march-27-2026-22c",
+      "station_code": "LFS",
+      "target_date": "2026-03-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1690351",
+      "market_slug": "highest-temperature-in-shenzhen-on-march-27-2026-23c",
+      "station_code": "LFS",
+      "target_date": "2026-03-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1690352",
+      "market_slug": "highest-temperature-in-shenzhen-on-march-27-2026-24c",
+      "station_code": "LFS",
+      "target_date": "2026-03-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1690353",
+      "market_slug": "highest-temperature-in-shenzhen-on-march-27-2026-25c",
+      "station_code": "LFS",
+      "target_date": "2026-03-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1690354",
+      "market_slug": "highest-temperature-in-shenzhen-on-march-27-2026-26c",
+      "station_code": "LFS",
+      "target_date": "2026-03-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1690355",
+      "market_slug": "highest-temperature-in-shenzhen-on-march-27-2026-27c",
+      "station_code": "LFS",
+      "target_date": "2026-03-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1690356",
+      "market_slug": "highest-temperature-in-shenzhen-on-march-27-2026-28c",
+      "station_code": "LFS",
+      "target_date": "2026-03-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1690357",
+      "market_slug": "highest-temperature-in-shenzhen-on-march-27-2026-29c",
+      "station_code": "LFS",
+      "target_date": "2026-03-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1690358",
+      "market_slug": "highest-temperature-in-shenzhen-on-march-27-2026-30c",
+      "station_code": "LFS",
+      "target_date": "2026-03-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1690359",
+      "market_slug": "highest-temperature-in-shenzhen-on-march-27-2026-31corhigher",
+      "station_code": "LFS",
+      "target_date": "2026-03-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2677981",
+      "market_slug": "highest-temperature-in-taipei-on-june-27-2026-20corbelow",
+      "station_code": "466920",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2677982",
+      "market_slug": "highest-temperature-in-taipei-on-june-27-2026-21c",
+      "station_code": "466920",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2677983",
+      "market_slug": "highest-temperature-in-taipei-on-june-27-2026-22c",
+      "station_code": "466920",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2677984",
+      "market_slug": "highest-temperature-in-taipei-on-june-27-2026-23c",
+      "station_code": "466920",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2677985",
+      "market_slug": "highest-temperature-in-taipei-on-june-27-2026-24c",
+      "station_code": "466920",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2677986",
+      "market_slug": "highest-temperature-in-taipei-on-june-27-2026-25c",
+      "station_code": "466920",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2677987",
+      "market_slug": "highest-temperature-in-taipei-on-june-27-2026-26c",
+      "station_code": "466920",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2677988",
+      "market_slug": "highest-temperature-in-taipei-on-june-27-2026-27c",
+      "station_code": "466920",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2677989",
+      "market_slug": "highest-temperature-in-taipei-on-june-27-2026-28c",
+      "station_code": "466920",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2677990",
+      "market_slug": "highest-temperature-in-taipei-on-june-27-2026-29c",
+      "station_code": "466920",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2677991",
+      "market_slug": "highest-temperature-in-taipei-on-june-27-2026-30corhigher",
+      "station_code": "466920",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924616",
+      "market_slug": "highest-temperature-in-taipei-on-april-13-2026-28corbelow",
+      "station_code": "466920",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924617",
+      "market_slug": "highest-temperature-in-taipei-on-april-13-2026-29c",
+      "station_code": "466920",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924618",
+      "market_slug": "highest-temperature-in-taipei-on-april-13-2026-30c",
+      "station_code": "466920",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924619",
+      "market_slug": "highest-temperature-in-taipei-on-april-13-2026-31c",
+      "station_code": "466920",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924620",
+      "market_slug": "highest-temperature-in-taipei-on-april-13-2026-32c",
+      "station_code": "466920",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924621",
+      "market_slug": "highest-temperature-in-taipei-on-april-13-2026-33c",
+      "station_code": "466920",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924622",
+      "market_slug": "highest-temperature-in-taipei-on-april-13-2026-34c",
+      "station_code": "466920",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924623",
+      "market_slug": "highest-temperature-in-taipei-on-april-13-2026-35c",
+      "station_code": "466920",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924624",
+      "market_slug": "highest-temperature-in-taipei-on-april-13-2026-36c",
+      "station_code": "466920",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924625",
+      "market_slug": "highest-temperature-in-taipei-on-april-13-2026-37c",
+      "station_code": "466920",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924626",
+      "market_slug": "highest-temperature-in-taipei-on-april-13-2026-38corhigher",
+      "station_code": "466920",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678058",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-june-27-2026-27corbelow",
+      "station_code": "WMKK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678059",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-june-27-2026-28c",
+      "station_code": "WMKK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678060",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-june-27-2026-29c",
+      "station_code": "WMKK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678061",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-june-27-2026-30c",
+      "station_code": "WMKK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678062",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-june-27-2026-31c",
+      "station_code": "WMKK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678063",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-june-27-2026-32c",
+      "station_code": "WMKK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678064",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-june-27-2026-33c",
+      "station_code": "WMKK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678065",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-june-27-2026-34c",
+      "station_code": "WMKK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678066",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-june-27-2026-35c",
+      "station_code": "WMKK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678067",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-june-27-2026-36c",
+      "station_code": "WMKK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678068",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-june-27-2026-37corhigher",
+      "station_code": "WMKK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2351065",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-may-27-2026-26corbelow",
+      "station_code": "WMKK",
+      "target_date": "2026-05-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2351066",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-may-27-2026-27c",
+      "station_code": "WMKK",
+      "target_date": "2026-05-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2351067",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-may-27-2026-28c",
+      "station_code": "WMKK",
+      "target_date": "2026-05-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2351068",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-may-27-2026-29c",
+      "station_code": "WMKK",
+      "target_date": "2026-05-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2351069",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-may-27-2026-30c",
+      "station_code": "WMKK",
+      "target_date": "2026-05-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2351070",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-may-27-2026-31c",
+      "station_code": "WMKK",
+      "target_date": "2026-05-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2351071",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-may-27-2026-32c",
+      "station_code": "WMKK",
+      "target_date": "2026-05-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2351072",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-may-27-2026-33c",
+      "station_code": "WMKK",
+      "target_date": "2026-05-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2351073",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-may-27-2026-34c",
+      "station_code": "WMKK",
+      "target_date": "2026-05-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2351074",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-may-27-2026-35c",
+      "station_code": "WMKK",
+      "target_date": "2026-05-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2351075",
+      "market_slug": "highest-temperature-in-kuala-lumpur-on-may-27-2026-36corhigher",
+      "station_code": "WMKK",
+      "target_date": "2026-05-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2040646",
+      "market_slug": "highest-temperature-in-jakarta-on-april-23-2026-27corbelow",
+      "station_code": "WIHH",
+      "target_date": "2026-04-23"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2040647",
+      "market_slug": "highest-temperature-in-jakarta-on-april-23-2026-28c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-23"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2040648",
+      "market_slug": "highest-temperature-in-jakarta-on-april-23-2026-29c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-23"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2040649",
+      "market_slug": "highest-temperature-in-jakarta-on-april-23-2026-30c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-23"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2040650",
+      "market_slug": "highest-temperature-in-jakarta-on-april-23-2026-31c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-23"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2040651",
+      "market_slug": "highest-temperature-in-jakarta-on-april-23-2026-32c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-23"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2040652",
+      "market_slug": "highest-temperature-in-jakarta-on-april-23-2026-33c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-23"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2040653",
+      "market_slug": "highest-temperature-in-jakarta-on-april-23-2026-34c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-23"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2040654",
+      "market_slug": "highest-temperature-in-jakarta-on-april-23-2026-35c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-23"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2040655",
+      "market_slug": "highest-temperature-in-jakarta-on-april-23-2026-36c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-23"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2040656",
+      "market_slug": "highest-temperature-in-jakarta-on-april-23-2026-37corhigher",
+      "station_code": "WIHH",
+      "target_date": "2026-04-23"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1953910",
+      "market_slug": "highest-temperature-in-jakarta-on-april-14-2026-27corbelow",
+      "station_code": "WIHH",
+      "target_date": "2026-04-14"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1953911",
+      "market_slug": "highest-temperature-in-jakarta-on-april-14-2026-28c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-14"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1953912",
+      "market_slug": "highest-temperature-in-jakarta-on-april-14-2026-29c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-14"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1953913",
+      "market_slug": "highest-temperature-in-jakarta-on-april-14-2026-30c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-14"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1953914",
+      "market_slug": "highest-temperature-in-jakarta-on-april-14-2026-31c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-14"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1953915",
+      "market_slug": "highest-temperature-in-jakarta-on-april-14-2026-32c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-14"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1953916",
+      "market_slug": "highest-temperature-in-jakarta-on-april-14-2026-33c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-14"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1953917",
+      "market_slug": "highest-temperature-in-jakarta-on-april-14-2026-34c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-14"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1953918",
+      "market_slug": "highest-temperature-in-jakarta-on-april-14-2026-35c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-14"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1953919",
+      "market_slug": "highest-temperature-in-jakarta-on-april-14-2026-36c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-14"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1953920",
+      "market_slug": "highest-temperature-in-jakarta-on-april-14-2026-37corhigher",
+      "station_code": "WIHH",
+      "target_date": "2026-04-14"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986340",
+      "market_slug": "highest-temperature-in-jakarta-on-april-16-2026-28corbelow",
+      "station_code": "WIHH",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986341",
+      "market_slug": "highest-temperature-in-jakarta-on-april-16-2026-29c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986342",
+      "market_slug": "highest-temperature-in-jakarta-on-april-16-2026-30c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986343",
+      "market_slug": "highest-temperature-in-jakarta-on-april-16-2026-31c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986344",
+      "market_slug": "highest-temperature-in-jakarta-on-april-16-2026-32c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986345",
+      "market_slug": "highest-temperature-in-jakarta-on-april-16-2026-33c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986346",
+      "market_slug": "highest-temperature-in-jakarta-on-april-16-2026-34c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986347",
+      "market_slug": "highest-temperature-in-jakarta-on-april-16-2026-35c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986348",
+      "market_slug": "highest-temperature-in-jakarta-on-april-16-2026-36c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986349",
+      "market_slug": "highest-temperature-in-jakarta-on-april-16-2026-37c",
+      "station_code": "WIHH",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986350",
+      "market_slug": "highest-temperature-in-jakarta-on-april-16-2026-38corhigher",
+      "station_code": "WIHH",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2122633",
+      "market_slug": "highest-temperature-in-jakarta-on-may-2-2026-28corbelow",
+      "station_code": "WIHH",
+      "target_date": "2026-05-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2122634",
+      "market_slug": "highest-temperature-in-jakarta-on-may-2-2026-29c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2122635",
+      "market_slug": "highest-temperature-in-jakarta-on-may-2-2026-30c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2122636",
+      "market_slug": "highest-temperature-in-jakarta-on-may-2-2026-31c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2122637",
+      "market_slug": "highest-temperature-in-jakarta-on-may-2-2026-32c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2122638",
+      "market_slug": "highest-temperature-in-jakarta-on-may-2-2026-33c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2122639",
+      "market_slug": "highest-temperature-in-jakarta-on-may-2-2026-34c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2122640",
+      "market_slug": "highest-temperature-in-jakarta-on-may-2-2026-35c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2122641",
+      "market_slug": "highest-temperature-in-jakarta-on-may-2-2026-36c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2122642",
+      "market_slug": "highest-temperature-in-jakarta-on-may-2-2026-37c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2122643",
+      "market_slug": "highest-temperature-in-jakarta-on-may-2-2026-38corhigher",
+      "station_code": "WIHH",
+      "target_date": "2026-05-02"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2145145",
+      "market_slug": "highest-temperature-in-jakarta-on-may-5-2026-27corbelow",
+      "station_code": "WIHH",
+      "target_date": "2026-05-05"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2145146",
+      "market_slug": "highest-temperature-in-jakarta-on-may-5-2026-28c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-05"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2145147",
+      "market_slug": "highest-temperature-in-jakarta-on-may-5-2026-29c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-05"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2145148",
+      "market_slug": "highest-temperature-in-jakarta-on-may-5-2026-30c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-05"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2145149",
+      "market_slug": "highest-temperature-in-jakarta-on-may-5-2026-31c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-05"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2145150",
+      "market_slug": "highest-temperature-in-jakarta-on-may-5-2026-32c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-05"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2145151",
+      "market_slug": "highest-temperature-in-jakarta-on-may-5-2026-33c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-05"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2145152",
+      "market_slug": "highest-temperature-in-jakarta-on-may-5-2026-34c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-05"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2145153",
+      "market_slug": "highest-temperature-in-jakarta-on-may-5-2026-35c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-05"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2145154",
+      "market_slug": "highest-temperature-in-jakarta-on-may-5-2026-36c",
+      "station_code": "WIHH",
+      "target_date": "2026-05-05"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2145155",
+      "market_slug": "highest-temperature-in-jakarta-on-may-5-2026-37corhigher",
+      "station_code": "WIHH",
+      "target_date": "2026-05-05"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678091",
+      "market_slug": "highest-temperature-in-manila-on-june-27-2026-26corbelow",
+      "station_code": "RPLL",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678092",
+      "market_slug": "highest-temperature-in-manila-on-june-27-2026-27c",
+      "station_code": "RPLL",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678099",
+      "market_slug": "highest-temperature-in-manila-on-june-27-2026-34c",
+      "station_code": "RPLL",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678100",
+      "market_slug": "highest-temperature-in-manila-on-june-27-2026-35c",
+      "station_code": "RPLL",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678093",
+      "market_slug": "highest-temperature-in-manila-on-june-27-2026-28c",
+      "station_code": "RPLL",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678094",
+      "market_slug": "highest-temperature-in-manila-on-june-27-2026-29c",
+      "station_code": "RPLL",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678095",
+      "market_slug": "highest-temperature-in-manila-on-june-27-2026-30c",
+      "station_code": "RPLL",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678096",
+      "market_slug": "highest-temperature-in-manila-on-june-27-2026-31c",
+      "station_code": "RPLL",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678097",
+      "market_slug": "highest-temperature-in-manila-on-june-27-2026-32c",
+      "station_code": "RPLL",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678098",
+      "market_slug": "highest-temperature-in-manila-on-june-27-2026-33c",
+      "station_code": "RPLL",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678101",
+      "market_slug": "highest-temperature-in-manila-on-june-27-2026-36corhigher",
+      "station_code": "RPLL",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988811",
+      "market_slug": "highest-temperature-in-manila-on-april-17-2026-28corbelow",
+      "station_code": "RPLL",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988812",
+      "market_slug": "highest-temperature-in-manila-on-april-17-2026-29c",
+      "station_code": "RPLL",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988813",
+      "market_slug": "highest-temperature-in-manila-on-april-17-2026-30c",
+      "station_code": "RPLL",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988814",
+      "market_slug": "highest-temperature-in-manila-on-april-17-2026-31c",
+      "station_code": "RPLL",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988815",
+      "market_slug": "highest-temperature-in-manila-on-april-17-2026-32c",
+      "station_code": "RPLL",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988816",
+      "market_slug": "highest-temperature-in-manila-on-april-17-2026-33c",
+      "station_code": "RPLL",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988817",
+      "market_slug": "highest-temperature-in-manila-on-april-17-2026-34c",
+      "station_code": "RPLL",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988818",
+      "market_slug": "highest-temperature-in-manila-on-april-17-2026-35c",
+      "station_code": "RPLL",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988819",
+      "market_slug": "highest-temperature-in-manila-on-april-17-2026-36c",
+      "station_code": "RPLL",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988820",
+      "market_slug": "highest-temperature-in-manila-on-april-17-2026-37c",
+      "station_code": "RPLL",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1988821",
+      "market_slug": "highest-temperature-in-manila-on-april-17-2026-38corhigher",
+      "station_code": "RPLL",
+      "target_date": "2026-04-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679376",
+      "market_slug": "highest-temperature-in-karachi-on-june-27-2026-29corbelow",
+      "station_code": "OPKC",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679377",
+      "market_slug": "highest-temperature-in-karachi-on-june-27-2026-30c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679378",
+      "market_slug": "highest-temperature-in-karachi-on-june-27-2026-31c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679379",
+      "market_slug": "highest-temperature-in-karachi-on-june-27-2026-32c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679380",
+      "market_slug": "highest-temperature-in-karachi-on-june-27-2026-33c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679381",
+      "market_slug": "highest-temperature-in-karachi-on-june-27-2026-34c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679382",
+      "market_slug": "highest-temperature-in-karachi-on-june-27-2026-35c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679383",
+      "market_slug": "highest-temperature-in-karachi-on-june-27-2026-36c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679384",
+      "market_slug": "highest-temperature-in-karachi-on-june-27-2026-37c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679385",
+      "market_slug": "highest-temperature-in-karachi-on-june-27-2026-38c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679386",
+      "market_slug": "highest-temperature-in-karachi-on-june-27-2026-39corhigher",
+      "station_code": "OPKC",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2477034",
+      "market_slug": "highest-temperature-in-karachi-on-june-11-2026-34corbelow",
+      "station_code": "OPKC",
+      "target_date": "2026-06-11"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2477035",
+      "market_slug": "highest-temperature-in-karachi-on-june-11-2026-35c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-11"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2477036",
+      "market_slug": "highest-temperature-in-karachi-on-june-11-2026-36c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-11"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2477037",
+      "market_slug": "highest-temperature-in-karachi-on-june-11-2026-37c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-11"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2477038",
+      "market_slug": "highest-temperature-in-karachi-on-june-11-2026-38c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-11"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2477039",
+      "market_slug": "highest-temperature-in-karachi-on-june-11-2026-39c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-11"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2477040",
+      "market_slug": "highest-temperature-in-karachi-on-june-11-2026-40c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-11"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2477041",
+      "market_slug": "highest-temperature-in-karachi-on-june-11-2026-41c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-11"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2477042",
+      "market_slug": "highest-temperature-in-karachi-on-june-11-2026-42c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-11"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2477043",
+      "market_slug": "highest-temperature-in-karachi-on-june-11-2026-43c",
+      "station_code": "OPKC",
+      "target_date": "2026-06-11"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2477044",
+      "market_slug": "highest-temperature-in-karachi-on-june-11-2026-44corhigher",
+      "station_code": "OPKC",
+      "target_date": "2026-06-11"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2137704",
+      "market_slug": "highest-temperature-in-karachi-on-may-4-2026-31corbelow",
+      "station_code": "OPKC",
+      "target_date": "2026-05-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2137705",
+      "market_slug": "highest-temperature-in-karachi-on-may-4-2026-32c",
+      "station_code": "OPKC",
+      "target_date": "2026-05-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2137706",
+      "market_slug": "highest-temperature-in-karachi-on-may-4-2026-33c",
+      "station_code": "OPKC",
+      "target_date": "2026-05-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2137707",
+      "market_slug": "highest-temperature-in-karachi-on-may-4-2026-34c",
+      "station_code": "OPKC",
+      "target_date": "2026-05-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2137708",
+      "market_slug": "highest-temperature-in-karachi-on-may-4-2026-35c",
+      "station_code": "OPKC",
+      "target_date": "2026-05-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2137709",
+      "market_slug": "highest-temperature-in-karachi-on-may-4-2026-36c",
+      "station_code": "OPKC",
+      "target_date": "2026-05-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2137710",
+      "market_slug": "highest-temperature-in-karachi-on-may-4-2026-37c",
+      "station_code": "OPKC",
+      "target_date": "2026-05-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2137711",
+      "market_slug": "highest-temperature-in-karachi-on-may-4-2026-38c",
+      "station_code": "OPKC",
+      "target_date": "2026-05-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2137712",
+      "market_slug": "highest-temperature-in-karachi-on-may-4-2026-39c",
+      "station_code": "OPKC",
+      "target_date": "2026-05-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2137713",
+      "market_slug": "highest-temperature-in-karachi-on-may-4-2026-40c",
+      "station_code": "OPKC",
+      "target_date": "2026-05-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2137714",
+      "market_slug": "highest-temperature-in-karachi-on-may-4-2026-41corhigher",
+      "station_code": "OPKC",
+      "target_date": "2026-05-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679264",
+      "market_slug": "highest-temperature-in-tel-aviv-on-june-27-2026-32c",
+      "station_code": "225",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679265",
+      "market_slug": "highest-temperature-in-tel-aviv-on-june-27-2026-33c",
+      "station_code": "225",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679268",
+      "market_slug": "highest-temperature-in-tel-aviv-on-june-27-2026-36c",
+      "station_code": "225",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679269",
+      "market_slug": "highest-temperature-in-tel-aviv-on-june-27-2026-37corhigher",
+      "station_code": "225",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679263",
+      "market_slug": "highest-temperature-in-tel-aviv-on-june-27-2026-31c",
+      "station_code": "225",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679266",
+      "market_slug": "highest-temperature-in-tel-aviv-on-june-27-2026-34c",
+      "station_code": "225",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679267",
+      "market_slug": "highest-temperature-in-tel-aviv-on-june-27-2026-35c",
+      "station_code": "225",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679259",
+      "market_slug": "highest-temperature-in-tel-aviv-on-june-27-2026-27corbelow",
+      "station_code": "225",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679260",
+      "market_slug": "highest-temperature-in-tel-aviv-on-june-27-2026-28c",
+      "station_code": "225",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679261",
+      "market_slug": "highest-temperature-in-tel-aviv-on-june-27-2026-29c",
+      "station_code": "225",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679262",
+      "market_slug": "highest-temperature-in-tel-aviv-on-june-27-2026-30c",
+      "station_code": "225",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1577682",
+      "market_slug": "highest-temperature-in-tel-aviv-on-march-16-2026-23corhigher",
+      "station_code": "225",
+      "target_date": "2026-03-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1577681",
+      "market_slug": "highest-temperature-in-tel-aviv-on-march-16-2026-22c",
+      "station_code": "225",
+      "target_date": "2026-03-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1577672",
+      "market_slug": "highest-temperature-in-tel-aviv-on-march-16-2026-13corbelow",
+      "station_code": "225",
+      "target_date": "2026-03-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1577673",
+      "market_slug": "highest-temperature-in-tel-aviv-on-march-16-2026-14c",
+      "station_code": "225",
+      "target_date": "2026-03-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1577674",
+      "market_slug": "highest-temperature-in-tel-aviv-on-march-16-2026-15c",
+      "station_code": "225",
+      "target_date": "2026-03-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1577675",
+      "market_slug": "highest-temperature-in-tel-aviv-on-march-16-2026-16c",
+      "station_code": "225",
+      "target_date": "2026-03-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1577677",
+      "market_slug": "highest-temperature-in-tel-aviv-on-march-16-2026-18c",
+      "station_code": "225",
+      "target_date": "2026-03-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1577678",
+      "market_slug": "highest-temperature-in-tel-aviv-on-march-16-2026-19c",
+      "station_code": "225",
+      "target_date": "2026-03-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1577680",
+      "market_slug": "highest-temperature-in-tel-aviv-on-march-16-2026-21c",
+      "station_code": "225",
+      "target_date": "2026-03-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1577676",
+      "market_slug": "highest-temperature-in-tel-aviv-on-march-16-2026-17c",
+      "station_code": "225",
+      "target_date": "2026-03-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1577679",
+      "market_slug": "highest-temperature-in-tel-aviv-on-march-16-2026-20c",
+      "station_code": "225",
+      "target_date": "2026-03-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091659",
+      "market_slug": "highest-temperature-in-tel-aviv-on-april-29-2026-18corbelow",
+      "station_code": "225",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091660",
+      "market_slug": "highest-temperature-in-tel-aviv-on-april-29-2026-19c",
+      "station_code": "225",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091661",
+      "market_slug": "highest-temperature-in-tel-aviv-on-april-29-2026-20c",
+      "station_code": "225",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091662",
+      "market_slug": "highest-temperature-in-tel-aviv-on-april-29-2026-21c",
+      "station_code": "225",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091663",
+      "market_slug": "highest-temperature-in-tel-aviv-on-april-29-2026-22c",
+      "station_code": "225",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091664",
+      "market_slug": "highest-temperature-in-tel-aviv-on-april-29-2026-23c",
+      "station_code": "225",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091665",
+      "market_slug": "highest-temperature-in-tel-aviv-on-april-29-2026-24c",
+      "station_code": "225",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091666",
+      "market_slug": "highest-temperature-in-tel-aviv-on-april-29-2026-25c",
+      "station_code": "225",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091667",
+      "market_slug": "highest-temperature-in-tel-aviv-on-april-29-2026-26c",
+      "station_code": "225",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091668",
+      "market_slug": "highest-temperature-in-tel-aviv-on-april-29-2026-27c",
+      "station_code": "225",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091669",
+      "market_slug": "highest-temperature-in-tel-aviv-on-april-29-2026-28corhigher",
+      "station_code": "225",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679343",
+      "market_slug": "highest-temperature-in-helsinki-on-june-27-2026-20corbelow",
+      "station_code": "EFHK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679344",
+      "market_slug": "highest-temperature-in-helsinki-on-june-27-2026-21c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679345",
+      "market_slug": "highest-temperature-in-helsinki-on-june-27-2026-22c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679346",
+      "market_slug": "highest-temperature-in-helsinki-on-june-27-2026-23c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679347",
+      "market_slug": "highest-temperature-in-helsinki-on-june-27-2026-24c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679348",
+      "market_slug": "highest-temperature-in-helsinki-on-june-27-2026-25c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679349",
+      "market_slug": "highest-temperature-in-helsinki-on-june-27-2026-26c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679350",
+      "market_slug": "highest-temperature-in-helsinki-on-june-27-2026-27c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679351",
+      "market_slug": "highest-temperature-in-helsinki-on-june-27-2026-28c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679352",
+      "market_slug": "highest-temperature-in-helsinki-on-june-27-2026-29c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679353",
+      "market_slug": "highest-temperature-in-helsinki-on-june-27-2026-30corhigher",
+      "station_code": "EFHK",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986307",
+      "market_slug": "highest-temperature-in-helsinki-on-april-16-2026-3corbelow",
+      "station_code": "EFHK",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986308",
+      "market_slug": "highest-temperature-in-helsinki-on-april-16-2026-4c",
+      "station_code": "EFHK",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986309",
+      "market_slug": "highest-temperature-in-helsinki-on-april-16-2026-5c",
+      "station_code": "EFHK",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986310",
+      "market_slug": "highest-temperature-in-helsinki-on-april-16-2026-6c",
+      "station_code": "EFHK",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986311",
+      "market_slug": "highest-temperature-in-helsinki-on-april-16-2026-7c",
+      "station_code": "EFHK",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986312",
+      "market_slug": "highest-temperature-in-helsinki-on-april-16-2026-8c",
+      "station_code": "EFHK",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986313",
+      "market_slug": "highest-temperature-in-helsinki-on-april-16-2026-9c",
+      "station_code": "EFHK",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986314",
+      "market_slug": "highest-temperature-in-helsinki-on-april-16-2026-10c",
+      "station_code": "EFHK",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986315",
+      "market_slug": "highest-temperature-in-helsinki-on-april-16-2026-11c",
+      "station_code": "EFHK",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986316",
+      "market_slug": "highest-temperature-in-helsinki-on-april-16-2026-12c",
+      "station_code": "EFHK",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1986317",
+      "market_slug": "highest-temperature-in-helsinki-on-april-16-2026-13corhigher",
+      "station_code": "EFHK",
+      "target_date": "2026-04-16"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2549669",
+      "market_slug": "highest-temperature-in-helsinki-on-june-17-2026-13corbelow",
+      "station_code": "EFHK",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2549670",
+      "market_slug": "highest-temperature-in-helsinki-on-june-17-2026-14c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2549671",
+      "market_slug": "highest-temperature-in-helsinki-on-june-17-2026-15c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2549672",
+      "market_slug": "highest-temperature-in-helsinki-on-june-17-2026-16c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2549673",
+      "market_slug": "highest-temperature-in-helsinki-on-june-17-2026-17c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2549674",
+      "market_slug": "highest-temperature-in-helsinki-on-june-17-2026-18c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2549675",
+      "market_slug": "highest-temperature-in-helsinki-on-june-17-2026-19c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2549676",
+      "market_slug": "highest-temperature-in-helsinki-on-june-17-2026-20c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2549677",
+      "market_slug": "highest-temperature-in-helsinki-on-june-17-2026-21c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2549678",
+      "market_slug": "highest-temperature-in-helsinki-on-june-17-2026-22c",
+      "station_code": "EFHK",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2549679",
+      "market_slug": "highest-temperature-in-helsinki-on-june-17-2026-23corhigher",
+      "station_code": "EFHK",
+      "target_date": "2026-06-17"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679332",
+      "market_slug": "highest-temperature-in-amsterdam-on-june-27-2026-30corbelow",
+      "station_code": "EHAM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679333",
+      "market_slug": "highest-temperature-in-amsterdam-on-june-27-2026-31c",
+      "station_code": "EHAM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679334",
+      "market_slug": "highest-temperature-in-amsterdam-on-june-27-2026-32c",
+      "station_code": "EHAM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679335",
+      "market_slug": "highest-temperature-in-amsterdam-on-june-27-2026-33c",
+      "station_code": "EHAM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679336",
+      "market_slug": "highest-temperature-in-amsterdam-on-june-27-2026-34c",
+      "station_code": "EHAM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679337",
+      "market_slug": "highest-temperature-in-amsterdam-on-june-27-2026-35c",
+      "station_code": "EHAM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679338",
+      "market_slug": "highest-temperature-in-amsterdam-on-june-27-2026-36c",
+      "station_code": "EHAM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679339",
+      "market_slug": "highest-temperature-in-amsterdam-on-june-27-2026-37c",
+      "station_code": "EHAM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679340",
+      "market_slug": "highest-temperature-in-amsterdam-on-june-27-2026-38c",
+      "station_code": "EHAM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679341",
+      "market_slug": "highest-temperature-in-amsterdam-on-june-27-2026-39c",
+      "station_code": "EHAM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679342",
+      "market_slug": "highest-temperature-in-amsterdam-on-june-27-2026-40corhigher",
+      "station_code": "EHAM",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2011475",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-20-2026-8corbelow",
+      "station_code": "EHAM",
+      "target_date": "2026-04-20"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2011476",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-20-2026-9c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-20"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2011477",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-20-2026-10c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-20"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2011478",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-20-2026-11c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-20"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2011479",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-20-2026-12c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-20"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2011480",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-20-2026-13c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-20"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2011481",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-20-2026-14c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-20"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2011482",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-20-2026-15c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-20"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2011483",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-20-2026-16c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-20"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2011484",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-20-2026-17c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-20"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2011485",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-20-2026-18corhigher",
+      "station_code": "EHAM",
+      "target_date": "2026-04-20"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924781",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-13-2026-8corbelow",
+      "station_code": "EHAM",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924782",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-13-2026-9c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924783",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-13-2026-10c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924784",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-13-2026-11c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924789",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-13-2026-16c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924790",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-13-2026-17c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924791",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-13-2026-18corhigher",
+      "station_code": "EHAM",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924785",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-13-2026-12c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924786",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-13-2026-13c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924787",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-13-2026-14c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1924788",
+      "market_slug": "highest-temperature-in-amsterdam-on-april-13-2026-15c",
+      "station_code": "EHAM",
+      "target_date": "2026-04-13"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678069",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-27-2026-25corbelow",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678070",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-27-2026-26c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678071",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-27-2026-27c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678072",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-27-2026-28c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678073",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-27-2026-29c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678074",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-27-2026-30c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678075",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-27-2026-31c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678076",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-27-2026-32c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678077",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-27-2026-33c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678078",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-27-2026-34c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678079",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-27-2026-35corhigher",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2416446",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-4-2026-31corbelow",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2416450",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-4-2026-32c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2416451",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-4-2026-33c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2416452",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-4-2026-34c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2416453",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-4-2026-35c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2416454",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-4-2026-36c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2416455",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-4-2026-37c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2416456",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-4-2026-38c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2416457",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-4-2026-39c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2416458",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-4-2026-40c",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2416459",
+      "market_slug": "highest-temperature-in-guangzhou-on-june-4-2026-41corhigher",
+      "station_code": "ZGGG",
+      "target_date": "2026-06-04"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678081",
+      "market_slug": "highest-temperature-in-qingdao-on-june-27-2026-23c",
+      "station_code": "ZSQD",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678082",
+      "market_slug": "highest-temperature-in-qingdao-on-june-27-2026-24c",
+      "station_code": "ZSQD",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678083",
+      "market_slug": "highest-temperature-in-qingdao-on-june-27-2026-25c",
+      "station_code": "ZSQD",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678084",
+      "market_slug": "highest-temperature-in-qingdao-on-june-27-2026-26c",
+      "station_code": "ZSQD",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678085",
+      "market_slug": "highest-temperature-in-qingdao-on-june-27-2026-27c",
+      "station_code": "ZSQD",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678086",
+      "market_slug": "highest-temperature-in-qingdao-on-june-27-2026-28c",
+      "station_code": "ZSQD",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678087",
+      "market_slug": "highest-temperature-in-qingdao-on-june-27-2026-29c",
+      "station_code": "ZSQD",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678088",
+      "market_slug": "highest-temperature-in-qingdao-on-june-27-2026-30c",
+      "station_code": "ZSQD",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678089",
+      "market_slug": "highest-temperature-in-qingdao-on-june-27-2026-31c",
+      "station_code": "ZSQD",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678090",
+      "market_slug": "highest-temperature-in-qingdao-on-june-27-2026-32corhigher",
+      "station_code": "ZSQD",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2678080",
+      "market_slug": "highest-temperature-in-qingdao-on-june-27-2026-22corbelow",
+      "station_code": "ZSQD",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2100264",
+      "market_slug": "highest-temperature-in-qingdao-on-april-28-2026-14corbelow",
+      "station_code": "ZSQD",
+      "target_date": "2026-04-28"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2100265",
+      "market_slug": "highest-temperature-in-qingdao-on-april-28-2026-15c",
+      "station_code": "ZSQD",
+      "target_date": "2026-04-28"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2100266",
+      "market_slug": "highest-temperature-in-qingdao-on-april-28-2026-16c",
+      "station_code": "ZSQD",
+      "target_date": "2026-04-28"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2100267",
+      "market_slug": "highest-temperature-in-qingdao-on-april-28-2026-17c",
+      "station_code": "ZSQD",
+      "target_date": "2026-04-28"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2100268",
+      "market_slug": "highest-temperature-in-qingdao-on-april-28-2026-18c",
+      "station_code": "ZSQD",
+      "target_date": "2026-04-28"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2100269",
+      "market_slug": "highest-temperature-in-qingdao-on-april-28-2026-19c",
+      "station_code": "ZSQD",
+      "target_date": "2026-04-28"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2100270",
+      "market_slug": "highest-temperature-in-qingdao-on-april-28-2026-20c",
+      "station_code": "ZSQD",
+      "target_date": "2026-04-28"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2100271",
+      "market_slug": "highest-temperature-in-qingdao-on-april-28-2026-21c",
+      "station_code": "ZSQD",
+      "target_date": "2026-04-28"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2100272",
+      "market_slug": "highest-temperature-in-qingdao-on-april-28-2026-22c",
+      "station_code": "ZSQD",
+      "target_date": "2026-04-28"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2100273",
+      "market_slug": "highest-temperature-in-qingdao-on-april-28-2026-23c",
+      "station_code": "ZSQD",
+      "target_date": "2026-04-28"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2100274",
+      "market_slug": "highest-temperature-in-qingdao-on-april-28-2026-24corhigher",
+      "station_code": "ZSQD",
+      "target_date": "2026-04-28"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091934",
+      "market_slug": "highest-temperature-in-panama-city-on-april-29-2026-23corbelow",
+      "station_code": "MPMG",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091935",
+      "market_slug": "highest-temperature-in-panama-city-on-april-29-2026-24c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091936",
+      "market_slug": "highest-temperature-in-panama-city-on-april-29-2026-25c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091937",
+      "market_slug": "highest-temperature-in-panama-city-on-april-29-2026-26c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091938",
+      "market_slug": "highest-temperature-in-panama-city-on-april-29-2026-27c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091939",
+      "market_slug": "highest-temperature-in-panama-city-on-april-29-2026-28c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091940",
+      "market_slug": "highest-temperature-in-panama-city-on-april-29-2026-29c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091941",
+      "market_slug": "highest-temperature-in-panama-city-on-april-29-2026-30c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091942",
+      "market_slug": "highest-temperature-in-panama-city-on-april-29-2026-31c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091943",
+      "market_slug": "highest-temperature-in-panama-city-on-april-29-2026-32c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2091944",
+      "market_slug": "highest-temperature-in-panama-city-on-april-29-2026-33corhigher",
+      "station_code": "MPMG",
+      "target_date": "2026-04-29"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1838292",
+      "market_slug": "highest-temperature-in-panama-city-on-april-7-2026-27c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-07"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1838294",
+      "market_slug": "highest-temperature-in-panama-city-on-april-7-2026-29c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-07"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1838296",
+      "market_slug": "highest-temperature-in-panama-city-on-april-7-2026-31c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-07"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1838298",
+      "market_slug": "highest-temperature-in-panama-city-on-april-7-2026-33c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-07"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1838300",
+      "market_slug": "highest-temperature-in-panama-city-on-april-7-2026-35c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-07"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1838291",
+      "market_slug": "highest-temperature-in-panama-city-on-april-7-2026-26corbelow",
+      "station_code": "MPMG",
+      "target_date": "2026-04-07"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1838293",
+      "market_slug": "highest-temperature-in-panama-city-on-april-7-2026-28c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-07"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1838295",
+      "market_slug": "highest-temperature-in-panama-city-on-april-7-2026-30c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-07"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1838297",
+      "market_slug": "highest-temperature-in-panama-city-on-april-7-2026-32c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-07"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1838299",
+      "market_slug": "highest-temperature-in-panama-city-on-april-7-2026-34c",
+      "station_code": "MPMG",
+      "target_date": "2026-04-07"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "1838301",
+      "market_slug": "highest-temperature-in-panama-city-on-april-7-2026-36corhigher",
+      "station_code": "MPMG",
+      "target_date": "2026-04-07"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679365",
+      "market_slug": "highest-temperature-in-cape-town-on-june-27-2026-12corbelow",
+      "station_code": "FACT",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679366",
+      "market_slug": "highest-temperature-in-cape-town-on-june-27-2026-13c",
+      "station_code": "FACT",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679367",
+      "market_slug": "highest-temperature-in-cape-town-on-june-27-2026-14c",
+      "station_code": "FACT",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679368",
+      "market_slug": "highest-temperature-in-cape-town-on-june-27-2026-15c",
+      "station_code": "FACT",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679369",
+      "market_slug": "highest-temperature-in-cape-town-on-june-27-2026-16c",
+      "station_code": "FACT",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679370",
+      "market_slug": "highest-temperature-in-cape-town-on-june-27-2026-17c",
+      "station_code": "FACT",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679371",
+      "market_slug": "highest-temperature-in-cape-town-on-june-27-2026-18c",
+      "station_code": "FACT",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679372",
+      "market_slug": "highest-temperature-in-cape-town-on-june-27-2026-19c",
+      "station_code": "FACT",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679373",
+      "market_slug": "highest-temperature-in-cape-town-on-june-27-2026-20c",
+      "station_code": "FACT",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679374",
+      "market_slug": "highest-temperature-in-cape-town-on-june-27-2026-21c",
+      "station_code": "FACT",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679375",
+      "market_slug": "highest-temperature-in-cape-town-on-june-27-2026-22corhigher",
+      "station_code": "FACT",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2282167",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-15corbelow",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2282168",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-16c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2282169",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-17c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2282170",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-18c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "missing_winning_outcome",
+      "market_id": "2282171",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-19c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2282171",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-19c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "missing_winning_outcome",
+      "market_id": "2282172",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-20c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2282172",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-20c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "missing_winning_outcome",
+      "market_id": "2282173",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-21c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2282173",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-21c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "missing_winning_outcome",
+      "market_id": "2282174",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-22c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2282174",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-22c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "missing_winning_outcome",
+      "market_id": "2282175",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-23c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2282175",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-23c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "missing_winning_outcome",
+      "market_id": "2282176",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-24c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2282176",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-24c",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "missing_winning_outcome",
+      "market_id": "2282177",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-25corhigher",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2282177",
+      "market_slug": "arch-highest-temperature-in-cape-town-on-may-19-2026-25corhigher",
+      "station_code": "FACT",
+      "target_date": "2026-05-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2019638",
+      "market_slug": "highest-temperature-in-cape-town-on-april-21-2026-12corbelow",
+      "station_code": "FACT",
+      "target_date": "2026-04-21"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2019639",
+      "market_slug": "highest-temperature-in-cape-town-on-april-21-2026-13c",
+      "station_code": "FACT",
+      "target_date": "2026-04-21"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2019640",
+      "market_slug": "highest-temperature-in-cape-town-on-april-21-2026-14c",
+      "station_code": "FACT",
+      "target_date": "2026-04-21"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2019641",
+      "market_slug": "highest-temperature-in-cape-town-on-april-21-2026-15c",
+      "station_code": "FACT",
+      "target_date": "2026-04-21"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2019642",
+      "market_slug": "highest-temperature-in-cape-town-on-april-21-2026-16c",
+      "station_code": "FACT",
+      "target_date": "2026-04-21"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2019643",
+      "market_slug": "highest-temperature-in-cape-town-on-april-21-2026-17c",
+      "station_code": "FACT",
+      "target_date": "2026-04-21"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2019644",
+      "market_slug": "highest-temperature-in-cape-town-on-april-21-2026-18c",
+      "station_code": "FACT",
+      "target_date": "2026-04-21"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2019645",
+      "market_slug": "highest-temperature-in-cape-town-on-april-21-2026-19c",
+      "station_code": "FACT",
+      "target_date": "2026-04-21"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2019646",
+      "market_slug": "highest-temperature-in-cape-town-on-april-21-2026-20c",
+      "station_code": "FACT",
+      "target_date": "2026-04-21"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2019647",
+      "market_slug": "highest-temperature-in-cape-town-on-april-21-2026-21c",
+      "station_code": "FACT",
+      "target_date": "2026-04-21"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2019648",
+      "market_slug": "highest-temperature-in-cape-town-on-april-21-2026-22corhigher",
+      "station_code": "FACT",
+      "target_date": "2026-04-21"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679354",
+      "market_slug": "highest-temperature-in-jeddah-on-june-27-2026-29corbelow",
+      "station_code": "OEJN",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679355",
+      "market_slug": "highest-temperature-in-jeddah-on-june-27-2026-30c",
+      "station_code": "OEJN",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679356",
+      "market_slug": "highest-temperature-in-jeddah-on-june-27-2026-31c",
+      "station_code": "OEJN",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679357",
+      "market_slug": "highest-temperature-in-jeddah-on-june-27-2026-32c",
+      "station_code": "OEJN",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679358",
+      "market_slug": "highest-temperature-in-jeddah-on-june-27-2026-33c",
+      "station_code": "OEJN",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679359",
+      "market_slug": "highest-temperature-in-jeddah-on-june-27-2026-34c",
+      "station_code": "OEJN",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679360",
+      "market_slug": "highest-temperature-in-jeddah-on-june-27-2026-35c",
+      "station_code": "OEJN",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679361",
+      "market_slug": "highest-temperature-in-jeddah-on-june-27-2026-36c",
+      "station_code": "OEJN",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679362",
+      "market_slug": "highest-temperature-in-jeddah-on-june-27-2026-37c",
+      "station_code": "OEJN",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679363",
+      "market_slug": "highest-temperature-in-jeddah-on-june-27-2026-38c",
+      "station_code": "OEJN",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2679364",
+      "market_slug": "highest-temperature-in-jeddah-on-june-27-2026-39corhigher",
+      "station_code": "OEJN",
+      "target_date": "2026-06-27"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2157251",
+      "market_slug": "highest-temperature-in-jeddah-on-may-6-2026-26corbelow",
+      "station_code": "OEJN",
+      "target_date": "2026-05-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2157252",
+      "market_slug": "highest-temperature-in-jeddah-on-may-6-2026-27c",
+      "station_code": "OEJN",
+      "target_date": "2026-05-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2157253",
+      "market_slug": "highest-temperature-in-jeddah-on-may-6-2026-28c",
+      "station_code": "OEJN",
+      "target_date": "2026-05-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2157254",
+      "market_slug": "highest-temperature-in-jeddah-on-may-6-2026-29c",
+      "station_code": "OEJN",
+      "target_date": "2026-05-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2157255",
+      "market_slug": "highest-temperature-in-jeddah-on-may-6-2026-30c",
+      "station_code": "OEJN",
+      "target_date": "2026-05-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2157256",
+      "market_slug": "highest-temperature-in-jeddah-on-may-6-2026-31c",
+      "station_code": "OEJN",
+      "target_date": "2026-05-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2157257",
+      "market_slug": "highest-temperature-in-jeddah-on-may-6-2026-32c",
+      "station_code": "OEJN",
+      "target_date": "2026-05-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2157258",
+      "market_slug": "highest-temperature-in-jeddah-on-may-6-2026-33c",
+      "station_code": "OEJN",
+      "target_date": "2026-05-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2157259",
+      "market_slug": "highest-temperature-in-jeddah-on-may-6-2026-34c",
+      "station_code": "OEJN",
+      "target_date": "2026-05-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2157260",
+      "market_slug": "highest-temperature-in-jeddah-on-may-6-2026-35c",
+      "station_code": "OEJN",
+      "target_date": "2026-05-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2157261",
+      "market_slug": "highest-temperature-in-jeddah-on-may-6-2026-36corhigher",
+      "station_code": "OEJN",
+      "target_date": "2026-05-06"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2004118",
+      "market_slug": "highest-temperature-in-jeddah-on-april-19-2026-30corbelow",
+      "station_code": "OEJN",
+      "target_date": "2026-04-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2004119",
+      "market_slug": "highest-temperature-in-jeddah-on-april-19-2026-31c",
+      "station_code": "OEJN",
+      "target_date": "2026-04-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2004120",
+      "market_slug": "highest-temperature-in-jeddah-on-april-19-2026-32c",
+      "station_code": "OEJN",
+      "target_date": "2026-04-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2004121",
+      "market_slug": "highest-temperature-in-jeddah-on-april-19-2026-33c",
+      "station_code": "OEJN",
+      "target_date": "2026-04-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2004122",
+      "market_slug": "highest-temperature-in-jeddah-on-april-19-2026-34c",
+      "station_code": "OEJN",
+      "target_date": "2026-04-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2004123",
+      "market_slug": "highest-temperature-in-jeddah-on-april-19-2026-35c",
+      "station_code": "OEJN",
+      "target_date": "2026-04-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2004124",
+      "market_slug": "highest-temperature-in-jeddah-on-april-19-2026-36c",
+      "station_code": "OEJN",
+      "target_date": "2026-04-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2004125",
+      "market_slug": "highest-temperature-in-jeddah-on-april-19-2026-37c",
+      "station_code": "OEJN",
+      "target_date": "2026-04-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2004126",
+      "market_slug": "highest-temperature-in-jeddah-on-april-19-2026-38c",
+      "station_code": "OEJN",
+      "target_date": "2026-04-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2004127",
+      "market_slug": "highest-temperature-in-jeddah-on-april-19-2026-39c",
+      "station_code": "OEJN",
+      "target_date": "2026-04-19"
+    },
+    {
+      "gap_reason": "non_metar_settlement_source",
+      "market_id": "2004128",
+      "market_slug": "highest-temperature-in-jeddah-on-april-19-2026-40corhigher",
+      "station_code": "OEJN",
+      "target_date": "2026-04-19"
+    }
+  ],
+  "generated_at": "2026-06-28T04:50:11Z",
+  "live_order_path": false,
+  "paper_only": true,
+  "schema_version": "polyweather_closed_weather_market_bulk_gap_report.v1"
+}

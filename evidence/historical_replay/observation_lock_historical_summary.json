@@ -1,0 +1,185 @@
+{
+  "brier_score": null,
+  "by_bucket_type": [
+    {
+      "bucket_type": "eq",
+      "count": 1254
+    },
+    {
+      "bucket_type": "range",
+      "count": 209
+    },
+    {
+      "bucket_type": "ge",
+      "count": 165
+    },
+    {
+      "bucket_type": "le",
+      "count": 165
+    }
+  ],
+  "by_price_bucket": [],
+  "by_station": [
+    {
+      "count": 385,
+      "station_code": "UUWW"
+    },
+    {
+      "count": 361,
+      "station_code": "LTAC"
+    },
+    {
+      "count": 300,
+      "station_code": "EGLC"
+    },
+    {
+      "count": 44,
+      "station_code": "RKSI"
+    },
+    {
+      "count": 33,
+      "station_code": "CYYZ"
+    },
+    {
+      "count": 33,
+      "station_code": "EDDM"
+    },
+    {
+      "count": 33,
+      "station_code": "EPWA"
+    },
+    {
+      "count": 33,
+      "station_code": "LEMD"
+    },
+    {
+      "count": 33,
+      "station_code": "LIMC"
+    },
+    {
+      "count": 33,
+      "station_code": "SBGR"
+    },
+    {
+      "count": 33,
+      "station_code": "VILK"
+    },
+    {
+      "count": 29,
+      "station_code": "SAEZ"
+    },
+    {
+      "count": 25,
+      "station_code": "KLGA"
+    },
+    {
+      "count": 22,
+      "station_code": "KATL"
+    },
+    {
+      "count": 22,
+      "station_code": "KAUS"
+    },
+    {
+      "count": 22,
+      "station_code": "KBKF"
+    },
+    {
+      "count": 22,
+      "station_code": "KDAL"
+    },
+    {
+      "count": 22,
+      "station_code": "KHOU"
+    },
+    {
+      "count": 22,
+      "station_code": "KLAX"
+    },
+    {
+      "count": 22,
+      "station_code": "KMIA"
+    },
+    {
+      "count": 22,
+      "station_code": "KORD"
+    },
+    {
+      "count": 22,
+      "station_code": "KSEA"
+    },
+    {
+      "count": 22,
+      "station_code": "KSFO"
+    },
+    {
+      "count": 22,
+      "station_code": "MMMX"
+    },
+    {
+      "count": 22,
+      "station_code": "NZWN"
+    },
+    {
+      "count": 22,
+      "station_code": "RJTT"
+    },
+    {
+      "count": 22,
+      "station_code": "WSSS"
+    },
+    {
+      "count": 22,
+      "station_code": "ZBAA"
+    },
+    {
+      "count": 22,
+      "station_code": "ZHHH"
+    },
+    {
+      "count": 22,
+      "station_code": "ZSPD"
+    },
+    {
+      "count": 22,
+      "station_code": "ZUCK"
+    },
+    {
+      "count": 22,
+      "station_code": "ZUUU"
+    }
+  ],
+  "by_time_to_close": [
+    {
+      "count": 858,
+      "time_to_close_bucket": "lt_30m"
+    },
+    {
+      "count": 814,
+      "time_to_close_bucket": "gt_2h"
+    },
+    {
+      "count": 121,
+      "time_to_close_bucket": "30m_to_2h"
+    }
+  ],
+  "candidate_count": 0,
+  "counts_for_live_gate": false,
+  "fill_count": 0,
+  "gap_count": 0,
+  "gap_samples": [],
+  "generated_at": "2026-06-28T04:55:56Z",
+  "live_order_path": false,
+  "locked_signal_count": 105,
+  "log_loss": null,
+  "missing_historical_executable_price": true,
+  "missing_historical_price_count": 105,
+  "missing_intraday_count": 803,
+  "no_lookahead_violation_count": 0,
+  "paper_only": true,
+  "replay_market_count": 836,
+  "replay_signal_count": 1793,
+  "resolved_fill_count": 0,
+  "resolved_pnl_cents": null,
+  "schema_version": "polyweather_observation_lock_historical_replay.v1.summary"
+}

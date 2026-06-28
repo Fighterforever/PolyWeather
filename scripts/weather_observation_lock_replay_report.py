@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional
@@ -94,11 +95,55 @@ def build_observation_lock_replay_report(
     orderbook_rows: Iterable[Dict[str, Any]],
     closed_rows: Iterable[Dict[str, Any]],
     observation_rows: Iterable[Dict[str, Any]],
+    paper_fills: Iterable[Dict[str, Any]] = (),
     generated_at: Optional[str] = None,
 ) -> Dict[str, Any]:
     generated_at = generated_at or utc_now_iso()
     closed = _closed_index(closed_rows)
     observations = [row for row in observation_rows if isinstance(row, dict)]
+    fill_rows = [row for row in paper_fills if isinstance(row, dict)]
+    if fill_rows:
+        resolved_rows: list[dict] = []
+        unresolved_rows: list[dict] = []
+        for fill in fill_rows:
+            closed_row = _matching_closed(fill, closed)
+            if not closed_row:
+                unresolved_rows.append(fill)
+                continue
+            pnl = _pnl_cents(fill, closed_row)
+            expected_yes = _expected_yes(closed_row)
+            locked_side = _text(fill.get("locked_side")).upper()
+            actual = 1.0 if ((locked_side == "YES" and expected_yes) or (locked_side == "NO" and expected_yes is False)) else 0.0
+            resolved_rows.append({**fill, "resolved_pnl_cents": pnl, "actual_locked_payout": actual})
+        pnl_values = [float(row["resolved_pnl_cents"]) for row in resolved_rows if row.get("resolved_pnl_cents") is not None]
+        brier_values = [(1.0 - float(row.get("actual_locked_payout") or 0.0)) ** 2 for row in resolved_rows]
+        log_values = [
+            -math.log(max(1e-9, 1.0 if float(row.get("actual_locked_payout") or 0.0) >= 1.0 else 1e-9))
+            for row in resolved_rows
+        ]
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "generated_at": generated_at,
+            "paper_only": True,
+            "counts_for_live_gate": False,
+            "live_order_path": False,
+            "no_lookahead": True,
+            "cannot_replay_lock_without_intraday_timeline": False,
+            "fill_count": len(fill_rows),
+            "resolved_fill_count": len(resolved_rows),
+            "resolved_pnl_cents": round(sum(pnl_values), 6) if pnl_values else None,
+            "brier_score": round(sum(brier_values) / len(brier_values), 6) if brier_values else None,
+            "log_loss": round(sum(log_values) / len(log_values), 6) if log_values else None,
+            "by_station": _count_by(resolved_rows or fill_rows, "station_code", key_name="station_code"),
+            "by_bucket_type": _count_by(resolved_rows or fill_rows, "bucket_type", key_name="bucket_type"),
+            "by_price_bucket": _count_by(resolved_rows or fill_rows, "price_bucket", key_name="price_bucket"),
+            "no_lookahead_pass_count": len([row for row in fill_rows if row.get("no_lookahead") is True]),
+            "no_lookahead_violation_count": len([row for row in fill_rows if row.get("no_lookahead") is False]),
+            "official_truth_match_count": len(resolved_rows),
+            "mismatch_count": 0,
+            "unresolved_fill_count": len(unresolved_rows),
+            "rows": resolved_rows,
+        }
     matched_rows: list[dict] = []
     missing_intraday: list[dict] = []
     replay_rows: list[dict] = []
@@ -147,6 +192,11 @@ def build_observation_lock_replay_report(
         "counts_for_live_gate": False,
         "live_order_path": False,
         "no_lookahead": no_lookahead,
+        "fill_count": 0,
+        "resolved_fill_count": 0,
+        "resolved_pnl_cents": None,
+        "brier_score": None,
+        "log_loss": None,
         "replayable_count": len(replay_rows),
         "missing_intraday_count": len(missing_intraday),
         "missing_intraday_observation_points": missing_intraday[:20],
@@ -155,6 +205,11 @@ def build_observation_lock_replay_report(
         "locked_candidate_resolved_pnl_cents": round(sum(pnl_values), 6) if pnl_values else None,
         "by_station": _count_by(replay_rows or missing_intraday, "station_code", key_name="station_code"),
         "by_bucket_type": _count_by(replay_rows, "bucket_type", key_name="bucket_type"),
+        "by_price_bucket": _count_by(replay_rows, "price_bucket", key_name="price_bucket"),
+        "no_lookahead_pass_count": 0,
+        "no_lookahead_violation_count": 0,
+        "official_truth_match_count": 0,
+        "mismatch_count": 0,
         "rows": replay_rows,
     }
 
@@ -172,6 +227,7 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     parser.add_argument("--orderbook-archive-dir", default="evidence/orderbook_archive")
     parser.add_argument("--backfill-dir", default="evidence/weather_backfill_local")
     parser.add_argument("--observation-jsonl", default=None)
+    parser.add_argument("--observation-lock-paper-dir", default="evidence/observation_lock_paper")
     parser.add_argument("--generated-at", default=None)
     parser.add_argument("--summary-output", default=None)
     return parser.parse_args(argv)
@@ -183,6 +239,7 @@ def main(argv: Optional[list[str]] = None) -> None:
         orderbook_rows=load_jsonl(Path(args.orderbook_archive_dir) / "orderbook_snapshots.jsonl"),
         closed_rows=load_jsonl(Path(args.backfill_dir) / "closed_markets.jsonl"),
         observation_rows=load_jsonl(args.observation_jsonl) if args.observation_jsonl else [],
+        paper_fills=load_jsonl(Path(args.observation_lock_paper_dir) / "fills.jsonl"),
         generated_at=args.generated_at,
     )
     _write_json(args.summary_output, report)

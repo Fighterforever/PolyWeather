@@ -46,3 +46,37 @@ def test_observation_lock_replay_blocks_without_intraday_timeline():
     assert report["cannot_replay_lock_without_intraday_timeline"] is True
     assert report["locked_candidate_resolved_pnl_cents"] is None
     assert report["no_lookahead"] is False
+
+
+def test_observation_lock_replay_scores_paper_fills_against_closed_truth():
+    report = build_observation_lock_replay_report(
+        orderbook_rows=[],
+        closed_rows=[
+            {
+                "market_slug": "highest-temperature-test",
+                "token_id": "yes-token",
+                "official_final_value": 24.0,
+                "settlement_spec": {"bucket_type": "ge", "threshold": 23.0},
+            }
+        ],
+        observation_rows=[],
+        paper_fills=[
+            {
+                "market_slug": "highest-temperature-test",
+                "token_id": "yes-token",
+                "locked_side": "YES",
+                "q_effective": 0.40,
+                "price_bucket": "price_ge_0_03",
+                "bucket_type": "ge",
+                "station_code": "UUWW",
+                "no_lookahead": True,
+            }
+        ],
+        generated_at="2026-06-30T03:05:00Z",
+    )
+
+    assert report["fill_count"] == 1
+    assert report["resolved_fill_count"] == 1
+    assert report["resolved_pnl_cents"] == 60.0
+    assert report["brier_score"] == 0.0
+    assert report["no_lookahead_pass_count"] == 1

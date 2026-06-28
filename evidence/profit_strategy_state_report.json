@@ -1,20 +1,56 @@
 {
-  "artifacts": {
-    "non_dust_due_plan": "evidence/non_dust_unresolved_due_plan_ltac_uuww.json",
-    "non_dust_due_runner_install_report": "evidence/non_dust_uuww_due_runner_install_report.json",
-    "observation_lock_replay": "evidence/observation_lock_replay_ltac_uuww.json",
-    "observation_lock_signal_report": "evidence/observation_lock_signal_report.json"
+  "active_alpha_research": {
+    "non_dust_threshold_cdf": {
+      "run_after_utc": "2026-06-30T03:05:00Z",
+      "runner_label": "com.polyweather.non-dust-uuww-due-pipeline",
+      "status": "pending_non_dust_due"
+    },
+    "observation_lock_alpha": {
+      "candidate_count": 0,
+      "live_order_path": false,
+      "locked_signal_count": 105,
+      "missing_historical_price_count": 105,
+      "replay_market_count": 836,
+      "replay_signal_count": 1793,
+      "resolved_pnl_cents": null,
+      "status": "historical_lock_signals_found_but_missing_executable_price"
+    }
   },
-  "can_tiny_live": false,
+  "artifacts": {
+    "intraday_launchd_install_report": "evidence/intraday_observation_launchd_install_report.json",
+    "intraday_observation_collector": "evidence/official_observations/intraday_observations.jsonl",
+    "observation_lock_paper_journal": "evidence/observation_lock_paper/fills.jsonl",
+    "observation_lock_signal_report": "evidence/observation_lock_signal_report.json",
+    "profit_strategy_state_report": "evidence/profit_strategy_state_report.json"
+  },
   "counts_for_live_gate": false,
-  "current_failed_strategies": {
+  "data_collection": {
+    "intraday_observation_collector_installed": true,
+    "latest_observation_at_by_station": {
+      "EGLC": "2026-06-28T04:20:00Z",
+      "LTAC": "2026-06-28T04:20:00Z",
+      "RKSI": "2026-06-28T04:30:00Z",
+      "UUWW": "2026-06-28T04:30:00Z"
+    },
+    "manifest": "evidence/official_observations/manifest.json",
+    "missing_station_reasons": [
+      {
+        "gap_reason": "unsupported_station_code",
+        "settlement_source": "metar",
+        "source": "aviationweather_metar_recent_72h",
+        "station_code": "RKSI"
+      }
+    ],
+    "observation_count": 400,
+    "station_count": 4
+  },
+  "failed_paths": {
     "archived_overlap_diagnostic": {
-      "reason": "archived overlap replay was diagnostic-only and previously negative; not an alpha path",
+      "reason": "diagnostic overlap replay was negative, not alpha evidence",
       "status": "negative"
     },
     "dust_tail_near_lock": {
-      "reason": "negative resolved PnL all came from dust bucket; diagnostic-only, not live evidence",
-      "resolved_pnl_cents": -0.8,
+      "reason": "resolved PnL was negative and dust-only",
       "status": "failed"
     }
   },
@@ -23,43 +59,59 @@
     "dust_tail_live",
     "maker_inferred_live"
   ],
-  "live_order_path": false,
-  "new_candidate_strategies": {
-    "non_dust_threshold_cdf": {
-      "allowed_bucket_types": [
-        "ge",
-        "le"
-      ],
-      "excluded": [
-        "eq",
-        "price_lt_0_005",
-        "unsupported_official_source"
-      ],
-      "status": "implemented_filter_pending_non_dust_resolution"
-    },
-    "observation_lock_alpha": {
-      "current_candidate_count": 0,
-      "intraday_observations_exist": false,
-      "replay_blocker": "cannot_replay_lock_without_intraday_timeline",
-      "signal_report": "evidence/observation_lock_signal_report.json",
-      "status": "implemented_scanner_needs_intraday_observations"
-    }
+  "latest_focus": "web_first_historical_alpha_backfill",
+  "live": {
+    "can_tiny_live": false,
+    "live_order_path": false,
+    "reason": "no historical executable-depth resolved PnL; live paths remain hard-disabled"
   },
-  "next_actions": [
-    "collect intraday METAR observation snapshots with available_at for UUWW/LTAC and future stations",
-    "run non-dust UUWW due check on 2026-06-30T03:05Z",
-    "evaluate observation-lock candidates only with no-lookahead intraday timeline and non-dust executable price"
-  ],
+  "live_order_path": false,
   "paper_only": true,
-  "schema_version": "polyweather_profit_strategy_state.v1",
-  "unresolved_strategies": {
-    "non_dust_tail_threshold_ge": {
-      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-23corhigher",
-      "next_non_dust_due_time": "2026-06-30T02:59:59Z",
-      "run_after_utc": "2026-06-30T03:05:00Z",
-      "status": "pending_due",
-      "summary_output": "evidence/due_pipeline_non_dust_uuww_after_due.json",
-      "token_id": "37558803415910171580264743940982364976255246575423901696378057384864203714268"
-    }
+  "schema_version": "polyweather_profit_strategy_state_report.v3",
+  "web_first_alpha_research": {
+    "data_source_coverage": {
+      "closed_polymarket_markets": {
+        "closed_temperature_market_count": 1343,
+        "closed_weather_market_count": 1373,
+        "replay_supported_market_count": 836,
+        "rows": 1373
+      },
+      "historical_alpha_dataset": {
+        "missing_field_counts": {
+          "forecast": 31,
+          "intraday": 1309,
+          "price": 1284,
+          "station_code": 31,
+          "target_date": 31
+        },
+        "row_count": 1373,
+        "rows": 1373
+      },
+      "historical_forecasts": {
+        "forecast_count": 124,
+        "gap_count": 0,
+        "rows": 124
+      },
+      "metar_history": {
+        "date_coverage_count": 12,
+        "gap_count": 33,
+        "observation_count": 400,
+        "rows": 400,
+        "station_count": 3
+      },
+      "price_history": {
+        "executable_depth_available": false,
+        "gap_count": 161,
+        "price_row_count": 5735,
+        "rows": 5735
+      }
+    },
+    "historical_observation_lock_alpha": "no_resolved_executable_price_for_observation_lock",
+    "report_path": "evidence/web_first_alpha_research_report.json",
+    "self_sampling_still_required": [
+      "pre-resolution executable orderbook depth",
+      "slippage and missed-fill measurement",
+      "maker quote lifecycle if maker execution is reconsidered"
+    ]
   }
 }

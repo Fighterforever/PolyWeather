@@ -1,0 +1,817 @@
+{
+  "counts_for_live_gate": false,
+  "gap_count": 161,
+  "gaps": [
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-a-major-hurricane-make-landfall-in-the-lower-48-states-before-september-15",
+      "token_id": "78151665847801698374443254462531115816726784528368050717731105555943666587498"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-there-be-a-named-tropical-system-wanda-that-forms-before-november-1st-2021",
+      "token_id": "106568900004977429679789059084616111808660451505064911147690920083504531313278"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-lower-48-states-by-july-15",
+      "token_id": "84572768818096744088737122924575427352858458658189410069379622592560653581387"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-there-be-19-or-more-named-storms-during-the-2022-atlantic-hurricane-season",
+      "token_id": "17819594616480354603228619941041885262517954671563614048463771813054168400730"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-lower-48-states-in-september",
+      "token_id": "38821859977141769479687154069900780747680793182636995644057791407942019605402"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-us-lower-48-states-before-september-1",
+      "token_id": "39520774491047894704339742909923690952013494851697103350035363043961463275966"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-it-snow-in-new-yorks-central-park-on-the-christmas-eve-dec-24",
+      "token_id": "52822535908988654877923850444135650359501612428700940872182390083905823320824"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-17-2026-8corbelow",
+      "token_id": "64612221250288499344544111078881999058696097260716788253773462905022533756188"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-17-2026-9c",
+      "token_id": "61114213608927707261613388961877246822889734868210677105144699424181576897741"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-17-2026-10c",
+      "token_id": "55374340376022534318402860872554868063449035667495160241658216133401957204754"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-17-2026-11c",
+      "token_id": "13897536552958662270584600727103196482882401841732470648850896315033922446338"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-17-2026-12c",
+      "token_id": "103598360030616510476480398506114921473320334841214843035323580214769624771055"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-17-2026-13c",
+      "token_id": "26526650450764902284206883617933472770416459642533714015991492373588136490082"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-17-2026-14c",
+      "token_id": "21571537487450913488270506716636746422366725110366871449809580579125743261990"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-17-2026-15c",
+      "token_id": "15211624628646988843774932054142324322229388346842326516485958879626183648000"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-17-2026-16c",
+      "token_id": "85676773090201782476919792184301616220673732789056534169557175277509250979868"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-17-2026-17c",
+      "token_id": "2583393873698536227185686669556280113847134897663740306674348822016117796923"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-17-2026-18corhigher",
+      "token_id": "20804735458875400724641171163804533591854303283310749472244175512741899858249"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-15-2026-11corbelow",
+      "token_id": "92385166325131302298470208416034991709622563762146349666874761847238659904196"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-15-2026-12c",
+      "token_id": "105121119757473655775771039308171049994958714410219903645951156156481771632152"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-15-2026-13c",
+      "token_id": "2740345552348004286179245720698337893612133259431348878081538625079467564259"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-15-2026-14c",
+      "token_id": "26007513184800629941457441451459386869952977381050084184197813043808878068255"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-15-2026-15c",
+      "token_id": "90061643953369246211643458347188250898531926095660949087573704964805956937505"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-15-2026-16c",
+      "token_id": "39626499757102573500973740316273364614003239640212630964514364117174620701484"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-15-2026-17c",
+      "token_id": "23874811565261953824659634030968455906902590137984924599811424175240690690849"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-15-2026-18c",
+      "token_id": "53704516946663743545335998653231378108952244177485942558749021432183791562813"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-15-2026-19c",
+      "token_id": "17830055586932772291344214870395294445608342929898601614190288905288435364895"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-15-2026-20c",
+      "token_id": "13432652940869634965856257628670937116970007050348097121969905849802029936995"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-15-2026-21corhigher",
+      "token_id": "86801664228397056728768911339185350838240430148443147855398285074267533940235"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-13corbelow",
+      "token_id": "18259809088623856419554887513524260570851779715612656367630757618166843950609"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-14c",
+      "token_id": "22423374034808930014846914277769654241714167163140381586917210238087760968395"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-15c",
+      "token_id": "41623932886956144079248448808955734139190183568571675972102029988964884048615"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-16c",
+      "token_id": "6488687384080162829411032950314646666314934254725916292550066483159384612316"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-17c",
+      "token_id": "28007584822848128336171899439611960667309776232579262592346629879915431016851"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-18c",
+      "token_id": "23012199446567290209913455731081369111204463456051571105999104320339859341121"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-19c",
+      "token_id": "68341245656351137898621642217890310173332975272992477115459746382373384619032"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-20c",
+      "token_id": "30806203443024194626253127523737038050994153188307409938719784557038230975833"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-21c",
+      "token_id": "11259395276749957178429073250410860523302785782699298894928854655230916210131"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-22c",
+      "token_id": "78618503260472181374405753488431914408282094197277687971712122171178355716910"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-16-2026-23corhigher",
+      "token_id": "21618902289973465195368226262133482058099172989951888331230401319166708860331"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-14corbelow",
+      "token_id": "97966561746327458766709260285061560756223801619875120737026071200464881771864"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-15c",
+      "token_id": "10321546327890771507631491361679771962444856757781036125118378270584508629951"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-16c",
+      "token_id": "26866993445162832036285208701191456959192155153765137826582667984852613529089"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-17c",
+      "token_id": "88129005201995542697658173115465919190582154731135428039456710136267739503768"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-18c",
+      "token_id": "3325366748262986247738392973410742830639277031367469301610496395012198391379"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-19c",
+      "token_id": "65288771489859685180723763076237934564584528745087056881164914249414554683085"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-20c",
+      "token_id": "53640406706679886829882414513727919496159705913907109517924240033781428427678"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-21c",
+      "token_id": "23571926183309957565911039492566135302665858005425725832678840260148843867617"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-22c",
+      "token_id": "82333666700743525168721997013476753445906008357993282539733971375974333394949"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-23c",
+      "token_id": "5721205645146292434726403318042845986417567123479618741554676447116481832991"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-15-2026-24corhigher",
+      "token_id": "62607861954094561069992601634730281385733923781448537897376034823339666163631"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-nyc-on-april-16-2026-77forbelow",
+      "token_id": "56813341475570553968038372482895363805413816230173910430418624038193289600165"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-nyc-on-april-16-2026-78-79f",
+      "token_id": "23597540189365062783891488835299456605338918691892214613069957742865784812416"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-nyc-on-april-16-2026-80-81f",
+      "token_id": "109600914719294552220440787895224468943092031283088478753410632006689838758234"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-nyc-on-april-16-2026-82-83f",
+      "token_id": "66088335595821264869227880646360036208453111108918767720194210790898790863731"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-nyc-on-april-16-2026-84-85f",
+      "token_id": "68258387681967431893685624351606780333400028544428426169775575755830117813810"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-nyc-on-april-16-2026-86-87f",
+      "token_id": "68120548229370450649230550320443781952386074778412093236371455613899468555944"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-nyc-on-april-16-2026-88-89f",
+      "token_id": "73045713715125022901844750420249918422996905644971690446464424512032558561317"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-nyc-on-april-16-2026-90-91f",
+      "token_id": "113303848279774232780758214158801897745481250525096025538455699697334962918031"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-nyc-on-april-16-2026-92-93f",
+      "token_id": "3475532182944447968649431278712869396921977238910417856435074802631884658561"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-nyc-on-april-16-2026-94-95f",
+      "token_id": "64414665883271520778968712141153827929587700869341831162168627051610853740255"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-nyc-on-april-16-2026-96forhigher",
+      "token_id": "79170283745442427962328902284903106224051136338280115384205884088344144380291"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-it-rain-in-la-by-next-friday",
+      "token_id": "66377982425625578696084720833136592368803595592463258847880061947590051495889"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-less-than-12-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "token_id": "106452110747611956978977268753064157389528376403403367585417828605993896395262"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-between-12-and-15-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "token_id": "16317379537814991855129487350420868230899067814629633592044411895109534532888"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-between-16-and-19-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "token_id": "18799600010887954008904645021662566080934550250947743173546356574585429130247"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-between-20-and-23-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "token_id": "39390223961001537684958618860296344528877772886264295838999474591376131091237"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-more-than-23-named-storms-occur-in-the-2025-atlantic-hurricane-season",
+      "token_id": "16732201506833757040751400365067477173117921746015165080559466291278323712498"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-hurricane-imelda-make-landfall-in-the-us",
+      "token_id": "5260223255126464432064837676951716157990946101819705400496910150705454021876"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-a-hurricane-make-landfall-in-the-us-by-september-30",
+      "token_id": "100879096067476698093193978806317262877933082182009754250724254785589701212478"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-air-quality-index-in-los-angeles-be-60-or-higher-on-november-1st",
+      "token_id": "51369991281048012842951728185899778291556494453180508227612934754460140834733"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-air-quality-index-in-los-angeles-be-65-or-higher-on-november-18th",
+      "token_id": "70900622069074686896669597263945605754411974532779391857237280894224361214785"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "nyc-air-quality-index-above-165-on-june-8",
+      "token_id": "5524106591400506485074295374730017646974453713092951474959145540408265270008"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-february-14-2026-4corbelow",
+      "token_id": "114605008186090109230844092010224221068857815706573506897739601260519354867176"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-february-14-2026-5c",
+      "token_id": "100647615695234021356886091798174787674146366454674029673756205598019186048438"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-february-14-2026-6c",
+      "token_id": "59490640359703333731023400685533897669168309540673266084768462672532506663090"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-february-14-2026-7c",
+      "token_id": "84861048811492575708148520522873512697427250625755239760703591610825008428107"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-february-14-2026-8c",
+      "token_id": "7689469211306064018781526390188096898389454987795801125412951920553617367319"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-february-14-2026-9c",
+      "token_id": "14009580974991338680721004174491181081409539153419148194908544909166330953529"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-february-14-2026-10c",
+      "token_id": "105483290129713949903634554966874737438428479176185479278027856140125215400793"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-february-14-2026-11c",
+      "token_id": "109426204544374707233177622282143836661336301889019214542563171368775899632139"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-february-14-2026-12corhigher",
+      "token_id": "64502039284364391117632856064932681283058015467068682580734289788321242410996"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-march-29-2026-4corbelow",
+      "token_id": "91593094966670456998056095371355696092774196534442438382397242837165205232868"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-march-29-2026-5c",
+      "token_id": "11106858543045566981374522530329419821205786351756171352707158032554476910909"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-march-29-2026-6c",
+      "token_id": "107873015234518183488935346218026550531107496778019830602911982169062228183436"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-march-29-2026-7c",
+      "token_id": "27392013880872560309609442558304632552091012894010124903918206683516648313991"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-march-29-2026-8c",
+      "token_id": "10941968566106682303596266704767049272325487763845043896437158980443865350209"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-march-29-2026-9c",
+      "token_id": "9605180329371522417665804555135109553959952155630364133159585307893055775615"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-march-29-2026-10c",
+      "token_id": "64621572162040260375936149760287489801836689680754789939553143132079771681758"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-march-29-2026-11c",
+      "token_id": "95520631435346958561780329174596354165127231286253722304172362908066748229272"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-march-29-2026-12c",
+      "token_id": "53141405378575048493791623841991358858313865289436225850909042515217478899909"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-march-29-2026-13c",
+      "token_id": "8436191018572027593202811687564519361988166787774696955286669837039642779254"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-ankara-on-march-29-2026-14corhigher",
+      "token_id": "54997145554898783280825853304084736804582782224562310865643182815045176746131"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-8corbelow",
+      "token_id": "51525792464214200492947290207821415089618704255454824855904784818296932240528"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-9c",
+      "token_id": "84982762963088369471325111301396538092383077729541300999671832837937195114079"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-10c",
+      "token_id": "99072076368290738593136157866820681302682116693441764525831110939081882883134"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-11c",
+      "token_id": "84562459220571483361023535975234036774709778041334713251817507496344408626899"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-12c",
+      "token_id": "78528025154653777104270055951878007859816958350663066147694601912770923405462"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-13c",
+      "token_id": "31948275757999505693882461607919348870467316897857809546553799658406294872517"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-14c",
+      "token_id": "99234145033495486109412648448749191378897179409241252365073701466426620244662"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-15c",
+      "token_id": "3412641716563327050717590839986462715483402410050770044174683172742813371682"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-16c",
+      "token_id": "73739768693728378705411622009068900226643546758011873729777555058283349970542"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-17c",
+      "token_id": "37398427057807396431141508694591916126895086297998108572735020828100503842339"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-march-31-2026-18corhigher",
+      "token_id": "13278131337472027732052225846644792904348843995009318599351900605128974025919"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-10c",
+      "token_id": "23884458562021839331058088106844293075107071908419094482239971332801839845563"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-13c",
+      "token_id": "16172447247146172951420604861244497877518952950664967258058209608564127608621"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-12c",
+      "token_id": "89283967029115582488424590867555078442253032871502184991675135934772991022589"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-15c",
+      "token_id": "3566503676537289373007983383366293872274837171729243863709555222575470239680"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-19corhigher",
+      "token_id": "72388214239028439273692641832067267597730493222198205382865788716110205487272"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-11c",
+      "token_id": "31534925029311792795224446351154866783334367955500939904254697764636915401238"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-16c",
+      "token_id": "19179966484830073422825360259774677665904119133136329961110362078273516243943"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-17c",
+      "token_id": "28798160357501008505451719510680641402057375406171499010612445782313311077539"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-9corbelow",
+      "token_id": "45625038194511396557286814097447397690448918665186729832474741144763528854259"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-14c",
+      "token_id": "80208254384794543749145766908884561375094029509976426089721559068927254499455"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-istanbul-on-april-2-2026-18c",
+      "token_id": "99502836835894843754941223170528876888018622840577973771551111673392499580490"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-moscow-on-april-23-2026-neg-1corbelow",
+      "token_id": "18611804732006644238867255434109914441410881133352618449681015757291463547443"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-moscow-on-april-23-2026-0c",
+      "token_id": "113559315494607796413850133948273439763362437600101830526692530588604072727936"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-moscow-on-april-23-2026-1c",
+      "token_id": "62032166535757853553934672860367619022807435662106703773855478986517940784517"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-moscow-on-april-23-2026-2c",
+      "token_id": "107552925553864218297729102660991222798365365207002494527936186913199109965824"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-moscow-on-april-23-2026-3c",
+      "token_id": "41970760691659451158754284611980781162721518730247549114163571608275481015061"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-moscow-on-april-23-2026-4c",
+      "token_id": "34935480261097844189146882302477425246598161649872978937818942295040417198149"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-moscow-on-april-23-2026-5c",
+      "token_id": "56238647546590265707363515377627351679498493694072392530648127639628019602201"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-moscow-on-april-23-2026-6c",
+      "token_id": "76561218913461095477522149805738401257730691465719980021678157381354071838039"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-moscow-on-april-23-2026-7c",
+      "token_id": "72777168570018980414852003334625997365197980074574404884850251594222564562951"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-moscow-on-april-23-2026-8c",
+      "token_id": "52860803028191927921717638725389893173153124106781284103010431394783872339024"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-moscow-on-april-23-2026-9corhigher",
+      "token_id": "46086660544201483149612297541530183798983726999120932557621496168220093175204"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-between-65-66f-on-july-15",
+      "token_id": "69140799672687060124756930424957834862560554647059134270821032870157894226944"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-between-69-70f-on-july-15",
+      "token_id": "2065452420943314407500577188950529168983364790609552621917213982893981614305"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-between-67-68f-on-july-15",
+      "token_id": "27321735643088880670073262103869091149465084068756901872739966668811305024446"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-64f-or-below-on-july-15",
+      "token_id": "115568174271429635440255906457647494402324069433507681389789815514056547557132"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-between-71-72f-on-july-15",
+      "token_id": "10892129365380516678013089279020372047016055754493428106814446722170711643276"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-between-73-74f-on-july-15",
+      "token_id": "97508631672447558843668333307497731592270661914525878524052484795349150428805"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-75f-or-higher-on-july-15",
+      "token_id": "8063544095307307639606359894887513645362858088397956553047231221461081558780"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-55f-or-below-on-october-5",
+      "token_id": "31848970200386028115433239100600597510143846166951731161679274770326243544582"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-between-58-59f-on-october-5",
+      "token_id": "52991871005721902021817623551508553730852234580849303615264850347687543949199"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-between-62-63f-on-october-5",
+      "token_id": "24876685036489683336827768049673860647562185524028917026128692811369806719528"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-66f-or-higher-on-october-5",
+      "token_id": "67251009115214429940937154547460715580091688581956533706771520986029737826452"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-between-56-57f-on-october-5",
+      "token_id": "99848624943094959989444559300319430304128853788068310251424462300812339651433"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-between-60-61f-on-october-5",
+      "token_id": "37905974881258387599043513481871964579395188024201189345230734791842053709906"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "will-the-highest-temperature-in-london-be-between-64-65f-on-october-5",
+      "token_id": "12481690276822675864176286342538275196877153018542317136939524959298614686335"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-14corbelow",
+      "token_id": "41400671554005765383413908600029160745826813222574358831627557005335258755716"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-15c",
+      "token_id": "64671518591979672101815467700413684305322020683064202319728432542079699772462"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-16c",
+      "token_id": "13684745518969162873336470233897322819851452316593269826230513975603865683985"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-17c",
+      "token_id": "59476502786286604645519198145248180894659037711621427901066845558664555079533"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-18c",
+      "token_id": "69587405221743806321898624491199497337044610217112322209513617115691004335729"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-19c",
+      "token_id": "9704311436079464928124499221807790757116809993488251234655061108095840340161"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-20c",
+      "token_id": "23345315649260162513176294541310461997071511140010638133102447247534658775483"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-21c",
+      "token_id": "1705984401595686118044186075943572331399165748065951102619721560457868556808"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-22c",
+      "token_id": "9300354865892596247652762913742328096412652180441636255227507444310266158551"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-23c",
+      "token_id": "68557512742829807007401024389175116928225908410958333888846038577325960860598"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-paris-on-april-6-2026-24corhigher",
+      "token_id": "106477135667126382080523474107414004236948128857266053200783683052726627350968"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-12-2026-14corbelow",
+      "token_id": "4863221680350593869659381748914140967060288239427962293086918159502851006504"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-12-2026-15c",
+      "token_id": "90067286574480251182177029486826845360894864265071454428157490971229620429075"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-12-2026-16c",
+      "token_id": "26947693683953905847417395111174007890382585650942321742463747338078454264219"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-12-2026-17c",
+      "token_id": "82221313876785841217097602830346225731974064466786658360257276518083960681833"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-12-2026-18c",
+      "token_id": "107909117405695749844341130189451295771460276511603706899312284794673853253108"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-12-2026-19c",
+      "token_id": "51185991688538975005376632553267351182381638985456695242646535682715600738271"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-12-2026-20c",
+      "token_id": "112002112836008305575284167182831998991973031058676670503441942002721230695145"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-12-2026-21c",
+      "token_id": "5689951220402147247268530139740347807529140832157782363543752814046214048341"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-12-2026-22c",
+      "token_id": "28089867704166503399658568175322136068606277343919621226573355068381705003817"
+    },
+    {
+      "gap_reason": "empty_price_history",
+      "market_slug": "highest-temperature-in-seoul-on-april-12-2026-23c",
+      "token_id": "16104751997352185399626789139347164889868853056737390278760849302078764304800"
+    }
+  ],
+  "live_order_path": false,
+  "output_path": "evidence/historical_markets/polymarket_price_history.jsonl",
+  "paper_only": true,
+  "price_row_count": 5735,
+  "schema_version": "polyweather_polymarket_price_history_gap_report.v1",
+  "token_count": 250
+}

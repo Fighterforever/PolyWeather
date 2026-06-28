@@ -1,0 +1,9 @@
+{
+  "counts_for_live_gate": false,
+  "gap_count": 0,
+  "gaps": [],
+  "live_order_path": false,
+  "paper_only": true,
+  "row_count": 125,
+  "schema_version": "polyweather_kalshi_weather_crosscheck_gap_report.v1"
+}
