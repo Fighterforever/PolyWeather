@@ -4,6 +4,7 @@ from src.trading.weather_station_confusion_edge import (
     build_station_bias_table,
     build_station_confusion_edge_report,
 )
+from scripts.weather_station_confusion_bias_backfill import build_station_confusion_bias_backfill_report
 
 
 def _station_rows(count: int = 3):
@@ -112,3 +113,72 @@ def test_excludes_eq_and_dust():
     assert report["candidate_count"] == 0
     assert report["no_candidate_reason_counts"]["bucket_not_ge_le"] == 1
     assert report["no_candidate_reason_counts"]["dust_price"] == 1
+
+
+def test_station_confusion_bias_backfill_builds_minimal_active_station_table():
+    active = [
+        {
+            "market_family": "temperature",
+            "side": "yes",
+            "market_bucket": {"bucket_type": "ge", "threshold": 25.0},
+            "settlement_spec": {
+                "station_code": "UUWW",
+                "settlement_source": "metar",
+                "target_date": "2026-06-30",
+                "bucket_type": "ge",
+                "threshold": 25.0,
+            },
+        }
+    ]
+    station_rows = [
+        {"station_code": "UUWW", "settlement_source": "metar", "target_date": f"2026-06-{20 + index:02d}", "temperature_c": 26.0 + index}
+        for index in range(3)
+    ]
+    city_rows = [
+        {"station_code": "UUWW", "source": "open_meteo_historical_forecast", "target_date": f"2026-06-{20 + index:02d}", "predicted_daily_high": 24.0 + index}
+        for index in range(3)
+    ]
+
+    report = build_station_confusion_bias_backfill_report(
+        active_rows=active,
+        station_observation_rows=station_rows,
+        city_grid_rows=city_rows,
+        generated_at="2026-06-28T00:00:00Z",
+    )
+
+    assert report["active_station_count"] == 1
+    assert report["station_bias_sample_count"] == 3
+    pair = report["station_pairs"][0]
+    assert pair["city"] == "moscow"
+    assert pair["station_code"] == "UUWW"
+    assert pair["sample_count"] == 3
+    assert pair["station_minus_city_bias_mean"] == 2.0
+    assert pair["gap_reason"] == "bias_sample_too_small"
+
+
+def test_station_confusion_bias_backfill_reports_station_level_gap_reason():
+    active = [
+        {
+            "market_family": "temperature",
+            "side": "yes",
+            "market_bucket": {"bucket_type": "ge", "threshold": 25.0},
+            "settlement_spec": {
+                "station_code": "UUWW",
+                "settlement_source": "metar",
+                "target_date": "2026-06-30",
+                "bucket_type": "ge",
+                "threshold": 25.0,
+            },
+        }
+    ]
+
+    report = build_station_confusion_bias_backfill_report(
+        active_rows=active,
+        station_observation_rows=[],
+        city_grid_rows=[],
+        generated_at="2026-06-28T00:00:00Z",
+    )
+
+    assert report["station_bias_sample_count"] == 0
+    assert report["station_pairs"][0]["gap_reason"] == "missing_station_and_city_grid_history"
+    assert report["status"] == "station_confusion_data_unavailable_reduce_priority"

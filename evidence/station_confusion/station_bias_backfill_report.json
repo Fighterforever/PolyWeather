@@ -1,0 +1,157 @@
+{
+  "active_station_count": 6,
+  "active_station_specs": [
+    {
+      "city": "ankara",
+      "settlement_source": "metar",
+      "station_code": "LTAC"
+    },
+    {
+      "city": "istanbul",
+      "settlement_source": "noaa",
+      "station_code": "LTFM"
+    },
+    {
+      "city": "london",
+      "settlement_source": "metar",
+      "station_code": "EGLC"
+    },
+    {
+      "city": "moscow",
+      "settlement_source": "metar",
+      "station_code": "UUWW"
+    },
+    {
+      "city": "paris",
+      "settlement_source": "aeroweb",
+      "station_code": "LFPB"
+    },
+    {
+      "city": "seoul",
+      "settlement_source": "metar",
+      "station_code": "RKSI"
+    }
+  ],
+  "city_grid_normalized_count": 20,
+  "counts_for_live_gate": false,
+  "generated_at": null,
+  "live_order_path": false,
+  "max_station_pair_sample_count": 1,
+  "paper_only": true,
+  "platform": "polymarket",
+  "schema_version": "polyweather_station_confusion_bias_backfill.v1",
+  "station_bias_sample_count": 4,
+  "station_observation_normalized_count": 15,
+  "station_pairs": [
+    {
+      "bias_direction": "station_hotter",
+      "city": "ankara",
+      "city_grid_high_mean": 26.1,
+      "gap_reason": "bias_sample_too_small",
+      "latest_sample_date": "2026-06-27",
+      "sample_count": 1,
+      "settlement_source": "metar",
+      "source_coverage": {
+        "city_grid_sample_count": 3,
+        "paired_sample_count": 1,
+        "station_sample_count": 4
+      },
+      "station_code": "LTAC",
+      "station_high_mean": 28.0,
+      "station_minus_city_bias_mean": 1.9,
+      "station_minus_city_bias_std": null
+    },
+    {
+      "bias_direction": null,
+      "city": "istanbul",
+      "city_grid_high_mean": null,
+      "gap_reason": "missing_station_history",
+      "latest_sample_date": null,
+      "sample_count": 0,
+      "settlement_source": "noaa",
+      "source_coverage": {
+        "city_grid_sample_count": 3,
+        "paired_sample_count": 0,
+        "station_sample_count": 0
+      },
+      "station_code": "LTFM",
+      "station_high_mean": null,
+      "station_minus_city_bias_mean": null,
+      "station_minus_city_bias_std": null
+    },
+    {
+      "bias_direction": "station_colder",
+      "city": "london",
+      "city_grid_high_mean": 32.3,
+      "gap_reason": "bias_sample_too_small",
+      "latest_sample_date": "2026-06-27",
+      "sample_count": 1,
+      "settlement_source": "metar",
+      "source_coverage": {
+        "city_grid_sample_count": 3,
+        "paired_sample_count": 1,
+        "station_sample_count": 4
+      },
+      "station_code": "EGLC",
+      "station_high_mean": 31.0,
+      "station_minus_city_bias_mean": -1.3,
+      "station_minus_city_bias_std": null
+    },
+    {
+      "bias_direction": "station_hotter",
+      "city": "moscow",
+      "city_grid_high_mean": 20.4,
+      "gap_reason": "bias_sample_too_small",
+      "latest_sample_date": "2026-06-27",
+      "sample_count": 1,
+      "settlement_source": "metar",
+      "source_coverage": {
+        "city_grid_sample_count": 3,
+        "paired_sample_count": 1,
+        "station_sample_count": 4
+      },
+      "station_code": "UUWW",
+      "station_high_mean": 21.0,
+      "station_minus_city_bias_mean": 0.6,
+      "station_minus_city_bias_std": null
+    },
+    {
+      "bias_direction": null,
+      "city": "paris",
+      "city_grid_high_mean": null,
+      "gap_reason": "missing_station_history",
+      "latest_sample_date": null,
+      "sample_count": 0,
+      "settlement_source": "aeroweb",
+      "source_coverage": {
+        "city_grid_sample_count": 4,
+        "paired_sample_count": 0,
+        "station_sample_count": 0
+      },
+      "station_code": "LFPB",
+      "station_high_mean": null,
+      "station_minus_city_bias_mean": null,
+      "station_minus_city_bias_std": null
+    },
+    {
+      "bias_direction": "station_hotter",
+      "city": "seoul",
+      "city_grid_high_mean": 22.8,
+      "gap_reason": "bias_sample_too_small",
+      "latest_sample_date": "2026-06-27",
+      "sample_count": 1,
+      "settlement_source": "metar",
+      "source_coverage": {
+        "city_grid_sample_count": 4,
+        "paired_sample_count": 1,
+        "station_sample_count": 3
+      },
+      "station_code": "RKSI",
+      "station_high_mean": 28.0,
+      "station_minus_city_bias_mean": 5.2,
+      "station_minus_city_bias_std": null
+    }
+  ],
+  "status": "station_confusion_bias_sample_too_small",
+  "strategy_id": "station_confusion_edge"
+}

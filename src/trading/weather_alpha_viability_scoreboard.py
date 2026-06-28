@@ -222,6 +222,7 @@ def build_alpha_viability_scoreboard(
     bucket_family_lp_arbitrage_report: Dict[str, Any] | None = None,
     bucket_family_historical_replay_report: Dict[str, Any] | None = None,
     maker_shadow_v2_report: Dict[str, Any] | None = None,
+    maker_shadow_v2_funnel_report: Dict[str, Any] | None = None,
     station_confusion_edge_report: Dict[str, Any] | None = None,
     generated_at: Optional[str] = None,
 ) -> Dict[str, Any]:
@@ -240,6 +241,7 @@ def build_alpha_viability_scoreboard(
     bucket_lp = _compact(bucket_family_lp_arbitrage_report or {})
     bucket_historical = _compact(bucket_family_historical_replay_report or {})
     maker_shadow = _compact(maker_shadow_v2_report or {})
+    maker_funnel = _compact(maker_shadow_v2_funnel_report or {})
     station_confusion = _compact(station_confusion_edge_report or {})
 
     strict_resolved_pnl = _safe_float(strict.get("resolved_pnl_cents"))
@@ -597,18 +599,36 @@ def build_alpha_viability_scoreboard(
         live_push_verdict = "structural_lp_arbitrage_forward_paper_started"
     else:
         live_push_verdict = "structural_arbitrage_forward_paper_started"
-    maker_inferred_count = _safe_int(maker_shadow.get("inferred_fill_count"))
-    maker_mean_without_rebate = _safe_float(maker_shadow.get("mean_markout_without_rebate"))
+    maker_inferred_count = _safe_int(maker_funnel.get("total_inferred_fill_count") or maker_shadow.get("inferred_fill_count"))
+    maker_mean_without_rebate = _safe_float(
+        maker_funnel.get("mean_markout_without_rebate")
+        if maker_funnel.get("mean_markout_without_rebate") is not None
+        else maker_shadow.get("mean_markout_without_rebate")
+    )
+    maker_opportunity_status = str(maker_funnel.get("opportunity_status") or "").strip()
     station_candidate_count = _safe_int(station_confusion.get("candidate_count") or station_confusion.get("active_candidate_count"))
     station_forward_fills = _safe_int(station_confusion.get("forward_paper_fill_count"))
     station_markout = _safe_float(station_confusion.get("mean_markout_cents") or station_confusion.get("mean_markout_without_rebate"))
-    if maker_inferred_count >= 30 and maker_mean_without_rebate is not None and maker_mean_without_rebate > 0:
-        live_push_status = "continue_paper_maker_research"
+    station_alpha_conclusion = str(station_confusion.get("alpha_conclusion") or "").strip()
+    if maker_opportunity_status == "maker_shadow_continue_paper_research" or (
+        maker_inferred_count >= 30 and maker_mean_without_rebate is not None and maker_mean_without_rebate > 0
+    ):
+        live_push_status = "continue_maker_shadow_paper_only"
         next_go_no_go_trigger = "maker_shadow_v2_mean_markout_without_rebate_positive_over_30_inferred_fills"
-    elif station_forward_fills > 0 and station_markout is not None and station_markout > 0:
-        live_push_status = "continue_station_confusion_paper_research"
+    elif station_alpha_conclusion == "station_confusion_forward_paper_candidate_found" or (
+        station_forward_fills > 0 and station_markout is not None and station_markout > 0
+    ):
+        live_push_status = "continue_station_confusion_forward_paper"
         next_go_no_go_trigger = "station_confusion_forward_markout_positive"
-    elif non_dust_status == "failed" and maker_inferred_count <= 0 and station_candidate_count <= 0:
+    elif non_dust_status == "single_positive_needs_more":
+        live_push_status = "continue_non_dust_forward_paper_only"
+        next_go_no_go_trigger = "collect_more_non_dust_forward_samples"
+    elif (
+        non_dust_status == "failed"
+        and maker_opportunity_status == "maker_shadow_no_current_opportunity_density"
+        and station_alpha_conclusion
+        in {"station_confusion_data_unavailable_reduce_priority", "station_confusion_no_current_edge"}
+    ):
         live_push_status = "pause_polymarket_weather_live_push"
         next_go_no_go_trigger = "new_polymarket_only_non_dust_edge_required"
     elif non_dust_status == "waiting_due":
@@ -671,12 +691,16 @@ def build_alpha_viability_scoreboard(
                 "mean_markout_without_rebate": maker_mean_without_rebate,
                 "mean_markout_with_rebate": _safe_float(maker_shadow.get("mean_markout_with_rebate")),
                 "adverse_selection_count": _safe_int(maker_shadow.get("adverse_selection_count")),
+                "funnel_opportunity_status": maker_opportunity_status or None,
+                "funnel_total_quote_count": _safe_int(maker_funnel.get("total_quote_count")),
+                "funnel_total_inferred_fill_count": _safe_int(maker_funnel.get("total_inferred_fill_count")),
             },
             "station_confusion_edge": {
                 "station_bias_sample_count": _safe_int(station_confusion.get("station_bias_sample_count")),
                 "candidate_count": station_candidate_count,
                 "active_candidate_count": _safe_int(station_confusion.get("active_candidate_count")),
                 "top_station_biases": station_confusion.get("top_station_biases") if isinstance(station_confusion.get("top_station_biases"), list) else [],
+                "alpha_conclusion": station_alpha_conclusion or None,
             },
             "bucket_family_structural_arbitrage": {
                 "family_count": _safe_int(bucket_arbitrage.get("family_count")),

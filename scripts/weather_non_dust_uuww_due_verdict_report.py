@@ -92,7 +92,7 @@ def _alpha_conclusion(*, resolved_pnl: Optional[float], resolved_fill_count: Opt
     if resolved_pnl < 0:
         return "non_dust_threshold_cdf_failed"
     if resolved_pnl > 0:
-        return "non_dust_threshold_cdf_positive_single_sample_needs_more_forward"
+        return "non_dust_threshold_cdf_single_positive_needs_more_forward"
     return "non_dust_threshold_cdf_waiting_resolution"
 
 

@@ -1,0 +1,39 @@
+{
+  "blocker_counts": {
+    "bucket_not_ge_le": 198,
+    "dust_price": 8,
+    "missing_orderbook": 3,
+    "spread_below_min": 29,
+    "station_anomaly": 2
+  },
+  "by_bucket_type": [],
+  "by_station": [],
+  "counts_for_live_gate": false,
+  "first_run_at": "2026-06-28T13:45:35Z",
+  "generated_at": "2026-06-28T13:45:45Z",
+  "inferred_fill_rate": null,
+  "input_report_exists_count": 1,
+  "input_report_paths": [
+    "evidence/maker_shadow_v2/report.json"
+  ],
+  "last_run_at": "2026-06-28T13:45:35Z",
+  "live_order_path": false,
+  "mean_markout_with_rebate": null,
+  "mean_markout_without_rebate": null,
+  "opportunity_status": "maker_shadow_no_current_opportunity_density",
+  "paper_only": true,
+  "platform": "polymarket",
+  "quote_rate": 0.0,
+  "run_count": 1,
+  "schema_version": "polyweather_maker_shadow_v2_24h_funnel.v1",
+  "strategy_id": "maker_shadow_v2",
+  "total_ge_le_rows": 42,
+  "total_inferred_fill_count": 0,
+  "total_markout_count": 0,
+  "total_non_dust_rows": 31,
+  "total_orderbook_available_rows": 31,
+  "total_quote_count": 0,
+  "total_scanned_rows": 240,
+  "total_spread_sufficient_rows": 2,
+  "window_hours": 24.0
+}

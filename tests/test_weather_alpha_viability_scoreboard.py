@@ -245,14 +245,65 @@ def test_alpha_viability_scoreboard_adds_polymarket_only_maker_and_station_rows(
 
 def test_alpha_viability_scoreboard_continues_maker_research_after_positive_shadow_sample():
     report = build_alpha_viability_scoreboard(
-        maker_shadow_v2_report={
-            "quote_count": 50,
-            "inferred_fill_count": 30,
+        maker_shadow_v2_funnel_report={
+            "total_quote_count": 50,
+            "total_inferred_fill_count": 30,
             "mean_markout_without_rebate": 0.15,
+            "opportunity_status": "maker_shadow_continue_paper_research",
         },
         generated_at="2026-06-28T00:00:00Z",
     )
 
-    assert report["summary"]["live_push_status"] == "continue_paper_maker_research"
+    assert report["summary"]["live_push_status"] == "continue_maker_shadow_paper_only"
     assert "maker_shadow_v2" in report["summary"]["continue_research_strategy_ids"]
+    assert report["live_order_path"] is False
+
+
+def test_alpha_viability_scoreboard_pauses_when_remaining_polymarket_paths_fail():
+    report = build_alpha_viability_scoreboard(
+        non_dust_due_runner_status={
+            "alpha_conclusion": "non_dust_threshold_cdf_failed",
+            "strict_replay": {"resolved_fill_count": 1, "resolved_pnl_cents": -1.0},
+        },
+        maker_shadow_v2_funnel_report={
+            "total_quote_count": 0,
+            "total_inferred_fill_count": 0,
+            "opportunity_status": "maker_shadow_no_current_opportunity_density",
+        },
+        station_confusion_edge_report={
+            "candidate_count": 0,
+            "alpha_conclusion": "station_confusion_data_unavailable_reduce_priority",
+        },
+        generated_at="2026-06-28T00:00:00Z",
+    )
+
+    assert report["summary"]["live_push_status"] == "pause_polymarket_weather_live_push"
+    assert report["live_order_path"] is False
+
+
+def test_alpha_viability_scoreboard_continues_non_dust_forward_on_single_positive():
+    report = build_alpha_viability_scoreboard(
+        non_dust_due_runner_status={
+            "alpha_conclusion": "non_dust_threshold_cdf_positive_single_sample_needs_more_forward",
+            "strict_replay": {"resolved_fill_count": 1, "resolved_pnl_cents": 2.0},
+        },
+        maker_shadow_v2_funnel_report={"opportunity_status": "maker_shadow_no_current_opportunity_density"},
+        station_confusion_edge_report={"alpha_conclusion": "station_confusion_no_current_edge"},
+        generated_at="2026-06-28T00:00:00Z",
+    )
+
+    assert report["summary"]["live_push_status"] == "continue_non_dust_forward_paper_only"
+    assert report["live_order_path"] is False
+
+
+def test_alpha_viability_scoreboard_continues_station_confusion_when_candidate_found():
+    report = build_alpha_viability_scoreboard(
+        station_confusion_edge_report={
+            "candidate_count": 1,
+            "alpha_conclusion": "station_confusion_forward_paper_candidate_found",
+        },
+        generated_at="2026-06-28T00:00:00Z",
+    )
+
+    assert report["summary"]["live_push_status"] == "continue_station_confusion_forward_paper"
     assert report["live_order_path"] is False

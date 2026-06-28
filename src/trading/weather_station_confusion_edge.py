@@ -7,12 +7,22 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
+from src.weather.station_registry import station_registry_snapshot
+
 
 SCHEMA_VERSION = "polyweather_station_confusion_edge.v1"
 BIAS_SCHEMA_VERSION = "polyweather_station_city_bias.v1"
 CANDIDATE_SCHEMA_VERSION = "polyweather_station_confusion_candidate.v1"
 STRATEGY_ID = "station_confusion_edge"
 SUPPORTED_SETTLEMENT_SOURCES = {"metar", "noaa", "wunderground", "aeroweb"}
+
+
+def _station_city_lookup() -> Dict[str, str]:
+    return {
+        str(spec.get("station_code") or "").strip().upper(): str(city or spec.get("city") or "").strip().lower()
+        for city, spec in station_registry_snapshot().items()
+        if isinstance(spec, dict) and str(spec.get("station_code") or "").strip()
+    }
 
 
 def utc_now_iso() -> str:
@@ -75,8 +85,8 @@ def _high_value(row: Dict[str, Any], *fields: str) -> Optional[float]:
 
 
 def _station_key(row: Dict[str, Any]) -> tuple[str, str, str, str]:
-    city = str(row.get("city") or row.get("city_key") or "").strip().lower()
     station = str(row.get("station_code") or row.get("settlement_station_code") or "").strip().upper()
+    city = str(row.get("city") or row.get("city_key") or _station_city_lookup().get(station, "")).strip().lower()
     target = str(row.get("target_date") or row.get("target_date_local") or row.get("date") or "").strip()
     raw_source = str(row.get("settlement_source") or row.get("source") or "metar").strip().lower()
     source = "metar" if raw_source.startswith("open_meteo") else raw_source
@@ -127,12 +137,19 @@ def build_station_bias_table(
             city_by_key[key] = float(high)
     paired_rows: List[Dict[str, Any]] = []
     by_station: Dict[tuple[str, str, str], List[float]] = defaultdict(list)
+    station_highs: Dict[tuple[str, str, str], List[float]] = defaultdict(list)
+    city_highs: Dict[tuple[str, str, str], List[float]] = defaultdict(list)
+    latest_dates: Dict[tuple[str, str, str], str] = {}
     for key in sorted(set(station_by_key) & set(city_by_key)):
         city, station, target_date, source = key
         station_high = station_by_key[key]
         city_high = city_by_key[key]
         bias = station_high - city_high
-        by_station[(city, station, source)].append(bias)
+        group_key = (city, station, source)
+        by_station[group_key].append(bias)
+        station_highs[group_key].append(station_high)
+        city_highs[group_key].append(city_high)
+        latest_dates[group_key] = max(target_date, latest_dates.get(group_key, ""))
         paired_rows.append(
             {
                 "schema_version": BIAS_SCHEMA_VERSION,
@@ -149,15 +166,29 @@ def build_station_bias_table(
         )
     station_biases: List[Dict[str, Any]] = []
     for (city, station, source), values in sorted(by_station.items()):
+        station_mean = _mean(station_highs[(city, station, source)])
+        city_mean = _mean(city_highs[(city, station, source)])
+        bias_mean = _mean(values)
         station_biases.append(
             {
                 "city": city,
                 "station_code": station,
                 "settlement_source": source,
-                "historical_bias_mean": _mean(values),
+                "station_high_mean": station_mean,
+                "city_grid_high_mean": city_mean,
+                "station_minus_city_bias_mean": bias_mean,
+                "station_minus_city_bias_std": _std(values),
+                "historical_bias_mean": bias_mean,
                 "historical_bias_std": _std(values),
                 "sample_count": len(values),
                 "absolute_bias_mean": _mean([abs(value) for value in values]),
+                "latest_sample_date": latest_dates.get((city, station, source)),
+                "source_coverage": {
+                    "station_sample_count": len(station_highs[(city, station, source)]),
+                    "city_grid_sample_count": len(city_highs[(city, station, source)]),
+                    "paired_sample_count": len(values),
+                },
+                "gap_reason": None,
                 "bias_direction": "station_hotter" if (sum(values) / len(values)) > 0 else ("station_colder" if (sum(values) / len(values)) < 0 else "flat"),
             }
         )

@@ -464,6 +464,46 @@ def _group_summary(quotes: Sequence[Dict[str, Any]], fills: Sequence[Dict[str, A
     return rows
 
 
+def _maker_shadow_input_funnel(
+    rows: Sequence[Dict[str, Any]],
+    *,
+    min_spread: float,
+) -> Dict[str, Any]:
+    total_scanned = len([row for row in rows if isinstance(row, dict)])
+    ge_le_rows: List[Dict[str, Any]] = [
+        row
+        for row in rows
+        if isinstance(row, dict) and _first_text(row, "bucket_type").lower() in {"ge", "le"}
+    ]
+    non_dust_rows: List[Dict[str, Any]] = [
+        row
+        for row in ge_le_rows
+        if maker_price_bucket(row.get("best_ask") or row.get("ask") or row.get("price")) != "price_lt_0_005"
+    ]
+    orderbook_rows: List[Dict[str, Any]] = [
+        row
+        for row in non_dust_rows
+        if _safe_float(row.get("best_bid") or row.get("bid")) is not None
+        and _safe_float(row.get("best_ask") or row.get("ask") or row.get("price")) is not None
+    ]
+    spread_rows: List[Dict[str, Any]] = []
+    for row in orderbook_rows:
+        spread = _safe_float(row.get("spread"))
+        if spread is None:
+            bid = _safe_float(row.get("best_bid") or row.get("bid"))
+            ask = _safe_float(row.get("best_ask") or row.get("ask") or row.get("price"))
+            spread = ask - bid if bid is not None and ask is not None else None
+        if spread is not None and spread >= float(min_spread):
+            spread_rows.append(row)
+    return {
+        "total_scanned_rows": total_scanned,
+        "total_ge_le_rows": len(ge_le_rows),
+        "total_non_dust_rows": len(non_dust_rows),
+        "total_orderbook_available_rows": len(orderbook_rows),
+        "total_spread_sufficient_rows": len(spread_rows),
+    }
+
+
 def build_maker_shadow_v2_report(
     rows: Iterable[Dict[str, Any]],
     *,
@@ -473,9 +513,11 @@ def build_maker_shadow_v2_report(
     **quote_kwargs: Any,
 ) -> Dict[str, Any]:
     generated_at = generated_at or utc_now_iso()
+    row_list = [row for row in rows if isinstance(row, dict)]
     estimated_rebate_cents = float(quote_kwargs.get("estimated_rebate_cents", 0.0))
+    min_spread = float(quote_kwargs.get("min_spread", 0.02))
     quotes, rejection_counts = build_maker_shadow_quotes(
-        rows,
+        row_list,
         observations=observations,
         generated_at=generated_at,
         **quote_kwargs,
@@ -508,6 +550,7 @@ def build_maker_shadow_v2_report(
         "counts_for_live_gate": False,
         "live_order_path": False,
         "quote_count": len(quotes),
+        **_maker_shadow_input_funnel(row_list, min_spread=min_spread),
         "inferred_fill_count": len(fills),
         "markout_count": len(markouts),
         "mean_markout_without_rebate": _mean(pnl_without),
@@ -516,6 +559,7 @@ def build_maker_shadow_v2_report(
         "stale_quote_count": stale_quote_count,
         "estimated_rebate_cents": estimated_rebate_cents,
         "no_candidate_reason_counts": dict(sorted(rejection_counts.items())),
+        "blocker_counts": dict(sorted(rejection_counts.items())),
         "by_station": _group_summary(quotes, fills, "station_code"),
         "by_bucket_type": _group_summary(quotes, fills, "bucket_type"),
         "by_price_bucket": _group_summary(quotes, fills, "price_bucket"),
@@ -524,6 +568,116 @@ def build_maker_shadow_v2_report(
         "markouts": markouts,
     }
     return report
+
+
+def _report_generated_at(report: Dict[str, Any]) -> str:
+    return str(report.get("generated_at") or "")
+
+
+def _sum_report_int(reports: Sequence[Dict[str, Any]], field: str) -> int:
+    return sum(_safe_int(report.get(field)) for report in reports if isinstance(report, dict))
+
+
+def _merge_counts(reports: Sequence[Dict[str, Any]], field: str) -> Dict[str, int]:
+    counts: Counter[str] = Counter()
+    for report in reports:
+        value = report.get(field) if isinstance(report, dict) else {}
+        if isinstance(value, dict):
+            for key, count in value.items():
+                counts[str(key)] += _safe_int(count)
+    return dict(sorted(counts.items()))
+
+
+def _aggregate_report_groups(reports: Sequence[Dict[str, Any]], field: str) -> List[Dict[str, Any]]:
+    grouped: Dict[str, Dict[str, Any]] = defaultdict(lambda: {"quote_count": 0, "inferred_fill_count": 0, "markouts": []})
+    for report in reports:
+        rows = report.get(field) if isinstance(report, dict) else []
+        if not isinstance(rows, list):
+            continue
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            group_key_field = field.removeprefix("by_")
+            key = str(row.get(group_key_field) or "missing")
+            grouped[key]["quote_count"] += _safe_int(row.get("quote_count"))
+            grouped[key]["inferred_fill_count"] += _safe_int(row.get("inferred_fill_count"))
+            mean = _safe_float(row.get("mean_markout_without_rebate"))
+            fills = _safe_int(row.get("inferred_fill_count"))
+            if mean is not None and fills > 0:
+                grouped[key]["markouts"].extend([mean] * fills)
+    output: List[Dict[str, Any]] = []
+    for key, payload in sorted(grouped.items()):
+        output.append(
+            {
+                field.removeprefix("by_"): key,
+                "quote_count": int(payload["quote_count"]),
+                "inferred_fill_count": int(payload["inferred_fill_count"]),
+                "mean_markout_without_rebate": _mean(payload["markouts"]),
+            }
+        )
+    return output
+
+
+def build_maker_shadow_v2_funnel_report(
+    reports: Iterable[Dict[str, Any]],
+    *,
+    generated_at: Optional[str] = None,
+    min_window_hours: float = 24.0,
+) -> Dict[str, Any]:
+    generated_at = generated_at or utc_now_iso()
+    materialized = [report for report in reports if isinstance(report, dict)]
+    timestamps = sorted(value for report in materialized for value in [_report_generated_at(report)] if value)
+    markout_without: List[float] = []
+    markout_with: List[float] = []
+    for report in materialized:
+        fills = _safe_int(report.get("inferred_fill_count"))
+        mean_without = _safe_float(report.get("mean_markout_without_rebate"))
+        mean_with = _safe_float(report.get("mean_markout_with_rebate"))
+        if mean_without is not None and fills > 0:
+            markout_without.extend([mean_without] * fills)
+        if mean_with is not None and fills > 0:
+            markout_with.extend([mean_with] * fills)
+    total_quote_count = _sum_report_int(materialized, "quote_count")
+    total_inferred_fill_count = _sum_report_int(materialized, "inferred_fill_count")
+    mean_without = _mean(markout_without)
+    if total_quote_count <= 0 and len(materialized) > 0:
+        opportunity_status = "maker_shadow_no_current_opportunity_density"
+    elif total_inferred_fill_count > 0 and mean_without is not None and mean_without < 0:
+        opportunity_status = "maker_shadow_negative_adverse_selection"
+    elif total_inferred_fill_count >= 30 and mean_without is not None and mean_without > 0:
+        opportunity_status = "maker_shadow_continue_paper_research"
+    else:
+        opportunity_status = "maker_shadow_collect_more_shadow_evidence"
+    total_scanned = _sum_report_int(materialized, "total_scanned_rows")
+    return {
+        "schema_version": "polyweather_maker_shadow_v2_24h_funnel.v1",
+        "strategy_id": STRATEGY_ID,
+        "platform": "polymarket",
+        "generated_at": generated_at,
+        "window_hours": float(min_window_hours),
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+        "run_count": len(materialized),
+        "first_run_at": timestamps[0] if timestamps else None,
+        "last_run_at": timestamps[-1] if timestamps else None,
+        "total_scanned_rows": total_scanned,
+        "total_ge_le_rows": _sum_report_int(materialized, "total_ge_le_rows"),
+        "total_non_dust_rows": _sum_report_int(materialized, "total_non_dust_rows"),
+        "total_spread_sufficient_rows": _sum_report_int(materialized, "total_spread_sufficient_rows"),
+        "total_orderbook_available_rows": _sum_report_int(materialized, "total_orderbook_available_rows"),
+        "total_quote_count": total_quote_count,
+        "total_inferred_fill_count": total_inferred_fill_count,
+        "total_markout_count": _sum_report_int(materialized, "markout_count"),
+        "mean_markout_without_rebate": mean_without,
+        "mean_markout_with_rebate": _mean(markout_with),
+        "blocker_counts": _merge_counts(materialized, "blocker_counts"),
+        "quote_rate": round(total_quote_count / total_scanned, 6) if total_scanned > 0 else None,
+        "inferred_fill_rate": round(total_inferred_fill_count / total_quote_count, 6) if total_quote_count > 0 else None,
+        "by_station": _aggregate_report_groups(materialized, "by_station"),
+        "by_bucket_type": _aggregate_report_groups(materialized, "by_bucket_type"),
+        "opportunity_status": opportunity_status,
+    }
 
 
 def write_json(path: str | Path, payload: Dict[str, Any]) -> None:
@@ -547,6 +701,7 @@ __all__ = [
     "STRATEGY_ID",
     "build_maker_shadow_quotes",
     "build_maker_shadow_v2_report",
+    "build_maker_shadow_v2_funnel_report",
     "maker_price_bucket",
     "simulate_maker_shadow_fills",
     "write_json",
