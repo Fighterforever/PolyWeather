@@ -43,11 +43,11 @@ def _row(
     }
 
 
-def _obs(value: float, *, observed_at: str = "2026-06-29T10:00:00Z", source: str = "metar"):
+def _obs(value: float, *, observed_at: str = "2026-06-29T10:00:00Z", source: str = "metar", station: str = "UUWW"):
     return {
         "source": source,
         "snapshot_type": "observation",
-        "station_code": "UUWW",
+        "station_code": station,
         "target_date": "2026-06-29",
         "available_at": observed_at,
         "observed_at": observed_at,
@@ -126,6 +126,20 @@ def test_eq_dead_no_lock_can_be_paper_candidate():
     assert row["exact_dead_no_lock_candidate"] is True
     assert row["eq_yes_prediction_forbidden"] is False
     assert row["live_gate_excluded_reason"] == "exact_dead_no_needs_forward_evidence"
+
+
+def test_noaa_station_source_uses_aviationweather_station_observation_without_reclassifying():
+    rows = [
+        _row(bucket_type="eq", threshold=27, source="noaa", station="LTFM", side="yes", token_id="yes-token", market_slug="eq-market"),
+        _row(bucket_type="eq", threshold=27, source="noaa", station="LTFM", side="no", token_id="no-token", market_slug="eq-market", best_ask=0.8),
+    ]
+    report = _report(rows, [_obs(28, source="aviationweather_metar_recent_72h", station="LTFM")])
+    row = [item for item in report["rows"] if item["token_id"] == "no-token"][0]
+
+    assert row["settlement_source"] == "noaa"
+    assert row["lock_state"] == "eq_yes_dead_no_locked"
+    assert row["decision"] == "candidate"
+    assert row["live_order_path"] is False
 
 
 def test_eq_dead_no_lock_requires_direct_no_ask():

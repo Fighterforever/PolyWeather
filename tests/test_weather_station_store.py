@@ -56,7 +56,10 @@ def test_active_supported_metar_station_manifest_extracts_exact_supported_rows()
     assert manifest["active_eq_row_count"] == 2
     assert manifest["active_supported_metar_station_count"] == 1
     assert manifest["station_codes"] == ["UUWW"]
-    assert manifest["unsupported_eq_rows_by_source"] == [{"settlement_source": "noaa", "row_count": 1}]
+    assert manifest["active_supported_official_station_count"] == 2
+    assert manifest["supported_official_station_codes"] == ["LTFM", "UUWW"]
+    assert manifest["unsupported_eq_rows_by_source"] == []
+    assert manifest["legacy_metar_only_unsupported_eq_rows_by_source"] == [{"settlement_source": "noaa", "row_count": 1}]
 
 
 def test_weather_snapshot_requires_available_at_for_replay_safety():

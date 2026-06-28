@@ -167,6 +167,7 @@ def build_alpha_viability_scoreboard(
     observation_lock_trade_replay_report: Dict[str, Any] | None = None,
     eq_dead_no_trade_replay_report: Dict[str, Any] | None = None,
     eq_dead_no_proxy_robustness_report: Dict[str, Any] | None = None,
+    eq_dead_no_expanded_robustness_report: Dict[str, Any] | None = None,
     eq_dead_no_sampler_report: Dict[str, Any] | None = None,
     eq_dead_no_markout_report: Dict[str, Any] | None = None,
     eq_dead_no_resolved_audit_report: Dict[str, Any] | None = None,
@@ -177,201 +178,202 @@ def build_alpha_viability_scoreboard(
 ) -> Dict[str, Any]:
     generated_at = generated_at or utc_now_iso()
     strict = _compact(strict_replay_report or {})
-    archived = _compact(archived_overlap_replay_report or {})
-    tradability = _summary(observation_lock_tradability_report or {})
     ol_trade = _summary(observation_lock_trade_replay_report or {})
     eq_trade = _summary(eq_dead_no_trade_replay_report or {})
     eq_robust = _compact(eq_dead_no_proxy_robustness_report or {})
+    eq_expanded = _compact(eq_dead_no_expanded_robustness_report or {})
     eq_sampler = _compact(eq_dead_no_sampler_report or {})
-    eq_markout = _compact(eq_dead_no_markout_report or {})
     eq_audit = _compact(eq_dead_no_resolved_audit_report or {})
     tl_trade = _summary(threshold_latency_trade_replay_report or {})
     active = _summary(active_sampler_report or {})
     due = _compact(non_dust_due_runner_status or {})
 
     strict_resolved_pnl = _safe_float(strict.get("resolved_pnl_cents"))
-    archived_resolved_pnl = _safe_float(archived.get("resolved_pnl_cents"))
     ol_proxy_pnl = _safe_float(ol_trade.get("trade_proxy_pnl_cents"))
     eq_proxy_pnl = _safe_float(eq_trade.get("deduped_trade_proxy_pnl_cents") or eq_trade.get("trade_proxy_pnl_cents"))
     eq_conservative_count = _safe_int(eq_robust.get("conservative_candidate_count"))
     eq_conservative_pnl = _safe_float(eq_robust.get("conservative_proxy_pnl_cents"))
     eq_conservative_without_top_1 = _safe_float(eq_robust.get("conservative_proxy_pnl_without_top_1"))
+    expanded_status = str(eq_expanded.get("status") or "").strip()
+    expanded_sample_count = _safe_int(eq_expanded.get("sample_count"))
+    expanded_unique_market_count = _safe_int(eq_expanded.get("unique_market_count"))
+    expanded_conservative_pnl = _safe_float(eq_expanded.get("conservative_proxy_pnl_cents"))
+    expanded_without_top_1 = _safe_float(eq_expanded.get("pnl_without_top_1"))
+    expanded_without_top_market = _safe_float(eq_expanded.get("pnl_without_top_market"))
     eq_proxy_robust = bool(eq_robust.get("conservative_proxy_positive_after_outlier_removal"))
     eq_robust_present = bool(eq_robust)
     eq_forward_fill_count = _safe_int(eq_sampler.get("paper_fill_count") or eq_sampler.get("fill_count"))
-    eq_markout_mean = _safe_float(eq_markout.get("mean_markout_cents"))
     eq_resolved_pnl = _safe_float(eq_audit.get("resolved_pnl_cents"))
     tl_proxy_pnl = _safe_float(tl_trade.get("trade_proxy_pnl_cents"))
     active_fill_count = _safe_int(active.get("paper_fill_count") or active.get("fill_count"))
     active_resolved_pnl = _safe_float(active.get("resolved_pnl_cents"))
 
+    due_conclusion = str(due.get("alpha_conclusion") or due.get("status") or "").strip()
+    due_resolved_pnl = _safe_float(
+        due.get("resolved_pnl_cents")
+        or due.get("non_dust_resolved_pnl_cents")
+        or (due.get("strict_replay") if isinstance(due.get("strict_replay"), dict) else {}).get("resolved_pnl_cents")
+    )
+    due_resolved_count = _safe_int(
+        due.get("resolved_fill_count")
+        or due.get("non_dust_resolved_fill_count")
+        or (due.get("strict_replay") if isinstance(due.get("strict_replay"), dict) else {}).get("resolved_fill_count")
+    )
+    due_fill_count = _safe_int(
+        due.get("fill_count")
+        or (due.get("strict_replay") if isinstance(due.get("strict_replay"), dict) else {}).get("fill_count")
+    )
+    if due_resolved_pnl is not None and due_resolved_pnl < 0 or "failed" in due_conclusion:
+        non_dust_status = "failed"
+    elif due_resolved_pnl is not None and due_resolved_pnl > 0:
+        non_dust_status = "single_positive_needs_more"
+    else:
+        non_dust_status = "waiting_due"
+
+    if expanded_status in {
+        "eq_dead_no_proxy_not_robust_keep_monitoring_only",
+        "eq_dead_no_proxy_robust_enough_for_forward_sampling",
+    }:
+        eq_status = expanded_status
+    elif eq_robust_present and eq_proxy_robust:
+        eq_status = "eq_dead_no_proxy_robust_enough_for_forward_sampling"
+    else:
+        eq_status = "eq_dead_no_proxy_not_robust_keep_monitoring_only"
+
     rows = [
         _row(
-            strategy_id="dust_tail_near_lock",
-            status="failed_negative_resolved_pnl" if strict_resolved_pnl is not None and strict_resolved_pnl < 0 else "dust_tail_diagnostic_only",
-            signal_count=_safe_int(strict.get("replay_candidate_count")),
-            executable_proxy_count=_safe_int(strict.get("fill_count")),
-            forward_paper_fill_count=_safe_int(strict.get("fill_count")),
-            resolved_fill_count=_safe_int(strict.get("resolved_fill_count")),
-            resolved_pnl_cents=strict_resolved_pnl,
-            non_dust_only=False,
-            main_blocker="dust_price_bucket_not_live_eligible",
-            next_action="do_not_use_as_tiny_live_evidence",
-        ),
-        _row(
-            strategy_id="archived_overlap_diagnostic",
-            status="failed_negative_resolved_pnl" if archived_resolved_pnl is not None and archived_resolved_pnl < 0 else "diagnostic_only",
-            signal_count=_safe_int(archived.get("fill_count")),
-            executable_proxy_count=_safe_int(archived.get("fill_count")),
-            resolved_fill_count=_safe_int(archived.get("resolved_fill_count") or archived.get("fill_count")),
-            resolved_pnl_cents=archived_resolved_pnl,
-            non_dust_only=False,
-            official_truth_coverage=_truth_coverage(archived),
-            main_blocker="diagnostic_only_not_strategy_signal",
-            next_action="use_only_for_sanity_check",
-        ),
-        _row(
-            strategy_id="post_lock_observation_lock_direct_taker",
-            status="no_observed_executable_opportunity"
-            if _safe_int(tradability.get("executable_depth_available_count")) == 0
-            else "historical_executable_depth_available_needs_replay",
-            signal_count=_safe_int(tradability.get("locked_signal_count")),
-            executable_proxy_count=_safe_int(tradability.get("executable_depth_available_count")),
+            strategy_id="non_dust_threshold_cdf",
+            status=non_dust_status,
+            signal_count=_safe_int(due.get("candidate_count") or due.get("signal_count")),
+            executable_proxy_count=due_fill_count or 0,
+            forward_paper_fill_count=due_fill_count or 0,
+            resolved_fill_count=due_resolved_count or 0,
+            resolved_pnl_cents=due_resolved_pnl,
             non_dust_only=True,
-            main_blocker="historical_orderbook_depth_missing",
-            next_action="use_trade_proxy_and_forward_sampler_to_test_real tradability".replace(" ", "_"),
+            main_blocker="awaiting_non_dust_due_resolution" if non_dust_status == "waiting_due" else None,
+            next_action="wait_for_scheduled_non_dust_due_runner" if non_dust_status == "waiting_due" else "paper_only_review_no_live_gate",
         ),
     ]
 
-    ol_status = _status(
-        trade_proxy_candidate_count=_safe_int(ol_trade.get("trade_proxy_candidate_count")),
-        trade_proxy_pnl_cents=ol_proxy_pnl,
-    )
-    rows.append(
-        _row(
-            strategy_id="observation_lock_trade_proxy",
-            status=ol_status,
-            signal_count=_safe_int(ol_trade.get("locked_signal_count")),
-            executable_proxy_count=_safe_int(ol_trade.get("trade_proxy_candidate_count")),
-            trade_proxy_pnl_cents=ol_proxy_pnl,
-            non_dust_only=True,
-        )
-    )
-    if eq_resolved_pnl is not None and eq_resolved_pnl > 0:
-        eq_status = "eq_dead_no_alpha_candidate_paper_only_review"
-    elif eq_resolved_pnl is not None and eq_resolved_pnl < 0:
-        eq_status = "failed_negative_resolved_pnl"
-    elif eq_forward_fill_count > 0 and eq_markout_mean is not None and eq_markout_mean > 0:
-        eq_status = "eq_dead_no_forward_markout_positive_pending_resolution"
-    elif eq_forward_fill_count > 0 and (eq_markout_mean is None or eq_markout_mean >= 0):
-        eq_status = "eq_dead_no_forward_paper_started"
-    elif eq_robust_present and eq_conservative_count > 0 and not eq_proxy_robust:
-        eq_status = "eq_dead_no_proxy_not_robust_reduce_priority"
-    elif eq_robust_present and eq_proxy_robust and _safe_int(eq_sampler.get("breached_eq_count")) <= 0:
-        eq_status = "eq_dead_no_historical_proxy_positive_waiting_for_forward_breach"
-    elif eq_robust_present and eq_proxy_robust:
-        eq_status = "historical_proxy_positive_needs_forward_eq_dead_no_sampling"
-    elif _safe_int(eq_trade.get("deduped_trade_proxy_candidate_count") or eq_trade.get("trade_proxy_candidate_count")) > 0 and eq_proxy_pnl is not None and eq_proxy_pnl > 0:
-        eq_status = "historical_proxy_positive_needs_forward_eq_dead_no_sampling"
-    elif _safe_int(eq_sampler.get("executable_candidate_count")) == 0:
-        eq_status = "waiting_for_exact_breach_liquidity"
-    else:
-        eq_status = "historical_proxy_nonpositive_or_unclear"
     eq_row = _row(
             strategy_id="eq_dead_no_lock",
             status=eq_status,
             signal_count=_safe_int(eq_trade.get("breached_eq_signal_count") or eq_sampler.get("breached_eq_count")),
-            executable_proxy_count=eq_conservative_count
+            executable_proxy_count=expanded_sample_count
+            or eq_conservative_count
             or _safe_int(eq_trade.get("deduped_trade_proxy_candidate_count") or eq_sampler.get("executable_candidate_count")),
             forward_paper_fill_count=eq_forward_fill_count,
             resolved_fill_count=_safe_int(eq_audit.get("resolved_fill_count")),
             resolved_pnl_cents=eq_resolved_pnl,
-            trade_proxy_pnl_cents=eq_conservative_pnl if eq_conservative_pnl is not None else eq_proxy_pnl,
+            trade_proxy_pnl_cents=expanded_conservative_pnl if expanded_conservative_pnl is not None else (eq_conservative_pnl if eq_conservative_pnl is not None else eq_proxy_pnl),
             non_dust_only=True,
-            main_blocker=_main_blocker(eq_status) if eq_status not in {"waiting_for_exact_breach_liquidity"} else "no_current_direct_no_liquidity",
-            next_action=_next_action(eq_status),
+            main_blocker="proxy_not_positive_after_outlier_removal" if eq_status == "eq_dead_no_proxy_not_robust_keep_monitoring_only" else "needs_forward_paper_execution_sampling",
+            next_action="keep_monitoring_only_no_frequency_increase" if eq_status == "eq_dead_no_proxy_not_robust_keep_monitoring_only" else "forward_sample_supported_exact_breaches_paper_only",
         )
     eq_row.update(
         {
-            "eq_dead_no_proxy_robustness": eq_robust or None,
-            "conservative_proxy_candidate_count": eq_conservative_count,
-            "conservative_proxy_pnl_cents": eq_conservative_pnl,
-            "conservative_proxy_pnl_without_top_1": eq_conservative_without_top_1,
-            "active_eq_station_count": _safe_int(eq_sampler.get("active_supported_metar_station_count")),
+            "eq_dead_no_proxy_robustness": eq_status == "eq_dead_no_proxy_robust_enough_for_forward_sampling",
+            "conservative_proxy_candidate_count": expanded_sample_count or eq_conservative_count,
+            "conservative_proxy_pnl_cents": expanded_conservative_pnl if expanded_conservative_pnl is not None else eq_conservative_pnl,
+            "conservative_proxy_pnl_without_top_1": expanded_without_top_1 if expanded_without_top_1 is not None else eq_conservative_without_top_1,
+            "pnl_without_top_market": expanded_without_top_market,
+            "expanded_unique_market_count": expanded_unique_market_count,
+            "active_eq_station_count": _safe_int(
+                eq_sampler.get("active_supported_official_station_count")
+                or eq_sampler.get("active_supported_metar_station_count")
+            ),
+            "active_supported_station_count_before": _safe_int(eq_sampler.get("active_supported_metar_station_count")),
+            "active_supported_station_count_after": _safe_int(
+                eq_sampler.get("active_supported_official_station_count")
+                or eq_sampler.get("active_supported_metar_station_count")
+            ),
             "active_breached_eq_count": _safe_int(eq_sampler.get("breached_eq_count")),
             "eq_dead_no_forward_paper_fill_count": eq_forward_fill_count,
             "eq_dead_no_current_status": eq_status,
         }
     )
     rows.append(eq_row)
-    tl_status = _status(
-        trade_proxy_candidate_count=_safe_int(tl_trade.get("trade_proxy_candidate_count")),
-        trade_proxy_pnl_cents=tl_proxy_pnl,
-    )
-    rows.append(
-        _row(
-            strategy_id="threshold_latency_trade_proxy",
-            status=tl_status,
-            signal_count=_safe_int(tl_trade.get("update_event_count")),
-            executable_proxy_count=_safe_int(tl_trade.get("trade_proxy_candidate_count")),
-            trade_proxy_pnl_cents=tl_proxy_pnl,
-            non_dust_only=True,
-        )
-    )
-    tl_forward_status = _status(
-        forward_paper_fill_count=active_fill_count,
-        resolved_pnl_cents=active_resolved_pnl,
-    )
-    rows.append(
-        _row(
-            strategy_id="threshold_latency_forward_paper",
-            status=tl_forward_status,
-            signal_count=_safe_int(active.get("candidate_count") or active.get("watch_count")),
-            forward_paper_fill_count=active_fill_count,
-            resolved_pnl_cents=active_resolved_pnl,
-            non_dust_only=True,
-        )
-    )
-    rows.append(
-        _row(
-            strategy_id="non_dust_threshold_cdf",
-            status="needs_non_dust_forward_fills"
-            if _safe_int(due.get("non_dust_resolved_fill_count") or due.get("resolved_fill_count")) == 0
-            else "paper_only_review",
-            signal_count=_safe_int(due.get("candidate_count") or due.get("signal_count")),
-            executable_proxy_count=_safe_int(due.get("fill_count")),
-            resolved_fill_count=_safe_int(due.get("non_dust_resolved_fill_count") or due.get("resolved_fill_count")),
-            resolved_pnl_cents=_safe_float(due.get("non_dust_resolved_pnl_cents") or due.get("resolved_pnl_cents")),
-            non_dust_only=True,
-            main_blocker="non_dust_resolved_evidence_missing",
-            next_action="continue_non_dust_threshold_sampling_only_if_trade_proxy_positive",
-        )
+
+    rows.extend(
+        [
+            _row(
+                strategy_id="observation_lock_trade_proxy",
+                status="collapsed_into_eq_dead_no_or_paused",
+                signal_count=_safe_int(ol_trade.get("locked_signal_count")),
+                executable_proxy_count=_safe_int(ol_trade.get("trade_proxy_candidate_count")),
+                trade_proxy_pnl_cents=ol_proxy_pnl,
+                non_dust_only=True,
+                main_blocker="collapsed_into_eq_dead_no_filter",
+                next_action="do_not_expand_separately",
+            ),
+            _row(
+                strategy_id="threshold_latency",
+                status="paused_no_candidate",
+                signal_count=_safe_int(tl_trade.get("update_event_count") or active.get("candidate_count") or active.get("watch_count")),
+                executable_proxy_count=_safe_int(tl_trade.get("trade_proxy_candidate_count")),
+                forward_paper_fill_count=active_fill_count,
+                resolved_pnl_cents=active_resolved_pnl,
+                trade_proxy_pnl_cents=tl_proxy_pnl,
+                non_dust_only=True,
+                main_blocker="no_current_candidate",
+                next_action="reduced_frequency_sampling_only",
+            ),
+            _row(
+                strategy_id="post_lock_ge_le",
+                status="killed_market_already_reflected",
+                non_dust_only=True,
+                main_blocker="market_already_reflected_observation",
+                next_action="do_not_continue",
+            ),
+            _row(
+                strategy_id="dust_tail_near_lock",
+                status="killed_negative_dust_only",
+                signal_count=_safe_int(strict.get("replay_candidate_count")),
+                executable_proxy_count=_safe_int(strict.get("fill_count")),
+                resolved_fill_count=_safe_int(strict.get("resolved_fill_count")),
+                resolved_pnl_cents=strict_resolved_pnl,
+                non_dust_only=False,
+                main_blocker="negative_or_dust_only_evidence",
+                next_action="do_not_use_as_tiny_live_evidence",
+            ),
+            _row(
+                strategy_id="maker_inferred",
+                status="killed_diagnostic_only",
+                non_dust_only=False,
+                main_blocker="inferred_fill_not_real_execution_evidence",
+                next_action="do_not_continue_without_quote_lifecycle",
+            ),
+        ]
     )
 
     continue_strategies = [
         row["strategy_id"]
         for row in rows
-        if row["status"] in {
-            "historical_proxy_positive_needs_forward_execution_sampling",
-            "historical_proxy_positive_needs_forward_eq_dead_no_sampling",
-            "forward_paper_positive_pending_resolution",
-            "alpha_candidate_paper_only_review",
-            "eq_dead_no_historical_proxy_positive_waiting_for_forward_breach",
-            "eq_dead_no_forward_paper_started",
-            "eq_dead_no_forward_markout_positive_pending_resolution",
-            "eq_dead_no_alpha_candidate_paper_only_review",
-        }
+        if row["status"] == "eq_dead_no_proxy_robust_enough_for_forward_sampling"
+    ]
+    wait_strategies = [
+        row["strategy_id"]
+        for row in rows
+        if row["status"] in {"waiting_due", "single_positive_needs_more"}
     ]
     pause_strategies = [
         row["strategy_id"]
         for row in rows
         if row["status"] in {
-            "failed_negative_resolved_pnl",
-            "no_observed_executable_opportunity",
-            "historical_proxy_nonpositive_or_unclear",
-            "eq_dead_no_proxy_not_robust_reduce_priority",
+            "eq_dead_no_proxy_not_robust_keep_monitoring_only",
+            "collapsed_into_eq_dead_no_or_paused",
+            "paused_no_candidate",
         }
-        or row["strategy_id"] in {"dust_tail_near_lock", "archived_overlap_diagnostic"}
+    ]
+    kill_strategies = [
+        row["strategy_id"]
+        for row in rows
+        if row["status"] in {
+            "failed",
+            "killed_market_already_reflected",
+            "killed_negative_dust_only",
+            "killed_diagnostic_only",
+        }
     ]
     ol_guidance = _positive_station_guidance(observation_lock_trade_replay_report or {})
     tl_guidance = _positive_station_guidance(threshold_latency_trade_replay_report or {})
@@ -392,6 +394,18 @@ def build_alpha_viability_scoreboard(
         sampler_mode = "reduced"
     else:
         sampler_mode = "paused"
+    if non_dust_status == "failed" and eq_status == "eq_dead_no_proxy_not_robust_keep_monitoring_only":
+        live_should_pause = True
+        reason = "all_current_weather_alpha_paths_failed_or_unproven"
+    elif eq_status == "eq_dead_no_proxy_not_robust_keep_monitoring_only" and non_dust_status != "single_positive_needs_more":
+        live_should_pause = True
+        reason = "waiting_for_non_dust_due_and_eq_dead_no_not_robust"
+    elif not continue_strategies:
+        live_should_pause = True
+        reason = "no_current_strategy_has_robust_forward_or_resolved_edge"
+    else:
+        live_should_pause = False
+        reason = "paper_only_forward_sampling_can_continue"
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at,
@@ -402,26 +416,35 @@ def build_alpha_viability_scoreboard(
         "summary": {
             "strategy_count": len(rows),
             "continue_strategy_ids": continue_strategies,
+            "wait_strategy_ids": wait_strategies,
             "pause_strategy_ids": pause_strategies,
-            "wait_strategy_ids": [
-                row["strategy_id"]
-                for row in rows
-                if row["strategy_id"] not in continue_strategies and row["strategy_id"] not in pause_strategies
-            ],
-            "live_should_pause": not bool(continue_strategies),
+            "kill_strategy_ids": kill_strategies,
+            "live_should_pause": live_should_pause,
+            "reason": reason,
+            "alpha_viability_final_verdict": reason,
             "live_order_path": False,
             "counts_for_live_gate": False,
             "eq_dead_no_proxy_robustness": {
-                "conservative_proxy_candidate_count": eq_conservative_count,
-                "conservative_proxy_pnl_cents": eq_conservative_pnl,
-                "conservative_proxy_pnl_without_top_1": eq_conservative_without_top_1,
-                "conservative_proxy_positive_after_outlier_removal": eq_proxy_robust,
+                "conservative_proxy_candidate_count": expanded_sample_count or eq_conservative_count,
+                "conservative_proxy_pnl_cents": expanded_conservative_pnl if expanded_conservative_pnl is not None else eq_conservative_pnl,
+                "conservative_proxy_pnl_without_top_1": expanded_without_top_1 if expanded_without_top_1 is not None else eq_conservative_without_top_1,
+                "pnl_without_top_market": expanded_without_top_market,
+                "conservative_proxy_positive_after_outlier_removal": eq_status == "eq_dead_no_proxy_robust_enough_for_forward_sampling",
                 "direction_confidence_filtered_pnl_cents": _safe_float(eq_robust.get("high_confidence_pnl_cents")),
             },
-            "active_eq_station_count": _safe_int(eq_sampler.get("active_supported_metar_station_count")),
+            "active_supported_station_count_before": _safe_int(eq_sampler.get("active_supported_metar_station_count")),
+            "active_supported_station_count_after": _safe_int(
+                eq_sampler.get("active_supported_official_station_count")
+                or eq_sampler.get("active_supported_metar_station_count")
+            ),
+            "active_eq_station_count": _safe_int(
+                eq_sampler.get("active_supported_official_station_count")
+                or eq_sampler.get("active_supported_metar_station_count")
+            ),
             "active_breached_eq_count": _safe_int(eq_sampler.get("breached_eq_count")),
             "eq_dead_no_forward_paper_fill_count": eq_forward_fill_count,
             "eq_dead_no_current_status": eq_status,
+            "non_dust_threshold_cdf_status": non_dust_status,
         },
         "historical_trade_proxy_guidance": {
             "sampler_mode": sampler_mode,
@@ -484,7 +507,7 @@ def update_profit_strategy_state_report(
             "historical_replay_path": "evidence/eq_dead_no/eq_dead_no_trade_replay_report.json",
         }
         threshold = active.get("threshold_latency")
-        threshold_row = rows.get("threshold_latency_forward_paper") or {}
+        threshold_row = rows.get("threshold_latency") or {}
         if isinstance(threshold, dict) and int(threshold_row.get("forward_paper_fill_count") or 0) <= 0:
             threshold["status"] = "reduced_frequency_no_current_candidate"
             threshold["next_action"] = "keep_observation_logging_reduce_execution_sampling_until_new_evidence"

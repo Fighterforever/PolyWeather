@@ -19,7 +19,10 @@ from src.trading.polymarket_orderbook_archive import build_orderbook_snapshot_re
 from src.trading.polymarket_readonly import build_polymarket_weather_payload  # noqa: E402
 from src.trading.weather_observation_lock_signal import build_observation_lock_signal_report  # noqa: E402
 from src.trading.weather_paper_journal import _append_jsonl, stable_json_hash, utc_now_iso  # noqa: E402
-from src.weather.station_registry import active_supported_metar_station_manifest  # noqa: E402
+from src.weather.station_registry import (  # noqa: E402
+    SUPPORTED_OFFICIAL_SOURCE_ADAPTERS,
+    active_supported_metar_station_manifest,
+)
 
 
 SCHEMA_VERSION = "polyweather_eq_dead_no_execution_sampler.v1"
@@ -112,6 +115,10 @@ def _settlement_source(row: Dict[str, Any]) -> str:
     return _field_text(row, "settlement_source").lower()
 
 
+def _source_supported(row: Dict[str, Any]) -> bool:
+    return _settlement_source(row) in SUPPORTED_OFFICIAL_SOURCE_ADAPTERS
+
+
 def _counter_rows(counter: Counter[str], field: str) -> list[dict]:
     return [{field: key, "count": value} for key, value in sorted(counter.items(), key=lambda item: (-item[1], item[0]))]
 
@@ -198,7 +205,7 @@ def _collection_manifest(
         for row in intraday_rows
         if _text(row.get("station_code")) and _text(row.get("source") or row.get("settlement_source")).lower().startswith(("metar", "aviationweather_metar"))
     }
-    expected = set(manifest.get("station_codes") or requested_station_codes)
+    expected = set(manifest.get("supported_official_station_codes") or manifest.get("station_codes") or requested_station_codes)
     manifest["requested_station_codes"] = sorted(set(requested_station_codes))
     manifest["collected_station_count"] = len(collected & expected) if expected else len(collected)
     manifest["collection_gap_by_station"] = [
@@ -225,7 +232,7 @@ def _build_opportunity_funnel(
     }
     temperature_source = [row for row in source_rows if _is_temperature_row(row)]
     exact_source = [row for row in temperature_source if _field_text(row, "bucket_type").lower() == "eq"]
-    supported_source = [row for row in exact_source if _settlement_source(row) == "metar"]
+    supported_source = [row for row in exact_source if _source_supported(row)]
     intraday_rows = [row for row in signal_rows if row.get("bucket_type") == "eq" and int(row.get("intraday_observation_count") or 0) > 0]
     breached = [row for row in signal_rows if row.get("bucket_type") == "eq" and row.get("lock_state") == "eq_yes_dead_no_locked"]
     direct_no = [row for row in breached if row.get("executable_price_source_type") == "direct_locked_side_book"]
@@ -250,7 +257,7 @@ def _build_opportunity_funnel(
         if _field_text(row, "bucket_type").lower() != "eq":
             blocker_counts["not_eq"] += 1
             continue
-        if _settlement_source(row) != "metar":
+        if not _source_supported(row):
             blocker_counts["unsupported_source"] += 1
         if _market_closed(row, generated_at):
             blocker_counts["market_closed"] += 1
@@ -314,7 +321,7 @@ def _build_nearest_breach_watchlist(
             continue
         distance = round(float(threshold) - float(current_high), 6) if current_high is not None else None
         blocker = "missing_intraday" if current_high is None else "not_breached"
-        if row.get("settlement_source") != "metar":
+        if row.get("settlement_source") not in SUPPORTED_OFFICIAL_SOURCE_ADAPTERS:
             blocker = "unsupported_source"
         elif row.get("executable_price_source_type") != "direct_locked_side_book":
             blocker = "missing_no_book"
@@ -336,7 +343,7 @@ def _build_nearest_breach_watchlist(
                 "observation_window_end_time": row.get("observation_window_end_time"),
                 "next_expected_check": generated_at,
                 "blocker": blocker,
-                "supported_source": row.get("settlement_source") == "metar",
+                "supported_source": row.get("settlement_source") in SUPPORTED_OFFICIAL_SOURCE_ADAPTERS,
                 "non_dust": row.get("price_bucket") != "price_lt_0_005",
                 "direct_no_book_available": row.get("executable_price_source_type") == "direct_locked_side_book",
             }
@@ -487,8 +494,10 @@ def build_eq_dead_no_execution_sampler_report(
         "generated_at": generated_at,
         "scanned_eq_rows": len(eq_rows),
         "active_supported_metar_station_count": station_manifest.get("active_supported_metar_station_count"),
+        "active_supported_official_station_count": station_manifest.get("active_supported_official_station_count"),
         "active_eq_row_count": station_manifest.get("active_eq_row_count"),
         "station_codes": station_manifest.get("station_codes") or [],
+        "supported_official_station_codes": station_manifest.get("supported_official_station_codes") or [],
         "breached_eq_count": len(breached),
         "direct_no_book_count": len(direct_no),
         "no_ask_available_count": len([row for row in direct_no if row.get("locked_side_best_ask") is not None]),
@@ -582,7 +591,15 @@ def main(argv: Optional[list[str]] = None) -> None:
     default_station_codes = ["LTAC", "UUWW", "EGLC"]
     fallback_station_codes = [str(code).strip().upper() for code in (args.station_codes or default_station_codes) if str(code).strip()]
     requested_station_codes = (
-        [str(code).strip().upper() for code in station_manifest.get("station_codes") or [] if str(code).strip()]
+        [
+            str(code).strip().upper()
+            for code in (
+                station_manifest.get("supported_official_station_codes")
+                or station_manifest.get("station_codes")
+                or []
+            )
+            if str(code).strip()
+        ]
         if args.auto_active_supported_stations
         else []
     )

@@ -150,14 +150,18 @@ def test_eq_dead_no_sampler_unsupported_source_does_not_block_supported(tmp_path
     metar = _row(side="no", token_id="metar-no")
     noaa = _row(side="no", token_id="noaa-no")
     noaa["market_slug"] = "noaa-market"
+    noaa["settlement_station_code"] = "LTFM"
     noaa["settlement_source"] = "noaa"
-    noaa["settlement_spec"] = {**noaa["settlement_spec"], "settlement_source": "noaa"}
+    noaa["settlement_spec"] = {**noaa["settlement_spec"], "station_code": "LTFM", "settlement_source": "noaa"}
 
     report = _report(tmp_path, [metar, noaa], obs_value=20.0)
 
     manifest = report["active_station_scan_manifest"]
     assert manifest["active_supported_metar_station_count"] == 1
-    assert manifest["unsupported_eq_rows_by_source"] == [{"settlement_source": "noaa", "row_count": 1}]
+    assert manifest["active_supported_official_station_count"] == 2
+    assert manifest["supported_official_station_codes"] == ["LTFM", "UUWW"]
+    assert manifest["unsupported_eq_rows_by_source"] == []
+    assert manifest["legacy_metar_only_unsupported_eq_rows_by_source"] == [{"settlement_source": "noaa", "row_count": 1}]
 
 
 def test_eq_dead_no_sampler_station_manifest(tmp_path):

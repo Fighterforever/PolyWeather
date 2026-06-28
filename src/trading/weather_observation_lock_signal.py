@@ -13,7 +13,7 @@ from src.weather.weather_sources import parse_utc, snapshots_available_for_repla
 
 SCHEMA_VERSION = "polyweather_weather_observation_lock_signal.v1"
 DUST_PRICE_BUCKET = "price_lt_0_005"
-SUPPORTED_LOCK_SOURCES = {"metar"}
+SUPPORTED_LOCK_SOURCES = {"metar", "noaa"}
 
 
 def _safe_float(value: Any) -> Optional[float]:
@@ -136,6 +136,18 @@ def _token_side(row: Dict[str, Any]) -> str:
     return _text(row.get("side") or row.get("outcome")).upper()
 
 
+def _observation_matches_source(row: Dict[str, Any], source: str) -> bool:
+    observed_source = _text(row.get("settlement_source") or row.get("source")).lower()
+    raw_source = _text(row.get("source")).lower()
+    if observed_source == source:
+        return True
+    if source == "metar" and raw_source.startswith("aviationweather_metar"):
+        return True
+    if source == "noaa" and raw_source.startswith(("aviationweather_metar", "aviationweather_noaa_station")):
+        return True
+    return False
+
+
 def build_market_side_book_pair_index(rows: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     index: Dict[str, Dict[str, Any]] = {}
     for row in rows:
@@ -215,10 +227,7 @@ def _latest_observation(
         for row in observations
         if _text(row.get("station_code")).upper() == station_code.upper()
         and _text(row.get("target_date") or row.get("target_date_local")) == target_date
-        and (
-            _text(row.get("settlement_source") or row.get("source")).lower() == source
-            or (source == "metar" and _text(row.get("source")).lower().startswith("aviationweather_metar"))
-        )
+        and _observation_matches_source(row, source)
         and _text(row.get("snapshot_type") or "observation") == "observation"
     ]
     raw_scoped_count = len(scoped)
@@ -230,10 +239,7 @@ def _latest_observation(
             row
             for row in observations
             if _text(row.get("station_code")).upper() == station_code.upper()
-            and (
-                _text(row.get("settlement_source") or row.get("source")).lower() == source
-                or (source == "metar" and _text(row.get("source")).lower().startswith("aviationweather_metar"))
-            )
+            and _observation_matches_source(row, source)
             and _text(row.get("snapshot_type") or "observation") == "observation"
         ]
         wrong_target_date_count = len(

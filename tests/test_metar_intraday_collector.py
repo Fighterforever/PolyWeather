@@ -67,3 +67,15 @@ def test_missing_metar_returns_gap_reason():
             "gap_reason": "missing_metar_rows_from_source",
         }
     ]
+
+
+def test_ltfm_is_supported_for_noaa_station_adapter_collection():
+    report = collect_metar_intraday_observations(
+        station_codes=["LTFM"],
+        fetched_at="2026-06-28T04:10:00Z",
+        api_rows=[_api_row("LTFM", temp=26)],
+    )
+
+    assert report["unsupported_station_codes"] == []
+    assert report["station_count"] == 1
+    assert report["observations"][0]["station_code"] == "LTFM"

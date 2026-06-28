@@ -225,6 +225,54 @@ def test_official_value_backfill_uses_recent_metar_for_metar_settlement_source()
     assert collector.calls[0]["params"] == {"ids": "RKSI", "format": "json", "hours": 72}
 
 
+def test_official_value_backfill_uses_noaa_station_adapter_for_noaa_source():
+    collector = FakeMetarCollector(
+        [
+            {
+                "icaoId": "LTFM",
+                "reportTime": "2026-06-27T10:00:00.000Z",
+                "temp": 24,
+            },
+            {
+                "icaoId": "LTFM",
+                "reportTime": "2026-06-27T12:00:00.000Z",
+                "temp": 27,
+            },
+        ]
+    )
+
+    supplement = build_official_value_supplement(
+        _record(
+            city="istanbul",
+            target_date="2026-06-27",
+            settlement_spec={
+                "city": "istanbul",
+                "station_code": "LTFM",
+                "settlement_source": "noaa",
+                "target_date": "2026-06-27",
+                "unit": "C",
+            },
+            parsed_temperature_spec={
+                "city": "istanbul",
+                "target_date": "2026-06-27",
+                "threshold": 27,
+                "comparator": "eq",
+                "unit": "C",
+            },
+        ),
+        repository=EmptyRepository(),
+        collector=collector,
+        fetch_external=True,
+    )
+
+    assert supplement["status"] == "ready"
+    assert supplement["official_final_value"] == 27.0
+    assert supplement["official_final_value_source"] == "aviationweather_noaa_station_recent"
+    assert supplement["official_final_value_source_code"] == "noaa_station_observation"
+    assert supplement["retrieval_method"] == "aviationweather_noaa_station_recent_72h"
+    assert collector.calls[0]["params"] == {"ids": "LTFM", "format": "json", "hours": 72}
+
+
 def test_official_value_backfill_converts_recent_metar_to_fahrenheit_for_f_markets():
     collector = FakeMetarCollector(
         [
@@ -465,31 +513,29 @@ def test_official_observation_request_plan_dedupes_archive_pending_markets_and_f
     )
 
     assert plan["request_count"] == 4
-    assert plan["supported_request_count"] == 3
-    assert plan["unsupported_request_count"] == 1
+    assert plan["supported_request_count"] == 4
+    assert plan["unsupported_request_count"] == 0
     assert plan["expected_reuse_market_count"] == 44
     by_key = {
         (row["station_code"], row["settlement_source"], row["target_date"]): row
         for row in plan["by_station_source_date"]
     }
     assert by_key[("LTAC", "metar", "2026-06-27")]["market_count"] == 11
-    assert by_key[("LTFM", "noaa", "2026-06-27")]["supported"] is False
-    assert by_key[("LTFM", "noaa", "2026-06-27")]["gap_reason"] == "unsupported_source_adapter"
-    assert by_key[("LTFM", "noaa", "2026-06-27")]["group_state"] == "official_source_unsupported"
-    assert by_key[("LTFM", "noaa", "2026-06-27")]["counts_for_live_gate"] is False
-    assert (
-        by_key[("LTFM", "noaa", "2026-06-27")]["calibration_excluded_reason"]
-        == "unsupported_official_source_adapter"
-    )
+    assert by_key[("LTFM", "noaa", "2026-06-27")]["supported"] is True
+    assert by_key[("LTFM", "noaa", "2026-06-27")]["gap_reason"] is None
+    assert by_key[("LTFM", "noaa", "2026-06-27")]["group_state"] == "official_source_supported"
+    assert by_key[("LTFM", "noaa", "2026-06-27")]["counts_for_live_gate"] is True
+    assert by_key[("LTFM", "noaa", "2026-06-27")]["calibration_excluded_reason"] is None
     requests = {
         (row["station_code"], row["settlement_source"]): row
         for row in plan["requests"]
     }
     assert requests[("LTAC", "metar")]["supported_external_method"] == "aviationweather_metar_recent_72h"
-    assert requests[("LTFM", "noaa")]["gap_reason"] == "unsupported_source_adapter"
-    assert requests[("LTFM", "noaa")]["group_state"] == "official_source_unsupported"
-    assert requests[("LTFM", "noaa")]["counts_for_live_gate"] is False
-    assert requests[("LTFM", "noaa")]["calibration_excluded_reason"] == "unsupported_official_source_adapter"
+    assert requests[("LTFM", "noaa")]["supported_external_method"] == "aviationweather_noaa_station_recent_72h"
+    assert requests[("LTFM", "noaa")]["gap_reason"] is None
+    assert requests[("LTFM", "noaa")]["group_state"] == "official_source_supported"
+    assert requests[("LTFM", "noaa")]["counts_for_live_gate"] is True
+    assert requests[("LTFM", "noaa")]["calibration_excluded_reason"] is None
 
 
 def test_official_value_supplement_can_make_closed_replay_seed_settlement_truth_complete():

@@ -8,6 +8,10 @@ from src.data_collection.city_registry import CITY_REGISTRY
 
 
 STATION_SPEC_SCHEMA_VERSION = "polyweather_station_spec.v1"
+SUPPORTED_OFFICIAL_SOURCE_ADAPTERS = {
+    "metar": "aviationweather_metar_recent_72h",
+    "noaa": "aviationweather_noaa_station_recent_72h",
+}
 
 
 def _text(value: Any) -> str:
@@ -112,7 +116,27 @@ def active_supported_metar_station_manifest(rows: Iterable[Dict[str, Any]]) -> D
     ]
     rows_by_station = Counter(_first_text_from_row(row, "station_code").upper() for row in supported_rows)
     station_codes = sorted(code for code in rows_by_station if code)
+    supported_official_rows = [
+        row
+        for row in eq_rows
+        if (_first_text_from_row(row, "settlement_source") or "").lower() in SUPPORTED_OFFICIAL_SOURCE_ADAPTERS
+    ]
+    official_rows_by_station = Counter(_first_text_from_row(row, "station_code").upper() for row in supported_official_rows)
+    supported_official_station_codes = sorted(code for code in official_rows_by_station if code)
+    rows_by_source = Counter((_first_text_from_row(row, "settlement_source") or "missing").lower() for row in eq_rows)
+    station_codes_by_source: Dict[str, list[str]] = {}
+    for row in supported_official_rows:
+        source = (_first_text_from_row(row, "settlement_source") or "missing").lower()
+        station = _first_text_from_row(row, "station_code").upper()
+        if station:
+            station_codes_by_source.setdefault(source, []).append(station)
+    station_codes_by_source = {source: sorted(set(codes)) for source, codes in sorted(station_codes_by_source.items())}
     unsupported_by_source = Counter(
+        (_first_text_from_row(row, "settlement_source") or "missing").lower()
+        for row in eq_rows
+        if (_first_text_from_row(row, "settlement_source") or "").lower() not in SUPPORTED_OFFICIAL_SOURCE_ADAPTERS
+    )
+    legacy_unsupported_by_source = Counter(
         (_first_text_from_row(row, "settlement_source") or "missing").lower()
         for row in eq_rows
         if (_first_text_from_row(row, "settlement_source") or "").lower() != "metar"
@@ -124,13 +148,30 @@ def active_supported_metar_station_manifest(rows: Iterable[Dict[str, Any]]) -> D
         "live_order_path": False,
         "active_eq_row_count": len(eq_rows),
         "active_supported_metar_station_count": len(station_codes),
+        "active_supported_official_station_count": len(supported_official_station_codes),
         "station_codes": station_codes,
+        "legacy_metar_station_codes": station_codes,
+        "supported_official_station_codes": supported_official_station_codes,
         "rows_by_station": [
             {"station_code": station, "row_count": count}
             for station, count in sorted(rows_by_station.items())
         ],
+        "rows_by_supported_official_station": [
+            {"station_code": station, "row_count": count}
+            for station, count in sorted(official_rows_by_station.items())
+        ],
+        "rows_by_settlement_source": [
+            {"settlement_source": source, "row_count": count}
+            for source, count in sorted(rows_by_source.items())
+        ],
+        "station_codes_by_source": station_codes_by_source,
+        "adapter_by_source": dict(SUPPORTED_OFFICIAL_SOURCE_ADAPTERS),
         "unsupported_eq_rows_by_source": [
             {"settlement_source": source, "row_count": count}
             for source, count in sorted(unsupported_by_source.items())
+        ],
+        "legacy_metar_only_unsupported_eq_rows_by_source": [
+            {"settlement_source": source, "row_count": count}
+            for source, count in sorted(legacy_unsupported_by_source.items())
         ],
     }

@@ -224,10 +224,13 @@ def _fetch_wunderground_value(
     )
 
 
-def _fetch_metar_recent_value(
+def _fetch_station_recent_value(
     record: Dict[str, Any],
     *,
     collector: Optional[Any] = None,
+    method: str,
+    source_name: str,
+    source_code: str,
 ) -> Dict[str, Any]:
     station_code = _record_station_code(record)
     city = _record_city(record)
@@ -237,7 +240,7 @@ def _fetch_metar_recent_value(
         return _gap_supplement(record, "missing_station_or_target_date")
 
     wx = collector or _default_weather_collector()
-    cache_key = (station_code, target_date, unit)
+    cache_key = (source_code, station_code, target_date, unit)
     cache = getattr(wx, "_official_value_metar_recent_cache", None)
     if not isinstance(cache, dict):
         cache = {}
@@ -251,12 +254,12 @@ def _fetch_metar_recent_value(
             return _ready_supplement(
                 record,
                 source=dict(cached.get("source") or {}),
-                method=str(cached.get("method") or "aviationweather_metar_recent_72h"),
+                method=str(cached.get("method") or method),
             )
         if isinstance(cached, dict):
             return _gap_supplement(
                 record,
-                str(cached.get("reason") or "metar_recent_gap"),
+                str(cached.get("reason") or f"{source_code}_recent_gap"),
                 detail=dict(cached.get("detail") or {}),
             )
 
@@ -273,11 +276,13 @@ def _fetch_metar_recent_value(
         response.raise_for_status()
         rows = response.json() if response.content else []
     except Exception as exc:  # pragma: no cover - defensive around external HTTP
-        cache[cache_key] = {"status": "gap", "reason": "metar_recent_fetch_error", "detail": {"error": str(exc)}}
-        return _gap_supplement(record, "metar_recent_fetch_error", detail={"error": str(exc)})
+        reason = f"{source_code}_recent_fetch_error"
+        cache[cache_key] = {"status": "gap", "reason": reason, "detail": {"error": str(exc)}}
+        return _gap_supplement(record, reason, detail={"error": str(exc)})
     if not isinstance(rows, list) or not rows:
-        cache[cache_key] = {"status": "gap", "reason": "metar_recent_no_payload"}
-        return _gap_supplement(record, "metar_recent_no_payload")
+        reason = f"{source_code}_recent_no_payload"
+        cache[cache_key] = {"status": "gap", "reason": reason}
+        return _gap_supplement(record, reason)
 
     utc_offset = _city_utc_offset(city)
     points: List[Dict[str, Any]] = []
@@ -315,18 +320,18 @@ def _fetch_metar_recent_value(
         detail = {"station_code": station_code, "target_date": target_date, "row_count": len(rows)}
         cache[cache_key] = {
             "status": "gap",
-            "reason": "metar_recent_missing_target_date_points",
+            "reason": f"{source_code}_recent_missing_target_date_points",
             "detail": detail,
         }
         return _gap_supplement(
             record,
-            "metar_recent_missing_target_date_points",
+            f"{source_code}_recent_missing_target_date_points",
             detail=detail,
         )
     source = {
         "official_final_value": derived.get("official_final_value"),
-        "source": "aviationweather_metar_recent",
-        "source_code": "metar",
+        "source": source_name,
+        "source_code": source_code,
         "station_code": station_code,
         "max_observed_at": derived.get("max_observed_at"),
         "observation_count": derived.get("observation_count"),
@@ -334,12 +339,40 @@ def _fetch_metar_recent_value(
     cache[cache_key] = {
         "status": "ready",
         "source": source,
-        "method": "aviationweather_metar_recent_72h",
+        "method": method,
     }
     return _ready_supplement(
         record,
         source=source,
+        method=method,
+    )
+
+
+def _fetch_metar_recent_value(
+    record: Dict[str, Any],
+    *,
+    collector: Optional[Any] = None,
+) -> Dict[str, Any]:
+    return _fetch_station_recent_value(
+        record,
+        collector=collector,
         method="aviationweather_metar_recent_72h",
+        source_name="aviationweather_metar_recent",
+        source_code="metar",
+    )
+
+
+def _fetch_noaa_station_recent_value(
+    record: Dict[str, Any],
+    *,
+    collector: Optional[Any] = None,
+) -> Dict[str, Any]:
+    return _fetch_station_recent_value(
+        record,
+        collector=collector,
+        method="aviationweather_noaa_station_recent_72h",
+        source_name="aviationweather_noaa_station_recent",
+        source_code="noaa_station_observation",
     )
 
 
@@ -359,6 +392,8 @@ def _external_method_for_source(source: str) -> Optional[str]:
     normalized = _text(source).lower()
     if normalized == "metar":
         return "aviationweather_metar_recent_72h"
+    if normalized == "noaa":
+        return "aviationweather_noaa_station_recent_72h"
     if normalized == "wunderground":
         return "wunderground_historical"
     return None
@@ -626,6 +661,13 @@ def build_official_value_supplement(
             detail = dict(external.get("gap_detail") or {})
             detail["local_store_status"] = local.get("status")
             return _gap_supplement(record, str(external.get("gap_reason") or "metar_recent_gap"), detail=detail)
+        if _record_source(record) == "noaa":
+            external = _fetch_noaa_station_recent_value(record, collector=collector)
+            if external.get("status") == "ready":
+                return external
+            detail = dict(external.get("gap_detail") or {})
+            detail["local_store_status"] = local.get("status")
+            return _gap_supplement(record, str(external.get("gap_reason") or "noaa_station_observation_recent_gap"), detail=detail)
         if _external_method_for_source(_record_source(record)) is None:
             return _gap_supplement(
                 record,

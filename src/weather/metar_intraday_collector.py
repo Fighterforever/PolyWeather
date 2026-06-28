@@ -17,7 +17,7 @@ from src.weather.weather_sources import parse_utc, utc_iso
 
 SOURCE_NAME = "aviationweather_metar_recent_72h"
 HISTORY_SOURCE_NAME = "aviationweather_metar_history"
-SUPPORTED_METAR_STATIONS = {"LTAC", "UUWW", "EGLC"}
+SUPPORTED_METAR_STATIONS = {"LTAC", "UUWW", "EGLC", "LTFM"}
 AVIATIONWEATHER_METAR_URL = "https://aviationweather.gov/api/data/metar"
 DEFAULT_USER_AGENT = "PolyWeatherResearch/1.0 paper-only aviationweather-metar-backfill"
 

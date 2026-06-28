@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from src.trading.weather_eq_dead_no_trade_replay import (
+    build_eq_dead_no_expanded_proxy_robustness_report,
     build_eq_dead_no_proxy_robustness_report,
     build_eq_dead_no_trade_replay_report,
 )
@@ -145,3 +146,43 @@ def test_eq_dead_no_conservative_proxy_dedupes_windows():
     conservative = report["strict_conservative_proxy"]
     assert conservative["conservative_candidate_count"] == 1
     assert conservative["conservative_proxy_pnl_cents"] == 10.0
+
+
+def test_eq_dead_no_expanded_proxy_robustness_keeps_outlier_dependent_edge_monitoring_only():
+    report = build_eq_dead_no_expanded_proxy_robustness_report(
+        observation_lock_trade_rows=[
+            _proxy_row(market_slug="outlier", token_id="outlier-no", pnl=47.0, trade_id="trade-outlier"),
+            _proxy_row(market_slug="flat", token_id="flat-no", replay_time="2026-06-27T09:02:00Z", pnl=0.0, trade_id="trade-flat"),
+        ],
+        closed_market_rows=[
+            {
+                "market_slug": "outlier",
+                "target_date": "2026-06-27",
+                "settlement_spec": {"bucket_type": "eq", "station_code": "UUWW", "settlement_source": "metar"},
+            }
+        ],
+    )
+
+    assert report["sample_count"] == 2
+    assert report["conservative_proxy_pnl_cents"] == 47.0
+    assert report["pnl_without_top_1"] == 0.0
+    assert report["status"] == "eq_dead_no_proxy_not_robust_keep_monitoring_only"
+    assert report["live_order_path"] is False
+
+
+def test_eq_dead_no_expanded_proxy_robustness_requires_positive_without_top_and_many_markets():
+    rows = [
+        _proxy_row(
+            market_slug=f"market-{index}",
+            token_id=f"no-{index}",
+            replay_time=f"2026-06-27T09:{index:02d}:00Z",
+            pnl=2.0,
+            trade_id=f"trade-{index}",
+        )
+        for index in range(10)
+    ]
+    report = build_eq_dead_no_expanded_proxy_robustness_report(observation_lock_trade_rows=rows)
+
+    assert report["unique_market_count"] == 10
+    assert report["pnl_without_top_1"] == 18.0
+    assert report["status"] == "eq_dead_no_proxy_robust_enough_for_forward_sampling"

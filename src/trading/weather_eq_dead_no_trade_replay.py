@@ -261,6 +261,104 @@ def build_eq_dead_no_proxy_robustness_report(
     }
 
 
+def build_eq_dead_no_expanded_proxy_robustness_report(
+    *,
+    observation_lock_trade_rows: Iterable[Dict[str, Any]],
+    closed_market_rows: Optional[Iterable[Dict[str, Any]]] = None,
+    default_cost: float = 0.005,
+) -> Dict[str, Any]:
+    base = build_eq_dead_no_trade_replay_report(observation_lock_trade_rows=observation_lock_trade_rows)
+    report_rows = [row for row in base.get("rows") or [] if isinstance(row, dict)]
+    conservative = _conservative_proxy_rows(report_rows, default_cost=default_cost)
+    conservative_sorted = sorted(
+        [row for row in conservative if row.get("trade_replay_pnl_cents") is not None],
+        key=lambda row: float(row.get("trade_replay_pnl_cents") or 0.0),
+        reverse=True,
+    )
+    sample_count = len(conservative_sorted)
+    conservative_pnl = _pnl_sum(conservative_sorted)
+    top_1 = float(conservative_sorted[0].get("trade_replay_pnl_cents") or 0.0) if conservative_sorted else 0.0
+    pnl_without_top_1 = round(float(conservative_pnl) - top_1, 6) if conservative_pnl is not None else None
+    by_market: Dict[str, float] = defaultdict(float)
+    for row in conservative_sorted:
+        by_market[_text(row.get("market_slug")) or "unknown"] += float(row.get("trade_replay_pnl_cents") or 0.0)
+    top_market, top_market_pnl = max(by_market.items(), key=lambda item: item[1], default=("unknown", 0.0))
+    pnl_without_top_market = (
+        round(float(conservative_pnl) - float(top_market_pnl), 6)
+        if conservative_pnl is not None and by_market
+        else None
+    )
+    unique_market_count = len({_text(row.get("market_slug")) for row in conservative_sorted if _text(row.get("market_slug"))})
+    unique_station_count = len({_text(row.get("station_code")) for row in conservative_sorted if _text(row.get("station_code"))})
+    unique_day_count = len({_text(row.get("target_date")) for row in conservative_sorted if _text(row.get("target_date"))})
+
+    closed_rows = [row for row in (closed_market_rows or []) if isinstance(row, dict)]
+    supported_closed_exact = [
+        row
+        for row in closed_rows
+        if _text((row.get("settlement_spec") or {}).get("bucket_type") or row.get("bucket_type")).lower() == "eq"
+        and _text((row.get("settlement_spec") or {}).get("settlement_source") or row.get("settlement_source")).lower()
+        in {"metar", "noaa"}
+    ]
+    closed_scope_keys = {
+        (
+            _text((row.get("settlement_spec") or {}).get("station_code") or row.get("settlement_station_code")),
+            _text((row.get("settlement_spec") or {}).get("target_date") or row.get("target_date")),
+            _text(row.get("market_slug")),
+        )
+        for row in supported_closed_exact
+    }
+    replay_scope_keys = {
+        (_text(row.get("station_code")), _text(row.get("target_date")), _text(row.get("market_slug")))
+        for row in conservative_sorted
+    }
+    if pnl_without_top_1 is not None and pnl_without_top_1 > 0 and unique_market_count >= 10:
+        status = "eq_dead_no_proxy_robust_enough_for_forward_sampling"
+    else:
+        status = "eq_dead_no_proxy_not_robust_keep_monitoring_only"
+    return {
+        "schema_version": "polyweather_eq_dead_no_expanded_proxy_robustness.v1",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+        "sample_count": sample_count,
+        "unique_market_count": unique_market_count,
+        "unique_station_count": unique_station_count,
+        "unique_day_count": unique_day_count,
+        "conservative_proxy_pnl_cents": conservative_pnl,
+        "pnl_without_top_1": pnl_without_top_1,
+        "pnl_without_top_market": pnl_without_top_market,
+        "top_1_contribution_cents": round(top_1, 6) if conservative_sorted else None,
+        "top_market_slug": top_market if by_market else None,
+        "top_market_contribution_cents": round(top_market_pnl, 6) if by_market else None,
+        "bootstrap_confidence_interval_cents": {
+            "status": "insufficient_sample" if sample_count < 2 else "not_computed_deterministic_outlier_checks_used",
+            "lower": None,
+            "upper": None,
+        },
+        "status": status,
+        "filter_definition": {
+            "bucket_type": "eq",
+            "lock_state": "eq_yes_dead_no_locked",
+            "locked_side": "NO",
+            "same_token_trade_required": True,
+            "direction_confidence": ["high", "reported_by_polymarket_data_api"],
+            "trade_source_trade_id_required": True,
+            "dedupe": "first_window_per_market_token_replay_time",
+        },
+        "closed_scope": {
+            "supported_official_source_closed_exact_market_count": len(supported_closed_exact),
+            "unique_closed_scope_count": len(closed_scope_keys),
+            "closed_scope_not_seen_in_trade_proxy_count": len(closed_scope_keys - replay_scope_keys),
+            "sample_closed_scope_not_seen": [
+                {"station_code": station, "target_date": target_date, "market_slug": slug}
+                for station, target_date, slug in sorted(closed_scope_keys - replay_scope_keys)[:10]
+            ],
+        },
+        "sample_rows": conservative_sorted[:10],
+    }
+
+
 def build_eq_dead_no_trade_replay_report(*, observation_lock_trade_rows: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
     rows = [
         row

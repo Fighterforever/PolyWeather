@@ -13,6 +13,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.trading.weather_eq_dead_no_trade_replay import (  # noqa: E402
+    build_eq_dead_no_expanded_proxy_robustness_report,
     build_eq_dead_no_proxy_robustness_report,
     build_eq_dead_no_trade_replay_report,
     load_jsonl,
@@ -25,6 +26,11 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     parser.add_argument("--summary-output", default="evidence/eq_dead_no/eq_dead_no_trade_replay_report.json")
     parser.add_argument("--rows-output", default="evidence/eq_dead_no/eq_dead_no_trade_replay_rows.jsonl")
     parser.add_argument("--robustness-output", default="evidence/eq_dead_no/eq_dead_no_proxy_robustness_report.json")
+    parser.add_argument("--closed-market-rows", default="evidence/weather_backfill_local/closed_markets.jsonl")
+    parser.add_argument(
+        "--expanded-robustness-output",
+        default="evidence/eq_dead_no/eq_dead_no_expanded_proxy_robustness_report.json",
+    )
     return parser.parse_args(argv)
 
 
@@ -46,6 +52,13 @@ def main(argv: Optional[list[str]] = None) -> None:
     robustness_output = Path(args.robustness_output)
     robustness_output.parent.mkdir(parents=True, exist_ok=True)
     robustness_output.write_text(json.dumps(robustness, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
+    expanded = build_eq_dead_no_expanded_proxy_robustness_report(
+        observation_lock_trade_rows=source_rows,
+        closed_market_rows=load_jsonl(args.closed_market_rows),
+    )
+    expanded_output = Path(args.expanded_robustness_output)
+    expanded_output.parent.mkdir(parents=True, exist_ok=True)
+    expanded_output.write_text(json.dumps(expanded, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
     print(json.dumps(report["summary"], ensure_ascii=False, indent=2, sort_keys=True))
 
 
