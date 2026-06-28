@@ -1,0 +1,149 @@
+{
+  "counts_for_live_gate": false,
+  "generated_at": "2026-06-28T08:00:00Z",
+  "historical_trade_proxy_guidance": {
+    "guidance_reason": "positive_trade_proxy_found",
+    "prioritized_station_codes": [
+      "EGLC",
+      "LTAC",
+      "UUWW"
+    ],
+    "prioritized_time_to_close_windows": [
+      "0-1m",
+      "1-3m",
+      "15-30m",
+      "3-5m",
+      "5-15m"
+    ],
+    "sampler_mode": "aggressive"
+  },
+  "live_order_path": false,
+  "paper_only": true,
+  "rows": [
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "main_blocker": "dust_price_bucket_not_live_eligible",
+      "next_action": "do_not_use_as_tiny_live_evidence",
+      "non_dust_only": false,
+      "official_truth_coverage": null,
+      "resolved_fill_count": 8,
+      "resolved_pnl_cents": null,
+      "signal_count": 28,
+      "status": "dust_tail_diagnostic_only",
+      "strategy_id": "dust_tail_near_lock",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "main_blocker": "diagnostic_only_not_strategy_signal",
+      "next_action": "use_only_for_sanity_check",
+      "non_dust_only": false,
+      "official_truth_coverage": null,
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 0,
+      "status": "diagnostic_only",
+      "strategy_id": "archived_overlap_diagnostic",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "main_blocker": "historical_orderbook_depth_missing",
+      "next_action": "use_trade_proxy_and_forward_sampler_to_test_real_tradability",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 105,
+      "status": "no_observed_executable_opportunity",
+      "strategy_id": "post_lock_observation_lock_direct_taker",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "executable_proxy_count": 17,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "main_blocker": "needs_forward_paper_execution_sampling",
+      "next_action": "focus_forward_paper_sampler_on_positive_station_window",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 105,
+      "status": "historical_proxy_positive_needs_forward_execution_sampling",
+      "strategy_id": "observation_lock_trade_proxy",
+      "trade_proxy_pnl_cents": 94.002355
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "main_blocker": "no_trade_proxy_or_forward_fill",
+      "next_action": "pause_or_reduce_sampler_frequency",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 9,
+      "status": "no_observed_executable_opportunity",
+      "strategy_id": "threshold_latency_trade_proxy",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "main_blocker": "no_trade_proxy_or_forward_fill",
+      "next_action": "pause_or_reduce_sampler_frequency",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 0,
+      "status": "no_observed_executable_opportunity",
+      "strategy_id": "threshold_latency_forward_paper",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "main_blocker": "non_dust_resolved_evidence_missing",
+      "next_action": "continue_non_dust_threshold_sampling_only_if_trade_proxy_positive",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 0,
+      "status": "needs_non_dust_forward_fills",
+      "strategy_id": "non_dust_threshold_cdf",
+      "trade_proxy_pnl_cents": null
+    }
+  ],
+  "schema_version": "polyweather_alpha_viability_scoreboard.v1",
+  "summary": {
+    "continue_strategy_ids": [
+      "observation_lock_trade_proxy"
+    ],
+    "counts_for_live_gate": false,
+    "live_order_path": false,
+    "live_should_pause": false,
+    "pause_strategy_ids": [
+      "dust_tail_near_lock",
+      "archived_overlap_diagnostic",
+      "post_lock_observation_lock_direct_taker",
+      "threshold_latency_trade_proxy",
+      "threshold_latency_forward_paper"
+    ],
+    "strategy_count": 7,
+    "wait_strategy_ids": [
+      "non_dust_threshold_cdf"
+    ]
+  }
+}
