@@ -1,0 +1,6531 @@
+{
+  "counts_for_live_gate": false,
+  "gap_count": 5070,
+  "gap_reason_counts": [
+    {
+      "count": 15,
+      "reason": "duplicate_family_not_exhaustive"
+    },
+    {
+      "count": 4918,
+      "reason": "isolated_binary_no_family_structure"
+    },
+    {
+      "count": 137,
+      "reason": "threshold_family_not_certified_exhaustive"
+    }
+  ],
+  "live_order_path": false,
+  "paper_only": true,
+  "sample_gaps": [
+    {
+      "category": "science",
+      "event_slug": "10pt0-or-above-earthquake-before-2027",
+      "family_id": "pmfam-000000",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "10pt0-or-above-earthquake-before-2027"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2022-nba-playoffs-round-2-who-will-win-celtics-vs-bucks",
+      "family_id": "pmfam-000001",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "2022-nba-playoffs-round-2-who-will-win-celtics-vs-bucks"
+      ]
+    },
+    {
+      "category": "chess",
+      "event_slug": "2022-norway-chess-will-magnus-carlsen-lose-any-game",
+      "family_id": "pmfam-000002",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "2022-norway-chess-will-magnus-carlsen-lose-any-game"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000003",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-alexander-albon-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000004",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-another-driver-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000005",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-arvid-lindblad-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000006",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-carlos-sainz-jr-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000007",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-charles-leclerc-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000008",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-driver-b-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000009",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-driver-c-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000010",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-driver-d-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000011",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-driver-e-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000012",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-driver-a-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000013",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-driver-f-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000014",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-driver-g-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000015",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-driver-h-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000016",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-driver-i-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000017",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-esteban-ocon-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000018",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-fernando-alonso-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000019",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-franco-colapinto-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000020",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-gabriel-bortoleto-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000021",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-george-russell-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000022",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-isack-hadjar-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000023",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-kimi-antonelli-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000024",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-lance-stroll-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000025",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-lando-norris-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000026",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-lewis-hamilton-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000027",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-liam-lawson-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000028",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-max-verstappen-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000029",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-nico-hlkenberg-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000030",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-oliver-bearman-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000031",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-oscar-piastri-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000032",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-pierre-gasly-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000033",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-sergio-prez-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "2026-f1-drivers-champion",
+      "family_id": "pmfam-000034",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-valtteri-bottas-be-the-2026-f1-drivers-champion"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000035",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-another-party-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000036",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-the-democratic-progressive-party-dpp-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000037",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-kuomintang-kmt-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000038",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-b-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000039",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-c-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000040",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-d-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000041",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-e-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000042",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-f-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000043",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-g-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000044",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-h-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000045",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-i-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000046",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-j-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000047",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-k-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000048",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-l-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000049",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-m-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000050",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-n-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000051",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-o-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000052",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-p-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000053",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-q-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000054",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-r-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000055",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-s-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000056",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-t-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000057",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-u-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000058",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-v-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000059",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-w-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000060",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-a-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000061",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-x-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000062",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-y-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000063",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-z-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "2026-taiwanese-local-elections-party-winner",
+      "family_id": "pmfam-000064",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-the-taiwan-peoples-party-tpp-win-the-most-head-of-local-government-elections-in-the-2026-taiwan-local-elections"
+      ]
+    },
+    {
+      "category": "geopolitics",
+      "event_slug": "2k-container-ship-transits-of-suez-canal-in-h1-2026",
+      "family_id": "pmfam-000065",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "2k-container-ship-transits-of-suez-canal-in-h1-2026"
+      ]
+    },
+    {
+      "category": "weather",
+      "event_slug": "9pt0-or-above-earthquake-before-2027",
+      "family_id": "pmfam-000066",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "9pt0-or-above-earthquake-before-2027"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "aca-credits-extended-house-winner-2026",
+      "family_id": "pmfam-000067",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-aca-premium-tax-credits-be-extended-and-will-the-democratic-party-win-the-house-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "aca-credits-extended-house-winner-2026",
+      "family_id": "pmfam-000068",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-aca-premium-tax-credits-be-extended-and-will-the-republican-party-win-the-house-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "aca-credits-extended-house-winner-2026",
+      "family_id": "pmfam-000069",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-aca-premium-tax-credits-not-be-extended-and-will-the-democratic-party-win-the-house-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "aca-credits-extended-house-winner-2026",
+      "family_id": "pmfam-000070",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-aca-premium-tax-credits-not-be-extended-and-will-the-republican-party-win-the-house-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "aca-credits-extended-house-winner-2026",
+      "family_id": "pmfam-000071",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-something-else-occur-811"
+      ]
+    },
+    {
+      "category": "trump_x_al-sharaa",
+      "event_slug": "ahmed-al-sharaa-out-as-leader-of-syria-before-2027",
+      "family_id": "pmfam-000072",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "ahmed-al-sharaa-out-as-leader-of-syria-before-2027"
+      ]
+    },
+    {
+      "category": "business",
+      "event_slug": "ai-bubble-burst-by",
+      "family_id": "pmfam-000073",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "ai-industry-downturn-by-december-31-2026-857"
+      ]
+    },
+    {
+      "category": "business",
+      "event_slug": "ai-bubble-burst-by",
+      "family_id": "pmfam-000074",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "ai-industry-downturn-by-december-31-2025"
+      ]
+    },
+    {
+      "category": "business",
+      "event_slug": "ai-bubble-burst-by",
+      "family_id": "pmfam-000075",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "ai-industry-downturn-by-march-31-2026-547"
+      ]
+    },
+    {
+      "category": "ai",
+      "event_slug": "ai-model-scores-90-on-frontiermath-benchmark-before-2027",
+      "family_id": "pmfam-000076",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "ai-model-scores-90-on-frontiermath-benchmark-before-2027"
+      ]
+    },
+    {
+      "category": "tech",
+      "event_slug": "ai-wins-imo-gold-medal-in-2026",
+      "family_id": "pmfam-000077",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "ai-wins-imo-gold-medal-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "alabama-governor-winner-2026",
+      "family_id": "pmfam-000078",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-the-democrats-win-the-alabama-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "alabama-governor-winner-2026",
+      "family_id": "pmfam-000079",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-b-win-the-alabama-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "alabama-governor-winner-2026",
+      "family_id": "pmfam-000080",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-c-win-the-alabama-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "alabama-governor-winner-2026",
+      "family_id": "pmfam-000081",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-d-win-the-alabama-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "alabama-governor-winner-2026",
+      "family_id": "pmfam-000082",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-e-win-the-alabama-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "alabama-governor-winner-2026",
+      "family_id": "pmfam-000083",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-f-win-the-alabama-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "alabama-governor-winner-2026",
+      "family_id": "pmfam-000084",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-g-win-the-alabama-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "alabama-governor-winner-2026",
+      "family_id": "pmfam-000085",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-h-win-the-alabama-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "alabama-governor-winner-2026",
+      "family_id": "pmfam-000086",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-i-win-the-alabama-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "alabama-governor-winner-2026",
+      "family_id": "pmfam-000087",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-j-win-the-alabama-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "alabama-governor-winner-2026",
+      "family_id": "pmfam-000088",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-a-win-the-alabama-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "alabama-governor-winner-2026",
+      "family_id": "pmfam-000089",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-other-win-the-alabama-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "alabama-governor-winner-2026",
+      "family_id": "pmfam-000090",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-the-republicans-win-the-alabama-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alabama-senate-election-winner-154",
+      "family_id": "pmfam-000091",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-a-candidate-not-listed-above-win-the-alabama-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alabama-senate-election-winner-154",
+      "family_id": "pmfam-000092",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-the-democrats-win-the-alabama-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alabama-senate-election-winner-154",
+      "family_id": "pmfam-000093",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-b-win-the-alabama-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alabama-senate-election-winner-154",
+      "family_id": "pmfam-000094",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-c-win-the-alabama-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alabama-senate-election-winner-154",
+      "family_id": "pmfam-000095",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-d-win-the-alabama-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alabama-senate-election-winner-154",
+      "family_id": "pmfam-000096",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-e-win-the-alabama-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alabama-senate-election-winner-154",
+      "family_id": "pmfam-000097",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-f-win-the-alabama-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alabama-senate-election-winner-154",
+      "family_id": "pmfam-000098",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-g-win-the-alabama-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alabama-senate-election-winner-154",
+      "family_id": "pmfam-000099",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-h-win-the-alabama-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alabama-senate-election-winner-154",
+      "family_id": "pmfam-000100",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-i-win-the-alabama-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alabama-senate-election-winner-154",
+      "family_id": "pmfam-000101",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-j-win-the-alabama-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alabama-senate-election-winner-154",
+      "family_id": "pmfam-000102",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-a-win-the-alabama-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alabama-senate-election-winner-154",
+      "family_id": "pmfam-000103",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-the-republicans-win-the-alabama-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000104",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-adam-crum-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000105",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-another-candidate-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000106",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-bernadette-wilson-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000107",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-i-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000108",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-bruce-walden-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000109",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-j-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000110",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-k-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000111",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-l-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000112",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-m-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000113",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-n-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000114",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-o-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000115",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-p-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000116",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-q-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000117",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-r-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000118",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-s-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000119",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-t-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000120",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-u-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000121",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-v-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000122",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-w-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000123",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-x-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000124",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-y-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000125",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-z-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000126",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-click-bishop-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000127",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-david-bronson-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000128",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-destry-j-payne-sr-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000129",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-edna-devries-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000130",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-gregg-brelsford-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000131",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-hank-kroll-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000132",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-james-parkin-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000133",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-jessica-faircloth-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000134",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-jonathan-kreiss-tomkins-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000135",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-lesil-mcguire-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000136",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-lisa-murkowski-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000137",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-mary-peltola-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000138",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-matt-claman-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000139",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-matt-heilala-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000140",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-nancy-dahlstrom-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000141",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-shelley-hughes-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000142",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-tom-begich-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "alaska-governor-election-winner",
+      "family_id": "pmfam-000143",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-treg-taylor-win-the-2026-alaska-governor-election"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000144",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-ann-diener-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000145",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-b-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000146",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-c-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000147",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-d-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000148",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-e-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000149",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-f-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000150",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-g-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000151",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-h-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000152",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-i-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000153",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-j-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000154",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-k-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000155",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-l-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000156",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-m-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000157",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-n-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000158",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-a-candidate-not-listed-above-win-the-alaska-senate-race-in-2026-492"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000159",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-o-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000160",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-p-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000161",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-q-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000162",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-r-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000163",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-s-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000164",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-t-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000165",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-u-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000166",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-v-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000167",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-w-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000168",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-a-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000169",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-dan-sullivan-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000170",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-dustin-darden-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000171",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-mary-peltola-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "alaska-senate-election-winner",
+      "family_id": "pmfam-000172",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-richard-grayson-win-the-alaska-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "aleksandar-vui-out-as-serbian-president-by",
+      "family_id": "pmfam-000173",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "aleksandar-vui-out-as-serbian-president-by-december-31-2025"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "aleksandar-vui-out-as-serbian-president-by",
+      "family_id": "pmfam-000174",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "aleksandar-vui-out-as-serbian-president-by-june-30-2026-398"
+      ]
+    },
+    {
+      "category": "canada",
+      "event_slug": "another-canada-election-called-by-june-30",
+      "family_id": "pmfam-000175",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "another-canada-election-called-by-june-30"
+      ]
+    },
+    {
+      "category": "bitcoin",
+      "event_slug": "another-sp-500-company-buys-bitcoin-by-november-30",
+      "family_id": "pmfam-000176",
+      "family_type": "threshold_monotonic_family",
+      "gap_reasons": [
+        "threshold_family_not_certified_exhaustive"
+      ],
+      "market_count": 2,
+      "market_slugs": [
+        "another-sp-500-company-buys-bitcoin-by-december-31-2026",
+        "another-sp-500-company-buys-bitcoin-by-december-31-2025"
+      ]
+    },
+    {
+      "category": "bitcoin",
+      "event_slug": "another-sp-500-company-buys-bitcoin-by-november-30",
+      "family_id": "pmfam-000177",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "another-sp-500-company-buys-bitcoin-by-november-30"
+      ]
+    },
+    {
+      "category": "economy",
+      "event_slug": "another-us-debt-downgrade-before-2027",
+      "family_id": "pmfam-000178",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "another-us-debt-downgrade-before-2027"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "another-us-government-shutdown-house-winner-2026",
+      "family_id": "pmfam-000179",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-something-else-occur-455"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "another-us-government-shutdown-house-winner-2026",
+      "family_id": "pmfam-000180",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-there-be-another-us-government-shutdown-by-january-31-and-will-the-democratic-party-win-the-house-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "another-us-government-shutdown-house-winner-2026",
+      "family_id": "pmfam-000181",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-there-be-another-us-government-shutdown-by-january-31-and-will-the-republican-party-win-the-house-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "another-us-government-shutdown-house-winner-2026",
+      "family_id": "pmfam-000182",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-there-be-no-us-government-shutdown-by-january-31-and-will-the-democratic-party-win-the-house-in-2026"
+      ]
+    },
+    {
+      "category": "midterms",
+      "event_slug": "another-us-government-shutdown-house-winner-2026",
+      "family_id": "pmfam-000183",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-there-be-no-us-government-shutdown-by-january-31-and-will-the-republican-party-win-the-house-in-2026"
+      ]
+    },
+    {
+      "category": "ai",
+      "event_slug": "anthropic-acquired-before-2027",
+      "family_id": "pmfam-000184",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "anthropic-acquired-before-2027"
+      ]
+    },
+    {
+      "category": "ai",
+      "event_slug": "anthropic-ipo-closing-market-cap",
+      "family_id": "pmfam-000185",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-anthropic-not-ipo-by-june-30-2026"
+      ]
+    },
+    {
+      "category": "ai",
+      "event_slug": "anthropic-ipo-closing-market-cap",
+      "family_id": "pmfam-000186",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-anthropics-market-cap-be-greater-than-600b-at-market-close-on-ipo-day"
+      ]
+    },
+    {
+      "category": "ai",
+      "event_slug": "anthropic-ipo-closing-market-cap",
+      "family_id": "pmfam-000187",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-anthropics-market-cap-be-less-than-100b-at-market-close-on-ipo-day"
+      ]
+    },
+    {
+      "category": "ai",
+      "event_slug": "anthropic-ipo-closing-market-cap",
+      "family_id": "pmfam-000188",
+      "family_type": "threshold_monotonic_family",
+      "gap_reasons": [
+        "threshold_family_not_certified_exhaustive"
+      ],
+      "market_count": 4,
+      "market_slugs": [
+        "will-anthropics-market-cap-be-between-100b-and-200b-at-market-close-on-ipo-day",
+        "will-anthropics-market-cap-be-between-200b-and-300b-at-market-close-on-ipo-day",
+        "will-anthropics-market-cap-be-between-300b-and-400b-at-market-close-on-ipo-day",
+        "will-anthropics-market-cap-be-between-400b-and-600b-at-market-close-on-ipo-day"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "any-country-withdraws-from-eu-before-2027",
+      "family_id": "pmfam-000189",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "any-country-withdraws-from-eu-before-2027"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "any-us-state-legislature-votes-on-secession-by-june-30-2026",
+      "family_id": "pmfam-000190",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "any-us-state-legislature-votes-on-secession-by-june-30-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000191",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-andy-biggs-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000192",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-another-candidate-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000193",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-b-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000194",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-c-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000195",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-d-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000196",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-e-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000197",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-f-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000198",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-g-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000199",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-h-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000200",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-i-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000201",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-j-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000202",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-k-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000203",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-l-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000204",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-m-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000205",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-n-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000206",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-o-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000207",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-p-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000208",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-q-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000209",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-r-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000210",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-s-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000211",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-t-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000212",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-u-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000213",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-v-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000214",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-w-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000215",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-a-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000216",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-x-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000217",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-y-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000218",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-z-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000219",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-david-schweikert-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arizona-governor-republican-primary-winner",
+      "family_id": "pmfam-000220",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-karrin-taylor-robson-win-the-2026-arizona-governor-republican-primary-election"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "arizona-governor-winner-2026",
+      "family_id": "pmfam-000221",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-the-democrat-win-the-arizona-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "arizona-governor-winner-2026",
+      "family_id": "pmfam-000222",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-b-win-the-arizona-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "arizona-governor-winner-2026",
+      "family_id": "pmfam-000223",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-c-win-the-arizona-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "arizona-governor-winner-2026",
+      "family_id": "pmfam-000224",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-d-win-the-arizona-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "arizona-governor-winner-2026",
+      "family_id": "pmfam-000225",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-e-win-the-arizona-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "arizona-governor-winner-2026",
+      "family_id": "pmfam-000226",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-f-win-the-arizona-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "arizona-governor-winner-2026",
+      "family_id": "pmfam-000227",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-g-win-the-arizona-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "arizona-governor-winner-2026",
+      "family_id": "pmfam-000228",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-h-win-the-arizona-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "arizona-governor-winner-2026",
+      "family_id": "pmfam-000229",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-i-win-the-arizona-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "arizona-governor-winner-2026",
+      "family_id": "pmfam-000230",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-j-win-the-arizona-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "arizona-governor-winner-2026",
+      "family_id": "pmfam-000231",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-a-win-the-arizona-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "arizona-governor-winner-2026",
+      "family_id": "pmfam-000232",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-other-win-the-arizona-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "arizona-governor-winner-2026",
+      "family_id": "pmfam-000233",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-the-republican-win-the-arizona-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-governor-winner-2026",
+      "family_id": "pmfam-000234",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-the-democrats-win-the-arkansas-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-governor-winner-2026",
+      "family_id": "pmfam-000235",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-b-win-the-arkansas-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-governor-winner-2026",
+      "family_id": "pmfam-000236",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-c-win-the-arkansas-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-governor-winner-2026",
+      "family_id": "pmfam-000237",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-d-win-the-arkansas-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-governor-winner-2026",
+      "family_id": "pmfam-000238",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-e-win-the-arkansas-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-governor-winner-2026",
+      "family_id": "pmfam-000239",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-f-win-the-arkansas-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-governor-winner-2026",
+      "family_id": "pmfam-000240",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-g-win-the-arkansas-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-governor-winner-2026",
+      "family_id": "pmfam-000241",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-h-win-the-arkansas-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-governor-winner-2026",
+      "family_id": "pmfam-000242",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-i-win-the-arkansas-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-governor-winner-2026",
+      "family_id": "pmfam-000243",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-j-win-the-arkansas-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-governor-winner-2026",
+      "family_id": "pmfam-000244",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-a-win-the-arkansas-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-governor-winner-2026",
+      "family_id": "pmfam-000245",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-other-win-the-arkansas-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-governor-winner-2026",
+      "family_id": "pmfam-000246",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-the-republicans-win-the-arkansas-governor-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-senate-election-winner",
+      "family_id": "pmfam-000247",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-a-candidate-not-listed-above-win-the-arkansas-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-senate-election-winner",
+      "family_id": "pmfam-000248",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-the-democrats-win-the-arkansas-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-senate-election-winner",
+      "family_id": "pmfam-000249",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-b-win-the-arkansas-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-senate-election-winner",
+      "family_id": "pmfam-000250",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-c-win-the-arkansas-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-senate-election-winner",
+      "family_id": "pmfam-000251",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-d-win-the-arkansas-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-senate-election-winner",
+      "family_id": "pmfam-000252",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-e-win-the-arkansas-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-senate-election-winner",
+      "family_id": "pmfam-000253",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-f-win-the-arkansas-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-senate-election-winner",
+      "family_id": "pmfam-000254",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-g-win-the-arkansas-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-senate-election-winner",
+      "family_id": "pmfam-000255",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-h-win-the-arkansas-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-senate-election-winner",
+      "family_id": "pmfam-000256",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-i-win-the-arkansas-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-senate-election-winner",
+      "family_id": "pmfam-000257",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-j-win-the-arkansas-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-senate-election-winner",
+      "family_id": "pmfam-000258",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-a-win-the-arkansas-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "arkansas-senate-election-winner",
+      "family_id": "pmfam-000259",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-the-republicans-win-the-arkansas-senate-race-in-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000260",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-another-candidate-be-the-republican-nominee-for-az-01-354-131-344-229-187-858-886"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000261",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-brandon-sowers-be-the-republican-nominee-for-az-01-218"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000262",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-g-be-the-republican-nominee-for-az-01-826"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000263",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-h-be-the-republican-nominee-for-az-01-642"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000264",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-i-be-the-republican-nominee-for-az-01-295"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000265",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-j-be-the-republican-nominee-for-az-01-456"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000266",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-k-be-the-republican-nominee-for-az-01-642"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000267",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-l-be-the-republican-nominee-for-az-01-318"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000268",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-m-be-the-republican-nominee-for-az-01-156"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000269",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-n-be-the-republican-nominee-for-az-01-655"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000270",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-o-be-the-republican-nominee-for-az-01-349"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000271",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-derrick-gallego-be-the-republican-nominee-for-az-01-424"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000272",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-gina-swoboda-be-the-republican-nominee-for-az-01"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000273",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-jason-duey-be-the-republican-nominee-for-az-01"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000274",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-jay-feely-be-the-republican-nominee-for-az-01"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000275",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-john-trobough-be-the-republican-nominee-for-az-01-622"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000276",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-joseph-chaplik-be-the-republican-nominee-for-az-01"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000277",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-kaitlin-purrington-be-the-republican-nominee-for-az-01"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000278",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-kari-lake-be-the-republican-nominee-for-az-01"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000279",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-mark-brnovich-be-the-republican-nominee-for-az-01"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000280",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-matt-gress-be-the-republican-nominee-for-az-01"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000281",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-muchelle-ugenti-rita-be-the-republican-nominee-for-az-01"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000282",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-paul-reevs-be-the-republican-nominee-for-az-01"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-01-republican-primary-winner",
+      "family_id": "pmfam-000283",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-todd-graham-be-the-republican-nominee-for-az-01"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000284",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-another-candidate-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000285",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-b-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000286",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-c-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000287",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-d-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000288",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-e-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000289",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-f-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000290",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-g-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000291",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-h-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000292",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-i-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000293",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-j-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000294",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-k-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000295",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-l-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000296",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-m-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000297",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-n-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000298",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-candidate-o-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000299",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-daniel-keenan-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000300",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-jay-feely-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000301",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-mark-lamb-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "az-05-republican-primary-winner",
+      "family_id": "pmfam-000302",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-travis-grantham-be-the-republican-nominee-for-az-05"
+      ]
+    },
+    {
+      "category": "world",
+      "event_slug": "aziz-akhannouch-out-as-morocco-prime-minister-by-december-31-2026",
+      "family_id": "pmfam-000303",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "aziz-akhannouch-out-as-morocco-prime-minister-by-december-31-2026"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "balance-of-power-2026-midterms",
+      "family_id": "pmfam-000304",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "2026-balance-of-power-d-senate-d-house-949"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "balance-of-power-2026-midterms",
+      "family_id": "pmfam-000305",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "2026-balance-of-power-d-senate-r-house-692"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "balance-of-power-2026-midterms",
+      "family_id": "pmfam-000306",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "2026-balance-of-power-other-131"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "balance-of-power-2026-midterms",
+      "family_id": "pmfam-000307",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "2026-balance-of-power-r-senate-d-house-444"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "balance-of-power-2026-midterms",
+      "family_id": "pmfam-000308",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "2026-balance-of-power-r-senate-r-house-537"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000309",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-achraf-hakimi-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000310",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-bruno-fernandes-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000311",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-cole-palmer-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000312",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-cristiano-ronaldo-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000313",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-declan-rice-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000314",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-desire-doue-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000315",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-dominik-szoboszlai-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000316",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-erling-haaland-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000317",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-federico-valverde-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000318",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-harry-kane-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000319",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-jude-bellingham-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000320",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-julian-alvarez-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000321",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-khvicha-kvaratskhelia-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000322",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-kylian-mbapp-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000323",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-lamine-yamal-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000324",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-lautaro-martinez-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000325",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-lionel-messi-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000326",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-luis-diaz-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000327",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-michael-olise-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000328",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-mohamed-salah-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000329",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-ousmane-dembl-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000330",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-pedri-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000331",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-aa-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000332",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ab-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000333",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ac-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000334",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ad-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000335",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ae-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000336",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-af-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000337",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ag-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000338",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ah-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000339",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ai-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000340",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-aj-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000341",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ak-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000342",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-al-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000343",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-am-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000344",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ao-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000345",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ap-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000346",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-aq-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000347",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ar-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000348",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-as-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000349",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-au-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000350",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-av-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000351",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-aw-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000352",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ax-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000353",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ay-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000354",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-az-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000355",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-ba-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000356",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bb-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000357",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bc-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000358",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bd-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000359",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bf-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000360",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bg-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000361",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bh-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000362",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bi-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000363",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bj-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000364",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bk-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000365",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bl-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000366",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bm-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000367",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bn-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000368",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bo-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000369",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bp-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000370",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bq-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000371",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-br-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000372",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bs-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000373",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bt-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000374",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bu-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000375",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bv-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000376",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bw-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000377",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bx-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000378",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-bz-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000379",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-p-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000380",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-q-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000381",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-r-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000382",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-s-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000383",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-t-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000384",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-u-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000385",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-v-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000386",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-w-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000387",
+      "family_type": "duplicate_or_near_duplicate",
+      "gap_reasons": [
+        "duplicate_family_not_exhaustive"
+      ],
+      "market_count": 4,
+      "market_slugs": [
+        "will-placeholder-be-win-the-2026-ballon-dor",
+        "will-placeholder-by-win-the-2026-ballon-dor",
+        "will-placeholder-an-win-the-2026-ballon-dor",
+        "will-placeholder-at-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000388",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-x-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000389",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-y-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000390",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-placeholder-z-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000391",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-raphinha-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000392",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-someone-else-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000393",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-vincius-jnior-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "soccer",
+      "event_slug": "ballon-dor-winner-2026",
+      "family_id": "pmfam-000394",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-vitinha-win-the-2026-ballon-dor"
+      ]
+    },
+    {
+      "category": "nfts",
+      "event_slug": "bayc-metaverse-will-the-floor-price-of-otherdeed-be-above-3pt5-eth-on-may-9",
+      "family_id": "pmfam-000395",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "bayc-metaverse-will-the-floor-price-of-otherdeed-be-above-3pt5-eth-on-may-9"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000396",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-afd-win-the-most-seats-in-the-2026-berlin-state-elections"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000397",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-another-party-win-the-most-seats-in-the-2026-berlin-state-elections-196-939-317-262-845-555-667-426-897"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000398",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-bsw-win-the-most-seats-in-the-2026-berlin-state-elections"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000399",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-cdu-win-the-most-seats-in-the-2026-berlin-state-elections"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000400",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-fdp-win-the-most-seats-in-the-2026-berlin-state-elections"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000401",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-fw-win-the-most-seats-in-the-2026-berlin-state-elections"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000402",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-grne-win-the-most-seats-in-the-2026-berlin-state-elections"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000403",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-linke-win-the-most-seats-in-the-2026-berlin-state-elections"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000404",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-b-win-the-most-seats-in-the-2026-berlin-state-elections-174"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000405",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-c-win-the-most-seats-in-the-2026-berlin-state-elections-833-922"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000406",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-d-win-the-most-seats-in-the-2026-berlin-state-elections-974-598-419"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000407",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-e-win-the-most-seats-in-the-2026-berlin-state-elections-126-999-346-951"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000408",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-f-win-the-most-seats-in-the-2026-berlin-state-elections-433-211-558-221-116"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000409",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-g-win-the-most-seats-in-the-2026-berlin-state-elections-962-176-364-259-592-512-396"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000410",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-h-win-the-most-seats-in-the-2026-berlin-state-elections-493-995-163-287-375-881-163-296"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000411",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-i-win-the-most-seats-in-the-2026-berlin-state-elections-553-857-128-191-899-696-472-346-843"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000412",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-j-win-the-most-seats-in-the-2026-berlin-state-elections-135-817-116-528-958-844-654-167-598"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000413",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-k-win-the-most-seats-in-the-2026-berlin-state-elections-356-817-678-123-722-522-818-149-817"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000414",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-l-win-the-most-seats-in-the-2026-berlin-state-elections-368-767-246-775-236-961-915-381-529"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000415",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-m-win-the-most-seats-in-the-2026-berlin-state-elections-219-444-532-623-384-859-129-338-368"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000416",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-n-win-the-most-seats-in-the-2026-berlin-state-elections-378-924-985-673-471-699-241-574-527"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000417",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-o-win-the-most-seats-in-the-2026-berlin-state-elections-937-778-725-987-331-256-546-132-929"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000418",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-party-a-win-the-most-seats-in-the-2026-berlin-state-elections-449"
+      ]
+    },
+    {
+      "category": "global_elections",
+      "event_slug": "berlin-state-election-winner",
+      "family_id": "pmfam-000419",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-spd-win-the-most-seats-in-the-2026-berlin-state-elections"
+      ]
+    },
+    {
+      "category": "politics",
+      "event_slug": "billionaire-one-time-wealth-tax-passes-in-california-election-2026",
+      "family_id": "pmfam-000420",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "billionaire-one-time-wealth-tax-passes-in-california-election-2026"
+      ]
+    },
+    {
+      "category": "bitcoin",
+      "event_slug": "bitcoin-more-valuable-than-any-company-before-2027",
+      "family_id": "pmfam-000421",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "bitcoin-more-valuable-than-any-company-before-2027"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000422",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-aldo-rebelo-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000423",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-another-person-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000424",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-camilo-santana-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000425",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-carlos-roberto-massa-jnior-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000426",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-eduardo-bolsonaro-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000427",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-eduardo-leite-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000428",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-fernando-haddad-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000429",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-flvio-bolsonaro-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000430",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-geraldo-alckmin-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000431",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-helder-barbalho-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000432",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-jair-bolsonaro-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000433",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-luiz-incio-lula-da-silva-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000434",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-michelle-bolsonaro-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000435",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-m-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000436",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-n-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000437",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-o-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000438",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-p-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000439",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-q-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000440",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-r-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000441",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-s-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000442",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-t-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000443",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-u-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000444",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-v-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000445",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-w-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000446",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-x-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000447",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-y-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000448",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-person-z-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000449",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-renan-santos-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000450",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-romeu-zema-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000451",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-ronaldo-caiado-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000452",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-tarcisio-de-frietas-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "brazil",
+      "event_slug": "brazil-presidential-election",
+      "family_id": "pmfam-000453",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-tereza-cristina-win-the-2026-brazilian-presidential-election"
+      ]
+    },
+    {
+      "category": "sports",
+      "event_slug": "broncos-3-v-giants-spread",
+      "family_id": "pmfam-000454",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "broncos-3-v-giants-spread"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000455",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-alex-padilla-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000456",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-antonio-villaraigosa-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000457",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-betty-yee-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000458",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-butch-ware-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000459",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-chad-bianco-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000460",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-daniel-mercuri-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000461",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-elaine-culotti-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000462",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-eleni-kounalakis-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000463",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-eric-swalwell-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000464",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-kamala-harris-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000465",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-katie-porter-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000466",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-kyle-langford-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000467",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-leo-zacky-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000468",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-matt-mahan-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000469",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-michael-younger-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000470",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-nicole-shanahan-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000471",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-f-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000472",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-g-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000473",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-h-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000474",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-i-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000475",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-j-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000476",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-k-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000477",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-l-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000478",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-m-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000479",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-n-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000480",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-o-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000481",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-p-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000482",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-q-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000483",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-r-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000484",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-s-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000485",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-t-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000486",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-u-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000487",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-v-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000488",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-w-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000489",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-x-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000490",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-y-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000491",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-option-z-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000492",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-other-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000493",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-rick-caruso-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000494",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-stephen-cloobeck-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000495",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-steve-hilton-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000496",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-tom-steyer-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000497",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-toni-atkins-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000498",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-tony-thurmond-win-the-california-governor-election-in-2026"
+      ]
+    },
+    {
+      "category": "elections",
+      "event_slug": "california-governor-election-2026",
+      "family_id": "pmfam-000499",
+      "family_type": "isolated_binary",
+      "gap_reasons": [
+        "isolated_binary_no_family_structure"
+      ],
+      "market_count": 1,
+      "market_slugs": [
+        "will-xavier-becerra-win-the-california-governor-election-in-2026"
+      ]
+    }
+  ],
+  "schema_version": "polyweather_polymarket_alpha_market_family_gaps.v1",
+  "scope": "polymarket_only"
+}

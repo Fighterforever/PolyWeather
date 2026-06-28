@@ -1,0 +1,32 @@
+{
+  "artifact_paths": {
+    "inferred_fills": "evidence/polymarket_alpha/maker_shadow/inferred_fills.jsonl",
+    "markouts": "evidence/polymarket_alpha/maker_shadow/markouts.jsonl",
+    "quotes": "evidence/polymarket_alpha/maker_shadow/quotes.jsonl"
+  },
+  "blocker_counts": {
+    "category_not_top_focus": 5183,
+    "depth_below_min": 1,
+    "missing_orderbook": 87,
+    "not_active": 61,
+    "spread_below_min": 12
+  },
+  "counts_for_live_gate": false,
+  "inferred_fill_count": 0,
+  "live_order_path": false,
+  "markout_count": 0,
+  "mean_markout_with_rebate": null,
+  "mean_markout_without_rebate": null,
+  "paper_only": true,
+  "quote_count": 6,
+  "schema_version": "polyweather_polymarket_alpha_maker_shadow.v1",
+  "scope": "polymarket_only",
+  "strategy_id": "polymarket_alpha_maker_shadow",
+  "top_categories": [
+    "tech",
+    "exchange",
+    "music",
+    "india",
+    "ukraine"
+  ]
+}

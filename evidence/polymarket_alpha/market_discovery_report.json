@@ -1,0 +1,2737 @@
+{
+  "active_market_count": 5339,
+  "artifact_paths": {
+    "active_markets_snapshot": "evidence/polymarket_alpha/active_markets_snapshot.jsonl",
+    "closed_markets_snapshot": "evidence/polymarket_alpha/closed_markets_snapshot.jsonl"
+  },
+  "category_counts": [
+    {
+      "category": "ai",
+      "count": 46
+    },
+    {
+      "category": "airdrops",
+      "count": 8
+    },
+    {
+      "category": "all",
+      "count": 2
+    },
+    {
+      "category": "argentina",
+      "count": 2
+    },
+    {
+      "category": "art",
+      "count": 8
+    },
+    {
+      "category": "awards",
+      "count": 71
+    },
+    {
+      "category": "bernie_sanders",
+      "count": 7
+    },
+    {
+      "category": "big_tech",
+      "count": 80
+    },
+    {
+      "category": "bitcoin",
+      "count": 51
+    },
+    {
+      "category": "bnb",
+      "count": 14
+    },
+    {
+      "category": "books",
+      "count": 1
+    },
+    {
+      "category": "brazil",
+      "count": 33
+    },
+    {
+      "category": "business",
+      "count": 45
+    },
+    {
+      "category": "canada",
+      "count": 1
+    },
+    {
+      "category": "chess",
+      "count": 15
+    },
+    {
+      "category": "china",
+      "count": 1
+    },
+    {
+      "category": "consensys",
+      "count": 5
+    },
+    {
+      "category": "coronavirus",
+      "count": 21
+    },
+    {
+      "category": "courts",
+      "count": 6
+    },
+    {
+      "category": "crypto",
+      "count": 270
+    },
+    {
+      "category": "crypto_prices",
+      "count": 11
+    },
+    {
+      "category": "culture",
+      "count": 58
+    },
+    {
+      "category": "dogecoin",
+      "count": 14
+    },
+    {
+      "category": "economic_policy",
+      "count": 1
+    },
+    {
+      "category": "economy",
+      "count": 49
+    },
+    {
+      "category": "elections",
+      "count": 556
+    },
+    {
+      "category": "elon_musk",
+      "count": 1
+    },
+    {
+      "category": "epstein",
+      "count": 1
+    },
+    {
+      "category": "esports",
+      "count": 2
+    },
+    {
+      "category": "ethereum",
+      "count": 27
+    },
+    {
+      "category": "exchange",
+      "count": 4
+    },
+    {
+      "category": "football",
+      "count": 1
+    },
+    {
+      "category": "foreign_policy",
+      "count": 18
+    },
+    {
+      "category": "formula_1",
+      "count": 12
+    },
+    {
+      "category": "france",
+      "count": 12
+    },
+    {
+      "category": "fraud",
+      "count": 2
+    },
+    {
+      "category": "games",
+      "count": 2
+    },
+    {
+      "category": "gaza",
+      "count": 5
+    },
+    {
+      "category": "geopolitics",
+      "count": 77
+    },
+    {
+      "category": "global_elections",
+      "count": 33
+    },
+    {
+      "category": "global_politics",
+      "count": 5
+    },
+    {
+      "category": "hamas",
+      "count": 1
+    },
+    {
+      "category": "hit_price",
+      "count": 12
+    },
+    {
+      "category": "hyperliquid",
+      "count": 26
+    },
+    {
+      "category": "india",
+      "count": 3
+    },
+    {
+      "category": "inflation",
+      "count": 9
+    },
+    {
+      "category": "ipo",
+      "count": 25
+    },
+    {
+      "category": "ipos",
+      "count": 40
+    },
+    {
+      "category": "israel",
+      "count": 51
+    },
+    {
+      "category": "japan",
+      "count": 1
+    },
+    {
+      "category": "jerome_powell",
+      "count": 31
+    },
+    {
+      "category": "league_of_legends",
+      "count": 42
+    },
+    {
+      "category": "lol",
+      "count": 37
+    },
+    {
+      "category": "mamdani",
+      "count": 4
+    },
+    {
+      "category": "mayor",
+      "count": 15
+    },
+    {
+      "category": "middle_east",
+      "count": 18
+    },
+    {
+      "category": "midterms",
+      "count": 375
+    },
+    {
+      "category": "movies",
+      "count": 58
+    },
+    {
+      "category": "music",
+      "count": 18
+    },
+    {
+      "category": "nba",
+      "count": 1
+    },
+    {
+      "category": "nba_playoffs",
+      "count": 11
+    },
+    {
+      "category": "nfts",
+      "count": 7
+    },
+    {
+      "category": "nuclear",
+      "count": 1
+    },
+    {
+      "category": "obama",
+      "count": 2
+    },
+    {
+      "category": "olympics",
+      "count": 4
+    },
+    {
+      "category": "openai",
+      "count": 8
+    },
+    {
+      "category": "pandemics",
+      "count": 9
+    },
+    {
+      "category": "pierre",
+      "count": 1
+    },
+    {
+      "category": "poker",
+      "count": 2
+    },
+    {
+      "category": "poland",
+      "count": 2
+    },
+    {
+      "category": "politics",
+      "count": 1545
+    },
+    {
+      "category": "pop-culture",
+      "count": 20
+    },
+    {
+      "category": "pre-market",
+      "count": 25
+    },
+    {
+      "category": "primaries",
+      "count": 118
+    },
+    {
+      "category": "putin",
+      "count": 3
+    },
+    {
+      "category": "russia",
+      "count": 3
+    },
+    {
+      "category": "rwa",
+      "count": 2
+    },
+    {
+      "category": "science",
+      "count": 14
+    },
+    {
+      "category": "senate",
+      "count": 1
+    },
+    {
+      "category": "soccer",
+      "count": 149
+    },
+    {
+      "category": "south_korea",
+      "count": 2
+    },
+    {
+      "category": "sports",
+      "count": 257
+    },
+    {
+      "category": "stablecoins",
+      "count": 2
+    },
+    {
+      "category": "starmer",
+      "count": 6
+    },
+    {
+      "category": "syria",
+      "count": 1
+    },
+    {
+      "category": "taxes",
+      "count": 3
+    },
+    {
+      "category": "taylor_swift",
+      "count": 1
+    },
+    {
+      "category": "tech",
+      "count": 88
+    },
+    {
+      "category": "tiktok",
+      "count": 7
+    },
+    {
+      "category": "trump",
+      "count": 106
+    },
+    {
+      "category": "trump-putin",
+      "count": 4
+    },
+    {
+      "category": "trump-zelenskyy",
+      "count": 5
+    },
+    {
+      "category": "trump_presidency",
+      "count": 8
+    },
+    {
+      "category": "trump_x_al-sharaa",
+      "count": 1
+    },
+    {
+      "category": "ukraine",
+      "count": 43
+    },
+    {
+      "category": "ukraine_&_russia",
+      "count": 5
+    },
+    {
+      "category": "ukraine_map",
+      "count": 6
+    },
+    {
+      "category": "us-current-affairs",
+      "count": 25
+    },
+    {
+      "category": "us_election",
+      "count": 256
+    },
+    {
+      "category": "ventuals",
+      "count": 7
+    },
+    {
+      "category": "weather",
+      "count": 8
+    },
+    {
+      "category": "world",
+      "count": 198
+    },
+    {
+      "category": "world_affairs",
+      "count": 3
+    },
+    {
+      "category": "world_elections",
+      "count": 256
+    },
+    {
+      "category": "xrp",
+      "count": 21
+    },
+    {
+      "category": "yearly",
+      "count": 42
+    },
+    {
+      "category": "youtube",
+      "count": 4
+    },
+    {
+      "category": "zelenskyy",
+      "count": 2
+    }
+  ],
+  "category_rankings": {
+    "by_active_market_count": [
+      {
+        "active_market_count": 542,
+        "category": "politics",
+        "closed_market_count": 58,
+        "event_family_size": 14.045455,
+        "market_count": 1545,
+        "median_spread": 0.03,
+        "orderbook_available_count": 3,
+        "total_volume": 1417128040.000059,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 178,
+        "category": "crypto",
+        "closed_market_count": 92,
+        "event_family_size": 3.857143,
+        "market_count": 270,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 45468508.787909,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 138,
+        "category": "elections",
+        "closed_market_count": 0,
+        "event_family_size": 20.592593,
+        "market_count": 556,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 158651936.023966,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 84,
+        "category": "trump",
+        "closed_market_count": 22,
+        "event_family_size": 8.153846,
+        "market_count": 106,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 14599954.238289,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 83,
+        "category": "world",
+        "closed_market_count": 28,
+        "event_family_size": 7.333333,
+        "market_count": 198,
+        "median_spread": 0.007,
+        "orderbook_available_count": 9,
+        "total_volume": 144978493.148918,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 82,
+        "category": "world_elections",
+        "closed_market_count": 0,
+        "event_family_size": 128.0,
+        "market_count": 256,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 1857154374.656826,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 78,
+        "category": "midterms",
+        "closed_market_count": 4,
+        "event_family_size": 13.392857,
+        "market_count": 375,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 2658189.02456,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 69,
+        "category": "tech",
+        "closed_market_count": 11,
+        "event_family_size": 4.190476,
+        "market_count": 88,
+        "median_spread": 0.05,
+        "orderbook_available_count": 1,
+        "total_volume": 43902888.553316,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 59,
+        "category": "sports",
+        "closed_market_count": 133,
+        "event_family_size": 1.875912,
+        "market_count": 257,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 193830051.555343,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 57,
+        "category": "soccer",
+        "closed_market_count": 18,
+        "event_family_size": 74.5,
+        "market_count": 149,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 3345782314.27205,
+        "trade_tape_density": 0.0
+      }
+    ],
+    "by_event_family_size": [
+      {
+        "active_market_count": 82,
+        "category": "world_elections",
+        "closed_market_count": 0,
+        "event_family_size": 128.0,
+        "market_count": 256,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 1857154374.656826,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 57,
+        "category": "soccer",
+        "closed_market_count": 18,
+        "event_family_size": 74.5,
+        "market_count": 149,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 3345782314.27205,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 20,
+        "category": "awards",
+        "closed_market_count": 0,
+        "event_family_size": 71.0,
+        "market_count": 71,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 21374268.757578,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 15,
+        "category": "league_of_legends",
+        "closed_market_count": 0,
+        "event_family_size": 42.0,
+        "market_count": 42,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 1617632.610854,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 10,
+        "category": "lol",
+        "closed_market_count": 0,
+        "event_family_size": 37.0,
+        "market_count": 37,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 3367486.000809,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 22,
+        "category": "movies",
+        "closed_market_count": 5,
+        "event_family_size": 29.0,
+        "market_count": 58,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 4936278.666447,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 10,
+        "category": "hyperliquid",
+        "closed_market_count": 16,
+        "event_family_size": 26.0,
+        "market_count": 26,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 4964803.41873,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 28,
+        "category": "primaries",
+        "closed_market_count": 0,
+        "event_family_size": 23.6,
+        "market_count": 118,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 239658.402873,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 15,
+        "category": "xrp",
+        "closed_market_count": 6,
+        "event_family_size": 21.0,
+        "market_count": 21,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 187161.628242,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 32,
+        "category": "yearly",
+        "closed_market_count": 10,
+        "event_family_size": 21.0,
+        "market_count": 42,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 2179067.819318,
+        "trade_tape_density": 0.0
+      }
+    ],
+    "by_median_spread": [
+      {
+        "active_market_count": 25,
+        "category": "ai",
+        "closed_market_count": 0,
+        "event_family_size": 7.666667,
+        "market_count": 46,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 26332742.737678,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 2,
+        "category": "airdrops",
+        "closed_market_count": 6,
+        "event_family_size": 8.0,
+        "market_count": 8,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 5270574.693328,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 0,
+        "category": "all",
+        "closed_market_count": 2,
+        "event_family_size": 1.0,
+        "market_count": 2,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 11429.18,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 2,
+        "category": "argentina",
+        "closed_market_count": 0,
+        "event_family_size": 1.0,
+        "market_count": 2,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 184989.12217,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 0,
+        "category": "art",
+        "closed_market_count": 8,
+        "event_family_size": 1.0,
+        "market_count": 8,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 57958.74,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 20,
+        "category": "awards",
+        "closed_market_count": 0,
+        "event_family_size": 71.0,
+        "market_count": 71,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 21374268.757578,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 6,
+        "category": "bernie_sanders",
+        "closed_market_count": 1,
+        "event_family_size": 7.0,
+        "market_count": 7,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 171482.92833,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 48,
+        "category": "big_tech",
+        "closed_market_count": 1,
+        "event_family_size": 10.0,
+        "market_count": 80,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 6047291.946015,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 35,
+        "category": "bitcoin",
+        "closed_market_count": 16,
+        "event_family_size": 12.75,
+        "market_count": 51,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 143961384.288924,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 11,
+        "category": "bnb",
+        "closed_market_count": 3,
+        "event_family_size": 14.0,
+        "market_count": 14,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 123467.223643,
+        "trade_tape_density": 0.0
+      }
+    ],
+    "by_total_volume": [
+      {
+        "active_market_count": 57,
+        "category": "soccer",
+        "closed_market_count": 18,
+        "event_family_size": 74.5,
+        "market_count": 149,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 3345782314.27205,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 82,
+        "category": "world_elections",
+        "closed_market_count": 0,
+        "event_family_size": 128.0,
+        "market_count": 256,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 1857154374.656826,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 542,
+        "category": "politics",
+        "closed_market_count": 58,
+        "event_family_size": 14.045455,
+        "market_count": 1545,
+        "median_spread": 0.03,
+        "orderbook_available_count": 3,
+        "total_volume": 1417128040.000059,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 59,
+        "category": "sports",
+        "closed_market_count": 133,
+        "event_family_size": 1.875912,
+        "market_count": 257,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 193830051.555343,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 35,
+        "category": "culture",
+        "closed_market_count": 9,
+        "event_family_size": 4.833333,
+        "market_count": 58,
+        "median_spread": 0.01,
+        "orderbook_available_count": 8,
+        "total_volume": 162681304.734047,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 138,
+        "category": "elections",
+        "closed_market_count": 0,
+        "event_family_size": 20.592593,
+        "market_count": 556,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 158651936.023966,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 83,
+        "category": "world",
+        "closed_market_count": 28,
+        "event_family_size": 7.333333,
+        "market_count": 198,
+        "median_spread": 0.007,
+        "orderbook_available_count": 9,
+        "total_volume": 144978493.148918,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 35,
+        "category": "bitcoin",
+        "closed_market_count": 16,
+        "event_family_size": 12.75,
+        "market_count": 51,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 143961384.288924,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 18,
+        "category": "brazil",
+        "closed_market_count": 0,
+        "event_family_size": 16.5,
+        "market_count": 33,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 106945994.318377,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 49,
+        "category": "geopolitics",
+        "closed_market_count": 28,
+        "event_family_size": 3.666667,
+        "market_count": 77,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 81545929.927741,
+        "trade_tape_density": 0.0
+      }
+    ],
+    "by_trade_tape_density": [
+      {
+        "active_market_count": 25,
+        "category": "ai",
+        "closed_market_count": 0,
+        "event_family_size": 7.666667,
+        "market_count": 46,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 26332742.737678,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 2,
+        "category": "airdrops",
+        "closed_market_count": 6,
+        "event_family_size": 8.0,
+        "market_count": 8,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 5270574.693328,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 0,
+        "category": "all",
+        "closed_market_count": 2,
+        "event_family_size": 1.0,
+        "market_count": 2,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 11429.18,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 2,
+        "category": "argentina",
+        "closed_market_count": 0,
+        "event_family_size": 1.0,
+        "market_count": 2,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 184989.12217,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 0,
+        "category": "art",
+        "closed_market_count": 8,
+        "event_family_size": 1.0,
+        "market_count": 8,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 57958.74,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 20,
+        "category": "awards",
+        "closed_market_count": 0,
+        "event_family_size": 71.0,
+        "market_count": 71,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 21374268.757578,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 6,
+        "category": "bernie_sanders",
+        "closed_market_count": 1,
+        "event_family_size": 7.0,
+        "market_count": 7,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 171482.92833,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 48,
+        "category": "big_tech",
+        "closed_market_count": 1,
+        "event_family_size": 10.0,
+        "market_count": 80,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 6047291.946015,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 35,
+        "category": "bitcoin",
+        "closed_market_count": 16,
+        "event_family_size": 12.75,
+        "market_count": 51,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 143961384.288924,
+        "trade_tape_density": 0.0
+      },
+      {
+        "active_market_count": 11,
+        "category": "bnb",
+        "closed_market_count": 3,
+        "event_family_size": 14.0,
+        "market_count": 14,
+        "median_spread": null,
+        "orderbook_available_count": 0,
+        "total_volume": 123467.223643,
+        "trade_tape_density": 0.0
+      }
+    ]
+  },
+  "category_stats": [
+    {
+      "active_market_count": 25,
+      "category": "ai",
+      "closed_market_count": 0,
+      "event_family_size": 7.666667,
+      "market_count": 46,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 26332742.737678,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 2,
+      "category": "airdrops",
+      "closed_market_count": 6,
+      "event_family_size": 8.0,
+      "market_count": 8,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 5270574.693328,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 0,
+      "category": "all",
+      "closed_market_count": 2,
+      "event_family_size": 1.0,
+      "market_count": 2,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 11429.18,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 2,
+      "category": "argentina",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 2,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 184989.12217,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 0,
+      "category": "art",
+      "closed_market_count": 8,
+      "event_family_size": 1.0,
+      "market_count": 8,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 57958.74,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 20,
+      "category": "awards",
+      "closed_market_count": 0,
+      "event_family_size": 71.0,
+      "market_count": 71,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 21374268.757578,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 6,
+      "category": "bernie_sanders",
+      "closed_market_count": 1,
+      "event_family_size": 7.0,
+      "market_count": 7,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 171482.92833,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 48,
+      "category": "big_tech",
+      "closed_market_count": 1,
+      "event_family_size": 10.0,
+      "market_count": 80,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 6047291.946015,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 35,
+      "category": "bitcoin",
+      "closed_market_count": 16,
+      "event_family_size": 12.75,
+      "market_count": 51,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 143961384.288924,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 11,
+      "category": "bnb",
+      "closed_market_count": 3,
+      "event_family_size": 14.0,
+      "market_count": 14,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 123467.223643,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "books",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 14877.86102,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 18,
+      "category": "brazil",
+      "closed_market_count": 0,
+      "event_family_size": 16.5,
+      "market_count": 33,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 106945994.318377,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 31,
+      "category": "business",
+      "closed_market_count": 14,
+      "event_family_size": 2.647059,
+      "market_count": 45,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 43217489.327013,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "canada",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 90494.53839,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 0,
+      "category": "chess",
+      "closed_market_count": 15,
+      "event_family_size": 1.0,
+      "market_count": 15,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 377488.66,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "china",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 1183470.239409,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 3,
+      "category": "consensys",
+      "closed_market_count": 2,
+      "event_family_size": 5.0,
+      "market_count": 5,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 437993.732621,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 0,
+      "category": "coronavirus",
+      "closed_market_count": 21,
+      "event_family_size": 1.0,
+      "market_count": 21,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 689004.55,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 6,
+      "category": "courts",
+      "closed_market_count": 0,
+      "event_family_size": 6.0,
+      "market_count": 6,
+      "median_spread": 0.006,
+      "orderbook_available_count": 6,
+      "total_volume": 1100442.63036,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 178,
+      "category": "crypto",
+      "closed_market_count": 92,
+      "event_family_size": 3.857143,
+      "market_count": 270,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 45468508.787909,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 7,
+      "category": "crypto_prices",
+      "closed_market_count": 4,
+      "event_family_size": 11.0,
+      "market_count": 11,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 70186.592892,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 35,
+      "category": "culture",
+      "closed_market_count": 9,
+      "event_family_size": 4.833333,
+      "market_count": 58,
+      "median_spread": 0.01,
+      "orderbook_available_count": 8,
+      "total_volume": 162681304.734047,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 12,
+      "category": "dogecoin",
+      "closed_market_count": 2,
+      "event_family_size": 14.0,
+      "market_count": 14,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 95726.716567,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "economic_policy",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 1632715.811991,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 28,
+      "category": "economy",
+      "closed_market_count": 1,
+      "event_family_size": 5.444444,
+      "market_count": 49,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 4062446.240192,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 138,
+      "category": "elections",
+      "closed_market_count": 0,
+      "event_family_size": 20.592593,
+      "market_count": 556,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 158651936.023966,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "elon_musk",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 20105.239447,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "epstein",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 694771.690981,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 2,
+      "category": "esports",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 2,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 18702.409297,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 24,
+      "category": "ethereum",
+      "closed_market_count": 3,
+      "event_family_size": 13.5,
+      "market_count": 27,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 7295961.330931,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "exchange",
+      "closed_market_count": 2,
+      "event_family_size": 4.0,
+      "market_count": 4,
+      "median_spread": 0.03,
+      "orderbook_available_count": 1,
+      "total_volume": 1581662.703945,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "football",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 28518.599307,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 10,
+      "category": "foreign_policy",
+      "closed_market_count": 8,
+      "event_family_size": 6.0,
+      "market_count": 18,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 41792891.753133,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 11,
+      "category": "formula_1",
+      "closed_market_count": 0,
+      "event_family_size": 12.0,
+      "market_count": 12,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 25836962.017373,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 4,
+      "category": "france",
+      "closed_market_count": 8,
+      "event_family_size": 6.0,
+      "market_count": 12,
+      "median_spread": 0.0015,
+      "orderbook_available_count": 2,
+      "total_volume": 3149405.841617,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "fraud",
+      "closed_market_count": 1,
+      "event_family_size": 2.0,
+      "market_count": 2,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 506778.096248,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 2,
+      "category": "games",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 2,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 289881.484304,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "gaza",
+      "closed_market_count": 4,
+      "event_family_size": 5.0,
+      "market_count": 5,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 2074158.596853,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 49,
+      "category": "geopolitics",
+      "closed_market_count": 28,
+      "event_family_size": 3.666667,
+      "market_count": 77,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 81545929.927741,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 17,
+      "category": "global_elections",
+      "closed_market_count": 0,
+      "event_family_size": 16.5,
+      "market_count": 33,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 3194852.799911,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 0,
+      "category": "global_politics",
+      "closed_market_count": 5,
+      "event_family_size": 1.0,
+      "market_count": 5,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 564977.98,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "hamas",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 107474.967244,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 7,
+      "category": "hit_price",
+      "closed_market_count": 5,
+      "event_family_size": 12.0,
+      "market_count": 12,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 308383.677138,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 10,
+      "category": "hyperliquid",
+      "closed_market_count": 16,
+      "event_family_size": 26.0,
+      "market_count": 26,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 4964803.41873,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "india",
+      "closed_market_count": 2,
+      "event_family_size": 3.0,
+      "market_count": 3,
+      "median_spread": 0.02,
+      "orderbook_available_count": 1,
+      "total_volume": 299912.773531,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 6,
+      "category": "inflation",
+      "closed_market_count": 3,
+      "event_family_size": 4.5,
+      "market_count": 9,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 1283133.415448,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 25,
+      "category": "ipo",
+      "closed_market_count": 0,
+      "event_family_size": 6.25,
+      "market_count": 25,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 2064570.559672,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 34,
+      "category": "ipos",
+      "closed_market_count": 6,
+      "event_family_size": 20.0,
+      "market_count": 40,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 9190359.478518,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 37,
+      "category": "israel",
+      "closed_market_count": 13,
+      "event_family_size": 5.666667,
+      "market_count": 51,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 46687373.565187,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "japan",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 763886.072499,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 26,
+      "category": "jerome_powell",
+      "closed_market_count": 5,
+      "event_family_size": 15.5,
+      "market_count": 31,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 1843717.000962,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 15,
+      "category": "league_of_legends",
+      "closed_market_count": 0,
+      "event_family_size": 42.0,
+      "market_count": 42,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 1617632.610854,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 10,
+      "category": "lol",
+      "closed_market_count": 0,
+      "event_family_size": 37.0,
+      "market_count": 37,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 3367486.000809,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 4,
+      "category": "mamdani",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 4,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 614251.465517,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 11,
+      "category": "mayor",
+      "closed_market_count": 0,
+      "event_family_size": 15.0,
+      "market_count": 15,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 12373311.368682,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 16,
+      "category": "middle_east",
+      "closed_market_count": 2,
+      "event_family_size": 6.0,
+      "market_count": 18,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 1686403.967735,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 78,
+      "category": "midterms",
+      "closed_market_count": 4,
+      "event_family_size": 13.392857,
+      "market_count": 375,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 2658189.02456,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 22,
+      "category": "movies",
+      "closed_market_count": 5,
+      "event_family_size": 29.0,
+      "market_count": 58,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 4936278.666447,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 6,
+      "category": "music",
+      "closed_market_count": 12,
+      "event_family_size": 9.0,
+      "market_count": 18,
+      "median_spread": 0.02,
+      "orderbook_available_count": 1,
+      "total_volume": 2267522.547678,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "nba",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 196545.428121,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 0,
+      "category": "nba_playoffs",
+      "closed_market_count": 11,
+      "event_family_size": 1.0,
+      "market_count": 11,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 147693.42,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 0,
+      "category": "nfts",
+      "closed_market_count": 7,
+      "event_family_size": 1.0,
+      "market_count": 7,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 96845.19,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "nuclear",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 192096.881418,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 2,
+      "category": "obama",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 2,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 22954.977318,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 0,
+      "category": "olympics",
+      "closed_market_count": 4,
+      "event_family_size": 1.0,
+      "market_count": 4,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 154077.64,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 5,
+      "category": "openai",
+      "closed_market_count": 3,
+      "event_family_size": 4.0,
+      "market_count": 8,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 845560.17518,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 6,
+      "category": "pandemics",
+      "closed_market_count": 3,
+      "event_family_size": 9.0,
+      "market_count": 9,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 7732898.543806,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "pierre",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 153392.860987,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 0,
+      "category": "poker",
+      "closed_market_count": 2,
+      "event_family_size": 1.0,
+      "market_count": 2,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 11534.76,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "poland",
+      "closed_market_count": 1,
+      "event_family_size": 2.0,
+      "market_count": 2,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 5099929.038609,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 542,
+      "category": "politics",
+      "closed_market_count": 58,
+      "event_family_size": 14.045455,
+      "market_count": 1545,
+      "median_spread": 0.03,
+      "orderbook_available_count": 3,
+      "total_volume": 1417128040.000059,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 0,
+      "category": "pop-culture",
+      "closed_market_count": 20,
+      "event_family_size": 1.0,
+      "market_count": 20,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 343021.7,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 24,
+      "category": "pre-market",
+      "closed_market_count": 1,
+      "event_family_size": 6.25,
+      "market_count": 25,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 1705059.350136,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 28,
+      "category": "primaries",
+      "closed_market_count": 0,
+      "event_family_size": 23.6,
+      "market_count": 118,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 239658.402873,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 3,
+      "category": "putin",
+      "closed_market_count": 0,
+      "event_family_size": 1.5,
+      "market_count": 3,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 10018432.851218,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 2,
+      "category": "russia",
+      "closed_market_count": 1,
+      "event_family_size": 1.5,
+      "market_count": 3,
+      "median_spread": null,
+      "orderbook_available_count": 1,
+      "total_volume": 381139.078697,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "rwa",
+      "closed_market_count": 1,
+      "event_family_size": 2.0,
+      "market_count": 2,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 10339.15461,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 7,
+      "category": "science",
+      "closed_market_count": 7,
+      "event_family_size": 1.555556,
+      "market_count": 14,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 3928831.685292,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "senate",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 448468.997524,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 57,
+      "category": "soccer",
+      "closed_market_count": 18,
+      "event_family_size": 74.5,
+      "market_count": 149,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 3345782314.27205,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 2,
+      "category": "south_korea",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 2,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 487921.042949,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 59,
+      "category": "sports",
+      "closed_market_count": 133,
+      "event_family_size": 1.875912,
+      "market_count": 257,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 193830051.555343,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "stablecoins",
+      "closed_market_count": 1,
+      "event_family_size": 2.0,
+      "market_count": 2,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 188674.089138,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 3,
+      "category": "starmer",
+      "closed_market_count": 3,
+      "event_family_size": 6.0,
+      "market_count": 6,
+      "median_spread": 0.02,
+      "orderbook_available_count": 3,
+      "total_volume": 796790.394902,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "syria",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 223260.3541,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 2,
+      "category": "taxes",
+      "closed_market_count": 1,
+      "event_family_size": 1.5,
+      "market_count": 3,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 182926.694517,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "taylor_swift",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 250093.190418,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 69,
+      "category": "tech",
+      "closed_market_count": 11,
+      "event_family_size": 4.190476,
+      "market_count": 88,
+      "median_spread": 0.05,
+      "orderbook_available_count": 1,
+      "total_volume": 43902888.553316,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 6,
+      "category": "tiktok",
+      "closed_market_count": 1,
+      "event_family_size": 7.0,
+      "market_count": 7,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 1152590.780136,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 84,
+      "category": "trump",
+      "closed_market_count": 22,
+      "event_family_size": 8.153846,
+      "market_count": 106,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 14599954.238289,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 2,
+      "category": "trump-putin",
+      "closed_market_count": 2,
+      "event_family_size": 4.0,
+      "market_count": 4,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 604176.900542,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "trump-zelenskyy",
+      "closed_market_count": 4,
+      "event_family_size": 5.0,
+      "market_count": 5,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 1628154.585655,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 4,
+      "category": "trump_presidency",
+      "closed_market_count": 4,
+      "event_family_size": 4.0,
+      "market_count": 8,
+      "median_spread": 0.002,
+      "orderbook_available_count": 1,
+      "total_volume": 4323364.171656,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 1,
+      "category": "trump_x_al-sharaa",
+      "closed_market_count": 0,
+      "event_family_size": 1.0,
+      "market_count": 1,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 62126.426137,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 18,
+      "category": "ukraine",
+      "closed_market_count": 25,
+      "event_family_size": 4.777778,
+      "market_count": 43,
+      "median_spread": 0.0165,
+      "orderbook_available_count": 4,
+      "total_volume": 17009091.857228,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 0,
+      "category": "ukraine_&_russia",
+      "closed_market_count": 5,
+      "event_family_size": 1.0,
+      "market_count": 5,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 308455.79,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 2,
+      "category": "ukraine_map",
+      "closed_market_count": 4,
+      "event_family_size": 6.0,
+      "market_count": 6,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 213530.792859,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 0,
+      "category": "us-current-affairs",
+      "closed_market_count": 25,
+      "event_family_size": 1.0,
+      "market_count": 25,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 3175069.87,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 41,
+      "category": "us_election",
+      "closed_market_count": 1,
+      "event_family_size": 12.190476,
+      "market_count": 256,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 13661628.254194,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 7,
+      "category": "ventuals",
+      "closed_market_count": 0,
+      "event_family_size": 7.0,
+      "market_count": 7,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 45254.539506,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 8,
+      "category": "weather",
+      "closed_market_count": 0,
+      "event_family_size": 4.0,
+      "market_count": 8,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 296200.561951,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 83,
+      "category": "world",
+      "closed_market_count": 28,
+      "event_family_size": 7.333333,
+      "market_count": 198,
+      "median_spread": 0.007,
+      "orderbook_available_count": 9,
+      "total_volume": 144978493.148918,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 2,
+      "category": "world_affairs",
+      "closed_market_count": 1,
+      "event_family_size": 3.0,
+      "market_count": 3,
+      "median_spread": 0.009,
+      "orderbook_available_count": 2,
+      "total_volume": 179616.987817,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 82,
+      "category": "world_elections",
+      "closed_market_count": 0,
+      "event_family_size": 128.0,
+      "market_count": 256,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 1857154374.656826,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 15,
+      "category": "xrp",
+      "closed_market_count": 6,
+      "event_family_size": 21.0,
+      "market_count": 21,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 187161.628242,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 32,
+      "category": "yearly",
+      "closed_market_count": 10,
+      "event_family_size": 21.0,
+      "market_count": 42,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 2179067.819318,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 4,
+      "category": "youtube",
+      "closed_market_count": 0,
+      "event_family_size": 4.0,
+      "market_count": 4,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 21164.135436,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 2,
+      "category": "zelenskyy",
+      "closed_market_count": 0,
+      "event_family_size": 2.0,
+      "market_count": 2,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 647861.01677,
+      "trade_tape_density": 0.0
+    }
+  ],
+  "closed_market_count": 300,
+  "counts_for_live_gate": false,
+  "diagnostics": {
+    "active_collection": {
+      "event_count": 500,
+      "market_count": 5339,
+      "orderbook_error_count": 72,
+      "orderbook_errors": [
+        "orderbook:106229668102716149832209250222340847662201251266419359322746795373714233470739:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=106229668102716149832209250222340847662201251266419359322746795373714233470739",
+        "orderbook:33007765079325382103458898680383691503895532108499178620460955049586020382226:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=33007765079325382103458898680383691503895532108499178620460955049586020382226",
+        "orderbook:33799186820745984796925628555218896548353763534512103584425851114581900224385:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=33799186820745984796925628555218896548353763534512103584425851114581900224385",
+        "orderbook:103693433518125527001416636574099415821922498558487623412396163292963814003978:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=103693433518125527001416636574099415821922498558487623412396163292963814003978",
+        "orderbook:76829103262452682809495706312303596619517678311126635179788744002179270771878:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=76829103262452682809495706312303596619517678311126635179788744002179270771878",
+        "orderbook:64363447502273727810951885622300334984823192995733592399845260605779604346480:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=64363447502273727810951885622300334984823192995733592399845260605779604346480",
+        "orderbook:34035142221712364354899416126623416304962260767590062792033879920204802585564:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=34035142221712364354899416126623416304962260767590062792033879920204802585564",
+        "orderbook:63517326976374375632630658298716704665562106331315856506724933470892403292808:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=63517326976374375632630658298716704665562106331315856506724933470892403292808",
+        "orderbook:88690814996233770591898470716166328103466067940966473105605164201940329453282:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=88690814996233770591898470716166328103466067940966473105605164201940329453282",
+        "orderbook:8742751018229234832921857767309518554098936800170398659707180534144915847218:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=8742751018229234832921857767309518554098936800170398659707180534144915847218",
+        "orderbook:103987163544260987991532262433517870096186052165281012310649437931429785893640:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=103987163544260987991532262433517870096186052165281012310649437931429785893640",
+        "orderbook:95240063980635384389711700976920130330286151970005645915312362757635455311419:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=95240063980635384389711700976920130330286151970005645915312362757635455311419",
+        "orderbook:71814393255767059896885192320205110950970857723857002926607409598043220968518:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=71814393255767059896885192320205110950970857723857002926607409598043220968518",
+        "orderbook:12829516190095699015724020226971790365553069623531701813243912652159051546595:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=12829516190095699015724020226971790365553069623531701813243912652159051546595",
+        "orderbook:62499647704758013801224496519154801919449219197687180369505612744147504118777:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=62499647704758013801224496519154801919449219197687180369505612744147504118777",
+        "orderbook:89667254973027475163940771416019167537897714895546880163448338769528535684137:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=89667254973027475163940771416019167537897714895546880163448338769528535684137",
+        "orderbook:82814855654672504061247670166274349069234747344604118638495723199148512283270:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=82814855654672504061247670166274349069234747344604118638495723199148512283270",
+        "orderbook:28181983066814192341972022528872656900287488784777109397388022150121214816984:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=28181983066814192341972022528872656900287488784777109397388022150121214816984",
+        "orderbook:103909253011351322759892776638669457027523901655815490042130382730360706229706:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=103909253011351322759892776638669457027523901655815490042130382730360706229706",
+        "orderbook:40643730425995007653653846322257326466291751148478865541862332040512398068473:GET https://clob.polymarket.com/book failed: 404 Client Error: Not Found for url: https://clob.polymarket.com/book?token_id=40643730425995007653653846322257326466291751148478865541862332040512398068473"
+      ],
+      "orderbook_market_request_count": 80,
+      "orderbook_token_request_count": 86
+    },
+    "active_errors": [],
+    "closed_collection": {
+      "event_count": 300,
+      "market_count": 300,
+      "orderbook_error_count": 0,
+      "orderbook_errors": [],
+      "orderbook_market_request_count": 0,
+      "orderbook_token_request_count": 0
+    },
+    "closed_errors": []
+  },
+  "generated_at": "2026-06-28T15:10:21Z",
+  "high_volume_category_counts": [
+    {
+      "category": "ai",
+      "count": 25
+    },
+    {
+      "category": "airdrops",
+      "count": 8
+    },
+    {
+      "category": "all",
+      "count": 2
+    },
+    {
+      "category": "argentina",
+      "count": 2
+    },
+    {
+      "category": "art",
+      "count": 7
+    },
+    {
+      "category": "awards",
+      "count": 20
+    },
+    {
+      "category": "bernie_sanders",
+      "count": 7
+    },
+    {
+      "category": "big_tech",
+      "count": 49
+    },
+    {
+      "category": "bitcoin",
+      "count": 50
+    },
+    {
+      "category": "bnb",
+      "count": 11
+    },
+    {
+      "category": "books",
+      "count": 1
+    },
+    {
+      "category": "brazil",
+      "count": 18
+    },
+    {
+      "category": "business",
+      "count": 39
+    },
+    {
+      "category": "canada",
+      "count": 1
+    },
+    {
+      "category": "chess",
+      "count": 13
+    },
+    {
+      "category": "china",
+      "count": 1
+    },
+    {
+      "category": "consensys",
+      "count": 5
+    },
+    {
+      "category": "coronavirus",
+      "count": 20
+    },
+    {
+      "category": "courts",
+      "count": 6
+    },
+    {
+      "category": "crypto",
+      "count": 239
+    },
+    {
+      "category": "crypto_prices",
+      "count": 8
+    },
+    {
+      "category": "culture",
+      "count": 44
+    },
+    {
+      "category": "dogecoin",
+      "count": 9
+    },
+    {
+      "category": "economic_policy",
+      "count": 1
+    },
+    {
+      "category": "economy",
+      "count": 27
+    },
+    {
+      "category": "elections",
+      "count": 135
+    },
+    {
+      "category": "elon_musk",
+      "count": 1
+    },
+    {
+      "category": "epstein",
+      "count": 1
+    },
+    {
+      "category": "esports",
+      "count": 2
+    },
+    {
+      "category": "ethereum",
+      "count": 24
+    },
+    {
+      "category": "exchange",
+      "count": 3
+    },
+    {
+      "category": "football",
+      "count": 1
+    },
+    {
+      "category": "foreign_policy",
+      "count": 18
+    },
+    {
+      "category": "formula_1",
+      "count": 11
+    },
+    {
+      "category": "france",
+      "count": 12
+    },
+    {
+      "category": "fraud",
+      "count": 2
+    },
+    {
+      "category": "games",
+      "count": 2
+    },
+    {
+      "category": "gaza",
+      "count": 5
+    },
+    {
+      "category": "geopolitics",
+      "count": 73
+    },
+    {
+      "category": "global_elections",
+      "count": 14
+    },
+    {
+      "category": "global_politics",
+      "count": 5
+    },
+    {
+      "category": "hamas",
+      "count": 1
+    },
+    {
+      "category": "hit_price",
+      "count": 12
+    },
+    {
+      "category": "hyperliquid",
+      "count": 22
+    },
+    {
+      "category": "india",
+      "count": 3
+    },
+    {
+      "category": "inflation",
+      "count": 9
+    },
+    {
+      "category": "ipo",
+      "count": 25
+    },
+    {
+      "category": "ipos",
+      "count": 39
+    },
+    {
+      "category": "israel",
+      "count": 50
+    },
+    {
+      "category": "japan",
+      "count": 1
+    },
+    {
+      "category": "jerome_powell",
+      "count": 30
+    },
+    {
+      "category": "league_of_legends",
+      "count": 15
+    },
+    {
+      "category": "lol",
+      "count": 10
+    },
+    {
+      "category": "mamdani",
+      "count": 4
+    },
+    {
+      "category": "mayor",
+      "count": 11
+    },
+    {
+      "category": "middle_east",
+      "count": 14
+    },
+    {
+      "category": "midterms",
+      "count": 81
+    },
+    {
+      "category": "movies",
+      "count": 27
+    },
+    {
+      "category": "music",
+      "count": 16
+    },
+    {
+      "category": "nba",
+      "count": 1
+    },
+    {
+      "category": "nba_playoffs",
+      "count": 11
+    },
+    {
+      "category": "nfts",
+      "count": 6
+    },
+    {
+      "category": "nuclear",
+      "count": 1
+    },
+    {
+      "category": "obama",
+      "count": 2
+    },
+    {
+      "category": "olympics",
+      "count": 3
+    },
+    {
+      "category": "openai",
+      "count": 8
+    },
+    {
+      "category": "pandemics",
+      "count": 9
+    },
+    {
+      "category": "pierre",
+      "count": 1
+    },
+    {
+      "category": "poker",
+      "count": 2
+    },
+    {
+      "category": "poland",
+      "count": 2
+    },
+    {
+      "category": "politics",
+      "count": 558
+    },
+    {
+      "category": "pop-culture",
+      "count": 19
+    },
+    {
+      "category": "pre-market",
+      "count": 25
+    },
+    {
+      "category": "primaries",
+      "count": 23
+    },
+    {
+      "category": "putin",
+      "count": 3
+    },
+    {
+      "category": "russia",
+      "count": 3
+    },
+    {
+      "category": "rwa",
+      "count": 1
+    },
+    {
+      "category": "science",
+      "count": 14
+    },
+    {
+      "category": "senate",
+      "count": 1
+    },
+    {
+      "category": "soccer",
+      "count": 75
+    },
+    {
+      "category": "south_korea",
+      "count": 2
+    },
+    {
+      "category": "sports",
+      "count": 167
+    },
+    {
+      "category": "stablecoins",
+      "count": 2
+    },
+    {
+      "category": "starmer",
+      "count": 5
+    },
+    {
+      "category": "syria",
+      "count": 1
+    },
+    {
+      "category": "taxes",
+      "count": 3
+    },
+    {
+      "category": "taylor_swift",
+      "count": 1
+    },
+    {
+      "category": "tech",
+      "count": 79
+    },
+    {
+      "category": "tiktok",
+      "count": 7
+    },
+    {
+      "category": "trump",
+      "count": 90
+    },
+    {
+      "category": "trump-putin",
+      "count": 3
+    },
+    {
+      "category": "trump-zelenskyy",
+      "count": 5
+    },
+    {
+      "category": "trump_presidency",
+      "count": 8
+    },
+    {
+      "category": "trump_x_al-sharaa",
+      "count": 1
+    },
+    {
+      "category": "ukraine",
+      "count": 43
+    },
+    {
+      "category": "ukraine_&_russia",
+      "count": 5
+    },
+    {
+      "category": "ukraine_map",
+      "count": 6
+    },
+    {
+      "category": "us-current-affairs",
+      "count": 24
+    },
+    {
+      "category": "us_election",
+      "count": 41
+    },
+    {
+      "category": "ventuals",
+      "count": 7
+    },
+    {
+      "category": "weather",
+      "count": 8
+    },
+    {
+      "category": "world",
+      "count": 110
+    },
+    {
+      "category": "world_affairs",
+      "count": 3
+    },
+    {
+      "category": "world_elections",
+      "count": 82
+    },
+    {
+      "category": "xrp",
+      "count": 19
+    },
+    {
+      "category": "yearly",
+      "count": 32
+    },
+    {
+      "category": "youtube",
+      "count": 4
+    },
+    {
+      "category": "zelenskyy",
+      "count": 2
+    }
+  ],
+  "live_order_path": false,
+  "multi_market_event_count": 352,
+  "multi_outcome_event_count": 4,
+  "orderbook_available_count": 43,
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_market_discovery.v1",
+  "scope": "polymarket_only",
+  "threshold_like_market_count": 5115,
+  "top_categories": [
+    {
+      "active_market_count": 57,
+      "category": "soccer",
+      "closed_market_count": 18,
+      "event_family_size": 74.5,
+      "market_count": 149,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 3345782314.27205,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 82,
+      "category": "world_elections",
+      "closed_market_count": 0,
+      "event_family_size": 128.0,
+      "market_count": 256,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 1857154374.656826,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 542,
+      "category": "politics",
+      "closed_market_count": 58,
+      "event_family_size": 14.045455,
+      "market_count": 1545,
+      "median_spread": 0.03,
+      "orderbook_available_count": 3,
+      "total_volume": 1417128040.000059,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 59,
+      "category": "sports",
+      "closed_market_count": 133,
+      "event_family_size": 1.875912,
+      "market_count": 257,
+      "median_spread": null,
+      "orderbook_available_count": 0,
+      "total_volume": 193830051.555343,
+      "trade_tape_density": 0.0
+    },
+    {
+      "active_market_count": 35,
+      "category": "culture",
+      "closed_market_count": 9,
+      "event_family_size": 4.833333,
+      "market_count": 58,
+      "median_spread": 0.01,
+      "orderbook_available_count": 8,
+      "total_volume": 162681304.734047,
+      "trade_tape_density": 0.0
+    }
+  ],
+  "trade_tape_available_count": 0
+}

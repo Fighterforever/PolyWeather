@@ -1,0 +1,99 @@
+{
+  "counts_for_live_gate": false,
+  "final_next_focus": "maker_shadow_top_categories_paper_markout",
+  "live_order_path": false,
+  "paper_only": true,
+  "rows": [
+    {
+      "candidate_count": 0,
+      "category": "all_market",
+      "counts_for_live_gate": false,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "no_current_structural_candidate",
+      "markout_count": 0,
+      "next_action": "forward paper only on structural candidates and near misses",
+      "paper_fill_count": 0,
+      "paper_only": true,
+      "platform": "polymarket",
+      "resolved_pnl_cents": null,
+      "strategy_id": "payoff_matrix_arbitrage"
+    },
+    {
+      "candidate_count": 6,
+      "category": "top_opportunity_categories",
+      "counts_for_live_gate": false,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "maker_shadow_diagnostic_only_no_real_fills",
+      "markout_count": 0,
+      "next_action": "collect trade tape/orderbook touch markouts paper_only",
+      "paper_fill_count": 0,
+      "paper_only": true,
+      "platform": "polymarket",
+      "resolved_pnl_cents": null,
+      "strategy_id": "maker_shadow"
+    },
+    {
+      "candidate_count": 5266,
+      "category": "all_market",
+      "counts_for_live_gate": false,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "candidate_discovery_only_no_trade_rule",
+      "markout_count": 0,
+      "next_action": "manually review top liquid confusion candidates before any paper fill design",
+      "paper_fill_count": 0,
+      "paper_only": true,
+      "platform": "polymarket",
+      "resolved_pnl_cents": null,
+      "strategy_id": "rule_confusion_scanner"
+    },
+    {
+      "candidate_count": 0,
+      "category": "weather",
+      "counts_for_live_gate": false,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "weather_live_push_downgraded_after_failed_or_unproven_substrategies",
+      "markout_count": 0,
+      "next_action": "keep non_dust_uuww_due_runner and bucket_family_lp_low_frequency_monitor",
+      "paper_fill_count": 0,
+      "paper_only": true,
+      "platform": "polymarket",
+      "resolved_pnl_cents": null,
+      "strategy_id": "weather_module"
+    }
+  ],
+  "schema_version": "polyweather_polymarket_alpha_viability_scoreboard.v1",
+  "scope": "polymarket_only",
+  "summary": {
+    "final_next_focus": "maker_shadow_top_categories_paper_markout",
+    "live_order_path": false,
+    "maker_shadow_quote_count": 6,
+    "rule_confusion_candidate_count": 5266,
+    "strategy_count": 4,
+    "structural_candidate_count": 0,
+    "top_opportunity_category": "tech",
+    "weather_status": "research_monitoring_only_until_non_dust_due"
+  },
+  "top_maker_categories": [
+    "tech",
+    "exchange",
+    "music",
+    "india",
+    "ukraine"
+  ],
+  "top_opportunity_categories": [
+    "tech",
+    "exchange",
+    "music",
+    "india",
+    "ukraine"
+  ],
+  "top_structural_candidates": [],
+  "weather_bucket_family_lp": "low_frequency_monitor",
+  "weather_live_push_status": "research_monitoring_only_until_non_dust_due",
+  "weather_module_status": "research_monitoring_only_until_non_dust_due",
+  "weather_non_dust_uuww_due_runner": "remains_active"
+}

@@ -1,0 +1,495 @@
+{
+  "artifact_paths": {
+    "candidates": "evidence/polymarket_alpha/rule_confusion_candidates.jsonl"
+  },
+  "candidate_count": 5266,
+  "counts_for_live_gate": false,
+  "input_market_count": 5339,
+  "live_order_path": false,
+  "no_candidate_reason_counts": [
+    {
+      "count": 73,
+      "reason": "no_confusion_feature"
+    }
+  ],
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_rule_confusion.v1",
+  "scope": "polymarket_only",
+  "top_candidates": [
+    {
+      "category": "us_election",
+      "confusion_features": [
+        "date_time_ambiguity",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "which-party-will-win-the-house-in-2026",
+      "liquidity": 450991.868,
+      "live_order_path": false,
+      "market_id": "562803",
+      "market_slug": "will-the-republican-party-control-the-house-after-the-2026-midterm-elections",
+      "paper_only": true,
+      "title": "Will the Republican Party control the House after the 2026 Midterm elections?",
+      "volume": 3556464.646207
+    },
+    {
+      "category": "us_election",
+      "confusion_features": [
+        "date_time_ambiguity",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "which-party-will-win-the-house-in-2026",
+      "liquidity": 408801.0869,
+      "live_order_path": false,
+      "market_id": "562802",
+      "market_slug": "will-the-democratic-party-control-the-house-after-the-2026-midterm-elections",
+      "paper_only": true,
+      "title": "Will the Democratic Party control the House after the 2026 Midterm elections?",
+      "volume": 4251891.321452
+    },
+    {
+      "category": "politics",
+      "confusion_features": [
+        "date_time_ambiguity",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "balance-of-power-2026-midterms",
+      "liquidity": 230461.6035,
+      "live_order_path": false,
+      "market_id": "562831",
+      "market_slug": "2026-balance-of-power-r-senate-r-house-537",
+      "paper_only": true,
+      "title": "2026 Balance of Power: R Senate, R House",
+      "volume": 1804872.524078
+    },
+    {
+      "category": "politics",
+      "confusion_features": [
+        "date_time_ambiguity",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "balance-of-power-2026-midterms",
+      "liquidity": 215793.88535,
+      "live_order_path": false,
+      "market_id": "562829",
+      "market_slug": "2026-balance-of-power-d-senate-r-house-692",
+      "paper_only": true,
+      "title": "2026 Balance of Power: D Senate, R House",
+      "volume": 1188039.671671
+    },
+    {
+      "category": "politics",
+      "confusion_features": [
+        "date_time_ambiguity",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "balance-of-power-2026-midterms",
+      "liquidity": 213322.2375,
+      "live_order_path": false,
+      "market_id": "562828",
+      "market_slug": "2026-balance-of-power-d-senate-d-house-949",
+      "paper_only": true,
+      "title": "2026 Balance of Power: D Senate, D House",
+      "volume": 2056300.333927
+    },
+    {
+      "category": "politics",
+      "confusion_features": [
+        "date_time_ambiguity",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "balance-of-power-2026-midterms",
+      "liquidity": 204433.77209,
+      "live_order_path": false,
+      "market_id": "562832",
+      "market_slug": "2026-balance-of-power-other-131",
+      "paper_only": true,
+      "title": "2026 Balance of Power: Other",
+      "volume": 1577350.941392
+    },
+    {
+      "category": "us_election",
+      "confusion_features": [
+        "date_time_ambiguity",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "which-party-will-win-the-senate-in-2026",
+      "liquidity": 200059.2321,
+      "live_order_path": false,
+      "market_id": "562793",
+      "market_slug": "will-the-democratic-party-control-the-senate-after-the-2026-midterm-elections",
+      "paper_only": true,
+      "title": "Will the Democratic Party control the Senate after the 2026 Midterm elections?",
+      "volume": 1481776.244725
+    },
+    {
+      "category": "us_election",
+      "confusion_features": [
+        "date_time_ambiguity",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "which-party-will-win-the-senate-in-2026",
+      "liquidity": 162351.8916,
+      "live_order_path": false,
+      "market_id": "562794",
+      "market_slug": "will-the-republican-party-control-the-senate-after-the-2026-midterm-elections",
+      "paper_only": true,
+      "title": "Will the Republican Party control the Senate after the 2026 Midterm elections?",
+      "volume": 1325155.350814
+    },
+    {
+      "category": "politics",
+      "confusion_features": [
+        "date_time_ambiguity",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "balance-of-power-2026-midterms",
+      "liquidity": 144216.1487,
+      "live_order_path": false,
+      "market_id": "562830",
+      "market_slug": "2026-balance-of-power-r-senate-d-house-444",
+      "paper_only": true,
+      "title": "2026 Balance of Power: R Senate, D House",
+      "volume": 1529170.059907
+    },
+    {
+      "category": "midterms",
+      "confusion_features": [
+        "by_vs_on_wording",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "another-us-government-shutdown-house-winner-2026",
+      "liquidity": 58378.76414,
+      "live_order_path": false,
+      "market_id": "902979",
+      "market_slug": "will-there-be-no-us-government-shutdown-by-january-31-and-will-the-democratic-party-win-the-house-in-2026",
+      "paper_only": true,
+      "title": "Will there be no US government shutdown by January 31 and will the Democratic Party win the House in 2026?",
+      "volume": 114128.089046
+    },
+    {
+      "category": "midterms",
+      "confusion_features": [
+        "by_vs_on_wording",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "another-us-government-shutdown-house-winner-2026",
+      "liquidity": 58378.76414,
+      "live_order_path": false,
+      "market_id": "902980",
+      "market_slug": "will-there-be-no-us-government-shutdown-by-january-31-and-will-the-republican-party-win-the-house-in-2026",
+      "paper_only": true,
+      "title": "Will there be no US government shutdown by January 31 and will the Republican Party win the House in 2026?",
+      "volume": 95473.709875
+    },
+    {
+      "category": "russia",
+      "confusion_features": [
+        "entity_ambiguity",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "natoeu-troops-fighting-in-ukraine-in-2025",
+      "liquidity": 46579.72007,
+      "live_order_path": false,
+      "market_id": "521103",
+      "market_slug": "natoeu-troops-fighting-in-ukraine-in-2025",
+      "paper_only": true,
+      "title": "NATO/EU troops fighting in Ukraine in 2025?",
+      "volume": 170793.703881
+    },
+    {
+      "category": "russia",
+      "confusion_features": [
+        "entity_ambiguity",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "natoeu-troops-fighting-in-ukraine-in-2025",
+      "liquidity": 46498.24007,
+      "live_order_path": false,
+      "market_id": "610236",
+      "market_slug": "natoeu-troops-fighting-in-ukraine-in-june-30-2026",
+      "paper_only": true,
+      "title": "NATO/EU troops fighting in Ukraine in June 30, 2026?",
+      "volume": 157531.601086
+    },
+    {
+      "category": "midterms",
+      "confusion_features": [
+        "by_vs_on_wording",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "another-us-government-shutdown-house-winner-2026",
+      "liquidity": 34745.00128,
+      "live_order_path": false,
+      "market_id": "902978",
+      "market_slug": "will-there-be-another-us-government-shutdown-by-january-31-and-will-the-republican-party-win-the-house-in-2026",
+      "paper_only": true,
+      "title": "Will there be another US government shutdown by January 31 and will the Republican Party win the House in 2026?",
+      "volume": 65381.522093
+    },
+    {
+      "category": "economic_policy",
+      "confusion_features": [
+        "by_vs_on_wording",
+        "date_time_ambiguity",
+        "source_ambiguity",
+        "threshold_ambiguity"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "us-recession-by-end-of-2026",
+      "liquidity": 25552.0422,
+      "live_order_path": false,
+      "market_id": "609655",
+      "market_slug": "us-recession-by-end-of-2026",
+      "paper_only": true,
+      "title": "US recession by end of 2026?",
+      "volume": 1632715.811991
+    },
+    {
+      "category": "midterms",
+      "confusion_features": [
+        "by_vs_on_wording",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "another-us-government-shutdown-house-winner-2026",
+      "liquidity": 24006.97288,
+      "live_order_path": false,
+      "market_id": "902977",
+      "market_slug": "will-there-be-another-us-government-shutdown-by-january-31-and-will-the-democratic-party-win-the-house-in-2026",
+      "paper_only": true,
+      "title": "Will there be another US government shutdown by January 31 and will the Democratic Party win the House in 2026?",
+      "volume": 51685.665994
+    },
+    {
+      "category": "politics",
+      "confusion_features": [
+        "date_time_ambiguity",
+        "entity_ambiguity",
+        "source_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "how-many-republican-governors-after-the-2026-midterm-elections",
+      "liquidity": 20873.7143,
+      "live_order_path": false,
+      "market_id": "907691",
+      "market_slug": "will-the-republican-party-hold-exactly-30-or-31-governorships-after-the-2026-midterm-elections",
+      "paper_only": true,
+      "title": "Will the Republican Party hold exactly 30 or 31 governorships after the 2026 midterm elections?",
+      "volume": 7430.245734
+    },
+    {
+      "category": "geopolitics",
+      "confusion_features": [
+        "by_vs_on_wording",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "israel-strike-on-damascus-by-september-30",
+      "liquidity": 17960.65332,
+      "live_order_path": false,
+      "market_id": "585583",
+      "market_slug": "israel-strike-on-damascus-by-september-30",
+      "paper_only": true,
+      "title": "Israel strike on Damascus by September 30?",
+      "volume": 16769.883532
+    },
+    {
+      "category": "geopolitics",
+      "confusion_features": [
+        "by_vs_on_wording",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "israel-strike-on-damascus-by-september-30",
+      "liquidity": 17960.65332,
+      "live_order_path": false,
+      "market_id": "626789",
+      "market_slug": "israel-strike-on-damascus-by-december-31",
+      "paper_only": true,
+      "title": "Israel strike on Damascus by December 31?",
+      "volume": 8914.864654
+    },
+    {
+      "category": "geopolitics",
+      "confusion_features": [
+        "by_vs_on_wording",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "israel-strike-on-damascus-by-september-30",
+      "liquidity": 17960.65332,
+      "live_order_path": false,
+      "market_id": "614696",
+      "market_slug": "israel-strike-on-damascus-by-october-31",
+      "paper_only": true,
+      "title": "Israel strike on Damascus by October 31?",
+      "volume": 11777.752765
+    },
+    {
+      "category": "geopolitics",
+      "confusion_features": [
+        "by_vs_on_wording",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "israel-strike-on-damascus-by-september-30",
+      "liquidity": 17960.65332,
+      "live_order_path": false,
+      "market_id": "897530",
+      "market_slug": "israel-strike-on-damascus-by-march-31-2026",
+      "paper_only": true,
+      "title": "Israel strike on Damascus by March 31, 2026?",
+      "volume": 135150.325196
+    },
+    {
+      "category": "geopolitics",
+      "confusion_features": [
+        "by_vs_on_wording",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "israel-strike-on-damascus-by-september-30",
+      "liquidity": 17960.65332,
+      "live_order_path": false,
+      "market_id": "1809580",
+      "market_slug": "israel-military-action-on-damascus-by-april-30-2026",
+      "paper_only": true,
+      "title": "Israel military action on Damascus by April 30, 2026?",
+      "volume": 7531.232034
+    },
+    {
+      "category": "geopolitics",
+      "confusion_features": [
+        "by_vs_on_wording",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "israel-strike-on-damascus-by-september-30",
+      "liquidity": 17806.73332,
+      "live_order_path": false,
+      "market_id": "1809581",
+      "market_slug": "israel-military-action-on-damascus-by-june-30-2026",
+      "paper_only": true,
+      "title": "Israel military action on Damascus by June 30, 2026?",
+      "volume": 9598.677942
+    },
+    {
+      "category": "politics",
+      "confusion_features": [
+        "by_vs_on_wording",
+        "source_ambiguity",
+        "threshold_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "scotus-accepts-sports-event-contract-case-by-july-31-2026",
+      "liquidity": 16697.533,
+      "live_order_path": false,
+      "market_id": "1231857",
+      "market_slug": "scotus-accepts-sports-event-contract-case-by-december-31-2026",
+      "paper_only": true,
+      "title": "SCOTUS accepts sports event contract case by December 31, 2026?",
+      "volume": 10729.605246
+    },
+    {
+      "category": "politics",
+      "confusion_features": [
+        "date_time_ambiguity",
+        "entity_ambiguity",
+        "source_ambiguity",
+        "title_resolution_mismatch"
+      ],
+      "confusion_severity": 6.0,
+      "counts_for_live_gate": false,
+      "event_slug": "how-many-republican-governors-after-the-2026-midterm-elections",
+      "liquidity": 16456.4116,
+      "live_order_path": false,
+      "market_id": "907689",
+      "market_slug": "will-the-republican-party-hold-exactly-26-or-27-governorships-after-the-2026-midterm-elections",
+      "paper_only": true,
+      "title": "Will the Republican Party hold exactly 26 or 27 governorships after the 2026 midterm elections?",
+      "volume": 15501.60038
+    }
+  ]
+}
