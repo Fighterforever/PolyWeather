@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from src.trading.weather_observation_lock_signal import build_observation_lock_signal_report
+from src.trading.weather_observation_lock_signal import (
+    build_market_side_book_pair_index,
+    build_observation_lock_signal_report,
+)
 from src.weather.weather_observations import OfficialIntradayObservationRepository, detect_station_observation_anomalies
 
 
@@ -18,9 +21,10 @@ def _row(
     source: str = "metar",
     side: str = "yes",
     token_id: str = "yes-token",
+    market_slug: str | None = None,
 ):
     return {
-        "market_slug": f"highest-temperature-test-{bucket_type}",
+        "market_slug": market_slug or f"highest-temperature-test-{bucket_type}",
         "token_id": token_id,
         "side": side,
         "bucket_type": bucket_type,
@@ -229,6 +233,159 @@ def test_market_side_orderbook_index_pairs_yes_no_tokens():
 
     assert report["summary"]["direct_locked_side_book_count"] == 2
     assert {row["locked_side_token_id"] for row in report["rows"]} == {"no-token"}
+
+
+def test_market_side_book_pair_indexes_yes_no():
+    rows = [
+        _row(side="yes", token_id="yes-token", market_slug="market-1", best_bid=0.1, best_ask=0.2),
+        _row(side="no", token_id="no-token", market_slug="market-1", best_bid=0.8, best_ask=0.9),
+    ]
+    pair = build_market_side_book_pair_index(rows)["market-1"]
+
+    assert pair["market_slug"] == "market-1"
+    assert pair["yes_token_id"] == "yes-token"
+    assert pair["no_token_id"] == "no-token"
+    assert pair["yes_best_bid"] == 0.1
+    assert pair["no_best_ask"] == 0.9
+    assert pair["pair_complete"] is True
+    assert pair["pair_gap_reason"] is None
+
+
+def test_market_side_book_pair_reports_missing_counterpart():
+    pair = build_market_side_book_pair_index([_row(side="yes", token_id="yes-token", market_slug="market-1")])[
+        "market-1"
+    ]
+
+    assert pair["yes_token_id"] == "yes-token"
+    assert pair["no_token_id"] is None
+    assert pair["pair_complete"] is False
+    assert pair["pair_gap_reason"] == "missing_counterpart_token_book"
+
+
+def test_market_side_book_pair_preserves_depth_ladders():
+    rows = [
+        {
+            **_row(side="yes", token_id="yes-token", market_slug="market-1"),
+            "order_book": {
+                "token_id": "yes-token",
+                "best_bid": 0.1,
+                "best_ask": 0.2,
+                "bids": [{"price": 0.1, "size": 4}, {"price": 0.09, "size": 3}],
+                "asks": [{"price": 0.2, "size": 5}],
+            },
+        },
+        {
+            **_row(side="no", token_id="no-token", market_slug="market-1"),
+            "order_book": {
+                "token_id": "no-token",
+                "best_bid": 0.7,
+                "best_ask": 0.8,
+                "bids": [{"price": 0.7, "size": 6}],
+                "asks": [{"price": 0.8, "size": 7}],
+            },
+        },
+    ]
+    pair = build_market_side_book_pair_index(rows)["market-1"]
+
+    assert pair["yes_bid_ladder"] == [{"price": 0.1, "size": 4.0}, {"price": 0.09, "size": 3.0}]
+    assert pair["yes_ask_ladder"] == [{"price": 0.2, "size": 5.0}]
+    assert pair["no_bid_ladder"] == [{"price": 0.7, "size": 6.0}]
+    assert pair["no_ask_ladder"] == [{"price": 0.8, "size": 7.0}]
+
+
+def test_dead_side_bid_capture_for_locked_no_uses_yes_bid():
+    rows = [
+        _row(bucket_type="le", threshold=24, side="yes", token_id="yes-token", best_bid=0.02, bid_depth=10.0),
+        _row(bucket_type="le", threshold=24, side="no", token_id="no-token", best_bid=0.98, best_ask=None),
+    ]
+    report = _report(rows, [_obs(28)])
+    row = [item for item in report["rows"] if item["token_id"] == "no-token"][0]
+
+    assert row["locked_side"] == "NO"
+    assert row["dead_side"] == "YES"
+    assert row["dead_side_token_id"] == "yes-token"
+    assert row["dead_side_best_bid"] == 0.02
+    assert row["dead_side_capture_edge"] == 0.015
+    assert row["dead_side_capture_candidate"] is True
+
+
+def test_dead_side_bid_capture_for_locked_yes_uses_no_bid():
+    rows = [
+        _row(bucket_type="ge", threshold=23, side="yes", token_id="yes-token", best_bid=0.98, best_ask=None),
+        _row(bucket_type="ge", threshold=23, side="no", token_id="no-token", best_bid=0.03, bid_depth=10.0),
+    ]
+    report = _report(rows, [_obs(24)])
+    row = [item for item in report["rows"] if item["token_id"] == "yes-token"][0]
+
+    assert row["locked_side"] == "YES"
+    assert row["dead_side"] == "NO"
+    assert row["dead_side_token_id"] == "no-token"
+    assert row["dead_side_best_bid"] == 0.03
+    assert row["dead_side_capture_edge"] == 0.025
+    assert row["dead_side_capture_candidate"] is True
+
+
+def test_dead_side_bid_capture_requires_bid_depth():
+    rows = [
+        _row(bucket_type="le", threshold=24, side="yes", token_id="yes-token", best_bid=0.02, bid_depth=0.0),
+        _row(bucket_type="le", threshold=24, side="no", token_id="no-token", best_bid=0.98, best_ask=None),
+    ]
+    report = _report(rows, [_obs(28)])
+    row = [item for item in report["rows"] if item["token_id"] == "no-token"][0]
+
+    assert row["dead_side_capture_candidate"] is False
+    assert "dead_side_bid_depth_too_low" in row["dead_side_capture_blockers"]
+
+
+def test_dead_side_bid_capture_is_diagnostic_only():
+    rows = [
+        _row(bucket_type="le", threshold=24, side="yes", token_id="yes-token", best_bid=0.02, bid_depth=10.0),
+        _row(bucket_type="le", threshold=24, side="no", token_id="no-token", best_bid=0.98, best_ask=None),
+    ]
+    report = _report(rows, [_obs(28)])
+    row = [item for item in report["rows"] if item["dead_side_capture_candidate"]][0]
+
+    assert row["execution_mode"] == "dead_side_bid_capture"
+    assert row["execution_mode_status"] == "diagnostic_only_until_ctf_split_merge_supported"
+    assert row["dead_side_capture_diagnostic_only"] is True
+    assert row["dead_side_capture_counts_for_live_gate"] is False
+    assert row["dead_side_capture_live_gate_excluded"] is True
+
+
+def test_dead_side_capture_not_live_eligible():
+    rows = [
+        _row(bucket_type="le", threshold=24, side="yes", token_id="yes-token", best_bid=0.02, bid_depth=10.0),
+        _row(bucket_type="le", threshold=24, side="no", token_id="no-token", best_bid=0.98, best_ask=None),
+    ]
+    report = _report(rows, [_obs(28)])
+    row = [item for item in report["rows"] if item["dead_side_capture_candidate"]][0]
+
+    assert row["counts_for_live_gate"] is False
+    assert row["live_order_path"] is False
+    assert report["counts_for_live_gate"] is False
+    assert report["live_order_path"] is False
+
+
+def test_market_already_reflected_when_locked_side_bid_high_no_ask_no_dead_bid():
+    rows = [
+        _row(bucket_type="le", threshold=24, side="yes", token_id="yes-token", best_bid=0.0, bid_depth=0.0),
+        _row(bucket_type="le", threshold=24, side="no", token_id="no-token", best_bid=0.999, best_ask=None),
+    ]
+    report = _report(rows, [_obs(28)])
+    row = [item for item in report["rows"] if item["token_id"] == "no-token"][0]
+
+    assert row["market_reflection_state"] == "market_already_reflected_lock"
+
+
+def test_market_not_reflected_when_dead_side_bid_positive():
+    rows = [
+        _row(bucket_type="le", threshold=24, side="yes", token_id="yes-token", best_bid=0.02, bid_depth=10.0),
+        _row(bucket_type="le", threshold=24, side="no", token_id="no-token", best_bid=0.999, best_ask=None),
+    ]
+    report = _report(rows, [_obs(28)])
+    row = [item for item in report["rows"] if item["token_id"] == "no-token"][0]
+
+    assert row["market_reflection_state"] != "market_already_reflected_lock"
 
 
 def test_stale_but_crossed_ge_lock_is_warning_not_blocker():

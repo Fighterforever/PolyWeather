@@ -71,7 +71,7 @@
       "collect_intraday_before_scan": true,
       "direct_locked_side_book_count": 2,
       "executable_candidate_count": 0,
-      "final_conclusion": "observation_lock_alpha_waiting_for_direct_locked_side_liquidity",
+      "final_conclusion": "observation_lock_market_already_reflected_currently_no_edge",
       "ge_le_locked_count": 2,
       "ge_le_locked_reject_reason_counts": [
         {
@@ -115,14 +115,33 @@
       "stale_warning_count": 0,
       "status": "active_execution_sampling",
       "synthetic_locked_side_price_count": 0,
-      "top_current_blocker": "ask_depth_too_low=2"
+      "top_current_blocker": "market_already_reflected_lock=2",
+      "direct_locked_side_taker_candidate_count": 0,
+      "direct_locked_side_missing_ask_count": 2,
+      "dead_side_bid_available_count": 0,
+      "dead_side_capture_candidate_count": 0,
+      "dead_side_capture_positive_edge_count": 0,
+      "dead_side_capture_total_bid_depth": 0.0,
+      "dead_side_capture_diagnostic_fill_count": 0,
+      "dead_side_capture_sampler_report_path": "evidence/observation_lock_execution/dead_side_capture_sampler_report.json",
+      "dead_side_capture_watch_rows_path": "evidence/observation_lock_execution/dead_side_capture_watch_rows.jsonl",
+      "dead_side_capture_diagnostic_fills_path": "evidence/observation_lock_execution/dead_side_capture_diagnostic_fills.jsonl",
+      "market_already_reflected_lock_count": 2,
+      "observation_lock_execution_mode_breakdown": [
+        {
+          "count": 240,
+          "execution_mode": "none"
+        }
+      ],
+      "execution_mode_status": "diagnostic_only_until_ctf_split_merge_supported",
+      "next_action": "continue METAR-first observation-lock sampler; current ge/le lock is already reflected by market, wait for dead-side bid or direct locked-side ask before paper evidence"
     },
     "observation_lock_execution_sampler": {
       "counts_for_live_gate": false,
       "executable_candidate_count": 0,
-      "generated_at": "2026-06-28T06:27:07Z",
+      "generated_at": "2026-06-28T06:57:56Z",
       "install_report_path": "evidence/observation_lock_sampler_launchd_install_report.json",
-      "last_run_status": "no_executable_direct_locked_side_candidate",
+      "last_run_status": "market_already_reflected_currently_no_edge",
       "live_order_path": false,
       "locked_count": 66,
       "metar_freshness_status": "fresh_candidates_required",
@@ -170,15 +189,15 @@
           "reason": "unsupported_official_source_not_alpha"
         },
         {
-          "count": 50,
+          "count": 40,
           "reason": "spread_too_wide"
         },
         {
-          "count": 38,
+          "count": 31,
           "reason": "dust_price"
         },
         {
-          "count": 38,
+          "count": 31,
           "reason": "dust_price_bucket_not_alpha"
         },
         {
@@ -206,7 +225,7 @@
           "reason": "missing_executable_price"
         }
       ],
-      "remaining_blocker": "no active executable direct locked-side ge/le candidate; top ge/le reject reasons: ask_depth_too_low=2, executable_edge_not_positive=2, locked_side_ask_depth_too_low=2, missing_executable_price=2",
+      "remaining_blocker": "current ge/le lock has no direct locked-side ask and no dead-side bid; market_already_reflected_lock=2",
       "report_path": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
       "runner_label": "com.polyweather.observation-lock-execution-sampler",
       "scanned_row_count": 240,
@@ -244,6 +263,46 @@
         {
           "count": 1,
           "reason": "not_locked_side_token_row"
+        }
+      ],
+      "collect_intraday_before_scan": true,
+      "direct_locked_side_taker_candidate_count": 0,
+      "direct_locked_side_missing_ask_count": 2,
+      "dead_side_bid_available_count": 0,
+      "dead_side_capture_candidate_count": 0,
+      "dead_side_capture_positive_edge_count": 0,
+      "dead_side_capture_total_bid_depth": 0.0,
+      "dead_side_capture_diagnostic_fill_count": 0,
+      "dead_side_capture_sampler_report_path": "evidence/observation_lock_execution/dead_side_capture_sampler_report.json",
+      "dead_side_capture_watch_rows_path": "evidence/observation_lock_execution/dead_side_capture_watch_rows.jsonl",
+      "dead_side_capture_diagnostic_fills_path": "evidence/observation_lock_execution/dead_side_capture_diagnostic_fills.jsonl",
+      "market_already_reflected_lock_count": 2,
+      "observation_lock_execution_mode_breakdown": [
+        {
+          "count": 240,
+          "execution_mode": "none"
+        }
+      ],
+      "execution_mode_status": "diagnostic_only_until_ctf_split_merge_supported",
+      "historical_ge_le_approx_positive_count": 1,
+      "launchd_install_report_path": "evidence/observation_lock_sampler_launchd_install_report.json",
+      "locked_signal_count": 105,
+      "non_dust_uuww_due_runner_status": "pending_due",
+      "observation_lock_active_sampler_status": "installed_running",
+      "resolved_pnl_cents": null,
+      "top_current_blocker": "market_already_reflected_lock=2",
+      "dead_side_capture_blocker_counts": [
+        {
+          "blocker": "dead_side_bid_depth_too_low",
+          "count": 2
+        },
+        {
+          "blocker": "dead_side_bid_missing_or_zero",
+          "count": 2
+        },
+        {
+          "blocker": "dead_side_capture_edge_not_positive",
+          "count": 2
         }
       ]
     }
@@ -290,7 +349,7 @@
       "status": "failed"
     }
   },
-  "final_conclusion": "observation_lock_alpha_waiting_for_direct_locked_side_liquidity",
+  "final_conclusion": "observation_lock_market_already_reflected_currently_no_edge",
   "killed_paths": [
     "eq_exact_live",
     "dust_tail_live",
@@ -300,7 +359,7 @@
   "live": {
     "can_tiny_live": false,
     "live_order_path": false,
-    "reason": "paper-only active sampler still has no executable direct locked-side fill"
+    "reason": "paper-only active sampler found current ge/le locks already reflected by market; no direct taker or dead-side diagnostic fill"
   },
   "live_order_path": false,
   "paper_only": true,

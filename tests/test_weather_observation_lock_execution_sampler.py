@@ -19,9 +19,10 @@ def _row(
     bid_depth: float = 10.0,
     token_id: str = "yes-token",
     side: str = "yes",
+    market_slug: str | None = None,
 ) -> dict:
     return {
-        "market_slug": f"highest-temperature-test-{bucket_type}-{token_id}",
+        "market_slug": market_slug or f"highest-temperature-test-{bucket_type}-{token_id}",
         "token_id": token_id,
         "side": side,
         "bucket_type": bucket_type,
@@ -179,3 +180,115 @@ def test_sampler_does_not_archive_eq_shadow_as_alpha_watch(tmp_path):
     assert report["ge_le_locked_count"] == 0
     assert report["locked_watch_orderbook_snapshot_count"] == 0
     assert load_jsonl(tmp_path / "archive" / "locked_watch_rows.jsonl") == []
+
+
+def test_sampler_outputs_dead_side_capture_diagnostics(tmp_path):
+    rows = [
+        _row(
+            bucket_type="le",
+            threshold=24,
+            side="yes",
+            token_id="yes-token",
+            market_slug="market-1",
+            best_bid=0.02,
+            best_ask=None,
+            bid_depth=10.0,
+            ask_depth=0.0,
+        ),
+        _row(
+            bucket_type="le",
+            threshold=24,
+            side="no",
+            token_id="no-token",
+            market_slug="market-1",
+            best_bid=0.98,
+            best_ask=None,
+            bid_depth=10.0,
+            ask_depth=0.0,
+        ),
+    ]
+    report = _run(tmp_path, rows, [_obs(28)])
+
+    assert report["direct_locked_side_taker_candidate_count"] == 0
+    assert report["dead_side_bid_available_count"] == 2
+    assert report["dead_side_capture_candidate_count"] == 2
+    assert report["dead_side_capture_positive_edge_count"] == 2
+    assert report["dead_side_capture_diagnostic_fill_count"] == 2
+    assert report["execution_mode_status"] == "diagnostic_only_until_ctf_split_merge_supported"
+    dead_report = json.loads((tmp_path / "archive" / "dead_side_capture_sampler_report.json").read_text())
+    assert dead_report["counts_for_live_gate"] is False
+    assert dead_report["live_gate_excluded"] is True
+    assert dead_report["dead_side_capture_candidate_count"] == 2
+    fills = load_jsonl(tmp_path / "archive" / "dead_side_capture_diagnostic_fills.jsonl")
+    assert len(fills) == 2
+    assert fills[0]["diagnostic_only"] is True
+    assert fills[0]["counts_for_live_gate"] is False
+    assert fills[0]["live_gate_excluded"] is True
+
+
+def test_sampler_reports_market_already_reflected_lock(tmp_path):
+    rows = [
+        _row(
+            bucket_type="le",
+            threshold=24,
+            side="yes",
+            token_id="yes-token",
+            market_slug="market-1",
+            best_bid=0.0,
+            best_ask=None,
+            bid_depth=0.0,
+            ask_depth=0.0,
+        ),
+        _row(
+            bucket_type="le",
+            threshold=24,
+            side="no",
+            token_id="no-token",
+            market_slug="market-1",
+            best_bid=0.999,
+            best_ask=None,
+            bid_depth=10.0,
+            ask_depth=0.0,
+        ),
+    ]
+    report = _run(tmp_path, rows, [_obs(28)])
+
+    assert report["market_already_reflected_lock_count"] >= 1
+    assert report["dead_side_capture_candidate_count"] == 0
+    dead_report = json.loads((tmp_path / "archive" / "dead_side_capture_sampler_report.json").read_text())
+    assert dead_report["market_already_reflected_lock_count"] >= 1
+
+
+def test_sampler_dead_side_capture_is_not_live_eligible(tmp_path):
+    rows = [
+        _row(
+            bucket_type="le",
+            threshold=24,
+            side="yes",
+            token_id="yes-token",
+            market_slug="market-1",
+            best_bid=0.02,
+            best_ask=None,
+            bid_depth=10.0,
+            ask_depth=0.0,
+        ),
+        _row(
+            bucket_type="le",
+            threshold=24,
+            side="no",
+            token_id="no-token",
+            market_slug="market-1",
+            best_bid=0.98,
+            best_ask=None,
+            bid_depth=10.0,
+            ask_depth=0.0,
+        ),
+    ]
+    report = _run(tmp_path, rows, [_obs(28)])
+
+    assert report["paper_only"] is True
+    assert report["live_order_path"] is False
+    assert report["counts_for_live_gate"] is False
+    for row in load_jsonl(tmp_path / "archive" / "dead_side_capture_diagnostic_fills.jsonl"):
+        assert row["live_order_path"] is False
+        assert row["counts_for_live_gate"] is False

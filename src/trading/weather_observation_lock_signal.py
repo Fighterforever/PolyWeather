@@ -109,6 +109,25 @@ def _book_depth(row: Dict[str, Any], side: str) -> Optional[float]:
     return round(total, 8) if found else None
 
 
+def _book_ladder(row: Dict[str, Any], side: str) -> List[Dict[str, float]]:
+    book = _order_book(row)
+    raw = book.get("asks" if side == "ask" else "bids")
+    if raw is None:
+        raw = book.get("ask_ladder" if side == "ask" else "bid_ladder")
+    rows: List[Dict[str, float]] = []
+    if not isinstance(raw, list):
+        return rows
+    for level in raw:
+        if not isinstance(level, dict):
+            continue
+        price = _safe_float(level.get("price"))
+        size = _safe_float(level.get("size"))
+        if price is None or size is None or price <= 0 or size <= 0:
+            continue
+        rows.append({"price": float(price), "size": float(size)})
+    return sorted(rows, key=lambda item: item["price"], reverse=(side == "bid"))
+
+
 def _market_key(row: Dict[str, Any]) -> str:
     return _text(row.get("market_slug") or row.get("market_id"))
 
@@ -117,7 +136,7 @@ def _token_side(row: Dict[str, Any]) -> str:
     return _text(row.get("side") or row.get("outcome")).upper()
 
 
-def build_market_side_orderbook_index(rows: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+def build_market_side_book_pair_index(rows: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     index: Dict[str, Dict[str, Any]] = {}
     for row in rows:
         if not isinstance(row, dict):
@@ -136,9 +155,50 @@ def build_market_side_orderbook_index(rows: Iterable[Dict[str, Any]]) -> Dict[st
             "spread": _book_float(row, "spread"),
             "ask_depth": _book_depth(row, "ask"),
             "bid_depth": _book_depth(row, "bid"),
+            "ask_ladder": _book_ladder(row, "ask"),
+            "bid_ladder": _book_ladder(row, "bid"),
         }
-        index.setdefault(key, {})[side] = entry
+        pair = index.setdefault(
+            key,
+            {
+                "market_slug": row.get("market_slug"),
+                "market_id": row.get("market_id"),
+                "YES": None,
+                "NO": None,
+            },
+        )
+        pair["market_slug"] = pair.get("market_slug") or row.get("market_slug")
+        pair["market_id"] = pair.get("market_id") or row.get("market_id")
+        pair[side] = entry
+    for pair in index.values():
+        yes = pair.get("YES") if isinstance(pair.get("YES"), dict) else {}
+        no = pair.get("NO") if isinstance(pair.get("NO"), dict) else {}
+        pair_complete = bool(yes and no)
+        pair.update(
+            {
+                "yes_token_id": yes.get("token_id"),
+                "no_token_id": no.get("token_id"),
+                "yes_best_bid": yes.get("best_bid"),
+                "yes_best_ask": yes.get("best_ask"),
+                "yes_bid_depth": yes.get("bid_depth"),
+                "yes_ask_depth": yes.get("ask_depth"),
+                "no_best_bid": no.get("best_bid"),
+                "no_best_ask": no.get("best_ask"),
+                "no_bid_depth": no.get("bid_depth"),
+                "no_ask_depth": no.get("ask_depth"),
+                "yes_bid_ladder": yes.get("bid_ladder") or [],
+                "yes_ask_ladder": yes.get("ask_ladder") or [],
+                "no_bid_ladder": no.get("bid_ladder") or [],
+                "no_ask_ladder": no.get("ask_ladder") or [],
+                "pair_complete": pair_complete,
+                "pair_gap_reason": None if pair_complete else "missing_counterpart_token_book",
+            }
+        )
     return index
+
+
+def build_market_side_orderbook_index(rows: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    return build_market_side_book_pair_index(rows)
 
 
 def _latest_observation(
@@ -269,7 +329,9 @@ def _execution_price(
         "price_semantics": "direct_token_best_ask",
         "locked_side_token_id": row.get("token_id"),
         "locked_side_token_available": token_side in {"YES", "NO"} and token_side == locked_side,
+        "locked_side_best_bid": best_bid if token_side == locked_side else None,
         "locked_side_best_ask": best_ask if token_side == locked_side else None,
+        "locked_side_bid_depth": bid_depth if token_side == locked_side else None,
         "locked_side_ask_depth": ask_depth if token_side == locked_side else None,
         "executable_price_source": "row_token_book",
         "executable_price_source_type": "direct_locked_side_book" if token_side == locked_side else "missing",
@@ -291,9 +353,13 @@ def _execution_price(
             "spread": spread,
             "ask_depth": ask_depth,
             "bid_depth": bid_depth,
+            "ask_ladder": _book_ladder(row, "ask"),
+            "bid_ladder": _book_ladder(row, "bid"),
         }
     if direct:
+        direct_best_bid = _safe_float(direct.get("best_bid"))
         direct_best_ask = _safe_float(direct.get("best_ask"))
+        direct_bid_depth = _safe_float(direct.get("bid_depth"))
         direct_ask_depth = _safe_float(direct.get("ask_depth"))
         direct_token_id = _text(direct.get("token_id"))
         return {
@@ -302,7 +368,9 @@ def _execution_price(
             "price_semantics": "direct_locked_side_best_ask",
             "locked_side_token_id": direct_token_id or None,
             "locked_side_token_available": True,
+            "locked_side_best_bid": direct_best_bid,
             "locked_side_best_ask": direct_best_ask,
+            "locked_side_bid_depth": direct_bid_depth,
             "locked_side_ask_depth": direct_ask_depth,
             "executable_price_source": "direct_locked_side_book",
             "executable_price_source_type": "direct_locked_side_book",
@@ -318,7 +386,9 @@ def _execution_price(
             "price_semantics": "synthetic_no_from_yes_bid",
             "locked_side_token_id": None,
             "locked_side_token_available": False,
+            "locked_side_best_bid": None,
             "locked_side_best_ask": None,
+            "locked_side_bid_depth": None,
             "locked_side_ask_depth": None,
             "executable_price_source": "synthetic_from_opposite_bid",
             "executable_price_source_type": "synthetic_from_opposite_bid" if q_effective is not None else "missing",
@@ -331,12 +401,120 @@ def _execution_price(
         "ask_depth": None,
         "locked_side_token_id": None,
         "locked_side_token_available": False,
+        "locked_side_best_bid": None,
         "locked_side_best_ask": None,
+        "locked_side_bid_depth": None,
         "locked_side_ask_depth": None,
         "executable_price_source": "missing_locked_side_book",
         "executable_price_source_type": "missing",
         "current_row_is_locked_side_token": False,
     }
+
+
+def _dead_side_capture_fields(
+    *,
+    row: Dict[str, Any],
+    locked_side: Optional[str],
+    bucket_type: str,
+    settlement_source: str,
+    lock_is_immutable: bool,
+    freshness: Dict[str, Any],
+    anomaly_flags: List[str],
+    market_side_index: Optional[Dict[str, Dict[str, Any]]],
+    default_cost: float,
+    min_dead_side_bid: float,
+    min_dead_side_bid_depth: float,
+) -> Dict[str, Any]:
+    dead_side = "NO" if locked_side == "YES" else "YES" if locked_side == "NO" else None
+    key = _market_key(row)
+    market_entry = (market_side_index or {}).get(key) or {}
+    dead_entry = market_entry.get(dead_side) if dead_side else None
+    if not dead_entry and dead_side and _token_side(row) == dead_side:
+        dead_entry = {
+            "row": row,
+            "token_id": _text(row.get("token_id") or _order_book(row).get("token_id")) or None,
+            "best_bid": _book_float(row, "best_bid"),
+            "bid_depth": _book_depth(row, "bid"),
+        }
+    dead_bid = _safe_float((dead_entry or {}).get("best_bid"))
+    dead_depth = _safe_float((dead_entry or {}).get("bid_depth"))
+    edge = round(float(dead_bid) - float(default_cost), 6) if dead_bid is not None else None
+    blockers: List[str] = []
+    if not dead_side:
+        blockers.append("missing_locked_side")
+    if bucket_type not in {"ge", "le"}:
+        blockers.append("bucket_type_not_alpha")
+    if settlement_source not in SUPPORTED_LOCK_SOURCES:
+        blockers.append("unsupported_official_source_not_alpha")
+    if not lock_is_immutable:
+        blockers.append("lock_not_immutable")
+    if freshness.get("freshness_blocker"):
+        blockers.append(str(freshness["freshness_blocker"]))
+    if anomaly_flags:
+        blockers.append("blocked_by_observation_anomaly")
+    if dead_bid is None or dead_bid <= 0:
+        blockers.append("dead_side_bid_missing_or_zero")
+    elif dead_bid <= float(min_dead_side_bid):
+        blockers.append("dead_side_bid_below_min")
+    if edge is None or edge <= 0:
+        blockers.append("dead_side_capture_edge_not_positive")
+    if dead_depth is None:
+        blockers.append("dead_side_bid_depth_missing")
+    elif dead_depth < float(min_dead_side_bid_depth):
+        blockers.append("dead_side_bid_depth_too_low")
+    if _price_bucket(dead_bid) == DUST_PRICE_BUCKET:
+        blockers.append("dead_side_dust_bid_not_alpha")
+    candidate = not blockers
+    return {
+        "dead_side": dead_side,
+        "dead_side_token_id": (dead_entry or {}).get("token_id") if dead_entry else None,
+        "dead_side_best_bid": dead_bid,
+        "dead_side_bid_depth": dead_depth,
+        "dead_side_capture_edge": edge,
+        "dead_side_capture_candidate": bool(candidate),
+        "dead_side_capture_blockers": sorted(set(blockers)),
+        "dead_side_price_bucket": _price_bucket(dead_bid),
+        "dead_side_capture_diagnostic_only": True,
+        "dead_side_capture_counts_for_live_gate": False,
+        "dead_side_capture_live_gate_excluded": True,
+    }
+
+
+def _market_reflection_state(
+    *,
+    locked_side: Optional[str],
+    bucket_type: str,
+    execution: Dict[str, Any],
+    executable_edge: Optional[float],
+    dead_side: Dict[str, Any],
+    market_pair: Dict[str, Any],
+    min_executable_edge: float,
+    min_dead_side_bid: float,
+) -> str:
+    if locked_side not in {"YES", "NO"} or bucket_type not in {"ge", "le"}:
+        return "not_locked"
+    if (
+        execution.get("executable_price_source_type") == "direct_locked_side_book"
+        and execution.get("q_effective") is not None
+        and executable_edge is not None
+        and executable_edge > float(min_executable_edge)
+    ):
+        return "locked_but_executable_edge_available"
+    if execution.get("executable_price_source_type") == "synthetic_from_opposite_bid":
+        return "locked_but_only_synthetic_diagnostic"
+    locked_bid = _safe_float(execution.get("locked_side_best_bid"))
+    locked_ask = _safe_float(execution.get("locked_side_best_ask"))
+    dead_bid = _safe_float(dead_side.get("dead_side_best_bid"))
+    if (
+        locked_bid is not None
+        and locked_bid >= 0.98
+        and locked_ask is None
+        and (dead_bid is None or dead_bid <= float(min_dead_side_bid))
+    ):
+        return "market_already_reflected_lock"
+    if not market_pair.get("pair_complete"):
+        return "locked_but_missing_pair_book"
+    return "locked_but_no_current_edge"
 
 
 def _target_date_from_observation_at(value: Any) -> str:
@@ -401,6 +579,8 @@ def build_observation_lock_signal_row(
     max_spread: float = 0.03,
     min_ask_depth: float = 1.0,
     default_cost: float = 0.005,
+    min_dead_side_bid: float = 0.005,
+    min_dead_side_bid_depth: float = 1.0,
     market_side_index: Optional[Dict[str, Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
     bucket_type = _text(_first_text(row, ("bucket_type",)) or "").lower()
@@ -458,12 +638,44 @@ def build_observation_lock_signal_row(
         if locked_side and q_effective is not None
         else None
     )
+    market_pair = (market_side_index or {}).get(_market_key(row)) or {}
+    anomaly_flags = list(obs["anomaly_flags"])
+    dead_side = _dead_side_capture_fields(
+        row=row,
+        locked_side=locked_side,
+        bucket_type=bucket_type,
+        settlement_source=settlement_source,
+        lock_is_immutable=lock_is_immutable,
+        freshness=freshness,
+        anomaly_flags=anomaly_flags,
+        market_side_index=market_side_index,
+        default_cost=default_cost,
+        min_dead_side_bid=min_dead_side_bid,
+        min_dead_side_bid_depth=min_dead_side_bid_depth,
+    )
+    market_reflection_state = _market_reflection_state(
+        locked_side=locked_side,
+        bucket_type=bucket_type,
+        execution={**execution, "q_effective": q_effective},
+        executable_edge=executable_edge,
+        dead_side=dead_side,
+        market_pair=market_pair,
+        min_executable_edge=min_executable_edge,
+        min_dead_side_bid=min_dead_side_bid,
+    )
+    execution_mode = None
+    execution_mode_status = None
+    if market_reflection_state == "locked_but_executable_edge_available":
+        execution_mode = "direct_locked_side_taker"
+        execution_mode_status = "paper_only_direct_locked_side_taker"
+    elif dead_side.get("dead_side_capture_candidate"):
+        execution_mode = "dead_side_bid_capture"
+        execution_mode_status = "diagnostic_only_until_ctf_split_merge_supported"
     best_bid = _book_float(row, "best_bid")
     best_ask = _book_float(row, "best_ask")
     spread = _book_float(row, "spread")
     ask_depth = execution["ask_depth"]
     price_bucket = _price_bucket(q_effective)
-    anomaly_flags = list(obs["anomaly_flags"])
     blockers: List[str] = []
     if lock_state in {"ge_not_locked", "le_not_locked", "range_not_locked", "eq_not_locked", "missing_intraday_observation"}:
         blockers.append("observation_not_locked")
@@ -521,14 +733,22 @@ def build_observation_lock_signal_row(
         "side": locked_side or _text(row.get("side") or row.get("outcome")).upper() or None,
         "token_side": _text(row.get("side") or row.get("outcome")).upper() or None,
         "price_semantics": execution["price_semantics"],
+        "market_side_pair_complete": market_pair.get("pair_complete"),
+        "market_side_pair_gap_reason": market_pair.get("pair_gap_reason"),
         "locked_side_token_id": execution.get("locked_side_token_id"),
         "locked_side_token_available": execution.get("locked_side_token_available"),
+        "locked_side_best_bid": execution.get("locked_side_best_bid"),
         "locked_side_best_ask": execution.get("locked_side_best_ask"),
+        "locked_side_bid_depth": execution.get("locked_side_bid_depth"),
         "locked_side_ask_depth": execution.get("locked_side_ask_depth"),
         "executable_price_source": execution.get("executable_price_source"),
         "executable_price_source_type": execution.get("executable_price_source_type"),
         "synthetic_price_diagnostic_only": execution.get("synthetic_price_diagnostic_only"),
         "current_row_is_locked_side_token": execution.get("current_row_is_locked_side_token"),
+        **dead_side,
+        "execution_mode": execution_mode,
+        "execution_mode_status": execution_mode_status,
+        "market_reflection_state": market_reflection_state,
         "bucket_type": bucket_type,
         "threshold": threshold,
         "upper_threshold": upper_threshold,
@@ -569,6 +789,8 @@ def build_observation_lock_signal_report(
     min_executable_edge: float = 0.0,
     max_spread: float = 0.03,
     min_ask_depth: float = 1.0,
+    min_dead_side_bid: float = 0.005,
+    min_dead_side_bid_depth: float = 1.0,
 ) -> Dict[str, Any]:
     generated_at = generated_at or _now_iso()
     source_rows = [row for row in rows if isinstance(row, dict)]
@@ -582,6 +804,8 @@ def build_observation_lock_signal_report(
             min_executable_edge=min_executable_edge,
             max_spread=max_spread,
             min_ask_depth=min_ask_depth,
+            min_dead_side_bid=min_dead_side_bid,
+            min_dead_side_bid_depth=min_dead_side_bid_depth,
             market_side_index=market_side_index,
         )
         for row in source_rows
@@ -591,11 +815,19 @@ def build_observation_lock_signal_report(
     stations: Dict[str, int] = {}
     buckets: Dict[str, int] = {}
     blockers: Dict[str, int] = {}
+    reflection_states: Dict[str, int] = {}
+    execution_modes: Dict[str, int] = {}
     for row in signal_rows:
         decisions[str(row.get("decision") or "unknown")] = decisions.get(str(row.get("decision") or "unknown"), 0) + 1
         locks[str(row.get("lock_state") or "unknown")] = locks.get(str(row.get("lock_state") or "unknown"), 0) + 1
         stations[str(row.get("station_code") or "unknown")] = stations.get(str(row.get("station_code") or "unknown"), 0) + 1
         buckets[str(row.get("bucket_type") or "unknown")] = buckets.get(str(row.get("bucket_type") or "unknown"), 0) + 1
+        reflection_states[str(row.get("market_reflection_state") or "unknown")] = (
+            reflection_states.get(str(row.get("market_reflection_state") or "unknown"), 0) + 1
+        )
+        execution_modes[str(row.get("execution_mode") or "none")] = (
+            execution_modes.get(str(row.get("execution_mode") or "none"), 0) + 1
+        )
         for blocker in row.get("blockers") or []:
             blockers[str(blocker)] = blockers.get(str(blocker), 0) + 1
     missing_intraday_count = len([row for row in signal_rows if row.get("lock_state") == "missing_intraday_observation"])
@@ -623,6 +855,46 @@ def build_observation_lock_signal_report(
     )
     stale_warning_count = len([row for row in signal_rows if row.get("freshness_warning") == "stale_intraday_observation"])
     stale_blocker_count = len([row for row in signal_rows if row.get("freshness_blocker") == "stale_intraday_observation"])
+    direct_locked_side_taker_candidate_count = len(
+        [
+            row
+            for row in signal_rows
+            if row.get("execution_mode") == "direct_locked_side_taker"
+            and row.get("decision") == "candidate"
+        ]
+    )
+    direct_locked_side_missing_ask_count = len(
+        [
+            row
+            for row in signal_rows
+            if row.get("lock_state") in {"ge_yes_locked", "le_yes_dead_no_locked"}
+            and row.get("bucket_type") in {"ge", "le"}
+            and row.get("executable_price_source_type") == "direct_locked_side_book"
+            and row.get("locked_side_best_ask") is None
+        ]
+    )
+    dead_side_bid_available_count = len(
+        [
+            row
+            for row in signal_rows
+            if row.get("lock_state") in {"ge_yes_locked", "le_yes_dead_no_locked"}
+            and row.get("bucket_type") in {"ge", "le"}
+            and _safe_float(row.get("dead_side_best_bid")) is not None
+            and float(row.get("dead_side_best_bid") or 0.0) > 0
+        ]
+    )
+    dead_side_capture_candidate_count = len([row for row in signal_rows if row.get("dead_side_capture_candidate") is True])
+    dead_side_capture_positive_edge_count = len(
+        [
+            row
+            for row in signal_rows
+            if _safe_float(row.get("dead_side_capture_edge")) is not None
+            and float(row.get("dead_side_capture_edge") or 0.0) > 0
+        ]
+    )
+    market_already_reflected_lock_count = len(
+        [row for row in signal_rows if row.get("market_reflection_state") == "market_already_reflected_lock"]
+    )
     visible_station_count = len(
         {
             str(row.get("station_code"))
@@ -648,6 +920,12 @@ def build_observation_lock_signal_report(
             "direct_locked_side_book_count": direct_locked_side_book_count,
             "synthetic_locked_side_price_count": synthetic_locked_side_price_count,
             "missing_locked_side_orderbook_count": missing_locked_side_orderbook_count,
+            "direct_locked_side_taker_candidate_count": direct_locked_side_taker_candidate_count,
+            "direct_locked_side_missing_ask_count": direct_locked_side_missing_ask_count,
+            "dead_side_bid_available_count": dead_side_bid_available_count,
+            "dead_side_capture_candidate_count": dead_side_capture_candidate_count,
+            "dead_side_capture_positive_edge_count": dead_side_capture_positive_edge_count,
+            "market_already_reflected_lock_count": market_already_reflected_lock_count,
             "candidate_count": decisions.get("candidate", 0),
             "watch_count": decisions.get("watch", 0),
             "shadow_count": decisions.get("shadow", 0),
@@ -671,6 +949,14 @@ def build_observation_lock_signal_report(
             "blocker_counts": [
                 {"blocker": key, "count": value}
                 for key, value in sorted(blockers.items(), key=lambda pair: (-pair[1], pair[0]))
+            ],
+            "market_reflection_state_counts": [
+                {"market_reflection_state": key, "count": value}
+                for key, value in sorted(reflection_states.items(), key=lambda pair: (-pair[1], pair[0]))
+            ],
+            "execution_mode_counts": [
+                {"execution_mode": key, "count": value}
+                for key, value in sorted(execution_modes.items(), key=lambda pair: (-pair[1], pair[0]))
             ],
             "candidate_samples": [
                 row

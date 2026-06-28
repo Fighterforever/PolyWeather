@@ -147,6 +147,49 @@ def _fill_from_signal(row: Dict[str, Any], *, recorded_at: str) -> Dict[str, Any
     }
 
 
+def _diagnostic_dead_side_fill_from_signal(row: Dict[str, Any], *, recorded_at: str) -> Dict[str, Any]:
+    identity = {
+        "recorded_at": recorded_at,
+        "market_slug": row.get("market_slug"),
+        "dead_side_token_id": row.get("dead_side_token_id"),
+        "execution_mode": "dead_side_bid_capture",
+        "latest_available_at": row.get("latest_available_at"),
+    }
+    return {
+        "schema_version": "polyweather_observation_lock_dead_side_capture_diagnostic_fill.v1",
+        "paper_only": True,
+        "diagnostic_only": True,
+        "counts_for_live_gate": False,
+        "live_gate_excluded": True,
+        "live_order_path": False,
+        "diagnostic_fill_id": stable_json_hash(identity, length=24),
+        "strategy_id": "observation_lock_dead_side_bid_capture_diagnostic",
+        "execution_mode": "dead_side_bid_capture",
+        "execution_mode_status": "diagnostic_only_until_ctf_split_merge_supported",
+        "recorded_at": recorded_at,
+        "market_slug": row.get("market_slug"),
+        "dead_side": row.get("dead_side"),
+        "dead_side_token_id": row.get("dead_side_token_id"),
+        "dead_side_best_bid": row.get("dead_side_best_bid"),
+        "dead_side_bid_depth": row.get("dead_side_bid_depth"),
+        "dead_side_capture_edge": row.get("dead_side_capture_edge"),
+        "locked_side": row.get("locked_side"),
+        "locked_side_token_id": row.get("locked_side_token_id"),
+        "locked_side_best_bid": row.get("locked_side_best_bid"),
+        "locked_side_best_ask": row.get("locked_side_best_ask"),
+        "lock_state": row.get("lock_state"),
+        "market_reflection_state": row.get("market_reflection_state"),
+        "bucket_type": row.get("bucket_type"),
+        "station_code": row.get("station_code"),
+        "target_date": row.get("target_date"),
+        "official_current_high": row.get("official_current_high"),
+        "latest_observation_at": row.get("latest_observation_at"),
+        "latest_available_at": row.get("latest_available_at"),
+        "settlement_spec": row.get("settlement_spec"),
+        "no_lookahead": bool(row.get("no_lookahead") is not False),
+    }
+
+
 def _write_jsonl(path: str | Path, rows: Iterable[Dict[str, Any]]) -> int:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -244,6 +287,7 @@ def build_observation_lock_execution_sampler_report(
     candidates: List[Dict[str, Any]] = []
     watch_samples: List[Dict[str, Any]] = []
     locked_watch_rows: List[Dict[str, Any]] = []
+    dead_side_watch_rows: List[Dict[str, Any]] = []
     for row in signal_report.get("rows") or []:
         if not isinstance(row, dict):
             continue
@@ -263,6 +307,7 @@ def build_observation_lock_execution_sampler_report(
         if is_ge_le_locked:
             for reason in reasons or ["candidate"]:
                 ge_le_locked_reject_counts[reason] += 1
+            dead_side_watch_rows.append(row)
             if row.get("decision") != "shadow":
                 locked_watch = {**row, "execution_sampler_reject_reasons": reasons}
                 locked_watch_rows.append(locked_watch)
@@ -316,7 +361,55 @@ def build_observation_lock_execution_sampler_report(
     locked_watch_snapshots_written = _append_jsonl(locked_watch_snapshot_path, locked_watch_snapshot_records)
     locked_watch_rows_path = archive_root / "locked_watch_rows.jsonl"
     locked_watch_rows_written = _write_jsonl(locked_watch_rows_path, locked_watch_rows)
+    dead_side_watch_rows_path = archive_root / "dead_side_capture_watch_rows.jsonl"
+    dead_side_watch_rows_written = _write_jsonl(dead_side_watch_rows_path, dead_side_watch_rows)
+    dead_side_diagnostic_fills = [
+        _diagnostic_dead_side_fill_from_signal(row, recorded_at=generated_at)
+        for row in dead_side_watch_rows
+        if row.get("dead_side_capture_candidate") is True
+    ]
+    dead_side_diagnostic_fills_path = archive_root / "dead_side_capture_diagnostic_fills.jsonl"
+    dead_side_diagnostic_fill_count = _write_jsonl(dead_side_diagnostic_fills_path, dead_side_diagnostic_fills)
+    dead_side_blockers: Counter[str] = Counter()
+    for row in dead_side_watch_rows:
+        for blocker in row.get("dead_side_capture_blockers") or []:
+            dead_side_blockers[str(blocker)] += 1
+    dead_side_total_bid_depth = round(
+        sum(float(row.get("dead_side_bid_depth") or 0.0) for row in dead_side_watch_rows),
+        8,
+    )
     summary = signal_report.get("summary") if isinstance(signal_report.get("summary"), dict) else {}
+    dead_side_capture_report = {
+        "schema_version": "polyweather_observation_lock_dead_side_capture_sampler.v1",
+        "paper_only": True,
+        "diagnostic_only": True,
+        "counts_for_live_gate": False,
+        "live_gate_excluded": True,
+        "live_order_path": False,
+        "generated_at": generated_at,
+        "ge_le_locked_count": summary.get("ge_le_locked_count"),
+        "direct_locked_side_taker_candidate_count": summary.get("direct_locked_side_taker_candidate_count"),
+        "direct_locked_side_missing_ask_count": summary.get("direct_locked_side_missing_ask_count"),
+        "dead_side_bid_available_count": summary.get("dead_side_bid_available_count"),
+        "dead_side_capture_candidate_count": summary.get("dead_side_capture_candidate_count"),
+        "dead_side_capture_positive_edge_count": summary.get("dead_side_capture_positive_edge_count"),
+        "dead_side_capture_total_bid_depth": dead_side_total_bid_depth,
+        "dead_side_capture_top_samples": [
+            row
+            for row in dead_side_watch_rows
+            if row.get("dead_side_best_bid") is not None
+        ][:20],
+        "dead_side_capture_blocker_counts": _counter_rows(dead_side_blockers, "blocker"),
+        "execution_mode_status": "diagnostic_only_until_ctf_split_merge_supported",
+        "diagnostic_fill_count": dead_side_diagnostic_fill_count,
+        "market_already_reflected_lock_count": summary.get("market_already_reflected_lock_count"),
+        "paths": {
+            "dead_side_capture_watch_rows": str(dead_side_watch_rows_path),
+            "dead_side_capture_diagnostic_fills": str(dead_side_diagnostic_fills_path),
+        },
+    }
+    dead_side_capture_report_path = archive_root / "dead_side_capture_sampler_report.json"
+    _write_json(dead_side_capture_report_path, dead_side_capture_report)
     report = {
         "schema_version": SCHEMA_VERSION,
         "paper_only": True,
@@ -332,20 +425,33 @@ def build_observation_lock_execution_sampler_report(
         "direct_locked_side_book_count": summary.get("direct_locked_side_book_count"),
         "synthetic_locked_side_price_count": summary.get("synthetic_locked_side_price_count"),
         "missing_locked_side_orderbook_count": summary.get("missing_locked_side_orderbook_count"),
+        "direct_locked_side_taker_candidate_count": summary.get("direct_locked_side_taker_candidate_count"),
+        "direct_locked_side_missing_ask_count": summary.get("direct_locked_side_missing_ask_count"),
+        "dead_side_bid_available_count": summary.get("dead_side_bid_available_count"),
+        "dead_side_capture_candidate_count": summary.get("dead_side_capture_candidate_count"),
+        "dead_side_capture_positive_edge_count": summary.get("dead_side_capture_positive_edge_count"),
+        "dead_side_capture_total_bid_depth": dead_side_total_bid_depth,
+        "market_already_reflected_lock_count": summary.get("market_already_reflected_lock_count"),
+        "observation_lock_execution_mode_breakdown": summary.get("execution_mode_counts"),
         "executable_candidate_count": len(candidates),
         "paper_fill_count": len(fills),
+        "dead_side_capture_diagnostic_fill_count": dead_side_diagnostic_fill_count,
         "paper_fill_written_count": fills_written,
         "orderbook_snapshot_count": len(snapshot_records),
         "orderbook_snapshot_written_count": snapshots_written,
         "locked_watch_orderbook_snapshot_count": len(locked_watch_snapshot_records),
         "locked_watch_orderbook_snapshot_written_count": locked_watch_snapshots_written,
         "locked_watch_rows_written_count": locked_watch_rows_written,
+        "dead_side_capture_watch_rows_written_count": dead_side_watch_rows_written,
         "reject_reason_counts": _counter_rows(reject_counts, "reason"),
         "ge_le_locked_reject_reason_counts": _counter_rows(ge_le_locked_reject_counts, "reason"),
         "locked_watch_reason_counts": _counter_rows(locked_watch_reason_counts, "reason"),
+        "dead_side_capture_blocker_counts": _counter_rows(dead_side_blockers, "blocker"),
         "candidate_samples": candidates[:10],
         "top_watch_samples": watch_samples[:10],
         "top_locked_watch_samples": watch_samples[:10],
+        "dead_side_capture_top_samples": dead_side_capture_report["dead_side_capture_top_samples"][:10],
+        "execution_mode_status": "diagnostic_only_until_ctf_split_merge_supported",
         "metar_freshness_status": "fresh_candidates_required",
         "max_staleness_minutes": float(max_staleness_minutes),
         "paths": {
@@ -354,6 +460,9 @@ def build_observation_lock_execution_sampler_report(
             "signal_report": str(signal_report_output) if signal_report_output else None,
             "locked_watch_orderbook_snapshots": str(locked_watch_snapshot_path),
             "locked_watch_rows": str(locked_watch_rows_path),
+            "dead_side_capture_watch_rows": str(dead_side_watch_rows_path),
+            "dead_side_capture_sampler_report": str(dead_side_capture_report_path),
+            "dead_side_capture_diagnostic_fills": str(dead_side_diagnostic_fills_path),
         },
     }
     _write_json(Path(orderbook_archive_dir) / "observation_lock_execution_sampler_report.json", report)

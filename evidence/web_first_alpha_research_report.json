@@ -1,6 +1,7 @@
 {
   "blockers": [
-    "direct locked-side token exists but current ask/depth is not executable for current ge/le locks",
+    "current ge/le locked market already reflected: locked-side bid is high, ask is absent, and dead-side bid is absent",
+    "dead-side bid capture remains diagnostic-only until CTF split/merge execution is implemented and validated",
     "historical ge/le triage is approximate only, not executable depth",
     "non-dust threshold path still waits for due runner resolution"
   ],
@@ -44,7 +45,7 @@
   },
   "execution_sampling": {
     "active_sampler_installed": true,
-    "active_sampler_last_run_status": "no_executable_direct_locked_side_candidate",
+    "active_sampler_last_run_status": "market_already_reflected_currently_no_edge",
     "counts_for_live_gate": false,
     "direct_locked_side_book_count": 2,
     "executable_candidate_count": 0,
@@ -54,9 +55,21 @@
     "observation_lock_sampler_report": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
     "paper_fill_count": 0,
     "status": "installed_running",
-    "top_current_blocker": "ask_depth_too_low=2"
+    "top_current_blocker": "market_already_reflected_lock=2",
+    "direct_locked_side_taker_candidate_count": 0,
+    "direct_locked_side_missing_ask_count": 2,
+    "dead_side_bid_available_count": 0,
+    "dead_side_capture_candidate_count": 0,
+    "dead_side_capture_diagnostic_fill_count": 0,
+    "market_already_reflected_lock_count": 2,
+    "observation_lock_execution_mode_breakdown": [
+      {
+        "count": 240,
+        "execution_mode": "none"
+      }
+    ]
   },
-  "final_conclusion": "observation_lock_alpha_waiting_for_direct_locked_side_liquidity",
+  "final_conclusion": "observation_lock_market_already_reflected_currently_no_edge",
   "historical_non_dust_threshold_replay": "pending_non_dust_uuww_due_runner",
   "non_dust_uuww_due_runner_status": "pending_due",
   "historical_observation_lock_alpha": "historical_locked_signal_tradability_triage_complete",
@@ -308,7 +321,7 @@
     "triage_rows_path": "evidence/historical_replay/observation_lock_locked_signal_triage.jsonl"
   },
   "live_order_path": false,
-  "next_action": "continue five-minute METAR-first observation-lock sampler; wait for direct locked-side ask liquidity on ge/le locks",
+  "next_action": "continue METAR-first observation-lock sampler; current ge/le lock is already reflected by market, wait for dead-side bid or direct locked-side ask before paper evidence",
   "observation_lock_active_sampler": {
     "collect_intraday_before_scan": true,
     "direct_locked_side_book_count": 2,
@@ -353,18 +366,37 @@
     "stale_warning_count": 0,
     "status": "active_execution_sampling",
     "synthetic_locked_side_price_count": 0,
-    "top_current_blocker": "ask_depth_too_low=2",
-    "final_conclusion": "observation_lock_alpha_waiting_for_direct_locked_side_liquidity",
+    "top_current_blocker": "market_already_reflected_lock=2",
+    "final_conclusion": "observation_lock_market_already_reflected_currently_no_edge",
     "historical_ge_le_approx_positive_count": 1,
     "locked_signal_count": 105,
-    "resolved_pnl_cents": null
+    "resolved_pnl_cents": null,
+    "direct_locked_side_taker_candidate_count": 0,
+    "direct_locked_side_missing_ask_count": 2,
+    "dead_side_bid_available_count": 0,
+    "dead_side_capture_candidate_count": 0,
+    "dead_side_capture_positive_edge_count": 0,
+    "dead_side_capture_total_bid_depth": 0.0,
+    "dead_side_capture_diagnostic_fill_count": 0,
+    "dead_side_capture_sampler_report_path": "evidence/observation_lock_execution/dead_side_capture_sampler_report.json",
+    "dead_side_capture_watch_rows_path": "evidence/observation_lock_execution/dead_side_capture_watch_rows.jsonl",
+    "dead_side_capture_diagnostic_fills_path": "evidence/observation_lock_execution/dead_side_capture_diagnostic_fills.jsonl",
+    "market_already_reflected_lock_count": 2,
+    "observation_lock_execution_mode_breakdown": [
+      {
+        "count": 240,
+        "execution_mode": "none"
+      }
+    ],
+    "execution_mode_status": "diagnostic_only_until_ctf_split_merge_supported",
+    "next_action": "continue METAR-first observation-lock sampler; current ge/le lock is already reflected by market, wait for dead-side bid or direct locked-side ask before paper evidence"
   },
   "observation_lock_execution_sampler": {
     "counts_for_live_gate": false,
     "executable_candidate_count": 0,
-    "generated_at": "2026-06-28T06:27:07Z",
+    "generated_at": "2026-06-28T06:57:56Z",
     "install_report_path": "evidence/observation_lock_sampler_launchd_install_report.json",
-    "last_run_status": "no_executable_direct_locked_side_candidate",
+    "last_run_status": "market_already_reflected_currently_no_edge",
     "live_order_path": false,
     "locked_count": 66,
     "metar_freshness_status": "fresh_candidates_required",
@@ -412,15 +444,15 @@
         "reason": "unsupported_official_source_not_alpha"
       },
       {
-        "count": 50,
+        "count": 40,
         "reason": "spread_too_wide"
       },
       {
-        "count": 38,
+        "count": 31,
         "reason": "dust_price"
       },
       {
-        "count": 38,
+        "count": 31,
         "reason": "dust_price_bucket_not_alpha"
       },
       {
@@ -448,7 +480,7 @@
         "reason": "missing_executable_price"
       }
     ],
-    "remaining_blocker": "no active executable direct locked-side ge/le candidate; top ge/le reject reasons: ask_depth_too_low=2, executable_edge_not_positive=2, locked_side_ask_depth_too_low=2, missing_executable_price=2",
+    "remaining_blocker": "current ge/le lock has no direct locked-side ask and no dead-side bid; market_already_reflected_lock=2",
     "report_path": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
     "runner_label": "com.polyweather.observation-lock-execution-sampler",
     "scanned_row_count": 240,
@@ -486,6 +518,46 @@
       {
         "count": 1,
         "reason": "not_locked_side_token_row"
+      }
+    ],
+    "collect_intraday_before_scan": true,
+    "direct_locked_side_taker_candidate_count": 0,
+    "direct_locked_side_missing_ask_count": 2,
+    "dead_side_bid_available_count": 0,
+    "dead_side_capture_candidate_count": 0,
+    "dead_side_capture_positive_edge_count": 0,
+    "dead_side_capture_total_bid_depth": 0.0,
+    "dead_side_capture_diagnostic_fill_count": 0,
+    "dead_side_capture_sampler_report_path": "evidence/observation_lock_execution/dead_side_capture_sampler_report.json",
+    "dead_side_capture_watch_rows_path": "evidence/observation_lock_execution/dead_side_capture_watch_rows.jsonl",
+    "dead_side_capture_diagnostic_fills_path": "evidence/observation_lock_execution/dead_side_capture_diagnostic_fills.jsonl",
+    "market_already_reflected_lock_count": 2,
+    "observation_lock_execution_mode_breakdown": [
+      {
+        "count": 240,
+        "execution_mode": "none"
+      }
+    ],
+    "execution_mode_status": "diagnostic_only_until_ctf_split_merge_supported",
+    "historical_ge_le_approx_positive_count": 1,
+    "launchd_install_report_path": "evidence/observation_lock_sampler_launchd_install_report.json",
+    "locked_signal_count": 105,
+    "non_dust_uuww_due_runner_status": "pending_due",
+    "observation_lock_active_sampler_status": "installed_running",
+    "resolved_pnl_cents": null,
+    "top_current_blocker": "market_already_reflected_lock=2",
+    "dead_side_capture_blocker_counts": [
+      {
+        "blocker": "dead_side_bid_depth_too_low",
+        "count": 2
+      },
+      {
+        "blocker": "dead_side_bid_missing_or_zero",
+        "count": 2
+      },
+      {
+        "blocker": "dead_side_capture_edge_not_positive",
+        "count": 2
       }
     ]
   },

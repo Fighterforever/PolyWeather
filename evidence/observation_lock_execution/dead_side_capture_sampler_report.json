@@ -1,0 +1,38 @@
+{
+  "counts_for_live_gate": false,
+  "dead_side_bid_available_count": 0,
+  "dead_side_capture_blocker_counts": [
+    {
+      "blocker": "dead_side_bid_depth_too_low",
+      "count": 2
+    },
+    {
+      "blocker": "dead_side_bid_missing_or_zero",
+      "count": 2
+    },
+    {
+      "blocker": "dead_side_capture_edge_not_positive",
+      "count": 2
+    }
+  ],
+  "dead_side_capture_candidate_count": 0,
+  "dead_side_capture_positive_edge_count": 0,
+  "dead_side_capture_top_samples": [],
+  "dead_side_capture_total_bid_depth": 0.0,
+  "diagnostic_fill_count": 0,
+  "diagnostic_only": true,
+  "direct_locked_side_missing_ask_count": 2,
+  "direct_locked_side_taker_candidate_count": 0,
+  "execution_mode_status": "diagnostic_only_until_ctf_split_merge_supported",
+  "ge_le_locked_count": 2,
+  "generated_at": "2026-06-28T06:57:56Z",
+  "live_gate_excluded": true,
+  "live_order_path": false,
+  "market_already_reflected_lock_count": 2,
+  "paper_only": true,
+  "paths": {
+    "dead_side_capture_diagnostic_fills": "evidence/observation_lock_execution/dead_side_capture_diagnostic_fills.jsonl",
+    "dead_side_capture_watch_rows": "evidence/observation_lock_execution/dead_side_capture_watch_rows.jsonl"
+  },
+  "schema_version": "polyweather_observation_lock_dead_side_capture_sampler.v1"
+}
