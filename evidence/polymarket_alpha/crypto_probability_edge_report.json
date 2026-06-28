@@ -1,0 +1,24 @@
+{
+  "artifact_paths": {
+    "crypto_probability_candidates": "evidence/polymarket_alpha/crypto_probability_candidates.jsonl"
+  },
+  "candidate_count": 0,
+  "counts_for_live_gate": false,
+  "gap_reasons": [
+    {
+      "count": 41,
+      "reason": "missing_executable_yes_bid_ask"
+    },
+    {
+      "count": 203,
+      "reason": "unparseable_crypto_threshold"
+    }
+  ],
+  "generated_at": "2026-06-29T00:00:00Z",
+  "live_order_path": false,
+  "model_ready_count": 41,
+  "paper_only": true,
+  "parsed_crypto_market_count": 41,
+  "schema_version": "polyweather_polymarket_alpha_crypto_probability_model.v1",
+  "scope": "polymarket_only"
+}

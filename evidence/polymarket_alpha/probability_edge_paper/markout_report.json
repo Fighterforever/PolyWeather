@@ -8,7 +8,7 @@
   "fill_count": 0,
   "live_order_path": false,
   "markout_count": 0,
-  "markout_status": "no_forward_markout_yet",
+  "markout_status": "ready_waiting_for_probability_edge_fills",
   "mean_markout": null,
   "mean_markout_1h": null,
   "paper_only": true,

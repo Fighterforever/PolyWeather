@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import math
 from collections import Counter, defaultdict, deque
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
@@ -13,7 +13,8 @@ from src.trading.polymarket_historical_price_backfill import (
 )
 
 
-SCHEMA_VERSION = "polyweather_polymarket_alpha_probability_dataset.v1"
+SCHEMA_VERSION = "polyweather_polymarket_alpha_probability_dataset.v2"
+DECISION_OFFSETS_SECONDS = (7 * 86400, 3 * 86400, 24 * 3600, 6 * 3600, 3600, 15 * 60)
 
 
 def _safe_float(value: Any) -> Optional[float]:
@@ -109,6 +110,7 @@ def _token_specs(markets: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]
                 "category": market.get("category"),
                 "tags": market.get("tags") if isinstance(market.get("tags"), list) else [],
                 "event_slug": market.get("event_slug"),
+                "event_family_id": _text(market.get("event_slug")) or _text(market.get("market_slug")) or token,
                 "token_id": token,
                 "outcome_label": str(outcomes[index]) if index < len(outcomes) else None,
                 "volume": _safe_float(market.get("volume")),
@@ -164,6 +166,14 @@ def _book_for_token(spec: Dict[str, Any]) -> Dict[str, Any]:
     return books.get(spec.get("token_id")) if isinstance(books.get(spec.get("token_id")), dict) else {}
 
 
+def _depth_for_book(book: Dict[str, Any]) -> Optional[float]:
+    for key in ("ask_depth_usdc_3c", "bid_depth_usdc_3c", "depth"):
+        value = _safe_float(book.get(key))
+        if value is not None:
+            return value
+    return None
+
+
 def _price_momentum(history: List[Dict[str, Any]], index: int, seconds: int) -> Optional[float]:
     current_price = _safe_float(history[index].get("price"))
     current_time = _parse_utc(history[index].get("timestamp"))
@@ -182,6 +192,10 @@ def _price_momentum(history: List[Dict[str, Any]], index: int, seconds: int) -> 
     return round(current_price - previous, 8) if previous is not None else None
 
 
+def _price_momentum_at(history: List[Dict[str, Any]], index: int, seconds: int) -> Optional[float]:
+    return _price_momentum(history, index, seconds)
+
+
 def _recent_trade_count(trades_by_token: Dict[str, List[Dict[str, Any]]], token_id: str, timestamp: str, window_seconds: int = 3600) -> int:
     current = _parse_utc(timestamp)
     if current is None:
@@ -197,14 +211,40 @@ def _recent_trade_count(trades_by_token: Dict[str, List[Dict[str, Any]]], token_
     return count
 
 
+def _history_index_at_or_before(history: List[Dict[str, Any]], target: datetime) -> Optional[int]:
+    selected: Optional[int] = None
+    for index, row in enumerate(history):
+        ts = _parse_utc(row.get("timestamp"))
+        if ts is None:
+            continue
+        if ts <= target:
+            selected = index
+        else:
+            break
+    return selected
+
+
+def _decision_targets(end_dt: datetime, first_history_dt: Optional[datetime]) -> List[Tuple[str, datetime]]:
+    targets: List[Tuple[str, datetime]] = []
+    for seconds in DECISION_OFFSETS_SECONDS:
+        label = f"T-{seconds}s"
+        target = end_dt - timedelta(seconds=seconds)
+        if first_history_dt is not None and target < first_history_dt:
+            continue
+        targets.append((label, target))
+    return targets
+
+
 def _row_from_spec(
     spec: Dict[str, Any],
     *,
     timestamp: str,
+    decision_label: Optional[str] = None,
     price_mid: Optional[float],
     best_bid: Optional[float],
     best_ask: Optional[float],
     spread: Optional[float],
+    depth: Optional[float] = None,
     trade_count_recent: int,
     price_momentum_5m: Optional[float],
     price_momentum_1h: Optional[float],
@@ -222,8 +262,18 @@ def _row_from_spec(
             return None, "no_lookahead_after_close"
     if price_mid is None:
         return None, "missing_price"
+    is_extreme = bool(price_mid < 0.05 or price_mid > 0.95)
+    is_mid_training = bool(0.10 <= price_mid <= 0.90)
     row = {
         "schema_version": SCHEMA_VERSION,
+        "decision_snapshot_id": "|".join(
+            [
+                str(spec.get("market_slug") or ""),
+                str(spec.get("token_id") or ""),
+                str(decision_label or timestamp),
+            ]
+        ),
+        "event_family_id": spec.get("event_family_id") or spec.get("event_slug") or spec.get("market_slug"),
         "market_id": spec.get("market_id"),
         "condition_id": spec.get("condition_id"),
         "market_slug": spec.get("market_slug"),
@@ -233,11 +283,15 @@ def _row_from_spec(
         "token_id": spec.get("token_id"),
         "outcome_label": spec.get("outcome_label"),
         "timestamp": timestamp,
+        "decision_time": timestamp,
+        "decision_label": decision_label,
         "time_to_close_seconds": seconds,
         "price_mid": price_mid,
         "best_bid": best_bid,
         "best_ask": best_ask,
+        "q_effective": best_ask,
         "spread": spread,
+        "depth": depth,
         "volume": spec.get("volume"),
         "liquidity": spec.get("liquidity"),
         "trade_count_recent": int(trade_count_recent),
@@ -247,6 +301,8 @@ def _row_from_spec(
         "spread_bucket": spread_bucket(spread),
         "time_to_close_bucket": time_to_close_bucket(seconds),
         "liquidity_bucket": liquidity_bucket(_safe_float(spec.get("liquidity"))),
+        "is_mid_price_training_row": is_mid_training,
+        "is_extreme_price_row": is_extreme,
         "resolved_payout": spec.get("resolved_payout"),
         "resolved": spec.get("resolved_payout") is not None,
         "data_source": data_source,
@@ -333,17 +389,37 @@ def build_probability_dataset(
     for token, history in history_by_token.items():
         history.sort(key=lambda row: row.get("timestamp") or "")
         spec = all_specs[token]
-        for index, price_row in enumerate(history):
+        end_dt = _parse_utc(spec.get("end_time"))
+        first_history_dt = None
+        for row in history:
+            first_history_dt = _parse_utc(row.get("timestamp"))
+            if first_history_dt is not None:
+                break
+        if end_dt is None:
+            gaps["missing_end_time_for_decision_snapshots"] += 1
+            continue
+        used_indexes: set[int] = set()
+        for decision_label, target_dt in _decision_targets(end_dt, first_history_dt):
+            if target_dt > end_dt:
+                continue
+            index = _history_index_at_or_before(history, target_dt)
+            if index is None or index in used_indexes:
+                gaps["missing_price_before_decision_time"] += 1
+                continue
+            used_indexes.add(index)
+            price_row = history[index]
             row, gap = _row_from_spec(
                 spec,
                 timestamp=_text(price_row.get("timestamp")),
+                decision_label=decision_label,
                 price_mid=_safe_float(price_row.get("price")),
                 best_bid=None,
                 best_ask=None,
                 spread=None,
+                depth=None,
                 trade_count_recent=_recent_trade_count(trades_by_token, token, _text(price_row.get("timestamp"))),
-                price_momentum_5m=_price_momentum(history, index, 300),
-                price_momentum_1h=_price_momentum(history, index, 3600),
+                price_momentum_5m=_price_momentum_at(history, index, 300),
+                price_momentum_1h=_price_momentum_at(history, index, 3600),
                 data_source=str(price_row.get("source") or "polymarket_price_history"),
                 executable_depth_available=False,
             )
@@ -359,6 +435,7 @@ def build_probability_dataset(
         best_bid = _safe_float(book.get("best_bid"))
         best_ask = _safe_float(book.get("best_ask"))
         spread = _safe_float(book.get("spread"))
+        depth = _depth_for_book(book)
         price_mid = round((best_bid + best_ask) / 2.0, 8) if best_bid is not None and best_ask is not None else None
         executable_depth_available = True
         if price_mid is None:
@@ -370,10 +447,12 @@ def build_probability_dataset(
         row, gap = _row_from_spec(
             spec,
             timestamp=generated_at,
+            decision_label="current_active_snapshot",
             price_mid=price_mid,
             best_bid=best_bid,
             best_ask=best_ask,
             spread=spread,
+            depth=depth,
             trade_count_recent=_recent_trade_count(trades_by_token, token, generated_at),
             price_momentum_5m=None,
             price_momentum_1h=None,
@@ -387,6 +466,13 @@ def build_probability_dataset(
 
     category_counts = Counter(str(row.get("category") or "uncategorized") for row in rows)
     category_resolved_counts = Counter(str(row.get("category") or "uncategorized") for row in rows if row.get("resolved"))
+    category_event_families: Dict[str, set[str]] = defaultdict(set)
+    for row in rows:
+        category_event_families[str(row.get("category") or "uncategorized")].add(str(row.get("event_family_id") or ""))
+    unique_event_families = {str(row.get("event_family_id") or "") for row in rows if row.get("event_family_id")}
+    unique_markets = {str(row.get("market_slug") or row.get("market_id") or "") for row in rows if row.get("market_slug") or row.get("market_id")}
+    mid_training_count = len([row for row in rows if row.get("is_mid_price_training_row")])
+    extreme_price_count = len([row for row in rows if row.get("is_extreme_price_row")])
     manifest = {
         "schema_version": f"{SCHEMA_VERSION}.manifest",
         "generated_at": generated_at,
@@ -394,9 +480,19 @@ def build_probability_dataset(
         "paper_only": True,
         "counts_for_live_gate": False,
         "live_order_path": False,
+        "snapshot_row_count": len(rows),
+        "resolved_snapshot_count": len([row for row in rows if row.get("resolved")]),
+        "unique_event_family_count": len(unique_event_families),
+        "unique_market_count": len(unique_markets),
+        "mid_price_training_row_count": mid_training_count,
+        "extreme_price_row_count": extreme_price_count,
         "row_count": len(rows),
         "resolved_row_count": len([row for row in rows if row.get("resolved")]),
         "category_counts": [{"category": key, "count": count} for key, count in sorted(category_counts.items())],
+        "category_event_family_counts": [
+            {"category": key, "event_family_count": len(value)}
+            for key, value in sorted(category_event_families.items())
+        ],
         "category_resolved_counts": [
             {"category": key, "count": count} for key, count in sorted(category_resolved_counts.items())
         ],

@@ -1,6 +1,6 @@
 {
   "counts_for_live_gate": false,
-  "final_next_focus": "collect_more_resolved_probability_history",
+  "final_next_focus": "expand_mid_price_decision_snapshot_family_coverage",
   "live_order_path": false,
   "live_push_status": "no_probability_edge_yet",
   "model_oos_positive_categories": [],
@@ -115,7 +115,7 @@
   "schema_version": "polyweather_polymarket_alpha_viability_scoreboard.v1",
   "scope": "polymarket_only",
   "summary": {
-    "final_next_focus": "collect_more_resolved_probability_history",
+    "final_next_focus": "expand_mid_price_decision_snapshot_family_coverage",
     "forward_paper_fill_count": 0,
     "live_order_path": false,
     "live_push_status": "no_probability_edge_yet",
@@ -123,6 +123,7 @@
     "maker_shadow_quote_count": 6,
     "markout_mean": null,
     "model_oos_positive_categories": [],
+    "probability_model_blocker": "need_at_least_two_event_families_for_leave_family_out",
     "resolved_pnl_cents": null,
     "rule_confusion_candidate_count": 5266,
     "strategy_count": 7,

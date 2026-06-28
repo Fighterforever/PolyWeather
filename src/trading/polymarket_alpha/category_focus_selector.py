@@ -51,18 +51,20 @@ def build_category_focus_report(
         median_depth = density.get("median_depth")
         execution_feasibility = 1.0 if median_depth is not None and _safe_float(median_depth) > 10 else 0.0
         resolution_speed = _safe_float(density.get("resolution_speed_score"))
-        focus_score = round(
-            min(1.0, sample_count / max(1, int(min_sample_count)))
-            + max(0.0, brier_improvement) * 10
+        activity_score = round(min(1.0, active_market_count / 100.0) + min(1.0, trade_tape_density / 20.0) + resolution_speed, 6)
+        model_edge_available = sample_count > 0 and model.get("brier_improvement") is not None and model.get("log_loss_improvement") is not None
+        model_edge_score = round(
+            max(0.0, brier_improvement) * 10
             + max(0.0, log_loss_improvement) * 2
             + positive_ev_rate
-            + min(1.0, active_market_count / 100.0)
-            + min(1.0, trade_tape_density / 20.0)
-            + execution_feasibility
-            + resolution_speed,
+            + min(1.0, sample_count / max(1, int(min_sample_count))),
             6,
-        )
-        if sample_count >= int(min_sample_count) and brier_improvement > 0 and log_loss_improvement > 0 and positive_ev_rate > 0:
+        ) if model_edge_available else None
+        execution_score = round(execution_feasibility + (0.5 if median_spread is not None and _safe_float(median_spread) <= 0.05 else 0.0), 6)
+        focus_score = round(activity_score + (model_edge_score or 0.0) + execution_score, 6)
+        if not model_edge_available:
+            recommendation = "collect_model_data"
+        elif sample_count >= int(min_sample_count) and brier_improvement > 0 and log_loss_improvement > 0 and positive_ev_rate > 0:
             recommendation = "focus_forward_paper"
         elif sample_count < int(min_sample_count):
             recommendation = "collect_more_data"
@@ -76,6 +78,9 @@ def build_category_focus_report(
             {
                 "category": category,
                 "focus_score": focus_score,
+                "activity_score": activity_score,
+                "model_edge_score": model_edge_score,
+                "execution_score": execution_score,
                 "sample_count": sample_count,
                 "brier_improvement": brier_improvement,
                 "log_loss_improvement": log_loss_improvement,
@@ -87,6 +92,13 @@ def build_category_focus_report(
                 "resolution_speed": resolution_speed,
                 "execution_feasibility": execution_feasibility,
                 "recommendation": recommendation,
+                "why": (
+                    "model_edge_unavailable"
+                    if not model_edge_available
+                    else "positive_oos_model_edge_and_execution_context"
+                    if recommendation == "focus_forward_paper"
+                    else "insufficient_or_negative_oos_model_edge"
+                ),
                 "paper_only": True,
                 "counts_for_live_gate": False,
                 "live_order_path": False,

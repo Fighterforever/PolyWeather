@@ -58,3 +58,13 @@ def test_category_focus_rejects_negative_oos_categories():
     )
 
     assert report["categories"][0]["recommendation"] == "reject_for_now"
+
+
+def test_category_focus_collects_model_data_when_edge_score_unavailable():
+    report = build_category_focus_report(
+        model_report={"by_category": []},
+        opportunity_density_report={"categories": [{"category": "finance", "active_market_count": 100, "median_depth": 1000}]},
+    )
+
+    assert report["categories"][0]["recommendation"] == "collect_model_data"
+    assert report["categories"][0]["model_edge_score"] is None

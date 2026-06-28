@@ -24,6 +24,8 @@ DEFAULT_ROOT = Path("evidence/polymarket_alpha")
 DEFAULT_ACTIVE = DEFAULT_ROOT / "active_markets_snapshot.jsonl"
 DEFAULT_MODEL = DEFAULT_ROOT / "probability_edge_model_report.json"
 DEFAULT_FOCUS = DEFAULT_ROOT / "category_focus_report.json"
+DEFAULT_CRYPTO = DEFAULT_ROOT / "crypto_probability_edge_report.json"
+DEFAULT_CRYPTO_CANDIDATES = DEFAULT_ROOT / "crypto_probability_candidates.jsonl"
 DEFAULT_REPORT = DEFAULT_ROOT / "active_probability_edge_report.json"
 DEFAULT_PAPER = DEFAULT_ROOT / "probability_edge_paper"
 
@@ -33,6 +35,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--active-markets", default=str(DEFAULT_ACTIVE))
     parser.add_argument("--model-report", default=str(DEFAULT_MODEL))
     parser.add_argument("--focus-report", default=str(DEFAULT_FOCUS))
+    parser.add_argument("--crypto-report", default=str(DEFAULT_CRYPTO))
+    parser.add_argument("--crypto-candidates", default=str(DEFAULT_CRYPTO_CANDIDATES))
     parser.add_argument("--summary-output", default=str(DEFAULT_REPORT))
     parser.add_argument("--fills-output", default=str(DEFAULT_PAPER / "fills.jsonl"))
     parser.add_argument("--watch-rows-output", default=str(DEFAULT_PAPER / "watch_rows.jsonl"))
@@ -45,10 +49,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
+    crypto_report = load_json(args.crypto_report)
+    crypto_candidates = load_jsonl(args.crypto_candidates)
+    if crypto_candidates:
+        crypto_report["candidates"] = crypto_candidates
     report = scan_active_probability_edges(
         active_markets=load_jsonl(args.active_markets),
         model_report=load_json(args.model_report),
         focus_report=load_json(args.focus_report),
+        crypto_report=crypto_report,
         min_edge=float(args.min_edge),
         min_depth=float(args.min_depth),
         max_spread=float(args.max_spread),
@@ -65,6 +74,8 @@ def main(argv: list[str] | None = None) -> None:
         json.dumps(
             {
                 "candidate_count": report.get("candidate_count"),
+                "scanned_active_market_count": report.get("scanned_active_market_count"),
+                "model_ready_count": report.get("model_ready_count"),
                 "paper_fill_count": report.get("paper_fill_count"),
                 "focus_categories": report.get("focus_categories"),
                 "live_order_path": report.get("live_order_path"),

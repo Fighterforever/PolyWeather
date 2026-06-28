@@ -34,11 +34,14 @@ def test_probability_dataset_marks_price_history_as_non_executable_and_no_lookah
         trade_rows=[{"token_id": "yes-token", "timestamp": "2026-01-01T00:30:00Z"}],
     )
 
-    assert report["manifest"]["row_count"] == 1
-    assert report["manifest"]["resolved_row_count"] == 1
+    assert report["manifest"]["snapshot_row_count"] == 1
+    assert report["manifest"]["resolved_snapshot_count"] == 1
     assert report["manifest"]["no_lookahead_violation_count"] == 0
-    assert report["manifest"]["no_lookahead_blocked_after_close_count"] == 1
+    assert report["manifest"]["unique_event_family_count"] == 1
+    assert report["manifest"]["mid_price_training_row_count"] == 1
     row = report["rows"][0]
+    assert row["decision_snapshot_id"]
+    assert row["decision_time"] == "2026-01-01T00:00:00Z"
     assert row["resolved_payout"] == 1.0
     assert row["executable_depth_available"] is False
     assert row["live_order_path"] is False
@@ -55,6 +58,20 @@ def test_probability_dataset_uses_active_orderbook_when_available():
     )
     report = build_probability_dataset(active_markets=[active], closed_markets=[], generated_at="2026-01-01T00:00:00Z")
 
-    assert report["manifest"]["row_count"] == 2
+    assert report["manifest"]["snapshot_row_count"] == 2
     assert all(row["data_source"] == "active_orderbook_snapshot" for row in report["rows"])
     assert all(row["executable_depth_available"] is True for row in report["rows"])
+
+
+def test_probability_dataset_marks_extreme_rows_outside_mid_training_set():
+    report = build_probability_dataset(
+        active_markets=[],
+        closed_markets=[_market(outcome_prices=[1.0, 0.0])],
+        price_history_rows=[
+            {"token_id": "yes-token", "timestamp": "2026-01-01T00:00:00Z", "price": 0.99},
+        ],
+    )
+
+    assert report["manifest"]["extreme_price_row_count"] == 1
+    assert report["manifest"]["mid_price_training_row_count"] == 0
+    assert report["rows"][0]["is_extreme_price_row"] is True

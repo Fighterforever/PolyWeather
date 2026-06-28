@@ -20,9 +20,10 @@ from src.trading.polymarket_alpha.probability_edge_model import (  # noqa: E402
 
 
 DEFAULT_ROOT = Path("evidence/polymarket_alpha")
-DEFAULT_DATASET = DEFAULT_ROOT / "probability_dataset.jsonl"
+DEFAULT_DATASET = DEFAULT_ROOT / "probability_decision_snapshots.jsonl"
 DEFAULT_REPORT = DEFAULT_ROOT / "probability_edge_model_report.json"
 DEFAULT_CANDIDATES = DEFAULT_ROOT / "probability_edge_candidates_historical.jsonl"
+DEFAULT_OOS_PREDICTIONS = DEFAULT_ROOT / "probability_edge_oos_predictions.jsonl"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -30,6 +31,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--dataset", default=str(DEFAULT_DATASET))
     parser.add_argument("--summary-output", default=str(DEFAULT_REPORT))
     parser.add_argument("--candidates-output", default=str(DEFAULT_CANDIDATES))
+    parser.add_argument("--oos-predictions-output", default=str(DEFAULT_OOS_PREDICTIONS))
     parser.add_argument("--min-edge", type=float, default=0.02)
     parser.add_argument("--cost", type=float, default=0.01)
     return parser.parse_args(argv)
@@ -39,9 +41,13 @@ def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
     report = build_probability_edge_model_report(load_jsonl(args.dataset), min_edge=float(args.min_edge), cost=float(args.cost))
     write_jsonl(args.candidates_output, report.get("candidates") or [])
+    write_jsonl(args.oos_predictions_output, report.get("oos_predictions") or [])
     compact = {key: value for key, value in report.items() if key not in {"candidates", "model"}}
     compact["model"] = report.get("model")
-    compact["artifact_paths"] = {"probability_edge_candidates_historical": str(args.candidates_output)}
+    compact["artifact_paths"] = {
+        "probability_edge_candidates_historical": str(args.candidates_output),
+        "probability_edge_oos_predictions": str(args.oos_predictions_output),
+    }
     write_json(args.summary_output, compact)
     print(
         json.dumps(

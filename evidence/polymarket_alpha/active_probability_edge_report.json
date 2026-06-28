@@ -6,20 +6,21 @@
   "blocker_counts": [
     {
       "count": 2258,
-      "reason": "category_not_focus_forward_paper"
-    },
-    {
-      "count": 3081,
-      "reason": "not_active"
+      "reason": "global_oos_model_not_passed"
     }
   ],
+  "by_model_source": [],
   "candidate_count": 0,
   "counts_for_live_gate": false,
+  "executable_candidate_count": 0,
   "focus_categories": [],
   "live_order_path": false,
+  "model_ready_count": 41,
   "paper_fill_count": 0,
   "paper_only": true,
-  "schema_version": "polyweather_polymarket_alpha_active_probability_edge.v1",
+  "scanned_active_market_count": 2258,
+  "schema_version": "polyweather_polymarket_alpha_active_probability_edge.v2",
   "scope": "polymarket_only",
+  "top_candidates": [],
   "watch_row_count": 0
 }

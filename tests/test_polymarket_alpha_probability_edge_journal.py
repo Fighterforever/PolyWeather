@@ -35,6 +35,13 @@ def test_probability_edge_markout_reports_forward_price_change():
     assert report["live_order_path"] is False
 
 
+def test_probability_edge_markout_waits_for_probability_edge_fills_when_empty():
+    report = build_markout_report(fills=[], price_rows=[])
+
+    assert report["fill_count"] == 0
+    assert report["markout_status"] == "ready_waiting_for_probability_edge_fills"
+
+
 def test_probability_edge_resolved_audit_keeps_unresolved_pnl_null():
     report = build_resolved_audit_report(fills=[_fill()], dataset_rows=[])
 

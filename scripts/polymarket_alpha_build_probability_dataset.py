@@ -26,8 +26,8 @@ DEFAULT_CLOSED = DEFAULT_ROOT / "closed_markets_snapshot.jsonl"
 DEFAULT_PRICE = Path("evidence/historical_markets/polymarket_price_history.jsonl")
 DEFAULT_TRADE = Path("evidence/historical_markets/polymarket_trade_tape.jsonl")
 DEFAULT_FETCHED_PRICE = DEFAULT_ROOT / "probability_price_history.jsonl"
-DEFAULT_DATASET = DEFAULT_ROOT / "probability_dataset.jsonl"
-DEFAULT_MANIFEST = DEFAULT_ROOT / "probability_dataset_manifest.json"
+DEFAULT_DATASET = DEFAULT_ROOT / "probability_decision_snapshots.jsonl"
+DEFAULT_MANIFEST = DEFAULT_ROOT / "probability_decision_snapshot_manifest.json"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -79,6 +79,9 @@ def main(argv: list[str] | None = None) -> None:
             {
                 "row_count": manifest.get("row_count"),
                 "resolved_row_count": manifest.get("resolved_row_count"),
+                "decision_snapshot_row_count": manifest.get("snapshot_row_count"),
+                "unique_event_family_count": manifest.get("unique_event_family_count"),
+                "mid_price_training_row_count": manifest.get("mid_price_training_row_count"),
                 "category_count": len(manifest.get("category_counts") or []),
                 "no_lookahead_violation_count": manifest.get("no_lookahead_violation_count"),
                 "live_order_path": manifest.get("live_order_path"),

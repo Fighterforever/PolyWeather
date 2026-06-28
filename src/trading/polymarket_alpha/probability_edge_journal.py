@@ -140,7 +140,9 @@ def build_markout_report(
         "mean_markout": _mean(all_values),
         "mean_markout_1h": _mean(one_hour_values),
         "markout_status": (
-            "no_forward_markout_yet"
+            "ready_waiting_for_probability_edge_fills"
+            if not materialized_fills
+            else "no_forward_markout_yet"
             if not markouts
             else "forward_markout_positive"
             if (_mean(one_hour_values) or _mean(all_values) or 0.0) > 0

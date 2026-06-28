@@ -184,10 +184,15 @@ def build_alpha_viability_scoreboard(
             next_action="keep non_dust_uuww_due_runner and bucket_family_lp_low_frequency_monitor",
         ),
     ]
+    model_blocker = str(probability_edge_model_report.get("oos_blocker_reason") or "")
     if structural_candidates:
         final_next_focus = "payoff_matrix_arbitrage_candidates_paper_review"
     elif live_push_status == "no_probability_edge_yet":
-        final_next_focus = "collect_more_resolved_probability_history"
+        final_next_focus = (
+            "expand_mid_price_decision_snapshot_family_coverage"
+            if model_blocker
+            else "probability_edge_model_research"
+        )
     elif live_push_status in {"continue_forward_paper", "collect_forward_markouts"}:
         final_next_focus = "probability_edge_forward_paper_markout"
     elif top_focus_categories:
@@ -232,6 +237,7 @@ def build_alpha_viability_scoreboard(
             "maker_shadow_focus_quote_count": maker_focus_quote_count,
             "rule_confusion_candidate_count": rule_candidate_count,
             "weather_status": weather_status,
+            "probability_model_blocker": model_blocker or None,
             "final_next_focus": final_next_focus,
             "live_order_path": False,
         },

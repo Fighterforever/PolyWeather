@@ -26,7 +26,7 @@ DEFAULT_PAPER = DEFAULT_ROOT / "probability_edge_paper"
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Audit forward markouts for paper-only probability edge fills.")
     parser.add_argument("--fills", default=str(DEFAULT_PAPER / "fills.jsonl"))
-    parser.add_argument("--price-rows", default=str(DEFAULT_ROOT / "probability_dataset.jsonl"))
+    parser.add_argument("--price-rows", default=str(DEFAULT_ROOT / "probability_decision_snapshots.jsonl"))
     parser.add_argument("--markouts-output", default=str(DEFAULT_PAPER / "markouts.jsonl"))
     parser.add_argument("--summary-output", default=str(DEFAULT_PAPER / "markout_report.json"))
     return parser.parse_args(argv)

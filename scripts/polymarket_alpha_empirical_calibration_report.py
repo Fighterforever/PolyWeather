@@ -20,7 +20,7 @@ from src.trading.polymarket_alpha.empirical_calibration import (  # noqa: E402
 
 
 DEFAULT_ROOT = Path("evidence/polymarket_alpha")
-DEFAULT_DATASET = DEFAULT_ROOT / "probability_dataset.jsonl"
+DEFAULT_DATASET = DEFAULT_ROOT / "probability_decision_snapshots.jsonl"
 DEFAULT_REPORT = DEFAULT_ROOT / "empirical_calibration_report.json"
 DEFAULT_TABLE = DEFAULT_ROOT / "empirical_calibration_table.jsonl"
 

@@ -1,345 +1,98 @@
 {
   "artifact_paths": {
-    "probability_edge_candidates_historical": "evidence/polymarket_alpha/probability_edge_candidates_historical.jsonl"
+    "probability_edge_candidates_historical": "evidence/polymarket_alpha/probability_edge_candidates_historical.jsonl",
+    "probability_edge_oos_predictions": "evidence/polymarket_alpha/probability_edge_oos_predictions.jsonl"
   },
-  "bucket_model_group_count": 45,
+  "bucket_model_group_count": 10,
   "by_category": [],
+  "by_price_bucket": [],
+  "by_time_to_close": [],
   "candidate_count": 0,
   "counts_for_live_gate": false,
-  "hard_conclusion": "no_probability_edge_yet_insufficient_category_event_oos_split",
-  "input_resolved_row_count": 8497,
+  "hard_conclusion": "no_probability_edge_yet_need_at_least_two_event_families_for_leave_family_out",
+  "input_resolved_row_count": 29,
+  "input_row_count": 5150,
   "live_order_path": false,
+  "logistic_model_ready": false,
+  "mid_price_training_row_count": 4,
   "model": {
-    "*|0_05_0_15": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 2.38740513195707e-06,
-      "sample_count": 674
+    "bins": {
+      "global|*|*|*": {
+        "p": 0.5,
+        "p_lcb": 0.010000000000000009,
+        "p_ucb": 0.99,
+        "sample_count": 4
+      },
+      "global|0_15_0_35|*|*": {
+        "p": 0.0,
+        "p_lcb": 0.0,
+        "p_ucb": 6.198064213930024e-05,
+        "sample_count": 1
+      },
+      "global|0_15_0_35|1d_7d|*": {
+        "p": 0.0,
+        "p_lcb": 0.0,
+        "p_ucb": 6.198064213930024e-05,
+        "sample_count": 1
+      },
+      "global|0_15_0_35|1d_7d|missing": {
+        "p": 0.0,
+        "p_lcb": 0.0,
+        "p_ucb": 6.198064213930024e-05,
+        "sample_count": 1
+      },
+      "global|0_35_0_65|*|*": {
+        "p": 0.5,
+        "p_lcb": 0.0,
+        "p_ucb": 1.0,
+        "sample_count": 2
+      },
+      "global|0_35_0_65|7d_30d|*": {
+        "p": 0.5,
+        "p_lcb": 0.0,
+        "p_ucb": 1.0,
+        "sample_count": 2
+      },
+      "global|0_35_0_65|7d_30d|missing": {
+        "p": 0.5,
+        "p_lcb": 0.0,
+        "p_ucb": 1.0,
+        "sample_count": 2
+      },
+      "global|0_65_0_85|*|*": {
+        "p": 1.0,
+        "p_lcb": 0.9999380193578608,
+        "p_ucb": 1.0,
+        "sample_count": 1
+      },
+      "global|0_65_0_85|1d_7d|*": {
+        "p": 1.0,
+        "p_lcb": 0.9999380193578608,
+        "p_ucb": 1.0,
+        "sample_count": 1
+      },
+      "global|0_65_0_85|1d_7d|missing": {
+        "p": 1.0,
+        "p_lcb": 0.9999380193578608,
+        "p_ucb": 1.0,
+        "sample_count": 1
+      }
     },
-    "*|0_15_0_35": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 2.573606084050562e-06,
-      "sample_count": 580
-    },
-    "*|0_35_0_65": {
-      "p": 0.4857142857142857,
-      "p_lcb": 0.43052008312017265,
-      "p_ucb": 0.5409084883083988,
-      "sample_count": 315
-    },
-    "*|0_65_0_85": {
-      "p": 1.0,
-      "p_lcb": 0.9999974374158342,
-      "p_ucb": 1.0,
-      "sample_count": 585
-    },
-    "*|0_85_0_95": {
-      "p": 1.0,
-      "p_lcb": 0.9999976161291485,
-      "p_ucb": 1.0,
-      "sample_count": 676
-    },
-    "*|ge_0_95": {
-      "p": 1.0,
-      "p_lcb": 0.9999987761945396,
-      "p_ucb": 1.0,
-      "sample_count": 2565
-    },
-    "*|lt_0_05": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 1.1128462703381562e-06,
-      "sample_count": 3102
-    },
-    "ethereum|*": {
-      "p": 0.5,
-      "p_lcb": 0.44834946488391647,
-      "p_ucb": 0.5516505351160835,
-      "sample_count": 360
-    },
-    "ethereum|0_05_0_15": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 5.991894837054282e-06,
-      "sample_count": 107
-    },
-    "ethereum|0_15_0_35": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 7.935808035753377e-06,
-      "sample_count": 61
-    },
-    "ethereum|0_35_0_65": {
-      "p": 0.5,
-      "p_lcb": 0.21709836809708338,
-      "p_ucb": 0.7829016319029166,
-      "sample_count": 12
-    },
-    "ethereum|0_65_0_85": {
-      "p": 1.0,
-      "p_lcb": 0.9999917904633975,
-      "p_ucb": 1.0,
-      "sample_count": 57
-    },
-    "ethereum|0_85_0_95": {
-      "p": 1.0,
-      "p_lcb": 0.9999941170577932,
-      "p_ucb": 1.0,
-      "sample_count": 111
-    },
-    "ethereum|ge_0_95": {
-      "p": 1.0,
-      "p_lcb": 0.9999746965088048,
-      "p_ucb": 1.0,
-      "sample_count": 6
-    },
-    "ethereum|lt_0_05": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 2.530349119522179e-05,
-      "sample_count": 6
-    },
-    "hyperliquid|*": {
-      "p": 0.5,
-      "p_lcb": 0.4171748830366054,
-      "p_ucb": 0.5828251169633947,
-      "sample_count": 140
-    },
-    "hyperliquid|0_05_0_15": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 1.0789444898238336e-05,
-      "sample_count": 33
-    },
-    "hyperliquid|0_15_0_35": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 1.2923857278557426e-05,
-      "sample_count": 23
-    },
-    "hyperliquid|0_65_0_85": {
-      "p": 1.0,
-      "p_lcb": 0.9999870761427214,
-      "p_ucb": 1.0,
-      "sample_count": 23
-    },
-    "hyperliquid|0_85_0_95": {
-      "p": 1.0,
-      "p_lcb": 0.9999892105551018,
-      "p_ucb": 1.0,
-      "sample_count": 33
-    },
-    "hyperliquid|ge_0_95": {
-      "p": 1.0,
-      "p_lcb": 0.9999834349766074,
-      "p_ucb": 1.0,
-      "sample_count": 14
-    },
-    "hyperliquid|lt_0_05": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 1.6565023392678922e-05,
-      "sample_count": 14
-    },
-    "inflation|*": {
-      "p": 0.5,
-      "p_lcb": 0.4606422528837776,
-      "p_ucb": 0.5393577471162224,
-      "sample_count": 620
-    },
-    "inflation|ge_0_95": {
-      "p": 1.0,
-      "p_lcb": 0.9999964797360803,
-      "p_ucb": 1.0,
-      "sample_count": 310
-    },
-    "inflation|lt_0_05": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 3.5202639197247884e-06,
-      "sample_count": 310
-    },
-    "ipos|*": {
-      "p": 0.5,
-      "p_lcb": 0.46352817654932543,
-      "p_ucb": 0.5364718234506746,
-      "sample_count": 722
-    },
-    "ipos|ge_0_95": {
-      "p": 1.0,
-      "p_lcb": 0.99999673786094,
-      "p_ucb": 1.0,
-      "sample_count": 361
-    },
-    "ipos|lt_0_05": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 3.2621390599631705e-06,
-      "sample_count": 361
-    },
-    "movies|*": {
-      "p": 0.5,
-      "p_lcb": 0.4342267065890256,
-      "p_ucb": 0.5657732934109744,
-      "sample_count": 222
-    },
-    "movies|ge_0_95": {
-      "p": 1.0,
-      "p_lcb": 0.9999941170577932,
-      "p_ucb": 1.0,
-      "sample_count": 111
-    },
-    "movies|lt_0_05": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 5.88294220683911e-06,
-      "sample_count": 111
-    },
-    "pandemics|*": {
-      "p": 0.5,
-      "p_lcb": 0.4501193133411898,
-      "p_ucb": 0.5498806866588102,
-      "sample_count": 386
-    },
-    "pandemics|ge_0_95": {
-      "p": 1.0,
-      "p_lcb": 0.9999955385357546,
-      "p_ucb": 1.0,
-      "sample_count": 193
-    },
-    "pandemics|lt_0_05": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 4.461464245338657e-06,
-      "sample_count": 193
-    },
-    "soccer|*": {
-      "p": 0.4211757823925124,
-      "p_lcb": 0.4046252654447116,
-      "p_ucb": 0.4377262993403132,
-      "sample_count": 3419
-    },
-    "soccer|ge_0_95": {
-      "p": 1.0,
-      "p_lcb": 0.9999983666666666,
-      "p_ucb": 1.0,
-      "sample_count": 1440
-    },
-    "soccer|lt_0_05": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 1.393263225439218e-06,
-      "sample_count": 1979
-    },
-    "sports|*": {
-      "p": 0.5,
-      "p_lcb": 0.4808832792912987,
-      "p_ucb": 0.5191167207087013,
-      "sample_count": 2628
-    },
-    "sports|0_05_0_15": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 2.68216470236947e-06,
-      "sample_count": 534
-    },
-    "sports|0_15_0_35": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 2.783012987810618e-06,
-      "sample_count": 496
-    },
-    "sports|0_35_0_65": {
-      "p": 0.48514851485148514,
-      "p_lcb": 0.42887382694153614,
-      "p_ucb": 0.5414232027614342,
-      "sample_count": 303
-    },
-    "sports|0_65_0_85": {
-      "p": 1.0,
-      "p_lcb": 0.9999972418976246,
-      "p_ucb": 1.0,
-      "sample_count": 505
-    },
-    "sports|0_85_0_95": {
-      "p": 1.0,
-      "p_lcb": 0.9999973127983641,
-      "p_ucb": 1.0,
-      "sample_count": 532
-    },
-    "sports|ge_0_95": {
-      "p": 1.0,
-      "p_lcb": 0.999994563938077,
-      "p_ucb": 1.0,
-      "sample_count": 130
-    },
-    "sports|lt_0_05": {
-      "p": 0.0,
-      "p_lcb": 0.0,
-      "p_ucb": 5.478366544874485e-06,
-      "sample_count": 128
+    "logistic": {
+      "ready": false,
+      "reason": "not_enough_rows_for_pure_python_logistic",
+      "weights": []
     }
   },
   "model_sources": [
     "market_price_baseline",
-    "empirical_bucket_calibration",
-    "pure_python_bin_calibration"
+    "global_empirical_calibration",
+    "global_logistic_pure_python",
+    "category_shrinkage_when_family_count_sufficient"
   ],
-  "oos_split_blocker_counts": {
-    "single_resolved_event_category_count": 8,
-    "single_resolved_event_row_count": 8497
-  },
-  "oos_split_blockers": [
-    {
-      "category": "ethereum",
-      "reason": "single_resolved_event_family_no_leakage_safe_oos_split",
-      "resolved_event_count": 1,
-      "resolved_row_count": 360
-    },
-    {
-      "category": "hyperliquid",
-      "reason": "single_resolved_event_family_no_leakage_safe_oos_split",
-      "resolved_event_count": 1,
-      "resolved_row_count": 140
-    },
-    {
-      "category": "inflation",
-      "reason": "single_resolved_event_family_no_leakage_safe_oos_split",
-      "resolved_event_count": 1,
-      "resolved_row_count": 620
-    },
-    {
-      "category": "ipos",
-      "reason": "single_resolved_event_family_no_leakage_safe_oos_split",
-      "resolved_event_count": 1,
-      "resolved_row_count": 722
-    },
-    {
-      "category": "movies",
-      "reason": "single_resolved_event_family_no_leakage_safe_oos_split",
-      "resolved_event_count": 1,
-      "resolved_row_count": 222
-    },
-    {
-      "category": "pandemics",
-      "reason": "single_resolved_event_family_no_leakage_safe_oos_split",
-      "resolved_event_count": 1,
-      "resolved_row_count": 386
-    },
-    {
-      "category": "soccer",
-      "reason": "single_resolved_event_family_no_leakage_safe_oos_split",
-      "resolved_event_count": 1,
-      "resolved_row_count": 3419
-    },
-    {
-      "category": "sports",
-      "reason": "single_resolved_event_family_no_leakage_safe_oos_split",
-      "resolved_event_count": 1,
-      "resolved_row_count": 2628
-    }
-  ],
+  "oos_blocker_reason": "need_at_least_two_event_families_for_leave_family_out",
+  "oos_prediction_count": 0,
+  "oos_predictions": [],
   "overall": {
     "brier_improvement": null,
     "brier_market": null,
@@ -353,11 +106,16 @@
   "positive_net_ev_after_cost": false,
   "resolved_candidate_count": 0,
   "resolved_candidate_pnl_proxy": null,
-  "schema_version": "polyweather_polymarket_alpha_probability_edge_model.v1",
+  "schema_version": "polyweather_polymarket_alpha_probability_edge_model.v2",
   "scope": "polymarket_only",
   "sklearn_available": false,
+  "split": {
+    "family_count": 1,
+    "reason": "need_at_least_two_event_families_for_leave_family_out",
+    "status": "blocked"
+  },
   "top_ev_candidate_rate_categories": [],
   "top_oos_brier_improvement_categories": [],
-  "train_row_count": 8497,
+  "train_row_count": 4,
   "validate_row_count": 0
 }
