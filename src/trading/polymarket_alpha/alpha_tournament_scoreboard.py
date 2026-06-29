@@ -292,7 +292,7 @@ def build_alpha_tournament_scoreboard(
 
     weather_lp_lane = _lane(
         lane_id="weather_lp_reward",
-        candidate_count=_safe_int(weather_lp_experiment_report.get("reward_market_count")),
+        candidate_count=_safe_int(weather_lp_experiment_report.get("reward_qualified_quote_count") or weather_lp_experiment_report.get("paper_quote_count")),
         paper_fill_count=_safe_int(weather_lp_experiment_report.get("inferred_fill_count")),
         watch_count=_safe_int(weather_lp_experiment_report.get("paper_quote_count")),
         available_markout_count=_safe_int(weather_lp_experiment_report.get("markout_count")),
@@ -304,10 +304,14 @@ def build_alpha_tournament_scoreboard(
     )
     weather_lp_lane["estimated_reward"] = weather_lp_experiment_report.get("estimated_reward_cents")
     weather_lp_lane["net_estimated_pnl_with_reward"] = weather_lp_experiment_report.get("net_estimated_pnl_with_reward")
-    if weather_lp_experiment_report.get("recommendation") == "insufficient_reward_metadata":
-        weather_lp_lane["status"] = "insufficient_reward_metadata"
+    if weather_lp_experiment_report.get("recommendation") in {"insufficient_reward_metadata", "reward_metadata_pipeline_broken_or_no_rewards"}:
+        weather_lp_lane["status"] = str(weather_lp_experiment_report.get("recommendation"))
         weather_lp_lane["next_action"] = "collect_reward_metadata"
         weather_lp_lane["priority"] = 12
+    elif _safe_int(weather_lp_experiment_report.get("paper_quote_count")) < 50:
+        weather_lp_lane["status"] = "continue_weather_lp_paper_insufficient_quotes"
+        weather_lp_lane["next_action"] = "collect_weather_lp_quote_markout"
+        weather_lp_lane["priority"] = 40
     elif _safe_int(weather_lp_experiment_report.get("paper_quote_count")) >= 50 and (_safe_float(weather_lp_experiment_report.get("net_estimated_pnl_with_reward")) or 0.0) > 0:
         weather_lp_lane["status"] = "paper_reward_lane_candidate"
         weather_lp_lane["next_action"] = "continue_weather_lp_paper"

@@ -29,5 +29,5 @@ def test_weather_lp_controller_requires_reward_metadata(tmp_path: Path):
         )
     )
 
-    assert report["recommendation"] == "insufficient_reward_metadata"
+    assert report["recommendation"] == "reward_metadata_pipeline_broken_or_no_rewards"
     assert report["live_order_path"] is False

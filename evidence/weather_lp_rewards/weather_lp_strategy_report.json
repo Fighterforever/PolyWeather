@@ -5,14 +5,57 @@
     "rejected": "evidence/weather_lp_rewards/weather_lp_rejected_rows.jsonl",
     "watch_rows": "evidence/weather_lp_rewards/weather_lp_watch_rows.jsonl"
   },
-  "candidate_count": 0,
+  "by_city": [
+    {
+      "candidate_count": 7,
+      "city": "ankara"
+    },
+    {
+      "candidate_count": 7,
+      "city": "istanbul"
+    },
+    {
+      "candidate_count": 6,
+      "city": "moscow"
+    }
+  ],
+  "by_minute_of_hour": [
+    {
+      "candidate_count": 20,
+      "minute_of_hour": "20"
+    }
+  ],
+  "candidate_count": 20,
   "counts_for_live_gate": false,
   "expensive_basket_rejection_count": 0,
   "input_market_count": 89,
   "live_order_path": false,
+  "no_candidate_reason_counts": [
+    {
+      "count": 50,
+      "reason": "extreme_midpoint_requires_two_sided_liquidity"
+    },
+    {
+      "count": 19,
+      "reason": "missing_midpoint"
+    },
+    {
+      "count": 19,
+      "reason": "missing_order_price"
+    },
+    {
+      "count": 19,
+      "reason": "missing_orderbook"
+    }
+  ],
   "paper_only": true,
-  "reject_count": 89,
-  "rejected_count": 89,
+  "paper_quote_candidate_count": 20,
+  "reject_count": 0,
+  "rejected_count": 0,
+  "reward_metadata_available_count": 89,
+  "reward_qualified_quote_count": 20,
+  "scanned_weather_markets": 89,
   "schema_version": "polyweather_polymarket_alpha_weather_lp_strategy.v1",
-  "watch_count": 0
+  "watch_count": 69,
+  "watch_only_count": 69
 }

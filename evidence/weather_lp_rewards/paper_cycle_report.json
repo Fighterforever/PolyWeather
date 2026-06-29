@@ -1,20 +1,26 @@
 {
+  "active_quote_count": 20,
+  "adverse_selection_count": 0,
   "artifact_paths": {
     "fills": "evidence/weather_lp_rewards/paper_fills.jsonl",
     "markouts": "evidence/weather_lp_rewards/markouts.jsonl",
+    "quote_updates": "evidence/weather_lp_rewards/paper_quote_updates.jsonl",
     "quotes": "evidence/weather_lp_rewards/paper_quotes.jsonl"
   },
   "counts_for_live_gate": false,
-  "estimated_reward_cents": 0,
-  "estimated_reward_points": 0,
-  "generated_at": "2026-06-29T14:55:00Z",
+  "estimated_reward_cents": null,
+  "estimated_reward_cents_proxy": null,
+  "estimated_reward_points": 5.06279836,
+  "generated_at": "2026-06-29T16:20:00Z",
   "inferred_fill_count": 0,
   "live_order_path": false,
   "markout_count": 0,
   "net_estimated_pnl_with_reward": null,
-  "net_estimated_pnl_without_reward": null,
+  "net_estimated_pnl_with_reward_proxy": null,
+  "net_estimated_pnl_without_reward": 0.0,
   "paper_only": true,
-  "paper_quote_count": 0,
+  "paper_quote_count": 20,
   "reward_is_guaranteed": false,
+  "reward_points_proxy": 5.06279836,
   "schema_version": "polyweather_polymarket_alpha_weather_lp_paper_journal.v1.report"
 }

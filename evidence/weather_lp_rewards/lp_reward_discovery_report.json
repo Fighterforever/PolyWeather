@@ -6,18 +6,40 @@
   "gap_counts": [
     {
       "count": 89,
-      "reason": "reward_metadata_missing"
+      "reason": "none"
     }
   ],
-  "generated_at": "2026-06-29T14:55:00Z",
+  "generated_at": "2026-06-29T16:20:00Z",
   "live_order_path": false,
   "market_count": 89,
+  "max_incentive_spread_found_count": 89,
+  "min_incentive_size_found_count": 89,
+  "min_max_incentive_found_count": 89,
   "paper_only": true,
-  "reward_available_count": 0,
-  "reward_by_city": [],
-  "reward_market_count": 0,
-  "reward_metadata_available_count": 0,
-  "reward_metadata_missing_count": 89,
+  "reward_available_count": 89,
+  "reward_by_city": [
+    {
+      "city": "ankara",
+      "count": 33
+    },
+    {
+      "city": "istanbul",
+      "count": 33
+    },
+    {
+      "city": "moscow",
+      "count": 23
+    }
+  ],
+  "reward_market_count": 89,
+  "reward_metadata_available_count": 89,
+  "reward_metadata_missing_count": 0,
+  "reward_program_type_counts": [
+    {
+      "count": 89,
+      "reward_program_type": "liquidity_reward"
+    }
+  ],
   "schema_version": "polyweather_polymarket_alpha_weather_lp_reward_discovery.v1",
   "scope": "polymarket_weather_lp_rewards"
 }

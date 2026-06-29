@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
 from src.trading.polymarket_alpha.probability_dataset import write_json, write_jsonl
+from src.trading.polymarket_alpha.reward_programs import extract_liquidity_reward_metadata
 
 
 SCHEMA_VERSION = "polyweather_polymarket_alpha_weather_lp_reward_discovery.v1"
@@ -52,6 +53,17 @@ def _reward_raw(row: Dict[str, Any]) -> Optional[float]:
     return None
 
 
+def _metadata_by_slug(rows: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    output: Dict[str, Dict[str, Any]] = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        slug = str(row.get("market_slug") or "").strip()
+        if slug:
+            output[slug] = row
+    return output
+
+
 def _flatten_family_catalog(payload: Dict[str, Any]) -> List[Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
     for family in payload.get("families") or []:
@@ -64,17 +76,34 @@ def _flatten_family_catalog(payload: Dict[str, Any]) -> List[Dict[str, Any]]:
     return rows
 
 
-def _row_from_bucket(bucket: Dict[str, Any], *, generated_at: str) -> Dict[str, Any]:
+def _row_from_bucket(bucket: Dict[str, Any], *, generated_at: str, reward_metadata: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    reward_metadata = reward_metadata or {}
+    if reward_metadata:
+        meta = {
+            "feesEnabled": reward_metadata.get("feesEnabled"),
+            "min_incentive_size": reward_metadata.get("min_incentive_size"),
+            "max_incentive_spread": reward_metadata.get("max_incentive_spread"),
+            "reward_allocation": reward_metadata.get("reward_allocation"),
+            "reward_program_type": reward_metadata.get("reward_program_type"),
+            "raw_field_names_found": reward_metadata.get("raw_field_names_found") or [],
+            "source_found": reward_metadata.get("source_found"),
+            "gap_reason": reward_metadata.get("gap_reason"),
+        }
+    else:
+        meta = extract_liquidity_reward_metadata(bucket)
     reward = _reward_raw(bucket)
     minute = _minute(generated_at)
     ask = _safe_float(bucket.get("yes_best_ask"))
     bid = _safe_float(bucket.get("yes_best_bid"))
     spread = _safe_float(bucket.get("yes_spread"))
-    reward_available = reward is not None and reward > 0
-    gap = None if reward is not None else "reward_metadata_missing"
+    reward_program_type = str(meta.get("reward_program_type") or "unknown")
+    reward_available = reward_program_type == "liquidity_reward"
+    gap = None if reward_available else str(meta.get("gap_reason") or "liquidity_reward_metadata_missing")
     return {
         "schema_version": f"{SCHEMA_VERSION}.market",
         "market_slug": bucket.get("market_slug"),
+        "market_id": bucket.get("market_id"),
+        "condition_id": bucket.get("condition_id") or bucket.get("conditionId"),
         "event_slug": bucket.get("event_slug") or bucket.get("family_event_slug"),
         "question": bucket.get("question") or bucket.get("title"),
         "city": bucket.get("city"),
@@ -101,8 +130,16 @@ def _row_from_bucket(bucket: Dict[str, Any], *, generated_at: str) -> Dict[str, 
         "liquidity": _safe_float(bucket.get("liquidity")),
         "volume": _safe_float(bucket.get("volume")),
         "reward_available": bool(reward_available),
+        "reward_metadata_available": bool(reward_available),
+        "reward_program_type": reward_program_type,
+        "feesEnabled": meta.get("feesEnabled"),
+        "min_incentive_size": meta.get("min_incentive_size"),
+        "max_incentive_spread": meta.get("max_incentive_spread"),
+        "reward_allocation": meta.get("reward_allocation"),
+        "reward_metadata_source": meta.get("source_found"),
+        "reward_raw_field_names_found": meta.get("raw_field_names_found") or [],
         "reward_rate_raw": reward,
-        "reward_score": round(float(reward), 8) if reward is not None else None,
+        "reward_score": round(float(reward), 8) if reward is not None else (meta.get("max_incentive_spread") if reward_available else None),
         "reward_window_detected": bool(reward_available and minute is not None),
         "minute_of_hour": minute,
         "data_source": "weather_bucket_family_catalog",
@@ -116,12 +153,22 @@ def _row_from_bucket(bucket: Dict[str, Any], *, generated_at: str) -> Dict[str, 
 def build_weather_lp_reward_discovery(
     *,
     family_catalog: Dict[str, Any],
+    reward_metadata_rows: Iterable[Dict[str, Any]] = (),
     generated_at: Optional[str] = None,
 ) -> Dict[str, Any]:
     generated_at = generated_at or _utc_now_iso()
-    markets = [_row_from_bucket(row, generated_at=generated_at) for row in _flatten_family_catalog(family_catalog)]
+    metadata = _metadata_by_slug(reward_metadata_rows)
+    markets = [
+        _row_from_bucket(row, generated_at=generated_at, reward_metadata=metadata.get(str(row.get("market_slug") or "")))
+        for row in _flatten_family_catalog(family_catalog)
+    ]
     gap_counts = Counter(str(row.get("gap_reason") or "none") for row in markets)
     reward_markets = [row for row in markets if row.get("reward_available")]
+    minmax = [
+        row
+        for row in markets
+        if row.get("min_incentive_size") is not None and row.get("max_incentive_spread") is not None
+    ]
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at,
@@ -132,8 +179,15 @@ def build_weather_lp_reward_discovery(
         "market_count": len(markets),
         "reward_market_count": len(reward_markets),
         "reward_available_count": len(reward_markets),
-        "reward_metadata_available_count": len([row for row in markets if row.get("reward_rate_raw") is not None]),
-        "reward_metadata_missing_count": len([row for row in markets if row.get("gap_reason") == "reward_metadata_missing"]),
+        "reward_metadata_available_count": len(reward_markets),
+        "reward_metadata_missing_count": len([row for row in markets if not row.get("reward_metadata_available")]),
+        "min_incentive_size_found_count": len([row for row in markets if row.get("min_incentive_size") is not None]),
+        "max_incentive_spread_found_count": len([row for row in markets if row.get("max_incentive_spread") is not None]),
+        "min_max_incentive_found_count": len(minmax),
+        "reward_program_type_counts": [
+            {"reward_program_type": key, "count": value}
+            for key, value in sorted(Counter(str(row.get("reward_program_type") or "unknown") for row in markets).items())
+        ],
         "reward_by_city": [{"city": city, "count": count} for city, count in sorted(Counter(str(row.get("city") or "missing") for row in reward_markets).items())],
         "gap_counts": [{"reason": key, "count": value} for key, value in sorted(gap_counts.items())],
         "markets": markets,
@@ -148,4 +202,20 @@ def load_json(path: str | Path) -> Dict[str, Any]:
     return parsed if isinstance(parsed, dict) else {}
 
 
-__all__ = ["SCHEMA_VERSION", "build_weather_lp_reward_discovery", "load_json", "write_json", "write_jsonl"]
+def load_jsonl(path: str | Path) -> List[Dict[str, Any]]:
+    source = Path(path)
+    if not source.exists():
+        return []
+    rows: List[Dict[str, Any]] = []
+    with source.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            try:
+                parsed = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(parsed, dict):
+                rows.append(parsed)
+    return rows
+
+
+__all__ = ["SCHEMA_VERSION", "build_weather_lp_reward_discovery", "load_json", "load_jsonl", "write_json", "write_jsonl"]

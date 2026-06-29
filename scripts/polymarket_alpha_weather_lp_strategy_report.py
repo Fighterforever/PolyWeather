@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -23,6 +24,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--watch-output", default="evidence/weather_lp_rewards/weather_lp_watch_rows.jsonl")
     parser.add_argument("--rejected-output", default="evidence/weather_lp_rewards/weather_lp_rejected_rows.jsonl")
     parser.add_argument("--basket-risk-output", default="evidence/weather_lp_rewards/basket_risk_report.json")
+    parser.add_argument("--generated-at", default=None)
+    parser.add_argument("--record-window-observation", action=argparse.BooleanOptionalAction, default=True)
     return parser.parse_args(argv)
 
 
@@ -70,6 +73,30 @@ def main(argv: list[str] | None = None) -> None:
         },
     )
     write_json(args.summary_output, compact)
+    if args.record_window_observation:
+        generated_at = args.generated_at or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+        minute = datetime.fromisoformat(generated_at.replace("Z", "+00:00")).minute
+        obs_path = Path("evidence/weather_lp_rewards/reward_window_observations.jsonl")
+        obs_path.parent.mkdir(parents=True, exist_ok=True)
+        with obs_path.open("a", encoding="utf-8") as handle:
+            handle.write(
+                json.dumps(
+                    {
+                        "generated_at": generated_at,
+                        "minute_of_hour": minute,
+                        "reward_metadata_available_count": compact.get("reward_metadata_available_count"),
+                        "reward_qualified_quote_count": compact.get("reward_qualified_quote_count"),
+                        "reward_market_count": compact.get("reward_metadata_available_count"),
+                        "market_slugs": [row.get("market_slug") for row in report.get("candidates") or []][:25],
+                        "paper_only": True,
+                        "counts_for_live_gate": False,
+                        "live_order_path": False,
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
+                + "\n"
+            )
     print(json.dumps({"candidate_count": compact.get("candidate_count"), "watch_count": compact.get("watch_count"), "reject_count": compact.get("reject_count"), "live_order_path": False}, indent=2, sort_keys=True))
 
 

@@ -14,11 +14,33 @@
         ".venv/bin/python",
         "scripts/polymarket_alpha_weather_lp_reward_discovery_report.py",
         "--generated-at",
-        "2026-06-29T14:55:00Z"
+        "2026-06-29T16:20:00Z",
+        "--no-record-window-observation"
       ],
       "returncode": 0,
       "stderr": "",
-      "stdout": "{\n  \"live_order_path\": false,\n  \"reward_market_count\": 0,\n  \"reward_metadata_missing_count\": 89\n}\n"
+      "stdout": "{\n  \"live_order_path\": false,\n  \"reward_market_count\": 0,\n  \"reward_metadata_available_count\": 0,\n  \"reward_metadata_missing_count\": 89\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_reward_metadata_audit_report.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"live_order_path\": false,\n  \"min_max_incentive_found_count\": 89,\n  \"reward_metadata_available_count\": 89\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_weather_lp_reward_discovery_report.py",
+        "--generated-at",
+        "2026-06-29T16:20:00Z",
+        "--record-window-observation"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"live_order_path\": false,\n  \"reward_market_count\": 89,\n  \"reward_metadata_available_count\": 89,\n  \"reward_metadata_missing_count\": 0\n}\n"
     },
     {
       "command": [
@@ -41,22 +63,24 @@
     {
       "command": [
         ".venv/bin/python",
-        "scripts/polymarket_alpha_weather_lp_strategy_report.py"
+        "scripts/polymarket_alpha_weather_lp_strategy_report.py",
+        "--generated-at",
+        "2026-06-29T16:20:00Z"
       ],
       "returncode": 0,
       "stderr": "",
-      "stdout": "{\n  \"candidate_count\": 0,\n  \"live_order_path\": false,\n  \"reject_count\": 89,\n  \"watch_count\": 0\n}\n"
+      "stdout": "{\n  \"candidate_count\": 20,\n  \"live_order_path\": false,\n  \"reject_count\": 0,\n  \"watch_count\": 69\n}\n"
     },
     {
       "command": [
         ".venv/bin/python",
         "scripts/polymarket_alpha_weather_lp_paper_cycle.py",
         "--generated-at",
-        "2026-06-29T14:55:00Z"
+        "2026-06-29T16:20:00Z"
       ],
       "returncode": 0,
       "stderr": "",
-      "stdout": "{\n  \"estimated_reward_cents\": 0,\n  \"inferred_fill_count\": 0,\n  \"live_order_path\": false,\n  \"paper_quote_count\": 0\n}\n"
+      "stdout": "{\n  \"estimated_reward_cents_proxy\": null,\n  \"inferred_fill_count\": 0,\n  \"live_order_path\": false,\n  \"paper_quote_count\": 20,\n  \"reward_points_proxy\": 5.06279836\n}\n"
     },
     {
       "command": [
@@ -65,7 +89,7 @@
       ],
       "returncode": 0,
       "stderr": "",
-      "stdout": "{\n  \"confidence\": \"insufficient_window_observations\",\n  \"live_order_path\": false,\n  \"observations_count\": 2,\n  \"support_40_51\": 0\n}\n"
+      "stdout": "{\n  \"confidence\": \"insufficient_observations\",\n  \"live_order_path\": false,\n  \"observations_count\": 6,\n  \"support_40_51\": 0\n}\n"
     },
     {
       "command": [
@@ -74,16 +98,21 @@
       ],
       "returncode": 0,
       "stderr": "",
-      "stdout": "{\n  \"live_order_path\": false,\n  \"paper_quote_count\": 0,\n  \"recommendation\": \"insufficient_reward_metadata\"\n}\n"
+      "stdout": "{\n  \"live_order_path\": false,\n  \"paper_quote_count\": 20,\n  \"recommendation\": \"continue_weather_lp_paper\"\n}\n"
     }
   ],
   "counts_for_live_gate": false,
-  "generated_at": "2026-06-29T14:55:00Z",
+  "estimated_reward_cents_proxy": null,
+  "generated_at": "2026-06-29T16:20:00Z",
   "live_order_path": false,
+  "max_incentive_spread_found_count": 89,
+  "min_incentive_size_found_count": 89,
   "paper_only": true,
-  "paper_quote_count": 0,
-  "recommendation": "insufficient_reward_metadata",
-  "reward_market_count": 0,
+  "paper_quote_count": 20,
+  "recommendation": "continue_weather_lp_paper",
+  "reward_market_count": 89,
+  "reward_metadata_available_count": 89,
+  "reward_points_proxy": 5.06279836,
   "schema_version": "polyweather_polymarket_alpha_weather_lp_runner.v1",
   "success": true
 }

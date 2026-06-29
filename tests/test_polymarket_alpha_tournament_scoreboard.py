@@ -59,14 +59,32 @@ def test_tournament_weather_lp_waits_for_reward_metadata():
             "reward_market_count": 0,
             "paper_quote_count": 0,
             "inferred_fill_count": 0,
-            "recommendation": "insufficient_reward_metadata",
+            "recommendation": "reward_metadata_pipeline_broken_or_no_rewards",
             "live_order_path": False,
         },
         payoff_arbitrage_report={"candidate_count": 1, "near_miss_count": 2},
     )
 
     lanes = {row["lane_id"]: row for row in report["lanes"]}
-    assert lanes["weather_lp_reward"]["status"] == "insufficient_reward_metadata"
+    assert lanes["weather_lp_reward"]["status"] == "reward_metadata_pipeline_broken_or_no_rewards"
     assert lanes["weather_lp_reward"]["next_action"] == "collect_reward_metadata"
     assert lanes["weather_lp_reward"]["live_order_path"] is False
+    assert report["top_lane"] != "weather_lp_reward"
+
+
+def test_tournament_weather_lp_needs_fifty_quotes_before_top_lane():
+    report = build_alpha_tournament_scoreboard(
+        weather_lp_experiment_report={
+            "reward_metadata_available_count": 89,
+            "reward_qualified_quote_count": 20,
+            "paper_quote_count": 20,
+            "recommendation": "continue_weather_lp_paper",
+            "live_order_path": False,
+        },
+        payoff_arbitrage_report={"candidate_count": 1, "near_miss_count": 2},
+    )
+
+    lanes = {row["lane_id"]: row for row in report["lanes"]}
+    assert lanes["weather_lp_reward"]["status"] == "continue_weather_lp_paper_insufficient_quotes"
+    assert lanes["weather_lp_reward"]["priority"] < 80
     assert report["top_lane"] != "weather_lp_reward"

@@ -1,0 +1,35 @@
+{
+  "artifact_paths": {
+    "reward_metadata_raw_samples": "evidence/weather_lp_rewards/reward_metadata_raw_samples.jsonl",
+    "reward_metadata_rows": "evidence/weather_lp_rewards/reward_metadata_rows.jsonl"
+  },
+  "counts_for_live_gate": false,
+  "gap_counts": [
+    {
+      "count": 89,
+      "reason": "none"
+    }
+  ],
+  "live_order_path": false,
+  "market_count": 89,
+  "max_incentive_spread_found_count": 89,
+  "min_incentive_size_found_count": 89,
+  "min_max_incentive_found_count": 89,
+  "paper_only": true,
+  "reward_metadata_available_count": 89,
+  "schema_version": "polyweather_polymarket_alpha_reward_metadata.v1",
+  "source_attempt_counts": [
+    {
+      "count": 89,
+      "source": "clob_market_full_object"
+    },
+    {
+      "count": 89,
+      "source": "clob_market_info_search"
+    },
+    {
+      "count": 89,
+      "source": "gamma_market_object"
+    }
+  ]
+}

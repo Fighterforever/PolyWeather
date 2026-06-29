@@ -15,10 +15,25 @@ def test_strategy_blocks_when_reward_metadata_missing():
 
 def test_strategy_generates_paper_quote_when_gates_pass():
     report = build_weather_lp_strategy(
-        reward_markets=[{"market_slug": "m", "city": "ankara", "best_ask": 0.02, "reward_available": True, "reward_score": 0.03}],
+        reward_markets=[
+            {
+                "market_slug": "m",
+                "city": "ankara",
+                "best_bid": 0.48,
+                "best_ask": 0.52,
+                "yes_best_bid": 0.48,
+                "yes_best_ask": 0.52,
+                "reward_metadata_available": True,
+                "reward_program_type": "liquidity_reward",
+                "min_incentive_size": 50,
+                "max_incentive_spread": 0.05,
+            }
+        ],
         city_regimes=[{"city": "ankara", "volatility_bucket": "stable"}],
     )
 
     assert report["candidate_count"] == 1
+    assert report["reward_qualified_quote_count"] == 1
     assert report["candidates"][0]["decision"] == "paper_quote"
+    assert report["candidates"][0]["reward_score_at_entry"]["qualifies_for_reward"] is True
     assert report["candidates"][0]["live_order_path"] is False
