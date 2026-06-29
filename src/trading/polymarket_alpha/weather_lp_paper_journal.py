@@ -159,6 +159,10 @@ def build_weather_lp_quote_update_ledger(
         price_markout = None
         if current_midpoint is not None and quote_price is not None:
             price_markout = round((current_midpoint - quote_price) * 100.0, 8)
+        midpoint_markout = None
+        entry_midpoint = _safe_float(quote.get("entry_midpoint") or quote.get("midpoint"))
+        if current_midpoint is not None and entry_midpoint is not None:
+            midpoint_markout = round((current_midpoint - entry_midpoint) * 100.0, 8)
         quote_touched = False
         if quote_price is not None and book.get("best_ask") is not None:
             quote_touched = bool(float(book["best_ask"]) <= quote_price)
@@ -203,6 +207,8 @@ def build_weather_lp_quote_update_ledger(
             "reward_points_delta_proxy": points_increment,
             "cumulative_reward_points_proxy": cumulative,
             "time_on_book_seconds": round(time_on_book, 3),
+            "markout_from_entry_midpoint": midpoint_markout,
+            "markout_from_quote_price": price_markout,
             "price_markout_from_entry": price_markout,
             "price_markout_cents": price_markout,
             "quote_touched": quote_touched,
@@ -310,10 +316,17 @@ def build_weather_lp_paper_cycle(
             "quote_size": candidate.get("quote_size") or candidate.get("min_incentive_size"),
             "size": candidate.get("quote_size") or candidate.get("min_incentive_size"),
             "midpoint": candidate.get("midpoint"),
+            "entry_time": previous.get("entry_time") or previous.get("quote_start_time") or generated_at,
+            "entry_midpoint": previous.get("entry_midpoint", candidate.get("midpoint")),
+            "entry_best_bid": previous.get("entry_best_bid", candidate.get("current_best_bid")),
+            "entry_best_ask": previous.get("entry_best_ask", candidate.get("current_best_ask")),
+            "entry_spread": previous.get("entry_spread", candidate.get("spread")),
             "spread_from_midpoint": candidate.get("spread_from_midpoint"),
             "max_incentive_spread": candidate.get("max_incentive_spread"),
             "min_incentive_size": candidate.get("min_incentive_size"),
             "reward_score_at_entry": candidate.get("reward_score_at_entry"),
+            "q_one_proxy": (candidate.get("reward_score_at_entry") or {}).get("q_one") if isinstance(candidate.get("reward_score_at_entry"), dict) else None,
+            "q_two_proxy": (candidate.get("reward_score_at_entry") or {}).get("q_two") if isinstance(candidate.get("reward_score_at_entry"), dict) else None,
             "q_min_proxy": (candidate.get("reward_score_at_entry") or {}).get("q_min") if isinstance(candidate.get("reward_score_at_entry"), dict) else None,
             "quote_start_time": previous.get("quote_start_time") or generated_at,
             "quote_end_time": None,

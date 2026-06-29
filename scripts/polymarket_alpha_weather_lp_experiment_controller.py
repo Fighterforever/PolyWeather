@@ -26,6 +26,22 @@ def _mean(report: Dict[str, Any], key: str) -> Any:
     return report.get(key)
 
 
+def _load_rows(path: str | Path) -> list[dict[str, Any]]:
+    source = Path(path)
+    if not source.exists():
+        return []
+    rows: list[dict[str, Any]] = []
+    with source.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            try:
+                parsed = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(parsed, dict):
+                rows.append(parsed)
+    return rows
+
+
 def build_report(args: argparse.Namespace) -> Dict[str, Any]:
     discovery = _load(args.discovery_report)
     strategy = _load(args.strategy_report)
@@ -45,8 +61,10 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
     reward_to_risk = reward_risk.get("reward_to_risk_proxy")
     if discovery.get("reward_metadata_available_count", 0) == 0:
         recommendation = "reward_metadata_pipeline_broken_or_no_rewards"
-    elif quote_update_count < 50:
+    elif quote_update_count < 100:
         recommendation = "continue_weather_lp_paper_insufficient_updates"
+    elif reward_risk.get("mean_current_markout") is not None and float(reward_risk.get("mean_current_markout")) < -1.0 and (reward_risk.get("break_even_share_p90") is None or float(reward_risk.get("break_even_share_p90") or 0) > 0.01):
+        recommendation = "reduce_weather_lp_strategy"
     elif reward_to_risk is not None and float(reward_to_risk) < 1.0:
         recommendation = "reduce_weather_lp_or_tighten_cancellation"
     elif pnl_with is not None and pnl_without is not None and pnl_with > 0 and pnl_without > -float(reward_cents_proxy or reward_cents or 0):
@@ -65,8 +83,30 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
     best_strategy = None
     if strategy_rows:
         best_strategy = max(strategy_rows, key=lambda row: (row.get("mean_current_markout") is not None, row.get("mean_current_markout") or -999)).get("strategy_variant")
+    update_rows = _load_rows(args.quote_updates)
+    times = []
+    for row in update_rows:
+        value = row.get("update_time") or row.get("generated_at")
+        if value:
+            times.append(str(value))
+    actual_window_minutes = None
+    if len(times) >= 2:
+        try:
+            import datetime as _dt
+
+            parsed = [_dt.datetime.fromisoformat(item.replace("Z", "+00:00")) for item in times]
+            actual_window_minutes = round((max(parsed) - min(parsed)).total_seconds() / 60.0, 3)
+        except Exception:
+            actual_window_minutes = None
+    city_confidence = "insufficient_sample"
+    if city_rows and all(int(row.get("quote_count") or 0) >= 20 for row in city_rows):
+        city_confidence = "directional_hint"
+    if city_rows and all(int(row.get("quote_count") or 0) >= 50 for row in city_rows):
+        city_confidence = "enough_for_filtering"
     return {
         "schema_version": "polyweather_polymarket_alpha_weather_lp_experiment_controller.v1",
+        "experiment_start": min(times) if times else None,
+        "actual_window_minutes": actual_window_minutes,
         "run_count": window.get("observations_count", 0),
         "reward_market_count": discovery.get("reward_market_count", 0),
         "reward_metadata_available_count": discovery.get("reward_metadata_available_count", 0),
@@ -85,21 +125,32 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "mean_markout_15m": _mean(reward_risk, "mean_15m_markout"),
         "mean_markout_1h": _mean(reward_risk, "mean_1h_markout"),
         "mean_markout_current": _mean(reward_risk, "mean_current_markout"),
+        "valid_markout_count_by_horizon": reward_risk.get("valid_markout_count_by_horizon"),
         "mean_5m_markout": _mean(reward_risk, "mean_5m_markout"),
         "mean_15m_markout": _mean(reward_risk, "mean_15m_markout"),
         "mean_1h_markout": _mean(reward_risk, "mean_1h_markout"),
         "mean_current_markout": _mean(reward_risk, "mean_current_markout"),
         "reward_to_risk_proxy": reward_to_risk,
+        "exact_reward_conversion_available": bool(reward_risk.get("exact_reward_conversion_available_count")),
+        "break_even_share_median": reward_risk.get("break_even_share_median"),
+        "break_even_share_p90": reward_risk.get("break_even_share_p90"),
+        "scenario_reward_0_5pct_share": reward_risk.get("scenario_reward_0_5pct_share"),
+        "scenario_reward_1pct_share": reward_risk.get("scenario_reward_1pct_share"),
         "adverse_selection_count": reward_risk.get("adverse_selection_count", paper.get("adverse_selection_count", 0)),
         "net_estimated_pnl_with_reward": pnl_with,
         "net_estimated_pnl_with_reward_proxy": pnl_with,
         "net_estimated_pnl_without_reward": pnl_without,
         "by_city": reward_risk.get("by_city") or [],
         "by_strategy_variant": reward_risk.get("by_strategy_variant") or [],
-        "best_city": best_city,
-        "worst_city": worst_city,
+        "tentative_best_city": best_city,
+        "tentative_worst_city": worst_city,
+        "best_city": best_city if city_confidence != "insufficient_sample" else None,
+        "worst_city": worst_city if city_confidence != "insufficient_sample" else None,
+        "city_confidence": city_confidence,
         "best_strategy_variant": best_strategy,
         "cancellation_policy_recommendation": cancellation.get("cancellation_policy_recommendation"),
+        "quote_optimizer_selected_count": _load(args.quote_optimizer_report).get("selected_quote_count"),
+        "rejected_expensive_basket_count": _load(args.quote_optimizer_report).get("rejected_expensive_basket_count"),
         "expensive_basket_rejection_count": strategy.get("expensive_basket_rejection_count", 0),
         "smart_holder_signal_count": holder.get("smart_holder_signal_count", 0),
         "time_window_confidence": window.get("window_confidence") or window.get("confidence"),
@@ -118,6 +169,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--quote-update-report", default="evidence/weather_lp_rewards/paper_quote_update_report.json")
     parser.add_argument("--reward-risk-report", default="evidence/weather_lp_rewards/reward_vs_risk_report.json")
     parser.add_argument("--cancellation-policy-report", default="evidence/weather_lp_rewards/cancellation_policy_report.json")
+    parser.add_argument("--quote-optimizer-report", default="evidence/weather_lp_rewards/quote_optimizer_report.json")
+    parser.add_argument("--quote-updates", default="evidence/weather_lp_rewards/paper_quote_updates.jsonl")
     parser.add_argument("--reward-window-report", default="evidence/weather_lp_rewards/reward_window_report.json")
     parser.add_argument("--smart-holder-report", default="evidence/weather_lp_rewards/smart_holder_signal_report.json")
     parser.add_argument("--summary-output", default="evidence/weather_lp_rewards/weather_lp_experiment_report.json")

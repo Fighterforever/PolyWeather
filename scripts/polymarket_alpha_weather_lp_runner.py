@@ -44,6 +44,7 @@ def main(argv: list[str] | None = None) -> None:
         [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_discovery_report.py", "--generated-at", generated_at, "--record-window-observation"],
         [args.python_path, "scripts/polymarket_alpha_weather_city_regime_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_smart_holder_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_quote_optimizer_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_strategy_report.py", "--generated-at", generated_at],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_paper_cycle.py", "--generated-at", generated_at],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_quote_update_report.py", "--generated-at", generated_at],
@@ -57,6 +58,8 @@ def main(argv: list[str] | None = None) -> None:
     results = [_run(command) for command in commands]
     experiment = _load("evidence/weather_lp_rewards/weather_lp_experiment_report.json")
     discovery = _load("evidence/weather_lp_rewards/lp_reward_discovery_report.json")
+    optimizer = _load("evidence/weather_lp_rewards/quote_optimizer_report.json")
+    reward_risk = _load("evidence/weather_lp_rewards/reward_vs_risk_report.json")
     report = {
         "schema_version": "polyweather_polymarket_alpha_weather_lp_runner.v1",
         "generated_at": generated_at,
@@ -68,10 +71,32 @@ def main(argv: list[str] | None = None) -> None:
         "paper_quote_count": experiment.get("paper_quote_count", 0),
         "quote_update_count": experiment.get("quote_update_count", 0),
         "reward_points_proxy": experiment.get("reward_points_proxy"),
+        "cumulative_reward_points_proxy": experiment.get("cumulative_reward_points_proxy"),
         "estimated_reward_cents_proxy": experiment.get("estimated_reward_cents_proxy"),
+        "mean_markout_5m": experiment.get("mean_5m_markout"),
+        "mean_markout_15m": experiment.get("mean_15m_markout"),
+        "mean_markout_1h": experiment.get("mean_1h_markout"),
+        "mean_markout_current": experiment.get("mean_current_markout"),
         "reward_to_risk_proxy": experiment.get("reward_to_risk_proxy"),
+        "experiment_recommendation": experiment.get("recommendation"),
         "recommendation": experiment.get("recommendation"),
+        "quote_optimizer_selected_count": optimizer.get("selected_quote_count"),
+        "rejected_expensive_basket_count": optimizer.get("rejected_expensive_basket_count"),
+        "valid_markout_count_by_horizon": reward_risk.get("valid_markout_count_by_horizon"),
+        "disk_usage": _run(["df", "-h", "."]),
         "commands": results,
+        "artifact_paths": {
+            "reward_metadata_audit": "evidence/weather_lp_rewards/reward_metadata_audit_report.json",
+            "quote_optimizer": "evidence/weather_lp_rewards/quote_optimizer_report.json",
+            "paper_quotes": "evidence/weather_lp_rewards/paper_quotes.jsonl",
+            "paper_quote_updates": "evidence/weather_lp_rewards/paper_quote_updates.jsonl",
+            "reward_vs_risk": "evidence/weather_lp_rewards/reward_vs_risk_report.json",
+            "reward_allocation_audit": "evidence/weather_lp_rewards/reward_allocation_audit_report.json",
+            "reward_window": "evidence/weather_lp_rewards/reward_window_report.json",
+            "cancellation_policy": "evidence/weather_lp_rewards/cancellation_policy_report.json",
+            "experiment": "evidence/weather_lp_rewards/weather_lp_experiment_report.json",
+            "alpha_tournament": "evidence/polymarket_alpha/alpha_tournament_scoreboard.json",
+        },
         "paper_only": True,
         "counts_for_live_gate": False,
         "live_order_path": False,

@@ -79,6 +79,7 @@ def test_tournament_weather_lp_needs_fifty_quotes_before_top_lane():
             "reward_qualified_quote_count": 20,
             "paper_quote_count": 20,
             "quote_update_count": 20,
+            "mean_current_markout": 0.5,
             "recommendation": "continue_weather_lp_paper",
             "live_order_path": False,
         },
@@ -86,6 +87,6 @@ def test_tournament_weather_lp_needs_fifty_quotes_before_top_lane():
     )
 
     lanes = {row["lane_id"]: row for row in report["lanes"]}
-    assert lanes["weather_lp_reward"]["status"] == "continue_weather_lp_paper_insufficient_updates"
-    assert lanes["weather_lp_reward"]["priority"] < 80
-    assert report["top_lane"] != "weather_lp_reward"
+    assert lanes["weather_lp_reward"]["status"] == "paper_positive_but_insufficient_updates"
+    assert lanes["weather_lp_reward"]["priority"] == 85
+    assert report["top_lane"] == "weather_lp_reward"

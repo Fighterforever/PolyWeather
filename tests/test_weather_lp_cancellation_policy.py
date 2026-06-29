@@ -14,7 +14,7 @@ def test_cancellation_policy_compares_hour_boundary_and_hold():
 
     policies = {row["policy"]: row for row in report["by_policy"]}
     assert policies["cancel_at_hour_boundary"]["quote_count"] == 1
-    assert policies["hold_until_manual_end"]["quote_count"] == 1
+    assert policies["hold_full_window"]["quote_count"] == 1
     assert report["live_order_path"] is False
 
 
@@ -26,5 +26,5 @@ def test_cancellation_policy_flags_reward_disqualification():
         ],
     )
 
-    row = [item for item in report["rows"] if item["policy"] == "cancel_on_reward_disqualification"][0]
+    row = [item for item in report["rows"] if item["policy"] == "cancel_after_reward_disqualified"][0]
     assert row["cancellation_reason"] == "spread_too_wide"

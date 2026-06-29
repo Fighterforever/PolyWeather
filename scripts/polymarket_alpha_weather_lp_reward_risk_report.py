@@ -38,7 +38,7 @@ def main(argv: list[str] | None = None) -> None:
     )
     write_jsonl(args.rows_output, report.get("rows") or [])
     city_basket = report.get("city_basket_attribution") or {}
-    compact = {key: value for key, value in report.items() if key not in {"rows", "city_basket_attribution"}}
+    compact = {key: value for key, value in report.items() if key not in {"rows", "quote_summaries", "city_basket_attribution"}}
     compact["artifact_paths"] = {"rows": str(args.rows_output), "city_basket_attribution": str(args.city_basket_output)}
     write_json(args.summary_output, compact)
     write_json(args.city_basket_output, city_basket)
