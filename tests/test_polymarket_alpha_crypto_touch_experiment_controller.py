@@ -24,7 +24,7 @@ def test_crypto_touch_72h_controller_keeps_threshold_when_near_miss_negative():
 
     assert report["formal_fill_count"] == 1
     assert report["keep_threshold_do_not_lower"] is True
-    assert report["recommendation"] == "reduce_priority_or_pause_after_more_samples"
+    assert report["recommendation"] == "shadow_only_pending_recalibration"
     assert report["live_order_path"] is False
     assert report["promote_to_tiny_live_review_candidate_never_set_true_until_enough_resolved_markout"] is False
 
@@ -48,7 +48,7 @@ def test_crypto_touch_72h_controller_reduces_priority_when_negative_and_surface_
     )
 
     assert report["surface_supported_fill_count"] == 0
-    assert report["recommendation"] == "reduce_priority_or_pause_after_more_samples"
+    assert report["recommendation"] == "shadow_only_pending_recalibration"
 
 
 def test_crypto_touch_72h_controller_reduces_priority_when_all_negative_and_fragile():
@@ -71,4 +71,4 @@ def test_crypto_touch_72h_controller_reduces_priority_when_all_negative_and_frag
 
     assert report["surface_supported_fill_count"] == 1
     assert report["sensitivity_fragile_fill_count"] == 1
-    assert report["recommendation"] == "reduce_priority_or_pause_after_more_samples"
+    assert report["recommendation"] == "shadow_only_pending_recalibration"

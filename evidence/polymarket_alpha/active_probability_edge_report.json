@@ -9,26 +9,22 @@
   },
   "blocker_counts": [
     {
-      "count": 8811,
+      "count": 8810,
       "reason": "global_oos_model_not_passed"
     }
   ],
-  "by_model_source": [
-    {
-      "count": 1,
-      "model_source": "crypto_lognormal_threshold_model"
-    }
-  ],
-  "candidate_count": 1,
+  "by_model_source": [],
+  "candidate_count": 0,
   "counts_for_live_gate": false,
   "downgraded_due_sensitivity_count": 2,
-  "downgraded_due_surface_count": 0,
-  "executable_candidate_count": 1,
+  "downgraded_due_surface_count": 2,
+  "executable_candidate_count": 0,
   "focus_categories": [],
   "formal_fill_count": 3,
   "formal_fill_followup_skipped": [],
   "formal_fill_followup_skipped_count": 0,
   "formal_fill_followup_snapshot_count": 3,
+  "formal_fill_mode": "disabled",
   "lane_reports": {
     "crypto_model_lane": {
       "blocker_counts": [
@@ -37,7 +33,7 @@
           "reason": "barrier_already_touched"
         },
         {
-          "count": 34,
+          "count": 35,
           "reason": "ev_below_min"
         },
         {
@@ -49,28 +45,219 @@
           "reason": "yes_no_bid_depth"
         }
       ],
-      "candidate_count": 1,
+      "candidate_count": 0,
       "downgraded_due_sensitivity_count": 2,
-      "downgraded_due_surface_count": 0,
+      "downgraded_due_surface_count": 2,
       "executable_price_available_count": 37,
+      "formal_fill_mode": "disabled",
       "live_order_path": false,
       "model_ready_count": 39,
-      "new_formal_fill_count": 1,
-      "old_formal_fill_count": 3,
-      "paper_fill_count": 1,
+      "new_formal_fill_count": 0,
+      "new_formal_fill_generation_enabled": false,
+      "old_formal_fill_count": 2,
+      "paper_fill_count": 0,
       "scanned_count": 39,
       "sensitivity_gate_enforced": true,
       "stricter_edge": 0.02,
       "surface_gate_enforced": true,
-      "top_candidates": [
+      "top_candidates": [],
+      "top_watch_rows": [
         {
-          "EV_safe": 0.02401703,
+          "EV_safe": 0.01332028,
+          "annual_vol": 0.7,
+          "asset": "ETH",
+          "barrier_already_touched": false,
+          "best_ask": 0.25,
+          "can_generate_official_candidate": true,
+          "can_generate_shadow_watch": true,
+          "candidate_downgraded_to_watch": true,
+          "category": "ethereum",
+          "confidence": 0.35,
+          "cost": 0.01,
+          "counts_for_live_gate": false,
+          "creation_time_proxy": false,
+          "creation_time_source": "createdAt",
+          "current_model_semantics": "touch_barrier",
+          "direction": "above",
+          "downgrade_reasons": [
+            "formal_fill_paused_pending_surface_recalibration",
+            "surface_unsupported",
+            "vol_support_rejected_below_stricter_edge"
+          ],
+          "generated_at": "2026-06-29T11:46:24Z",
+          "high_since_start_gap_reason": null,
+          "high_since_start_kline_count": 30796,
+          "high_since_start_verified": true,
+          "historical_high_since_start": 1849.54,
+          "live_order_path": false,
+          "market_creation_time": "2026-06-08T02:30:32Z",
+          "market_price": 0.24,
+          "market_slug": "will-ethereum-reach-2500-by-december-31-2026-from-june-8",
+          "max_high_at": "2026-06-15T15:54:00Z",
+          "max_high_since_start": 1849.54,
+          "model_source": "crypto_lognormal_threshold_model",
+          "orderbook_snapshot": {
+            "ask_depth_usdc_3c": 113.7126,
+            "ask_ladder": [
+              {
+                "price": 0.25,
+                "size": 5.7
+              },
+              {
+                "price": 0.27,
+                "size": 415.88
+              },
+              {
+                "price": 0.42,
+                "size": 125.0
+              },
+              {
+                "price": 0.43,
+                "size": 100.0
+              },
+              {
+                "price": 0.69,
+                "size": 411.0
+              },
+              {
+                "price": 0.76,
+                "size": 155.0
+              },
+              {
+                "price": 0.91,
+                "size": 77.77
+              },
+              {
+                "price": 0.97,
+                "size": 22.16
+              },
+              {
+                "price": 0.98,
+                "size": 47.0
+              },
+              {
+                "price": 0.99,
+                "size": 11.91
+              }
+            ],
+            "ask_levels": 10,
+            "best_ask": 0.25,
+            "best_bid": 0.23,
+            "bid_depth_usdc_3c": 40.9524,
+            "bid_ladder": [
+              {
+                "price": 0.23,
+                "size": 21.7
+              },
+              {
+                "price": 0.22,
+                "size": 154.37
+              },
+              {
+                "price": 0.2,
+                "size": 10.0
+              },
+              {
+                "price": 0.19,
+                "size": 50.0
+              },
+              {
+                "price": 0.17,
+                "size": 587.45
+              },
+              {
+                "price": 0.16,
+                "size": 5.0
+              },
+              {
+                "price": 0.14,
+                "size": 1041.99
+              },
+              {
+                "price": 0.1,
+                "size": 300.0
+              },
+              {
+                "price": 0.09,
+                "size": 5000.0
+              },
+              {
+                "price": 0.08,
+                "size": 55.0
+              },
+              {
+                "price": 0.07,
+                "size": 3000.0
+              },
+              {
+                "price": 0.05,
+                "size": 20.0
+              },
+              {
+                "price": 0.02,
+                "size": 35.92
+              },
+              {
+                "price": 0.01,
+                "size": 6.56
+              }
+            ],
+            "bid_levels": 14,
+            "market": "0xc68ab4e00ec12073ef04c78e774698258aab6c6a378157c14c940d6a2c52aa72",
+            "spread": 0.02,
+            "timestamp": "1782733552933",
+            "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
+          },
+          "orderbook_snapshot_id": null,
+          "p_lcb": 0.27332028,
+          "p_model": 0.35332028,
+          "p_no_lcb": 0.56667972,
+          "p_no_model": 0.64667972,
+          "p_no_touch": 0.64667972,
+          "p_no_ucb": 0.72667972,
+          "p_trade_lcb": 0.27332028,
+          "p_trade_model": 0.35332028,
+          "p_trade_ucb": 0.43332028,
+          "p_ucb": 0.43332028,
+          "p_yes_lcb": 0.27332028,
+          "p_yes_model": 0.35332028,
+          "p_yes_terminal": 0.1194326,
+          "p_yes_touch": 0.35332028,
+          "p_yes_ucb": 0.43332028,
+          "paper_only": true,
+          "parsed_start_time": "2026-06-08T02:30:32Z",
+          "priority_rank": 1,
+          "probability_semantics": "touch_barrier",
+          "q_effective": 0.25,
+          "semantics_type": "touch_barrier",
+          "sensitivity_base_EV_safe": 0.01332028,
+          "sensitivity_fragile": true,
+          "sensitivity_model_confidence": 0.0,
+          "side": "YES",
+          "spot": 1572.77,
+          "stricter_edge": 0.02,
+          "surface_group_member_count": 3,
+          "surface_group_too_sparse": true,
+          "surface_invalid_reason": "group_member_count_below_min,distinct_threshold_count_below_min",
+          "surface_residual_supports_model_direction": false,
+          "surface_residual_z_score": 0.674491,
+          "surface_support": false,
+          "surface_valid": false,
+          "target_time": "2027-01-01T05:00:00Z",
+          "threshold": 2500.0,
+          "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754",
+          "vol_support_reason": "sensitivity_fragile,model_vol_above_implied_vol",
+          "vol_supports_trade": false
+        },
+        {
+          "EV_safe": 0.01163864,
           "annual_vol": 0.55,
           "asset": "BTC",
           "barrier_already_touched": false,
-          "best_ask": 0.26,
+          "best_ask": 0.27,
           "can_generate_official_candidate": true,
           "can_generate_shadow_watch": true,
+          "candidate_downgraded_to_watch": true,
           "category": "bitcoin",
           "confidence": 0.35,
           "cost": 0.01,
@@ -79,25 +266,26 @@
           "creation_time_source": "createdAt",
           "current_model_semantics": "touch_barrier",
           "direction": "above",
-          "generated_at": "2026-06-29T09:30:39.332353Z",
+          "downgrade_reasons": [
+            "formal_fill_paused_pending_surface_recalibration",
+            "surface_unsupported",
+            "vol_support_rejected_below_stricter_edge"
+          ],
+          "generated_at": "2026-06-29T11:46:24Z",
           "high_since_start_gap_reason": null,
-          "high_since_start_kline_count": 30702,
+          "high_since_start_kline_count": 30838,
           "high_since_start_verified": true,
           "historical_high_since_start": 67292.15,
           "live_order_path": false,
           "market_creation_time": "2026-06-08T01:48:16Z",
-          "market_price": 0.255,
+          "market_price": 0.265,
           "market_slug": "will-bitcoin-reach-85000-by-december-31-2026-from-june-8",
           "max_high_at": "2026-06-15T15:59:00Z",
           "max_high_since_start": 67292.15,
           "model_source": "crypto_lognormal_threshold_model",
           "orderbook_snapshot": {
-            "ask_depth_usdc_3c": 1500.2326,
+            "ask_depth_usdc_3c": 2423.6556,
             "ask_ladder": [
-              {
-                "price": 0.26,
-                "size": 5.0
-              },
               {
                 "price": 0.27,
                 "size": 330.0
@@ -112,11 +300,11 @@
               },
               {
                 "price": 0.3,
-                "size": 3052.41
+                "size": 3082.41
               },
               {
                 "price": 0.31,
-                "size": 929.2
+                "size": 927.68
               },
               {
                 "price": 0.32,
@@ -139,6 +327,10 @@
                 "size": 500.0
               },
               {
+                "price": 0.4,
+                "size": 500.0
+              },
+              {
                 "price": 0.41,
                 "size": 100.0
               },
@@ -151,10 +343,6 @@
                 "size": 500.0
               },
               {
-                "price": 0.44,
-                "size": 500.0
-              },
-              {
                 "price": 0.49,
                 "size": 500.0
               },
@@ -163,7 +351,7 @@
                 "size": 28.76
               },
               {
-                "price": 0.66,
+                "price": 0.57,
                 "size": 500.0
               },
               {
@@ -236,7 +424,7 @@
               },
               {
                 "price": 0.93,
-                "size": 5.0
+                "size": 505.0
               },
               {
                 "price": 0.94,
@@ -263,18 +451,22 @@
                 "size": 38090.12
               }
             ],
-            "ask_levels": 42,
-            "best_ask": 0.26,
-            "best_bid": 0.25,
-            "bid_depth_usdc_3c": 504.036,
+            "ask_levels": 41,
+            "best_ask": 0.27,
+            "best_bid": 0.26,
+            "bid_depth_usdc_3c": 436.2642,
             "bid_ladder": [
+              {
+                "price": 0.26,
+                "size": 98.57
+              },
               {
                 "price": 0.25,
                 "size": 630.0
               },
               {
                 "price": 0.24,
-                "size": 637.65
+                "size": 642.65
               },
               {
                 "price": 0.23,
@@ -282,7 +474,7 @@
               },
               {
                 "price": 0.22,
-                "size": 430.0
+                "size": 400.0
               },
               {
                 "price": 0.2,
@@ -290,19 +482,19 @@
               },
               {
                 "price": 0.15,
-                "size": 420.0
+                "size": 500.0
               },
               {
                 "price": 0.14,
-                "size": 999.99
+                "size": 1006.37
               },
               {
                 "price": 0.12,
-                "size": 506.84
+                "size": 500.0
               },
               {
                 "price": 0.11,
-                "size": 1600.0
+                "size": 2787.21
               },
               {
                 "price": 0.1,
@@ -342,593 +534,113 @@
               },
               {
                 "price": 0.01,
-                "size": 36937.53
+                "size": 38437.53
               }
             ],
-            "bid_levels": 19,
+            "bid_levels": 20,
             "market": "0x1239389645c8a73b170b78ef3a83d69b6cf1d2711d412829ea8836660b08fc93",
             "spread": 0.01,
-            "timestamp": "1782725437017",
+            "timestamp": "1782733619683",
             "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
           },
           "orderbook_snapshot_id": null,
-          "p_lcb": 0.29401703,
-          "p_model": 0.37401703,
-          "p_no_lcb": 0.54598297,
-          "p_no_model": 0.62598297,
-          "p_no_touch": 0.62598297,
-          "p_no_ucb": 0.70598297,
-          "p_trade_lcb": 0.29401703,
-          "p_trade_model": 0.37401703,
-          "p_trade_ucb": 0.45401703,
-          "p_ucb": 0.45401703,
-          "p_yes_lcb": 0.29401703,
-          "p_yes_model": 0.37401703,
-          "p_yes_terminal": 0.13891987,
-          "p_yes_touch": 0.37401703,
-          "p_yes_ucb": 0.45401703,
+          "p_lcb": 0.29163864,
+          "p_model": 0.37163864,
+          "p_no_lcb": 0.54836136,
+          "p_no_model": 0.62836136,
+          "p_no_touch": 0.62836136,
+          "p_no_ucb": 0.70836136,
+          "p_trade_lcb": 0.29163864,
+          "p_trade_model": 0.37163864,
+          "p_trade_ucb": 0.45163864,
+          "p_ucb": 0.45163864,
+          "p_yes_lcb": 0.29163864,
+          "p_yes_model": 0.37163864,
+          "p_yes_terminal": 0.13795146,
+          "p_yes_touch": 0.37163864,
+          "p_yes_ucb": 0.45163864,
           "paper_only": true,
           "parsed_start_time": "2026-06-08T01:48:16Z",
           "priority_rank": 1,
           "probability_semantics": "touch_barrier",
-          "q_effective": 0.26,
+          "q_effective": 0.27,
           "semantics_type": "touch_barrier",
-          "sensitivity_base_EV_safe": 0.02401703,
+          "sensitivity_base_EV_safe": 0.01163864,
           "sensitivity_fragile": true,
           "sensitivity_model_confidence": 0.0,
           "side": "YES",
-          "spot": 59967.24,
+          "spot": 59868.31,
           "stricter_edge": 0.02,
-          "surface_group_member_count": 1,
+          "surface_group_member_count": 3,
           "surface_group_too_sparse": true,
-          "surface_residual_supports_model_direction": true,
-          "surface_residual_z_score": 0.0,
-          "surface_support": true,
+          "surface_invalid_reason": "group_member_count_below_min,distinct_threshold_count_below_min",
+          "surface_residual_supports_model_direction": false,
+          "surface_residual_z_score": 0.674491,
+          "surface_support": false,
+          "surface_valid": false,
           "target_time": "2027-01-01T05:00:00Z",
           "threshold": 85000.0,
-          "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
-        }
-      ],
-      "top_watch_rows": [
+          "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466",
+          "vol_support_reason": "sensitivity_fragile,model_vol_above_implied_vol",
+          "vol_supports_trade": false
+        },
         {
-          "EV_safe": 0.01700058,
+          "EV_safe": 0.01332028,
           "annual_vol": 0.7,
           "asset": "ETH",
           "barrier_already_touched": false,
           "best_ask": 0.25,
-          "can_generate_official_candidate": true,
-          "can_generate_shadow_watch": true,
-          "candidate_downgraded_to_watch": true,
-          "category": "ethereum",
-          "confidence": 0.35,
-          "cost": 0.01,
-          "counts_for_live_gate": false,
-          "creation_time_proxy": false,
-          "creation_time_source": "createdAt",
-          "current_model_semantics": "touch_barrier",
-          "direction": "above",
-          "downgrade_reasons": [
-            "sensitivity_fragile_below_stricter_edge"
-          ],
-          "generated_at": "2026-06-29T09:30:39.332353Z",
-          "high_since_start_gap_reason": null,
-          "high_since_start_kline_count": 30660,
-          "high_since_start_verified": true,
-          "historical_high_since_start": 1849.54,
-          "live_order_path": false,
-          "market_creation_time": "2026-06-08T02:30:32Z",
-          "market_price": 0.24,
-          "market_slug": "will-ethereum-reach-2500-by-december-31-2026-from-june-8",
-          "max_high_at": "2026-06-15T15:54:00Z",
-          "max_high_since_start": 1849.54,
-          "model_source": "crypto_lognormal_threshold_model",
-          "orderbook_snapshot": {
-            "ask_depth_usdc_3c": 124.3336,
-            "ask_ladder": [
-              {
-                "price": 0.25,
-                "size": 5.7
-              },
-              {
-                "price": 0.26,
-                "size": 40.85
-              },
-              {
-                "price": 0.27,
-                "size": 415.88
-              },
-              {
-                "price": 0.42,
-                "size": 125.0
-              },
-              {
-                "price": 0.43,
-                "size": 100.0
-              },
-              {
-                "price": 0.67,
-                "size": 6.0
-              },
-              {
-                "price": 0.68,
-                "size": 300.0
-              },
-              {
-                "price": 0.69,
-                "size": 411.0
-              },
-              {
-                "price": 0.76,
-                "size": 155.0
-              },
-              {
-                "price": 0.91,
-                "size": 77.77
-              },
-              {
-                "price": 0.99,
-                "size": 78.4
-              }
-            ],
-            "ask_levels": 11,
-            "best_ask": 0.25,
-            "best_bid": 0.23,
-            "bid_depth_usdc_3c": 40.9524,
-            "bid_ladder": [
-              {
-                "price": 0.23,
-                "size": 21.7
-              },
-              {
-                "price": 0.22,
-                "size": 154.37
-              },
-              {
-                "price": 0.2,
-                "size": 10.0
-              },
-              {
-                "price": 0.19,
-                "size": 50.0
-              },
-              {
-                "price": 0.17,
-                "size": 587.45
-              },
-              {
-                "price": 0.16,
-                "size": 5.0
-              },
-              {
-                "price": 0.14,
-                "size": 1041.99
-              },
-              {
-                "price": 0.1,
-                "size": 300.0
-              },
-              {
-                "price": 0.09,
-                "size": 5000.0
-              },
-              {
-                "price": 0.08,
-                "size": 55.0
-              },
-              {
-                "price": 0.07,
-                "size": 3000.0
-              },
-              {
-                "price": 0.05,
-                "size": 20.0
-              },
-              {
-                "price": 0.01,
-                "size": 78.4
-              }
-            ],
-            "bid_levels": 13,
-            "market": "0xc68ab4e00ec12073ef04c78e774698258aab6c6a378157c14c940d6a2c52aa72",
-            "spread": 0.02,
-            "timestamp": "1782725410733",
-            "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
-          },
-          "orderbook_snapshot_id": null,
-          "p_lcb": 0.27700058,
-          "p_model": 0.35700058,
-          "p_no_lcb": 0.56299942,
-          "p_no_model": 0.64299942,
-          "p_no_touch": 0.64299942,
-          "p_no_ucb": 0.72299942,
-          "p_trade_lcb": 0.27700058,
-          "p_trade_model": 0.35700058,
-          "p_trade_ucb": 0.43700058,
-          "p_ucb": 0.43700058,
-          "p_yes_lcb": 0.27700058,
-          "p_yes_model": 0.35700058,
-          "p_yes_terminal": 0.12083587,
-          "p_yes_touch": 0.35700058,
-          "p_yes_ucb": 0.43700058,
-          "paper_only": true,
-          "parsed_start_time": "2026-06-08T02:30:32Z",
-          "priority_rank": 1,
-          "probability_semantics": "touch_barrier",
-          "q_effective": 0.25,
-          "semantics_type": "touch_barrier",
-          "sensitivity_base_EV_safe": 0.01700058,
-          "sensitivity_fragile": true,
-          "sensitivity_model_confidence": 0.0,
-          "side": "YES",
-          "spot": 1578.15,
-          "stricter_edge": 0.02,
-          "surface_group_member_count": 2,
-          "surface_group_too_sparse": false,
-          "surface_residual_supports_model_direction": true,
-          "surface_residual_z_score": 0.674491,
-          "surface_support": true,
-          "target_time": "2027-01-01T05:00:00Z",
-          "threshold": 2500.0,
-          "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
-        },
-        {
-          "EV_safe": 0.0126528,
-          "annual_vol": 0.55,
-          "asset": "BTC",
-          "barrier_already_touched": false,
-          "best_ask": 0.36,
-          "can_generate_official_candidate": true,
-          "can_generate_shadow_watch": true,
-          "candidate_downgraded_to_watch": true,
-          "category": "bitcoin",
-          "confidence": 0.35,
-          "cost": 0.01,
-          "counts_for_live_gate": false,
-          "creation_time_proxy": false,
-          "creation_time_source": "createdAt",
-          "current_model_semantics": "touch_barrier",
-          "direction": "above",
-          "downgrade_reasons": [
-            "sensitivity_fragile_below_stricter_edge"
-          ],
-          "generated_at": "2026-06-29T09:30:39.332353Z",
-          "high_since_start_gap_reason": null,
-          "high_since_start_kline_count": 30702,
-          "high_since_start_verified": true,
-          "historical_high_since_start": 67292.15,
-          "live_order_path": false,
-          "market_creation_time": "2026-06-08T01:48:17Z",
-          "market_price": 0.355,
-          "market_slug": "will-bitcoin-reach-80000-by-december-31-2026-from-june-8",
-          "max_high_at": "2026-06-15T15:59:00Z",
-          "max_high_since_start": 67292.15,
-          "model_source": "crypto_lognormal_threshold_model",
-          "orderbook_snapshot": {
-            "ask_depth_usdc_3c": 950.0502,
-            "ask_ladder": [
-              {
-                "price": 0.36,
-                "size": 5.0
-              },
-              {
-                "price": 0.37,
-                "size": 2041.89
-              },
-              {
-                "price": 0.38,
-                "size": 218.28
-              },
-              {
-                "price": 0.39,
-                "size": 281.55
-              },
-              {
-                "price": 0.45,
-                "size": 100.0
-              },
-              {
-                "price": 0.46,
-                "size": 366.5
-              },
-              {
-                "price": 0.47,
-                "size": 100.0
-              },
-              {
-                "price": 0.48,
-                "size": 704.98
-              },
-              {
-                "price": 0.49,
-                "size": 162.0
-              },
-              {
-                "price": 0.5,
-                "size": 200.0
-              },
-              {
-                "price": 0.51,
-                "size": 100.0
-              },
-              {
-                "price": 0.54,
-                "size": 2903.0
-              },
-              {
-                "price": 0.55,
-                "size": 5476.52
-              },
-              {
-                "price": 0.57,
-                "size": 500.0
-              },
-              {
-                "price": 0.61,
-                "size": 500.0
-              },
-              {
-                "price": 0.67,
-                "size": 500.0
-              },
-              {
-                "price": 0.74,
-                "size": 3600.0
-              },
-              {
-                "price": 0.75,
-                "size": 1300.0
-              },
-              {
-                "price": 0.76,
-                "size": 16000.0
-              },
-              {
-                "price": 0.8,
-                "size": 5.0
-              },
-              {
-                "price": 0.81,
-                "size": 5.0
-              },
-              {
-                "price": 0.82,
-                "size": 14147.02
-              },
-              {
-                "price": 0.83,
-                "size": 5.0
-              },
-              {
-                "price": 0.84,
-                "size": 505.0
-              },
-              {
-                "price": 0.85,
-                "size": 5.0
-              },
-              {
-                "price": 0.86,
-                "size": 5.0
-              },
-              {
-                "price": 0.87,
-                "size": 5.0
-              },
-              {
-                "price": 0.88,
-                "size": 5.0
-              },
-              {
-                "price": 0.89,
-                "size": 5.0
-              },
-              {
-                "price": 0.9,
-                "size": 1505.0
-              },
-              {
-                "price": 0.91,
-                "size": 5.0
-              },
-              {
-                "price": 0.92,
-                "size": 5.0
-              },
-              {
-                "price": 0.93,
-                "size": 5.0
-              },
-              {
-                "price": 0.94,
-                "size": 14005.0
-              },
-              {
-                "price": 0.95,
-                "size": 505.0
-              },
-              {
-                "price": 0.96,
-                "size": 5.0
-              },
-              {
-                "price": 0.97,
-                "size": 5.0
-              },
-              {
-                "price": 0.98,
-                "size": 15005.0
-              },
-              {
-                "price": 0.99,
-                "size": 40505.0
-              }
-            ],
-            "ask_levels": 39,
-            "best_ask": 0.36,
-            "best_bid": 0.35,
-            "bid_depth_usdc_3c": 604.0246,
-            "bid_ladder": [
-              {
-                "price": 0.35,
-                "size": 451.1
-              },
-              {
-                "price": 0.34,
-                "size": 673.22
-              },
-              {
-                "price": 0.33,
-                "size": 522.56
-              },
-              {
-                "price": 0.32,
-                "size": 140.0
-              },
-              {
-                "price": 0.31,
-                "size": 500.0
-              },
-              {
-                "price": 0.3,
-                "size": 717.05
-              },
-              {
-                "price": 0.28,
-                "size": 20.0
-              },
-              {
-                "price": 0.24,
-                "size": 240.0
-              },
-              {
-                "price": 0.23,
-                "size": 510.0
-              },
-              {
-                "price": 0.22,
-                "size": 1710.0
-              },
-              {
-                "price": 0.21,
-                "size": 400.0
-              },
-              {
-                "price": 0.2,
-                "size": 770.0
-              },
-              {
-                "price": 0.19,
-                "size": 1133.14
-              },
-              {
-                "price": 0.17,
-                "size": 99.99
-              },
-              {
-                "price": 0.16,
-                "size": 100.0
-              },
-              {
-                "price": 0.12,
-                "size": 1900.0
-              },
-              {
-                "price": 0.1,
-                "size": 1250.0
-              },
-              {
-                "price": 0.09,
-                "size": 1936.11
-              },
-              {
-                "price": 0.08,
-                "size": 2453.12
-              },
-              {
-                "price": 0.07,
-                "size": 2455.37
-              },
-              {
-                "price": 0.06,
-                "size": 3385.44
-              },
-              {
-                "price": 0.05,
-                "size": 7395.0
-              },
-              {
-                "price": 0.04,
-                "size": 7812.5
-              },
-              {
-                "price": 0.03,
-                "size": 10937.51
-              },
-              {
-                "price": 0.02,
-                "size": 18187.52
-              },
-              {
-                "price": 0.01,
-                "size": 70937.53
-              }
-            ],
-            "bid_levels": 26,
-            "market": "0xc564e47b7a853f3e52ea7b8e28d69ed99fcb284929364fd0f8024c2bca03ea96",
-            "spread": 0.01,
-            "timestamp": "1782725437006",
-            "token_id": "93924969469939330995194645669345334142528685509853517456507765752635309176671"
-          },
-          "orderbook_snapshot_id": null,
-          "p_lcb": 0.3826528,
-          "p_model": 0.4626528,
-          "p_no_lcb": 0.4573472,
-          "p_no_model": 0.5373472,
-          "p_no_touch": 0.5373472,
-          "p_no_ucb": 0.6173472,
-          "p_trade_lcb": 0.3826528,
-          "p_trade_model": 0.4626528,
-          "p_trade_ucb": 0.5426528,
-          "p_ucb": 0.5426528,
-          "p_yes_lcb": 0.3826528,
-          "p_yes_model": 0.4626528,
-          "p_yes_terminal": 0.17600527,
-          "p_yes_touch": 0.4626528,
-          "p_yes_ucb": 0.5426528,
-          "paper_only": true,
-          "parsed_start_time": "2026-06-08T01:48:17Z",
-          "priority_rank": 1,
-          "probability_semantics": "touch_barrier",
-          "q_effective": 0.36,
-          "semantics_type": "touch_barrier",
-          "sensitivity_base_EV_safe": 0.0126528,
-          "sensitivity_fragile": true,
-          "sensitivity_model_confidence": 0.0,
-          "side": "YES",
-          "spot": 59967.24,
-          "stricter_edge": 0.02,
-          "surface_group_member_count": 1,
-          "surface_group_too_sparse": true,
-          "surface_residual_supports_model_direction": true,
-          "surface_residual_z_score": 0.0,
-          "surface_support": true,
-          "target_time": "2027-01-01T05:00:00Z",
-          "threshold": 80000.0,
-          "token_id": "93924969469939330995194645669345334142528685509853517456507765752635309176671"
-        },
-        {
-          "EV_safe": 0.02401703,
-          "annual_vol": 0.55,
-          "asset": "BTC",
-          "barrier_already_touched": false,
-          "best_ask": 0.26,
           "blocker": null,
           "can_generate_official_candidate": true,
           "can_generate_shadow_watch": true,
           "creation_time_proxy": false,
           "creation_time_source": "createdAt",
-          "depth": 1500.2326,
-          "generated_at": "2026-06-29T09:30:39.332353Z",
+          "depth": 113.7126,
+          "generated_at": "2026-06-29T11:46:24Z",
+          "high_since_start_gap_reason": null,
+          "high_since_start_verified": true,
+          "historical_high_since_start": 1849.54,
+          "live_order_path": false,
+          "market_creation_time": "2026-06-08T02:30:32Z",
+          "market_slug": "will-ethereum-reach-2500-by-december-31-2026-from-june-8",
+          "max_high_at": "2026-06-15T15:54:00Z",
+          "max_high_since_start": 1849.54,
+          "p_lcb": 0.27332028,
+          "p_model": 0.35332028,
+          "p_no_lcb": 0.56667972,
+          "p_no_model": 0.64667972,
+          "p_no_ucb": 0.72667972,
+          "p_trade_lcb": 0.27332028,
+          "p_trade_model": 0.35332028,
+          "p_trade_ucb": 0.43332028,
+          "p_ucb": 0.43332028,
+          "p_yes_lcb": 0.27332028,
+          "p_yes_model": 0.35332028,
+          "p_yes_ucb": 0.43332028,
+          "paper_only": true,
+          "probability_semantics": "touch_barrier",
+          "q_effective": 0.25,
+          "semantics_type": "touch_barrier",
+          "side": "YES",
+          "spot": 1572.77,
+          "spread": 0.02,
+          "target_time": "2027-01-01T05:00:00Z",
+          "threshold": 2500.0,
+          "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
+        },
+        {
+          "EV_safe": 0.01163864,
+          "annual_vol": 0.55,
+          "asset": "BTC",
+          "barrier_already_touched": false,
+          "best_ask": 0.27,
+          "blocker": null,
+          "can_generate_official_candidate": true,
+          "can_generate_shadow_watch": true,
+          "creation_time_proxy": false,
+          "creation_time_source": "createdAt",
+          "depth": 2423.6556,
+          "generated_at": "2026-06-29T11:46:24Z",
           "high_since_start_gap_reason": null,
           "high_since_start_verified": true,
           "historical_high_since_start": 67292.15,
@@ -937,119 +649,75 @@
           "market_slug": "will-bitcoin-reach-85000-by-december-31-2026-from-june-8",
           "max_high_at": "2026-06-15T15:59:00Z",
           "max_high_since_start": 67292.15,
-          "p_lcb": 0.29401703,
-          "p_model": 0.37401703,
-          "p_no_lcb": 0.54598297,
-          "p_no_model": 0.62598297,
-          "p_no_ucb": 0.70598297,
-          "p_trade_lcb": 0.29401703,
-          "p_trade_model": 0.37401703,
-          "p_trade_ucb": 0.45401703,
-          "p_ucb": 0.45401703,
-          "p_yes_lcb": 0.29401703,
-          "p_yes_model": 0.37401703,
-          "p_yes_ucb": 0.45401703,
+          "p_lcb": 0.29163864,
+          "p_model": 0.37163864,
+          "p_no_lcb": 0.54836136,
+          "p_no_model": 0.62836136,
+          "p_no_ucb": 0.70836136,
+          "p_trade_lcb": 0.29163864,
+          "p_trade_model": 0.37163864,
+          "p_trade_ucb": 0.45163864,
+          "p_ucb": 0.45163864,
+          "p_yes_lcb": 0.29163864,
+          "p_yes_model": 0.37163864,
+          "p_yes_ucb": 0.45163864,
           "paper_only": true,
           "probability_semantics": "touch_barrier",
-          "q_effective": 0.26,
+          "q_effective": 0.27,
           "semantics_type": "touch_barrier",
           "side": "YES",
-          "spot": 59967.24,
+          "spot": 59868.31,
           "spread": 0.01,
           "target_time": "2027-01-01T05:00:00Z",
           "threshold": 85000.0,
           "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
         },
         {
-          "EV_safe": 0.01700058,
-          "annual_vol": 0.7,
-          "asset": "ETH",
-          "barrier_already_touched": false,
-          "best_ask": 0.25,
-          "blocker": null,
-          "can_generate_official_candidate": true,
-          "can_generate_shadow_watch": true,
-          "creation_time_proxy": false,
-          "creation_time_source": "createdAt",
-          "depth": 124.3336,
-          "generated_at": "2026-06-29T09:30:39.332353Z",
-          "high_since_start_gap_reason": null,
-          "high_since_start_verified": true,
-          "historical_high_since_start": 1849.54,
-          "live_order_path": false,
-          "market_creation_time": "2026-06-08T02:30:32Z",
-          "market_slug": "will-ethereum-reach-2500-by-december-31-2026-from-june-8",
-          "max_high_at": "2026-06-15T15:54:00Z",
-          "max_high_since_start": 1849.54,
-          "p_lcb": 0.27700058,
-          "p_model": 0.35700058,
-          "p_no_lcb": 0.56299942,
-          "p_no_model": 0.64299942,
-          "p_no_ucb": 0.72299942,
-          "p_trade_lcb": 0.27700058,
-          "p_trade_model": 0.35700058,
-          "p_trade_ucb": 0.43700058,
-          "p_ucb": 0.43700058,
-          "p_yes_lcb": 0.27700058,
-          "p_yes_model": 0.35700058,
-          "p_yes_ucb": 0.43700058,
-          "paper_only": true,
-          "probability_semantics": "touch_barrier",
-          "q_effective": 0.25,
-          "semantics_type": "touch_barrier",
-          "side": "YES",
-          "spot": 1578.15,
-          "spread": 0.02,
-          "target_time": "2027-01-01T05:00:00Z",
-          "threshold": 2500.0,
-          "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
-        },
-        {
-          "EV_safe": 0.0126528,
+          "EV_safe": 0.00875793,
           "annual_vol": 0.55,
           "asset": "BTC",
           "barrier_already_touched": false,
-          "best_ask": 0.36,
-          "blocker": null,
+          "best_ask": 0.2,
+          "blocker": "ev_below_min",
           "can_generate_official_candidate": true,
           "can_generate_shadow_watch": true,
           "creation_time_proxy": false,
           "creation_time_source": "createdAt",
-          "depth": 950.0502,
-          "generated_at": "2026-06-29T09:30:39.332353Z",
+          "depth": 6089.2751,
+          "generated_at": "2026-06-29T11:46:24Z",
           "high_since_start_gap_reason": null,
           "high_since_start_verified": true,
-          "historical_high_since_start": 67292.15,
+          "historical_high_since_start": 82850.0,
           "live_order_path": false,
-          "market_creation_time": "2026-06-08T01:48:17Z",
-          "market_slug": "will-bitcoin-reach-80000-by-december-31-2026-from-june-8",
-          "max_high_at": "2026-06-15T15:59:00Z",
-          "max_high_since_start": 67292.15,
-          "p_lcb": 0.3826528,
-          "p_model": 0.4626528,
-          "p_no_lcb": 0.4573472,
-          "p_no_model": 0.5373472,
-          "p_no_ucb": 0.6173472,
-          "p_trade_lcb": 0.3826528,
-          "p_trade_model": 0.4626528,
-          "p_trade_ucb": 0.5426528,
-          "p_ucb": 0.5426528,
-          "p_yes_lcb": 0.3826528,
-          "p_yes_model": 0.4626528,
-          "p_yes_ucb": 0.5426528,
+          "market_creation_time": "2026-02-06T15:44:31Z",
+          "market_slug": "will-bitcoin-reach-90000-by-december-31-2026-113-862-581-343",
+          "max_high_at": "2026-05-06T11:22:00Z",
+          "max_high_since_start": 82850.0,
+          "p_lcb": 0.21875793,
+          "p_model": 0.29875793,
+          "p_no_lcb": 0.62124207,
+          "p_no_model": 0.70124207,
+          "p_no_ucb": 0.78124207,
+          "p_trade_lcb": 0.21875793,
+          "p_trade_model": 0.29875793,
+          "p_trade_ucb": 0.37875793,
+          "p_ucb": 0.37875793,
+          "p_yes_lcb": 0.21875793,
+          "p_yes_model": 0.29875793,
+          "p_yes_ucb": 0.37875793,
           "paper_only": true,
           "probability_semantics": "touch_barrier",
-          "q_effective": 0.36,
+          "q_effective": 0.2,
           "semantics_type": "touch_barrier",
           "side": "YES",
-          "spot": 59967.24,
-          "spread": 0.01,
+          "spot": 59868.31,
+          "spread": 0.02,
           "target_time": "2027-01-01T05:00:00Z",
-          "threshold": 80000.0,
-          "token_id": "93924969469939330995194645669345334142528685509853517456507765752635309176671"
+          "threshold": 90000.0,
+          "token_id": "89384721767526056909881321094852287855436067743554155484781205764118128944311"
         },
         {
-          "EV_safe": 0.00616941,
+          "EV_safe": 0.00311944,
           "annual_vol": 0.7,
           "asset": "ETH",
           "barrier_already_touched": false,
@@ -1060,7 +728,7 @@
           "creation_time_proxy": false,
           "creation_time_source": "createdAt",
           "depth": 16.0327,
-          "generated_at": "2026-06-29T09:30:39.332353Z",
+          "generated_at": "2026-06-29T11:46:24Z",
           "high_since_start_gap_reason": null,
           "high_since_start_verified": true,
           "historical_high_since_start": 1849.54,
@@ -1069,75 +737,75 @@
           "market_slug": "will-ethereum-reach-2750-by-december-31-2026-from-june-8",
           "max_high_at": "2026-06-15T15:54:00Z",
           "max_high_since_start": 1849.54,
-          "p_lcb": 0.18616941,
-          "p_model": 0.26616941,
-          "p_no_lcb": 0.65383059,
-          "p_no_model": 0.73383059,
-          "p_no_ucb": 0.81383059,
-          "p_trade_lcb": 0.18616941,
-          "p_trade_model": 0.26616941,
-          "p_trade_ucb": 0.34616941,
-          "p_ucb": 0.34616941,
-          "p_yes_lcb": 0.18616941,
-          "p_yes_model": 0.26616941,
-          "p_yes_ucb": 0.34616941,
+          "p_lcb": 0.18311944,
+          "p_model": 0.26311944,
+          "p_no_lcb": 0.65688056,
+          "p_no_model": 0.73688056,
+          "p_no_ucb": 0.81688056,
+          "p_trade_lcb": 0.18311944,
+          "p_trade_model": 0.26311944,
+          "p_trade_ucb": 0.34311944,
+          "p_ucb": 0.34311944,
+          "p_yes_lcb": 0.18311944,
+          "p_yes_model": 0.26311944,
+          "p_yes_ucb": 0.34311944,
           "paper_only": true,
           "probability_semantics": "touch_barrier",
           "q_effective": 0.17,
           "semantics_type": "touch_barrier",
           "side": "YES",
-          "spot": 1578.15,
+          "spot": 1572.77,
           "spread": 0.01,
           "target_time": "2027-01-01T05:00:00Z",
           "threshold": 2750.0,
           "token_id": "109204197687767722729294908496033551963201953931111544169334789476829097062278"
         },
         {
-          "EV_safe": 0.00084194,
+          "EV_safe": -2.047e-05,
           "annual_vol": 0.55,
           "asset": "BTC",
           "barrier_already_touched": false,
-          "best_ask": 0.21,
+          "best_ask": 0.37,
           "blocker": "ev_below_min",
           "can_generate_official_candidate": true,
           "can_generate_shadow_watch": true,
           "creation_time_proxy": false,
           "creation_time_source": "createdAt",
-          "depth": 6104.9751,
-          "generated_at": "2026-06-29T09:30:39.332353Z",
+          "depth": 962.0225,
+          "generated_at": "2026-06-29T11:46:24Z",
           "high_since_start_gap_reason": null,
           "high_since_start_verified": true,
-          "historical_high_since_start": 82850.0,
+          "historical_high_since_start": 67292.15,
           "live_order_path": false,
-          "market_creation_time": "2026-02-06T15:44:31Z",
-          "market_slug": "will-bitcoin-reach-90000-by-december-31-2026-113-862-581-343",
-          "max_high_at": "2026-05-06T11:22:00Z",
-          "max_high_since_start": 82850.0,
-          "p_lcb": 0.22084194,
-          "p_model": 0.30084194,
-          "p_no_lcb": 0.61915806,
-          "p_no_model": 0.69915806,
-          "p_no_ucb": 0.77915806,
-          "p_trade_lcb": 0.22084194,
-          "p_trade_model": 0.30084194,
-          "p_trade_ucb": 0.38084194,
-          "p_ucb": 0.38084194,
-          "p_yes_lcb": 0.22084194,
-          "p_yes_model": 0.30084194,
-          "p_yes_ucb": 0.38084194,
+          "market_creation_time": "2026-06-08T01:48:17Z",
+          "market_slug": "will-bitcoin-reach-80000-by-december-31-2026-from-june-8",
+          "max_high_at": "2026-06-15T15:59:00Z",
+          "max_high_since_start": 67292.15,
+          "p_lcb": 0.37997953,
+          "p_model": 0.45997953,
+          "p_no_lcb": 0.46002047,
+          "p_no_model": 0.54002047,
+          "p_no_ucb": 0.62002047,
+          "p_trade_lcb": 0.37997953,
+          "p_trade_model": 0.45997953,
+          "p_trade_ucb": 0.53997953,
+          "p_ucb": 0.53997953,
+          "p_yes_lcb": 0.37997953,
+          "p_yes_model": 0.45997953,
+          "p_yes_ucb": 0.53997953,
           "paper_only": true,
           "probability_semantics": "touch_barrier",
-          "q_effective": 0.21,
+          "q_effective": 0.37,
           "semantics_type": "touch_barrier",
           "side": "YES",
-          "spot": 59967.24,
-          "spread": 0.03,
+          "spot": 59868.31,
+          "spread": 0.02,
           "target_time": "2027-01-01T05:00:00Z",
-          "threshold": 90000.0,
-          "token_id": "89384721767526056909881321094852287855436067743554155484781205764118128944311"
+          "threshold": 80000.0,
+          "token_id": "93924969469939330995194645669345334142528685509853517456507765752635309176671"
         },
         {
-          "EV_safe": -0.01896666,
+          "EV_safe": -0.02077013,
           "annual_vol": 0.55,
           "asset": "BTC",
           "barrier_already_touched": false,
@@ -1147,8 +815,8 @@
           "can_generate_shadow_watch": true,
           "creation_time_proxy": false,
           "creation_time_source": "createdAt",
-          "depth": 3869.7964,
-          "generated_at": "2026-06-29T09:30:39.332353Z",
+          "depth": 3873.5609,
+          "generated_at": "2026-06-29T11:46:24Z",
           "high_since_start_gap_reason": null,
           "high_since_start_verified": true,
           "historical_high_since_start": 67292.15,
@@ -1157,24 +825,24 @@
           "market_slug": "will-bitcoin-reach-95000-by-december-31-2026-from-june-8",
           "max_high_at": "2026-06-15T15:59:00Z",
           "max_high_since_start": 67292.15,
-          "p_lcb": 0.16103334,
-          "p_model": 0.24103334,
-          "p_no_lcb": 0.67896666,
-          "p_no_model": 0.75896666,
-          "p_no_ucb": 0.83896666,
-          "p_trade_lcb": 0.16103334,
-          "p_trade_model": 0.24103334,
-          "p_trade_ucb": 0.32103334,
-          "p_ucb": 0.32103334,
-          "p_yes_lcb": 0.16103334,
-          "p_yes_model": 0.24103334,
-          "p_yes_ucb": 0.32103334,
+          "p_lcb": 0.15922987,
+          "p_model": 0.23922987,
+          "p_no_lcb": 0.68077013,
+          "p_no_model": 0.76077013,
+          "p_no_ucb": 0.84077013,
+          "p_trade_lcb": 0.15922987,
+          "p_trade_model": 0.23922987,
+          "p_trade_ucb": 0.31922987,
+          "p_ucb": 0.31922987,
+          "p_yes_lcb": 0.15922987,
+          "p_yes_model": 0.23922987,
+          "p_yes_ucb": 0.31922987,
           "paper_only": true,
           "probability_semantics": "touch_barrier",
           "q_effective": 0.17,
           "semantics_type": "touch_barrier",
           "side": "YES",
-          "spot": 59967.24,
+          "spot": 59868.31,
           "spread": 0.02,
           "target_time": "2027-01-01T05:00:00Z",
           "threshold": 95000.0,
@@ -1191,8 +859,8 @@
           "can_generate_shadow_watch": true,
           "creation_time_proxy": false,
           "creation_time_source": "createdAt",
-          "depth": 687.74502,
-          "generated_at": "2026-06-29T09:30:39.332353Z",
+          "depth": 685.287,
+          "generated_at": "2026-06-29T11:46:24Z",
           "high_since_start_gap_reason": null,
           "high_since_start_verified": true,
           "historical_high_since_start": 82850.0,
@@ -1218,55 +886,55 @@
           "q_effective": 0.011,
           "semantics_type": "touch_barrier",
           "side": "YES",
-          "spot": 59967.24,
+          "spot": 59868.31,
           "spread": 0.001,
           "target_time": "2027-01-01T05:00:00Z",
           "threshold": 1000000.0,
           "token_id": "18571303954259773157233385333455041418270179723020753158306812650937565180666"
         },
         {
-          "EV_safe": -0.02160687,
-          "annual_vol": 0.7,
-          "asset": "ETH",
+          "EV_safe": -0.024,
+          "annual_vol": 0.55,
+          "asset": "BTC",
           "barrier_already_touched": false,
-          "best_ask": 0.13,
+          "best_ask": 0.014,
           "blocker": "ev_below_min",
           "can_generate_official_candidate": true,
           "can_generate_shadow_watch": true,
           "creation_time_proxy": false,
           "creation_time_source": "createdAt",
-          "depth": 1205.3271,
-          "generated_at": "2026-06-29T09:30:39.332353Z",
+          "depth": 1386.34193,
+          "generated_at": "2026-06-29T11:46:24Z",
           "high_since_start_gap_reason": null,
           "high_since_start_verified": true,
-          "historical_high_since_start": 1849.54,
+          "historical_high_since_start": 97924.49,
           "live_order_path": false,
-          "market_creation_time": "2026-06-08T02:30:31Z",
-          "market_slug": "will-ethereum-reach-3000-by-december-31-2026-from-june-8",
-          "max_high_at": "2026-06-15T15:54:00Z",
-          "max_high_since_start": 1849.54,
-          "p_lcb": 0.11839313,
-          "p_model": 0.19839313,
-          "p_no_lcb": 0.72160687,
-          "p_no_model": 0.80160687,
-          "p_no_ucb": 0.88160687,
-          "p_trade_lcb": 0.11839313,
-          "p_trade_model": 0.19839313,
-          "p_trade_ucb": 0.27839313,
-          "p_ucb": 0.27839313,
-          "p_yes_lcb": 0.11839313,
-          "p_yes_model": 0.19839313,
-          "p_yes_ucb": 0.27839313,
+          "market_creation_time": "2025-12-29T15:15:07Z",
+          "market_slug": "will-bitcoin-reach-250000-by-december-31-2026-579-442",
+          "max_high_at": "2026-01-14T20:11:00Z",
+          "max_high_since_start": 97924.49,
+          "p_lcb": 0.0,
+          "p_model": 0.00026926,
+          "p_no_lcb": 0.91973074,
+          "p_no_model": 0.99973074,
+          "p_no_ucb": 1.0,
+          "p_trade_lcb": 0.0,
+          "p_trade_model": 0.00026926,
+          "p_trade_ucb": 0.08026926,
+          "p_ucb": 0.08026926,
+          "p_yes_lcb": 0.0,
+          "p_yes_model": 0.00026926,
+          "p_yes_ucb": 0.08026926,
           "paper_only": true,
           "probability_semantics": "touch_barrier",
-          "q_effective": 0.13,
+          "q_effective": 0.014,
           "semantics_type": "touch_barrier",
           "side": "YES",
-          "spot": 1578.15,
-          "spread": 0.01,
+          "spot": 59868.31,
+          "spread": 0.001,
           "target_time": "2027-01-01T05:00:00Z",
-          "threshold": 3000.0,
-          "token_id": "17572937743553622007574854767800179053257989607150990127742127678112949966531"
+          "threshold": 250000.0,
+          "token_id": "13433573766910980267981622064090484781359464703732825845886677588040916221533"
         }
       ],
       "watch_count": 2
@@ -1274,7 +942,7 @@
     "global_oos_model_lane": {
       "blocker_counts": [
         {
-          "count": 8811,
+          "count": 8810,
           "reason": "global_oos_model_not_passed"
         }
       ],
@@ -1283,7 +951,7 @@
       "live_order_path": false,
       "model_ready_count": 0,
       "paper_fill_count": 0,
-      "scanned_count": 8811,
+      "scanned_count": 8810,
       "top_candidates": [],
       "top_watch_rows": []
     },
@@ -1322,344 +990,19 @@
   },
   "live_order_path": false,
   "model_ready_count": 39,
-  "new_formal_fill_count": 1,
-  "new_paper_fill_count": 1,
-  "old_formal_fill_count": 3,
+  "new_formal_fill_count": 0,
+  "new_formal_fill_generation_enabled": false,
+  "new_paper_fill_count": 0,
+  "old_formal_fill_count": 2,
   "orderbook_snapshot_id_null_count": 0,
   "paper_fill_count": 3,
   "paper_only": true,
   "rejected_fill_count": 0,
   "rejected_fills": [],
-  "scanned_active_market_count": 8811,
+  "scanned_active_market_count": 8810,
   "schema_version": "polyweather_polymarket_alpha_active_probability_edge.v2",
   "scope": "polymarket_only",
-  "top_candidates": [
-    {
-      "EV_safe": 0.02401703,
-      "annual_vol": 0.55,
-      "asset": "BTC",
-      "barrier_already_touched": false,
-      "best_ask": 0.26,
-      "can_generate_official_candidate": true,
-      "can_generate_shadow_watch": true,
-      "category": "bitcoin",
-      "confidence": 0.35,
-      "cost": 0.01,
-      "counts_for_live_gate": false,
-      "creation_time_proxy": false,
-      "creation_time_source": "createdAt",
-      "current_model_semantics": "touch_barrier",
-      "direction": "above",
-      "generated_at": "2026-06-29T09:30:39.332353Z",
-      "high_since_start_gap_reason": null,
-      "high_since_start_kline_count": 30702,
-      "high_since_start_verified": true,
-      "historical_high_since_start": 67292.15,
-      "live_order_path": false,
-      "market_creation_time": "2026-06-08T01:48:16Z",
-      "market_price": 0.255,
-      "market_slug": "will-bitcoin-reach-85000-by-december-31-2026-from-june-8",
-      "max_high_at": "2026-06-15T15:59:00Z",
-      "max_high_since_start": 67292.15,
-      "model_source": "crypto_lognormal_threshold_model",
-      "orderbook_snapshot": {
-        "ask_depth_usdc_3c": 1500.2326,
-        "ask_ladder": [
-          {
-            "price": 0.26,
-            "size": 5.0
-          },
-          {
-            "price": 0.27,
-            "size": 330.0
-          },
-          {
-            "price": 0.28,
-            "size": 2130.0
-          },
-          {
-            "price": 0.29,
-            "size": 2804.94
-          },
-          {
-            "price": 0.3,
-            "size": 3052.41
-          },
-          {
-            "price": 0.31,
-            "size": 929.2
-          },
-          {
-            "price": 0.32,
-            "size": 2134.81
-          },
-          {
-            "price": 0.33,
-            "size": 5019.46
-          },
-          {
-            "price": 0.34,
-            "size": 6815.32
-          },
-          {
-            "price": 0.35,
-            "size": 200.0
-          },
-          {
-            "price": 0.39,
-            "size": 500.0
-          },
-          {
-            "price": 0.41,
-            "size": 100.0
-          },
-          {
-            "price": 0.42,
-            "size": 100.0
-          },
-          {
-            "price": 0.43,
-            "size": 500.0
-          },
-          {
-            "price": 0.44,
-            "size": 500.0
-          },
-          {
-            "price": 0.49,
-            "size": 500.0
-          },
-          {
-            "price": 0.52,
-            "size": 28.76
-          },
-          {
-            "price": 0.66,
-            "size": 500.0
-          },
-          {
-            "price": 0.67,
-            "size": 500.0
-          },
-          {
-            "price": 0.69,
-            "size": 4750.0
-          },
-          {
-            "price": 0.78,
-            "size": 800.0
-          },
-          {
-            "price": 0.79,
-            "size": 7500.0
-          },
-          {
-            "price": 0.8,
-            "size": 5.0
-          },
-          {
-            "price": 0.81,
-            "size": 5.0
-          },
-          {
-            "price": 0.82,
-            "size": 5.0
-          },
-          {
-            "price": 0.83,
-            "size": 5.0
-          },
-          {
-            "price": 0.84,
-            "size": 1505.0
-          },
-          {
-            "price": 0.85,
-            "size": 5.0
-          },
-          {
-            "price": 0.86,
-            "size": 5.0
-          },
-          {
-            "price": 0.87,
-            "size": 5.0
-          },
-          {
-            "price": 0.88,
-            "size": 5.0
-          },
-          {
-            "price": 0.89,
-            "size": 10505.0
-          },
-          {
-            "price": 0.9,
-            "size": 5.0
-          },
-          {
-            "price": 0.91,
-            "size": 5.0
-          },
-          {
-            "price": 0.92,
-            "size": 5.0
-          },
-          {
-            "price": 0.93,
-            "size": 5.0
-          },
-          {
-            "price": 0.94,
-            "size": 14005.0
-          },
-          {
-            "price": 0.95,
-            "size": 205.0
-          },
-          {
-            "price": 0.96,
-            "size": 5.0
-          },
-          {
-            "price": 0.97,
-            "size": 5.0
-          },
-          {
-            "price": 0.98,
-            "size": 15005.0
-          },
-          {
-            "price": 0.99,
-            "size": 38090.12
-          }
-        ],
-        "ask_levels": 42,
-        "best_ask": 0.26,
-        "best_bid": 0.25,
-        "bid_depth_usdc_3c": 504.036,
-        "bid_ladder": [
-          {
-            "price": 0.25,
-            "size": 630.0
-          },
-          {
-            "price": 0.24,
-            "size": 637.65
-          },
-          {
-            "price": 0.23,
-            "size": 430.0
-          },
-          {
-            "price": 0.22,
-            "size": 430.0
-          },
-          {
-            "price": 0.2,
-            "size": 100.0
-          },
-          {
-            "price": 0.15,
-            "size": 420.0
-          },
-          {
-            "price": 0.14,
-            "size": 999.99
-          },
-          {
-            "price": 0.12,
-            "size": 506.84
-          },
-          {
-            "price": 0.11,
-            "size": 1600.0
-          },
-          {
-            "price": 0.1,
-            "size": 1750.0
-          },
-          {
-            "price": 0.09,
-            "size": 1736.11
-          },
-          {
-            "price": 0.08,
-            "size": 2553.12
-          },
-          {
-            "price": 0.07,
-            "size": 2455.37
-          },
-          {
-            "price": 0.06,
-            "size": 3385.44
-          },
-          {
-            "price": 0.05,
-            "size": 4895.0
-          },
-          {
-            "price": 0.04,
-            "size": 8312.5
-          },
-          {
-            "price": 0.03,
-            "size": 11437.51
-          },
-          {
-            "price": 0.02,
-            "size": 17187.52
-          },
-          {
-            "price": 0.01,
-            "size": 36937.53
-          }
-        ],
-        "bid_levels": 19,
-        "market": "0x1239389645c8a73b170b78ef3a83d69b6cf1d2711d412829ea8836660b08fc93",
-        "spread": 0.01,
-        "timestamp": "1782725437017",
-        "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
-      },
-      "orderbook_snapshot_id": null,
-      "p_lcb": 0.29401703,
-      "p_model": 0.37401703,
-      "p_no_lcb": 0.54598297,
-      "p_no_model": 0.62598297,
-      "p_no_touch": 0.62598297,
-      "p_no_ucb": 0.70598297,
-      "p_trade_lcb": 0.29401703,
-      "p_trade_model": 0.37401703,
-      "p_trade_ucb": 0.45401703,
-      "p_ucb": 0.45401703,
-      "p_yes_lcb": 0.29401703,
-      "p_yes_model": 0.37401703,
-      "p_yes_terminal": 0.13891987,
-      "p_yes_touch": 0.37401703,
-      "p_yes_ucb": 0.45401703,
-      "paper_only": true,
-      "parsed_start_time": "2026-06-08T01:48:16Z",
-      "priority_rank": 1,
-      "probability_semantics": "touch_barrier",
-      "q_effective": 0.26,
-      "semantics_type": "touch_barrier",
-      "sensitivity_base_EV_safe": 0.02401703,
-      "sensitivity_fragile": true,
-      "sensitivity_model_confidence": 0.0,
-      "side": "YES",
-      "spot": 59967.24,
-      "stricter_edge": 0.02,
-      "surface_group_member_count": 1,
-      "surface_group_too_sparse": true,
-      "surface_residual_supports_model_direction": true,
-      "surface_residual_z_score": 0.0,
-      "surface_support": true,
-      "target_time": "2027-01-01T05:00:00Z",
-      "threshold": 85000.0,
-      "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
-    }
-  ],
+  "top_candidates": [],
   "watch_count": 2,
   "watch_row_count": 2
 }

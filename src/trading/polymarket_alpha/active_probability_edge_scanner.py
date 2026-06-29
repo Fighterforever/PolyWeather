@@ -145,9 +145,13 @@ def _gate_crypto_candidates(
     *,
     surface_report: Optional[Dict[str, Any]] = None,
     sensitivity_report: Optional[Dict[str, Any]] = None,
+    crypto_touch_formal_fill_mode: str = "disabled",
     min_edge: float = 0.01,
     stricter_edge: float = 0.02,
 ) -> Dict[str, Any]:
+    mode = str(crypto_touch_formal_fill_mode or "disabled").strip().lower()
+    if mode not in {"disabled", "strict", "legacy"}:
+        mode = "disabled"
     surface_by_key = _surface_index(surface_report)
     sensitivity_by_key = _sensitivity_index(sensitivity_report)
     enforce_surface = bool(surface_by_key)
@@ -163,37 +167,50 @@ def _gate_crypto_candidates(
         ev_safe = _safe_float(row.get("EV_safe")) or 0.0
         surface_row = surface_by_key.get(key)
         group_size = int((surface_row or {}).get("group_member_count") or 0)
-        surface_too_sparse = enforce_surface and (surface_row is None or group_size < 2)
-        surface_supported = (
-            True
-            if not enforce_surface or surface_too_sparse
-            else bool((surface_row or {}).get("surface_supports_model_direction"))
-        )
+        surface_valid = (surface_row or {}).get("surface_valid")
+        surface_too_sparse = enforce_surface and (surface_row is None or group_size < 4 or surface_valid is False)
+        if not enforce_surface:
+            surface_supported = True
+        elif mode == "legacy" and surface_too_sparse:
+            surface_supported = True
+        else:
+            surface_supported = bool((surface_row or {}).get("surface_supports_model_direction")) and surface_valid is not False and group_size >= 4
         sensitivity_row = sensitivity_by_key.get(key)
         sensitivity_fragile = bool((sensitivity_row or {}).get("sensitivity_fragile")) if enforce_sensitivity else False
-        sensitivity_allowed = (not sensitivity_fragile) or ev_safe >= float(stricter_edge)
+        vol_supports_trade = (sensitivity_row or {}).get("vol_supports_trade")
+        vol_supported = True if vol_supports_trade is None else bool(vol_supports_trade)
+        sensitivity_allowed = vol_supported and ((not sensitivity_fragile) or ev_safe >= float(stricter_edge))
         row.update(
             {
                 "surface_support": bool(surface_supported),
                 "surface_group_too_sparse": bool(surface_too_sparse),
                 "surface_group_member_count": group_size if enforce_surface else None,
+                "surface_valid": surface_valid,
+                "surface_invalid_reason": (surface_row or {}).get("surface_invalid_reason"),
                 "surface_residual_z_score": (surface_row or {}).get("residual_z_score"),
                 "surface_residual_supports_model_direction": (surface_row or {}).get("surface_supports_model_direction"),
                 "sensitivity_fragile": bool(sensitivity_fragile),
                 "sensitivity_base_EV_safe": (sensitivity_row or {}).get("base_EV_safe"),
                 "sensitivity_model_confidence": (sensitivity_row or {}).get("model_confidence"),
+                "vol_supports_trade": vol_supports_trade,
+                "vol_support_reason": (sensitivity_row or {}).get("vol_support_reason"),
                 "stricter_edge": float(stricter_edge),
             }
         )
         reasons: List[str] = []
         if ev_safe < float(min_edge):
             reasons.append("ev_below_min")
+        if mode == "disabled":
+            reasons.append("formal_fill_paused_pending_surface_recalibration")
         if not surface_supported:
             downgraded_surface += 1
             reasons.append("surface_unsupported")
         if not sensitivity_allowed:
             downgraded_sensitivity += 1
-            reasons.append("sensitivity_fragile_below_stricter_edge")
+            if not vol_supported:
+                reasons.append("vol_support_rejected_below_stricter_edge")
+            else:
+                reasons.append("sensitivity_fragile_below_stricter_edge")
         if reasons:
             watch_rows.append(
                 {
@@ -217,6 +234,8 @@ def _gate_crypto_candidates(
         "watch_count": len(watch_rows),
         "surface_gate_enforced": enforce_surface,
         "sensitivity_gate_enforced": enforce_sensitivity,
+        "formal_fill_mode": mode,
+        "new_formal_fill_generation_enabled": mode in {"strict", "legacy"},
         "stricter_edge": float(stricter_edge),
     }
 
@@ -347,6 +366,7 @@ def scan_active_probability_edges(
     crypto_report: Optional[Dict[str, Any]] = None,
     surface_report: Optional[Dict[str, Any]] = None,
     sensitivity_report: Optional[Dict[str, Any]] = None,
+    crypto_touch_formal_fill_mode: str = "disabled",
     min_edge: float = 0.02,
     stricter_edge: float = 0.02,
     min_depth: float = 10.0,
@@ -373,6 +393,7 @@ def scan_active_probability_edges(
         raw_crypto_candidates,
         surface_report=surface_report,
         sensitivity_report=sensitivity_report,
+        crypto_touch_formal_fill_mode=crypto_touch_formal_fill_mode,
         min_edge=float(min_edge),
         stricter_edge=float(stricter_edge),
     )
@@ -398,6 +419,8 @@ def scan_active_probability_edges(
             "watch_count": crypto_gate["watch_count"],
             "surface_gate_enforced": crypto_gate["surface_gate_enforced"],
             "sensitivity_gate_enforced": crypto_gate["sensitivity_gate_enforced"],
+            "formal_fill_mode": crypto_gate["formal_fill_mode"],
+            "new_formal_fill_generation_enabled": crypto_gate["new_formal_fill_generation_enabled"],
             "stricter_edge": crypto_gate["stricter_edge"],
             "live_order_path": False,
         },
@@ -563,6 +586,8 @@ def scan_active_probability_edges(
         "downgraded_due_surface_count": crypto_gate["downgraded_due_surface_count"],
         "downgraded_due_sensitivity_count": crypto_gate["downgraded_due_sensitivity_count"],
         "watch_count": crypto_gate["watch_count"],
+        "formal_fill_mode": crypto_gate["formal_fill_mode"],
+        "new_formal_fill_generation_enabled": crypto_gate["new_formal_fill_generation_enabled"],
         "focus_categories": sorted(focus),
         "watch_row_count": len(watch_rows),
         "blocker_counts": [{"reason": key, "count": count} for key, count in sorted(blockers.items())],

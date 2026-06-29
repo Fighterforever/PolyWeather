@@ -74,6 +74,18 @@ def _surface_supported_keys(surface_report: Optional[Dict[str, Any]]) -> set[str
     return keys
 
 
+def _surface_rows_by_key(surface_report: Optional[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    if not isinstance(surface_report, dict):
+        return {}
+    rows: Dict[str, Dict[str, Any]] = {}
+    for row in (surface_report.get("rows") or []) + (surface_report.get("top_relative_value_rows") or []):
+        if isinstance(row, dict):
+            key = _identity(row)
+            if key != "||" and key not in rows:
+                rows[key] = row
+    return rows
+
+
 def _sensitivity_fragile_keys(sensitivity_report: Optional[Dict[str, Any]]) -> set[str]:
     if not isinstance(sensitivity_report, dict):
         return set()
@@ -86,6 +98,18 @@ def _sensitivity_fragile_keys(sensitivity_report: Optional[Dict[str, Any]]) -> s
     return keys
 
 
+def _sensitivity_rows_by_key(sensitivity_report: Optional[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    if not isinstance(sensitivity_report, dict):
+        return {}
+    rows: Dict[str, Dict[str, Any]] = {}
+    for row in sensitivity_report.get("rows") or []:
+        if isinstance(row, dict):
+            key = _identity(row)
+            if key != "||" and key not in rows:
+                rows[key] = row
+    return rows
+
+
 def _annotate_fills(
     fills: List[Dict[str, Any]],
     *,
@@ -94,14 +118,35 @@ def _annotate_fills(
 ) -> List[Dict[str, Any]]:
     supported = _surface_supported_keys(surface_report)
     fragile = _sensitivity_fragile_keys(sensitivity_report)
+    surface_rows = _surface_rows_by_key(surface_report)
+    sensitivity_rows = _sensitivity_rows_by_key(sensitivity_report)
     annotated: List[Dict[str, Any]] = []
     for fill in fills:
         key = _identity(fill)
+        surface_row = surface_rows.get(key) or {}
+        sensitivity_row = sensitivity_rows.get(key) or {}
+        surface_support = key in supported
+        sensitivity_fragile = key in fragile
+        vol_supports_trade = sensitivity_row.get("vol_supports_trade")
+        if surface_support and vol_supports_trade is True and not sensitivity_fragile:
+            classification = "keep_as_valid_experiment"
+        elif not surface_support:
+            classification = "downgraded_surface_invalid"
+        elif sensitivity_fragile or vol_supports_trade is False:
+            classification = "downgraded_sensitivity_fragile"
+        else:
+            classification = "keep_as_valid_experiment"
         annotated.append(
             {
                 **fill,
-                "surface_support": key in supported,
-                "sensitivity_fragile": key in fragile,
+                "surface_group_member_count": surface_row.get("group_member_count"),
+                "surface_valid": surface_row.get("surface_valid"),
+                "surface_support": surface_support,
+                "implied_touch_vol": sensitivity_row.get("market_implied_touch_vol"),
+                "vol_supports_trade": sensitivity_row.get("vol_supports_trade"),
+                "vol_support_reason": sensitivity_row.get("vol_support_reason"),
+                "sensitivity_fragile": sensitivity_fragile,
+                "final_classification": classification,
             }
         )
     return annotated
@@ -165,6 +210,10 @@ def _formal_fill_summary(fills: List[Dict[str, Any]], markouts: List[Dict[str, A
         "mean_EV_safe": _mean(fill.get("EV_safe") for fill in fills),
         "surface_supported_count": sum(1 for fill in fills if fill.get("surface_support")),
         "sensitivity_fragile_count": sum(1 for fill in fills if fill.get("sensitivity_fragile")),
+        "vol_supported_count": sum(1 for fill in fills if fill.get("vol_supports_trade") is True),
+        "negative_markout_count": len({str(row.get("fill_id") or row.get("token_id") or "") for row in available if (_safe_float(row.get("markout_cents")) or 0.0) < 0}),
+        "classification_counts": _count_by_key(fills, "final_classification"),
+        "fills": fills,
         "available_markout_count": len(available),
         "mean_5m_markout": by_horizon.get("5m"),
         "mean_15m_markout": by_horizon.get("15m"),
@@ -268,6 +317,7 @@ def build_crypto_touch_forward_validation_report(
     )
     surface_support_count = _surface_support_count(annotated_fills, surface_report)
     sensitivity_fragile_count = formal.get("sensitivity_fragile_count") or 0
+    vol_supported_count = formal.get("vol_supported_count") or 0
     near_short_negative = any(
         value is not None and value < 0
         for value in (near.get("mean_5m_markout"), near.get("mean_15m_markout"))
@@ -284,7 +334,17 @@ def build_crypto_touch_forward_validation_report(
         and formal["mean_1h_markout"] > 0
         and formal["mean_6h_markout"] > 0
     )
-    if formal["fill_count"] > 0 and not non_current_markouts:
+    if (
+        formal_non_current_negative
+        and formal["fill_count"] > 0
+        and (
+            sensitivity_fragile_count >= formal["fill_count"]
+            or surface_support_count == 0
+            or vol_supported_count == 0
+        )
+    ):
+        verdict = "shadow_only_pending_recalibration"
+    elif formal["fill_count"] > 0 and not non_current_markouts:
         verdict = "crypto_touch_waiting_for_valid_horizon_markout"
     elif formal_non_current_negative and (
         surface_support_count < formal["fill_count"]
@@ -312,10 +372,13 @@ def build_crypto_touch_forward_validation_report(
         "horizon_markout_validity": horizon_validity,
         "surface_support_count": surface_support_count,
         "sensitivity_fragile_count": sensitivity_fragile_count,
+        "vol_supported_count": vol_supported_count,
         "near_miss_watch": near,
         "invalidated_old_fills": _invalidated_summary(invalidated_old_fills),
         "verdict": {
             "status": verdict,
+            "crypto_touch_status": verdict,
+            "do_not_create_new_formal_fills": bool(verdict == "shadow_only_pending_recalibration"),
             "continue_sampling": bool(verdict in {"continue_crypto_touch_sampling", "continue_crypto_touch_sampling_insufficient_forward_fills"}),
             "continue_crypto_touch_sampling": bool(verdict in {"continue_crypto_touch_sampling", "continue_crypto_touch_sampling_insufficient_forward_fills"}),
             "keep_min_edge_threshold": True,

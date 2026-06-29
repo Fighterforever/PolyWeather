@@ -2,15 +2,22 @@
   "artifact_paths": {
     "active_probability_edge_report": "evidence/polymarket_alpha/active_probability_edge_report.json",
     "crypto_probability_edge_report": "evidence/polymarket_alpha/crypto_probability_edge_report.json",
+    "crypto_touch_72h_experiment_report": "evidence/polymarket_alpha/crypto_touch_72h_experiment_report.json",
+    "crypto_touch_followup_snapshot_coverage_report": "evidence/polymarket_alpha/crypto_touch_followup_snapshot_coverage_report.json",
+    "crypto_touch_forward_validation_report": "evidence/polymarket_alpha/crypto_touch_forward_validation_report.json",
     "crypto_touch_near_miss_markout_report": "evidence/polymarket_alpha/crypto_touch_near_miss_markout_report.json",
     "crypto_touch_near_miss_orderbook_snapshots": "evidence/polymarket_alpha/crypto_touch_near_miss_orderbook_snapshots.jsonl",
     "crypto_touch_near_miss_watch": "evidence/polymarket_alpha/crypto_touch_near_miss_watch.jsonl",
-    "probability_edge_fills": "evidence/polymarket_alpha/probability_edge_paper/fills.jsonl"
+    "crypto_touch_sensitivity_report": "evidence/polymarket_alpha/crypto_touch_sensitivity_report.json",
+    "crypto_touch_surface_report": "evidence/polymarket_alpha/crypto_touch_surface_report.json",
+    "probability_edge_fill_followup_orderbook_snapshots": "evidence/polymarket_alpha/probability_edge_paper/fill_followup_orderbook_snapshots.jsonl",
+    "probability_edge_fills": "evidence/polymarket_alpha/probability_edge_paper/fills.jsonl",
+    "probability_edge_markout_report": "evidence/polymarket_alpha/probability_edge_paper/markout_report.json"
   },
   "commands": [
     {
       "command": [
-        "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+        ".venv/bin/python",
         "scripts/polymarket_alpha_market_discovery_report.py",
         "--active-limit",
         "3000",
@@ -20,7 +27,7 @@
         "--max-orderbook-markets",
         "80",
         "--generated-at",
-        "2026-06-29T05:51:39Z"
+        "2026-06-29T11:46:24Z"
       ],
       "returncode": 0,
       "stderr": "",
@@ -28,7 +35,7 @@
     },
     {
       "command": [
-        "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+        ".venv/bin/python",
         "scripts/polymarket_alpha_crypto_edge_report.py",
         "--fetch-gamma-metadata",
         "--fetch-binance-spot",
@@ -40,39 +47,106 @@
         "--cost",
         "0.01",
         "--generated-at",
-        "2026-06-29T05:51:39Z"
+        "2026-06-29T11:46:24Z"
       ],
       "returncode": 0,
       "stderr": "",
-      "stdout": "{\n  \"candidate_count\": 3,\n  \"executable_price_available_count\": 38,\n  \"live_order_path\": false,\n  \"model_ready_count\": 39,\n  \"parsed_crypto_market_count\": 39\n}\n"
+      "stdout": "{\n  \"candidate_count\": 2,\n  \"executable_price_available_count\": 37,\n  \"live_order_path\": false,\n  \"model_ready_count\": 39,\n  \"parsed_crypto_market_count\": 39\n}\n"
     },
     {
       "command": [
-        "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
-        "scripts/polymarket_alpha_active_probability_edge_report.py",
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_crypto_touch_surface_report.py",
+        "--min-edge",
+        "0.01"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"group_count\": 6,\n  \"live_order_path\": false,\n  \"market_count\": 10,\n  \"monotonic_violation_count\": 0,\n  \"relative_value_candidate_count\": 0,\n  \"surface_near_miss_count\": 0\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_crypto_sensitivity_report.py",
+        "--no-fetch-realized-vol",
+        "--no-fetch-gamma-metadata",
+        "--no-fetch-orderbooks",
         "--min-edge",
         "0.01",
         "--cost",
         "0.01",
         "--generated-at",
-        "2026-06-29T05:51:39Z"
+        "2026-06-29T11:46:24Z"
       ],
       "returncode": 0,
       "stderr": "",
-      "stdout": "{\n  \"candidate_count\": 3,\n  \"focus_categories\": [],\n  \"live_order_path\": false,\n  \"model_ready_count\": 39,\n  \"paper_fill_count\": 3,\n  \"scanned_active_market_count\": 8812\n}\n"
+      "stdout": "{\n  \"implied_vol_output\": \"evidence/polymarket_alpha/crypto_touch_implied_vol_report.json\",\n  \"live_order_path\": false,\n  \"sensitivity_fragile_count\": 4,\n  \"summary_output\": \"evidence/polymarket_alpha/crypto_touch_sensitivity_report.json\",\n  \"verified_not_touched_market_side_count\": 10,\n  \"vol_supported_count\": 5\n}\n"
     },
     {
       "command": [
-        "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_active_probability_edge_report.py",
+        "--min-edge",
+        "0.01",
+        "--stricter-edge",
+        "0.02",
+        "--cost",
+        "0.01",
+        "--generated-at",
+        "2026-06-29T11:46:24Z"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"candidate_count\": 0,\n  \"downgraded_due_sensitivity_count\": 2,\n  \"downgraded_due_surface_count\": 2,\n  \"focus_categories\": [],\n  \"formal_fill_mode\": \"disabled\",\n  \"live_order_path\": false,\n  \"model_ready_count\": 39,\n  \"new_formal_fill_count\": 0,\n  \"new_formal_fill_generation_enabled\": false,\n  \"old_formal_fill_count\": 2,\n  \"paper_fill_count\": 3,\n  \"scanned_active_market_count\": 8810,\n  \"watch_count\": 2\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_probability_edge_markout_report.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"available_markout_count\": 9,\n  \"fill_count\": 3,\n  \"live_order_path\": false,\n  \"markout_count\": 21,\n  \"markout_status\": \"forward_markout_nonpositive\",\n  \"mean_markout\": -0.01666667,\n  \"mean_markout_cents\": -1.66666667\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_crypto_touch_followup_snapshot_report.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"coverage_by_horizon\": {\n    \"15m\": {\n      \"covered_fill_count\": 0,\n      \"eligible_elapsed_fill_count\": 3,\n      \"gap_reason_counts\": {\n        \"watcher_started_after_horizon_tolerance\": 3\n      },\n      \"missing_fill_count\": 3\n    },\n    \"1h\": {\n      \"covered_fill_count\": 3,\n      \"eligible_elapsed_fill_count\": 3,\n      \"gap_reason_counts\": {},\n      \"missing_fill_count\": 0\n    },\n    \"24h\": {\n      \"covered_fill_count\": 0,\n      \"eligible_elapsed_fill_count\": 0,\n      \"gap_reason_counts\": {\n        \"horizon_not_reached_by_latest_snapshot\": 3\n      },\n      \"missing_fill_count\": 3\n    },\n    \"5m\": {\n      \"covered_fill_count\": 0,\n      \"eligible_elapsed_fill_count\": 3,\n      \"gap_reason_counts\": {\n        \"watcher_started_after_horizon_tolerance\": 3\n      },\n      \"missing_fill_count\": 3\n    },\n    \"60s\": {\n      \"covered_fill_count\": 0,\n      \"eligible_elapsed_fill_count\": 3,\n      \"gap_reason_counts\": {\n        \"watcher_started_after_horizon_tolerance\": 3\n      },\n      \"missing_fill_count\": 3\n    },\n    \"6h\": {\n      \"covered_fill_count\": 3,\n      \"eligible_elapsed_fill_count\": 3,\n      \"gap_reason_counts\": {},\n      \"missing_fill_count\": 0\n    }\n  },\n  \"fill_count\": 3,\n  \"followup_snapshot_count\": 101,\n  \"live_order_path\": false,\n  \"watcher_state\": \"not_loaded\"\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
         "scripts/polymarket_alpha_crypto_touch_watch_markout_report.py"
       ],
       "returncode": 0,
       "stderr": "",
-      "stdout": "{\n  \"available_markout_count\": 8,\n  \"live_order_path\": false,\n  \"markout_status\": \"markout_available\",\n  \"mean_markout_cents\": -1.5,\n  \"watch_count\": 10\n}\n"
+      "stdout": "{\n  \"available_markout_count\": 305,\n  \"live_order_path\": false,\n  \"markout_status\": \"markout_available\",\n  \"mean_markout_cents\": -1.83278689,\n  \"watch_count\": 107\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_crypto_touch_forward_validation_report.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"do_not_lower_threshold\": true,\n  \"formal_available_markout_count\": 9,\n  \"formal_fill_count\": 3,\n  \"live_order_path\": false,\n  \"near_miss_available_markout_count\": 305,\n  \"verdict\": \"shadow_only_pending_recalibration\"\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_crypto_touch_experiment_controller.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"formal_fill_count\": 3,\n  \"formal_valid_markout_count\": 9,\n  \"keep_threshold_do_not_lower\": true,\n  \"live_order_path\": false,\n  \"recommendation\": \"shadow_only_pending_recalibration\"\n}\n"
     }
   ],
   "counts_for_live_gate": false,
-  "generated_at": "2026-06-29T05:51:39Z",
+  "generated_at": "2026-06-29T11:46:24Z",
   "live_order_path": false,
   "paper_only": true,
   "schema_version": "polyweather_polymarket_alpha_crypto_touch_watcher.v1",

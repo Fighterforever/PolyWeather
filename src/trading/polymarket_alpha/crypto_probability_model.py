@@ -1072,6 +1072,19 @@ def build_crypto_touch_sensitivity_report(
             and base_ev > 0
             and any(_safe_float(value) is not None and float(value) <= 0 for value in scenario_values)
         )
+        vol_edge = _safe_float(row.get("vol_edge"))
+        side = str(row.get("side") or "").upper()
+        vol_reasons: List[str] = []
+        if row.get("market_implied_touch_vol") is None:
+            vol_reasons.append("missing_implied_touch_vol")
+        if row.get("sensitivity_fragile"):
+            vol_reasons.append("sensitivity_fragile")
+        if vol_edge is not None and side == "YES" and vol_edge > 0.10:
+            vol_reasons.append("model_vol_above_implied_vol")
+        if vol_edge is not None and side == "NO" and vol_edge < -0.10:
+            vol_reasons.append("model_vol_below_implied_vol")
+        row["vol_supports_trade"] = not vol_reasons
+        row["vol_support_reason"] = "vol_supports_trade" if not vol_reasons else ",".join(vol_reasons)
     rows.sort(key=lambda row: float(row.get("base_EV_safe") if row.get("base_EV_safe") is not None else -1e9), reverse=True)
     for index, row in enumerate(rows, start=1):
         row["sensitivity_rank"] = index
@@ -1089,6 +1102,7 @@ def build_crypto_touch_sensitivity_report(
         "cost_scenarios": list(cost_scenarios),
         "haircuts": list(haircuts),
         "sensitivity_fragile_count": sum(1 for row in rows if row.get("sensitivity_fragile")),
+        "vol_supported_count": sum(1 for row in rows if row.get("vol_supports_trade")),
         "rows": rows,
     }
 

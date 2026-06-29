@@ -80,8 +80,8 @@ def test_crypto_touch_forward_validation_reduces_priority_when_surface_unsupport
 
     assert report["surface_support_count"] == 0
     assert report["sensitivity_fragile_count"] == 0
-    assert report["verdict"]["status"] == "crypto_touch_model_overoptimistic_reduce_priority"
-    assert report["verdict"]["reduce_priority_if_negative_markout"] is True
+    assert report["verdict"]["status"] == "shadow_only_pending_recalibration"
+    assert report["verdict"]["do_not_create_new_formal_fills"] is True
 
 
 def test_crypto_touch_forward_validation_reduces_priority_when_fragile_and_markout_negative():
@@ -98,4 +98,5 @@ def test_crypto_touch_forward_validation_reduces_priority_when_fragile_and_marko
 
     assert report["surface_support_count"] == 1
     assert report["sensitivity_fragile_count"] == 1
-    assert report["verdict"]["status"] == "crypto_touch_model_overoptimistic_reduce_priority"
+    assert report["verdict"]["status"] == "shadow_only_pending_recalibration"
+    assert report["verdict"]["do_not_create_new_formal_fills"] is True

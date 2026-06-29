@@ -23,6 +23,7 @@ DEFAULT_ROOT = Path("evidence/polymarket_alpha")
 DEFAULT_ACTIVE = DEFAULT_ROOT / "active_markets_snapshot.jsonl"
 DEFAULT_CRYPTO_REPORT = DEFAULT_ROOT / "crypto_probability_edge_report.json"
 DEFAULT_REPORT = DEFAULT_ROOT / "crypto_touch_sensitivity_report.json"
+DEFAULT_IMPLIED_VOL_REPORT = DEFAULT_ROOT / "crypto_touch_implied_vol_report.json"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -30,6 +31,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--active-markets", default=str(DEFAULT_ACTIVE))
     parser.add_argument("--crypto-report", default=str(DEFAULT_CRYPTO_REPORT))
     parser.add_argument("--summary-output", default=str(DEFAULT_REPORT))
+    parser.add_argument("--implied-vol-output", default=str(DEFAULT_IMPLIED_VOL_REPORT))
     parser.add_argument("--high-since-start-cache-dir", default=str(DEFAULT_ROOT / "binance_klines"))
     parser.add_argument("--metadata-cache-dir", default=str(DEFAULT_ROOT / "gamma_market_metadata"))
     parser.add_argument("--price-history-rows", default=str(DEFAULT_ROOT / "probability_decision_snapshots.jsonl"))
@@ -82,13 +84,54 @@ def main(argv: list[str] | None = None) -> None:
         fetch_realized_vol=bool(args.fetch_realized_vol),
     )
     write_json(args.summary_output, report)
+    implied_vol_report = {
+        "schema_version": "polyweather_polymarket_alpha_crypto_touch_implied_vol.v1",
+        "scope": "polymarket_only",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+        "generated_at": report.get("generated_at"),
+        "row_count": len(report.get("rows") or []),
+        "vol_supported_count": report.get("vol_supported_count"),
+        "sensitivity_fragile_count": report.get("sensitivity_fragile_count"),
+        "rows": [
+            {
+                key: row.get(key)
+                for key in (
+                    "market_slug",
+                    "token_id",
+                    "asset",
+                    "side",
+                    "threshold",
+                    "target_time",
+                    "market_creation_time",
+                    "q_effective",
+                    "realized_vol_7d",
+                    "realized_vol_30d",
+                    "realized_vol_90d",
+                    "model_vol",
+                    "market_implied_touch_vol",
+                    "vol_edge",
+                    "base_EV_safe",
+                    "sensitivity_fragile",
+                    "vol_supports_trade",
+                    "vol_support_reason",
+                )
+            }
+            for row in (report.get("rows") or [])
+            if isinstance(row, dict)
+        ],
+    }
+    write_json(args.implied_vol_output, implied_vol_report)
     print(
         json.dumps(
             {
                 "verified_not_touched_market_side_count": report.get("verified_not_touched_market_side_count"),
                 "sensitivity_fragile_count": report.get("sensitivity_fragile_count"),
+                "vol_supported_count": report.get("vol_supported_count"),
                 "live_order_path": report.get("live_order_path"),
                 "summary_output": args.summary_output,
+                "implied_vol_output": args.implied_vol_output,
             },
             ensure_ascii=False,
             indent=2,

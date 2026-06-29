@@ -97,6 +97,7 @@ def test_active_probability_edge_scanner_prioritizes_crypto_candidates():
         active_markets=[_market(category="sports")],
         model_report=_model(False),
         crypto_report={"candidates": [crypto_candidate]},
+        crypto_touch_formal_fill_mode="strict",
     )
 
     assert report["candidate_count"] == 1
@@ -104,6 +105,31 @@ def test_active_probability_edge_scanner_prioritizes_crypto_candidates():
     assert report["by_model_source"] == [{"model_source": "crypto_lognormal_threshold_model", "count": 1}]
     assert report["lane_reports"]["crypto_model_lane"]["candidate_count"] == 1
     assert report["lane_reports"]["global_oos_model_lane"]["candidate_count"] == 0
+
+
+def test_crypto_touch_formal_fill_mode_disabled_routes_candidate_to_watch():
+    crypto_candidate = {
+        "market_slug": "btc-over-100k",
+        "token_id": "yes-token",
+        "side": "YES",
+        "category": "crypto",
+        "model_source": "crypto_lognormal_threshold_model",
+        "EV_safe": 0.03,
+        "paper_only": True,
+        "live_order_path": False,
+    }
+    report = scan_active_probability_edges(
+        active_markets=[],
+        model_report=_model(False),
+        crypto_report={"candidates": [crypto_candidate]},
+    )
+
+    assert report["formal_fill_mode"] == "disabled"
+    assert report["new_formal_fill_generation_enabled"] is False
+    assert report["candidate_count"] == 0
+    assert report["new_formal_fill_count"] == 0
+    assert report["watch_rows"][0]["downgrade_reasons"] == ["formal_fill_paused_pending_surface_recalibration"]
+    assert report["watch_rows"][0]["live_order_path"] is False
 
 
 def test_crypto_candidate_downgraded_when_surface_unsupported():
@@ -122,6 +148,7 @@ def test_crypto_candidate_downgraded_when_surface_unsupported():
         model_report=_model(False),
         crypto_report={"candidates": [crypto_candidate]},
         surface_report={"rows": [{**crypto_candidate, "group_member_count": 2, "surface_supports_model_direction": False}]},
+        crypto_touch_formal_fill_mode="strict",
         min_edge=0.01,
     )
 
@@ -149,6 +176,7 @@ def test_crypto_candidate_downgraded_when_sensitivity_fragile_below_stricter_edg
         crypto_report={"candidates": [crypto_candidate]},
         surface_report={"rows": [{**crypto_candidate, "group_member_count": 2, "surface_supports_model_direction": True}]},
         sensitivity_report={"rows": [{**crypto_candidate, "sensitivity_fragile": True}]},
+        crypto_touch_formal_fill_mode="strict",
         min_edge=0.01,
         stricter_edge=0.02,
     )
@@ -156,6 +184,33 @@ def test_crypto_candidate_downgraded_when_sensitivity_fragile_below_stricter_edg
     assert report["candidate_count"] == 0
     assert report["downgraded_due_sensitivity_count"] == 1
     assert "sensitivity_fragile_below_stricter_edge" in report["watch_rows"][0]["downgrade_reasons"]
+
+
+def test_crypto_candidate_downgraded_when_vol_support_rejected():
+    crypto_candidate = {
+        "market_slug": "btc-over-100k",
+        "token_id": "yes-token",
+        "side": "YES",
+        "category": "crypto",
+        "model_source": "crypto_lognormal_threshold_model",
+        "EV_safe": 0.03,
+        "paper_only": True,
+        "live_order_path": False,
+    }
+    report = scan_active_probability_edges(
+        active_markets=[],
+        model_report=_model(False),
+        crypto_report={"candidates": [crypto_candidate]},
+        surface_report={"rows": [{**crypto_candidate, "group_member_count": 4, "surface_valid": True, "surface_supports_model_direction": True}]},
+        sensitivity_report={"rows": [{**crypto_candidate, "sensitivity_fragile": False, "vol_supports_trade": False}]},
+        crypto_touch_formal_fill_mode="strict",
+        min_edge=0.01,
+        stricter_edge=0.02,
+    )
+
+    assert report["candidate_count"] == 0
+    assert report["downgraded_due_sensitivity_count"] == 1
+    assert "vol_support_rejected_below_stricter_edge" in report["watch_rows"][0]["downgrade_reasons"]
 
 
 def test_crypto_candidate_allowed_when_surface_sparse_and_sensitivity_clean():
@@ -175,6 +230,7 @@ def test_crypto_candidate_allowed_when_surface_sparse_and_sensitivity_clean():
         crypto_report={"candidates": [crypto_candidate]},
         surface_report={"rows": [{**crypto_candidate, "group_member_count": 1, "surface_supports_model_direction": False}]},
         sensitivity_report={"rows": [{**crypto_candidate, "sensitivity_fragile": False}]},
+        crypto_touch_formal_fill_mode="legacy",
         min_edge=0.01,
     )
 
@@ -300,6 +356,7 @@ def test_fill_schema_includes_trade_probability_fields():
         active_markets=[_market(category="sports")],
         model_report=_model(False),
         crypto_report={"candidates": [crypto_candidate]},
+        crypto_touch_formal_fill_mode="strict",
     )
 
     candidate = report["candidates"][0]

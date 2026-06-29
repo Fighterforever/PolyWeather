@@ -333,6 +333,8 @@ def test_touch_sensitivity_report_is_diagnostic_only():
     assert "EV_safe_by_cost" in report["rows"][0]
     assert "realized_vol_gap_reason" in report["rows"][0]
     assert "sensitivity_rank" in report["rows"][0]
+    assert "vol_supports_trade" in report["rows"][0]
+    assert "vol_support_reason" in report["rows"][0]
 
 
 def test_touch_sensitivity_can_reuse_existing_crypto_probability_report():
@@ -367,6 +369,7 @@ def test_touch_sensitivity_can_reuse_existing_crypto_probability_report():
 
     assert report["verified_not_touched_market_side_count"] == 1
     assert report["rows"][0]["market_implied_touch_vol"] is not None
+    assert "vol_supports_trade" in report["rows"][0]
 
 
 def test_touch_implied_vol_increases_with_market_probability():
@@ -376,6 +379,39 @@ def test_touch_implied_vol_increases_with_market_probability():
     assert low is not None
     assert high is not None
     assert high > low
+
+
+def test_vol_support_rejects_fragile_trade():
+    report = build_crypto_touch_sensitivity_report(
+        active_markets=[],
+        crypto_probability_report={
+            "generated_at": "2026-06-29T00:00:00Z",
+            "near_misses": [
+                {
+                    "market_slug": "btc-85k",
+                    "token_id": "yes-token",
+                    "asset": "BTC",
+                    "side": "YES",
+                    "threshold": 85000,
+                    "target_time": "2026-12-31T00:00:00Z",
+                    "market_creation_time": "2026-06-08T00:00:00Z",
+                    "semantics_type": "touch_barrier",
+                    "high_since_start_verified": True,
+                    "barrier_already_touched": False,
+                    "best_ask": 0.27,
+                    "q_effective": 0.27,
+                    "spot": 60000,
+                }
+            ],
+        },
+        annual_vols={"BTC": 1.0},
+        cost=0.01,
+    )
+
+    row = report["rows"][0]
+    assert row["market_implied_touch_vol"] is not None
+    assert row["vol_supports_trade"] is False
+    assert "model_vol_above_implied_vol" in row["vol_support_reason"] or "sensitivity_fragile" in row["vol_support_reason"]
 
 
 def test_proxy_creation_time_blocks_official_candidate_but_keeps_watch():

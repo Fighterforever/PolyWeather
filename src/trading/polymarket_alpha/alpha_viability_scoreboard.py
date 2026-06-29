@@ -97,7 +97,13 @@ def build_alpha_viability_scoreboard(
         markout_mean = _safe_float(probability_markout_report.get("mean_markout"))
     resolved_pnl_cents = _safe_float(probability_resolved_audit_report.get("resolved_pnl_cents"))
     resolved_fill_count = _safe_int(probability_resolved_audit_report.get("resolved_fill_count"))
-    if resolved_pnl_cents is not None and resolved_pnl_cents > 0 and resolved_fill_count >= 30:
+    crypto_formal = crypto_touch_validation_report.get("formal_fills") if isinstance(crypto_touch_validation_report.get("formal_fills"), dict) else {}
+    crypto_near = crypto_touch_validation_report.get("near_miss_watch") if isinstance(crypto_touch_validation_report.get("near_miss_watch"), dict) else {}
+    crypto_verdict = crypto_touch_validation_report.get("verdict") if isinstance(crypto_touch_validation_report.get("verdict"), dict) else {}
+    explicit_crypto_status = str(crypto_verdict.get("status") or "")
+    if explicit_crypto_status == "shadow_only_pending_recalibration":
+        live_push_status = "shadow_only_pending_recalibration"
+    elif resolved_pnl_cents is not None and resolved_pnl_cents > 0 and resolved_fill_count >= 30:
         live_push_status = "tiny_live_review_candidate"
     elif markout_mean is not None and markout_mean > 0:
         live_push_status = "continue_forward_paper"
@@ -109,17 +115,14 @@ def build_alpha_viability_scoreboard(
         live_push_status = "no_probability_edge_yet"
     else:
         live_push_status = "collect_forward_markouts"
-    crypto_formal = crypto_touch_validation_report.get("formal_fills") if isinstance(crypto_touch_validation_report.get("formal_fills"), dict) else {}
-    crypto_near = crypto_touch_validation_report.get("near_miss_watch") if isinstance(crypto_touch_validation_report.get("near_miss_watch"), dict) else {}
-    crypto_verdict = crypto_touch_validation_report.get("verdict") if isinstance(crypto_touch_validation_report.get("verdict"), dict) else {}
     crypto_formal_fill_count = _safe_int(crypto_formal.get("fill_count"))
     crypto_formal_markout_count = _safe_int(crypto_formal.get("available_markout_count"))
     crypto_formal_mean = _safe_float(crypto_formal.get("mean_5m_markout"))
     if crypto_formal_mean is None:
         crypto_formal_mean = _safe_float(crypto_formal.get("mean_15m_markout"))
     near_negative = bool(crypto_verdict.get("do_not_lower_threshold"))
-    explicit_crypto_status = str(crypto_verdict.get("status") or "")
     if explicit_crypto_status in {
+        "shadow_only_pending_recalibration",
         "crypto_touch_model_overoptimistic_reduce_priority",
         "crypto_touch_waiting_for_valid_horizon_markout",
     }:
@@ -276,6 +279,9 @@ def build_alpha_viability_scoreboard(
             "crypto_touch_formal_fill_count": crypto_formal_fill_count,
             "crypto_touch_formal_markout_count": crypto_formal_markout_count,
             "crypto_touch_do_not_lower_threshold": near_negative,
+            "crypto_touch_do_not_create_new_formal_fills": bool(crypto_verdict.get("do_not_create_new_formal_fills")),
+            "crypto_touch_vol_supported_count": _safe_int(crypto_formal.get("vol_supported_count")),
+            "crypto_touch_sensitivity_fragile_count": _safe_int(crypto_formal.get("sensitivity_fragile_count")),
             "markout_mean": markout_mean,
             "resolved_pnl_cents": resolved_pnl_cents,
             "live_push_status": live_push_status,

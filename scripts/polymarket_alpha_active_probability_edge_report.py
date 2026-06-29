@@ -53,6 +53,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--generated-at", default=None)
     parser.add_argument("--min-edge", type=float, default=0.02)
     parser.add_argument("--stricter-edge", type=float, default=0.02)
+    parser.add_argument(
+        "--crypto-touch-formal-fill-mode",
+        choices=("disabled", "strict", "legacy"),
+        default="disabled",
+        help="Controls crypto touch formal paper fills. Default disabled keeps rows in watch pending surface recalibration.",
+    )
     parser.add_argument("--min-depth", type=float, default=10.0)
     parser.add_argument("--max-spread", type=float, default=0.15)
     parser.add_argument("--cost", type=float, default=0.01)
@@ -121,6 +127,7 @@ def main(argv: list[str] | None = None) -> None:
         crypto_report=crypto_report,
         surface_report=load_json(args.surface_report),
         sensitivity_report=load_json(args.sensitivity_report),
+        crypto_touch_formal_fill_mode=args.crypto_touch_formal_fill_mode,
         min_edge=float(args.min_edge),
         stricter_edge=float(args.stricter_edge),
         min_depth=float(args.min_depth),
@@ -185,6 +192,8 @@ def main(argv: list[str] | None = None) -> None:
                 "downgraded_due_surface_count": report.get("downgraded_due_surface_count"),
                 "downgraded_due_sensitivity_count": report.get("downgraded_due_sensitivity_count"),
                 "watch_count": report.get("watch_count"),
+                "formal_fill_mode": report.get("formal_fill_mode"),
+                "new_formal_fill_generation_enabled": report.get("new_formal_fill_generation_enabled"),
                 "focus_categories": report.get("focus_categories"),
                 "live_order_path": report.get("live_order_path"),
             },

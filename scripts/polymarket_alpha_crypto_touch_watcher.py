@@ -139,6 +139,7 @@ def main(argv: list[str] | None = None) -> None:
             "crypto_touch_followup_snapshot_coverage_report": "evidence/polymarket_alpha/crypto_touch_followup_snapshot_coverage_report.json",
             "crypto_touch_surface_report": "evidence/polymarket_alpha/crypto_touch_surface_report.json",
             "crypto_touch_sensitivity_report": "evidence/polymarket_alpha/crypto_touch_sensitivity_report.json",
+            "crypto_touch_implied_vol_report": "evidence/polymarket_alpha/crypto_touch_implied_vol_report.json",
             "crypto_touch_near_miss_watch": "evidence/polymarket_alpha/crypto_touch_near_miss_watch.jsonl",
             "crypto_touch_near_miss_orderbook_snapshots": "evidence/polymarket_alpha/crypto_touch_near_miss_orderbook_snapshots.jsonl",
             "crypto_touch_near_miss_markout_report": "evidence/polymarket_alpha/crypto_touch_near_miss_markout_report.json",

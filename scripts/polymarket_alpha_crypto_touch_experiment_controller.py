@@ -118,6 +118,13 @@ def build_crypto_touch_72h_experiment_report(
     near_miss_watch_count = len(near_miss_watch)
     surface_supported_fill_count = _surface_supported_fill_count(formal_fills, surface_report)
     sensitivity_fragile_fill_count = _sensitivity_fragile_fill_count(formal_fills, sensitivity_report)
+    vol_supported = {
+        _identity(row)
+        for row in sensitivity_report.get("rows") or []
+        if isinstance(row, dict) and row.get("vol_supports_trade") is True
+    }
+    formal_fills_vol_supported_count = sum(1 for fill in formal_fills if _identity(fill) in vol_supported)
+    surface_valid_group_count = int(surface_report.get("surface_valid_group_count") or 0)
     mean_1h = _by_horizon(markout_report, "3600s") or _by_horizon(markout_report, "1h")
     mean_6h = _by_horizon(markout_report, "21600s") or _by_horizon(markout_report, "6h")
     mean_current = _by_horizon(markout_report, "current")
@@ -137,7 +144,13 @@ def build_crypto_touch_72h_experiment_report(
         and formal_valid_markout_count > 0
         and all(value is not None and value < 0 for value in (mean_1h, mean_current) if value is not None)
     )
-    if formal_fill_count >= 20 and (mean_1h is not None and mean_1h < 0) and (mean_6h is not None and mean_6h < 0):
+    if all_formal_negative and formal_fill_count > 0 and (
+        sensitivity_fragile_fill_count >= formal_fill_count
+        or surface_supported_fill_count == 0
+        or formal_fills_vol_supported_count == 0
+    ):
+        recommendation = "shadow_only_pending_recalibration"
+    elif formal_fill_count >= 20 and (mean_1h is not None and mean_1h < 0) and (mean_6h is not None and mean_6h < 0):
         recommendation = "pause_crypto_touch"
     elif all_formal_negative and (
         surface_supported_fill_count < formal_fill_count
@@ -165,6 +178,12 @@ def build_crypto_touch_72h_experiment_report(
         "mean_markout_current": mean_current,
         "near_miss_mean_markout_5m": _by_horizon(near_miss_markout_report, "300s") or _by_horizon(near_miss_markout_report, "5m"),
         "near_miss_mean_markout_15m": _by_horizon(near_miss_markout_report, "900s") or _by_horizon(near_miss_markout_report, "15m"),
+        "formal_fill_mode": active_probability_report.get("formal_fill_mode") or "disabled",
+        "new_formal_fill_generation_enabled": bool(active_probability_report.get("new_formal_fill_generation_enabled")),
+        "surface_valid_group_count": surface_valid_group_count,
+        "formal_fills_surface_supported_after_fix": surface_supported_fill_count,
+        "formal_fills_vol_supported_count": formal_fills_vol_supported_count,
+        "formal_fills_negative_markout_count": int(formal_fill_count if all_formal_negative else 0),
         "old_formal_fill_count": active_probability_report.get("old_formal_fill_count"),
         "new_formal_fill_count": active_probability_report.get("new_formal_fill_count"),
         "downgraded_due_surface_count": active_probability_report.get("downgraded_due_surface_count"),
