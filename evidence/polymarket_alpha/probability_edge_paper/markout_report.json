@@ -2,25 +2,99 @@
   "artifact_paths": {
     "markouts": "evidence/polymarket_alpha/probability_edge_paper/markouts.jsonl"
   },
-  "available_markout_count": 0,
-  "by_asset": [],
-  "by_category": [],
-  "by_horizon": [],
-  "by_model_source": [],
-  "by_semantics_type": [],
-  "by_side": [],
+  "available_markout_count": 15,
+  "by_asset": [
+    {
+      "bucket": "BTC",
+      "mean": -1.5,
+      "sample_count": 10
+    },
+    {
+      "bucket": "ETH",
+      "mean": -2.0,
+      "sample_count": 5
+    }
+  ],
+  "by_category": [
+    {
+      "bucket": "bitcoin",
+      "mean": -1.5,
+      "sample_count": 10
+    },
+    {
+      "bucket": "ethereum",
+      "mean": -2.0,
+      "sample_count": 5
+    }
+  ],
+  "by_horizon": [
+    {
+      "bucket": "300s",
+      "mean": -1.66666667,
+      "sample_count": 3
+    },
+    {
+      "bucket": "3600s",
+      "mean": -1.66666667,
+      "sample_count": 3
+    },
+    {
+      "bucket": "60s",
+      "mean": -1.66666667,
+      "sample_count": 3
+    },
+    {
+      "bucket": "900s",
+      "mean": -1.66666667,
+      "sample_count": 3
+    },
+    {
+      "bucket": "current",
+      "mean": -1.66666667,
+      "sample_count": 3
+    }
+  ],
+  "by_model_source": [
+    {
+      "bucket": "crypto_lognormal_threshold_model",
+      "mean": -1.66666667,
+      "sample_count": 15
+    }
+  ],
+  "by_semantics_type": [
+    {
+      "bucket": "touch_barrier",
+      "mean": -1.66666667,
+      "sample_count": 15
+    }
+  ],
+  "by_side": [
+    {
+      "bucket": "YES",
+      "mean": -1.66666667,
+      "sample_count": 15
+    }
+  ],
   "counts_for_live_gate": false,
-  "fill_count": 0,
-  "legacy_markout_status": "ready_waiting_for_probability_edge_fills",
+  "fill_count": 3,
+  "invalid_fill_count": 0,
+  "invalid_fills": [],
   "live_order_path": false,
-  "markout_count": 0,
-  "markout_status": "ready_waiting_for_valid_crypto_fills",
-  "mean_markout": null,
-  "mean_markout_1h": null,
-  "mean_markout_1h_cents": null,
-  "mean_markout_cents": null,
+  "markout_count": 15,
+  "markout_status": "forward_markout_nonpositive",
+  "mean_markout": -0.01666667,
+  "mean_markout_1h": -0.01666667,
+  "mean_markout_1h_cents": -1.66666667,
+  "mean_markout_cents": -1.66666667,
   "missing_snapshot_count": 0,
+  "missing_snapshot_reason_counts": [
+    {
+      "count": 15,
+      "reason": "none"
+    }
+  ],
   "paper_only": true,
+  "raw_fill_count": 3,
   "schema_version": "polyweather_polymarket_alpha_probability_edge_journal.v1.markout_report",
   "scope": "polymarket_only"
 }

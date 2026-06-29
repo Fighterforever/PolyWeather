@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from src.trading.polymarket_alpha.probability_edge_journal import (
+    build_formal_fill_followup_orderbook_snapshots,
     build_markout_report,
     build_probability_edge_fills_with_snapshots,
     build_resolved_audit_report,
@@ -57,6 +58,44 @@ def test_probability_edge_markout_waits_for_probability_edge_fills_when_empty():
     assert report["fill_count"] == 0
     assert report["markout_status"] == "ready_waiting_for_valid_crypto_fills"
     assert report["legacy_markout_status"] == "ready_waiting_for_probability_edge_fills"
+
+
+def test_crypto_touch_formal_fills_counted_for_markout():
+    fill = _valid_crypto_touch_candidate(EV_safe=0.03, orderbook_snapshot_id="snap-1")
+    fill["timestamp"] = "2026-06-29T00:00:00Z"
+    report = build_markout_report(fills=[fill], price_rows=[], orderbook_snapshots=[], horizons=(300,))
+
+    assert report["fill_count"] == 1
+    assert report["available_markout_count"] == 0
+    assert report["markouts"][0]["missing_snapshot_reason"] == "missing_later_snapshot"
+    assert report["markout_status"] == "missing_later_snapshot"
+
+
+def test_markout_uses_timestamp_as_entry_time_fallback():
+    fill = _valid_crypto_touch_candidate(EV_safe=0.03, orderbook_snapshot_id="snap-1")
+    fill["timestamp"] = "2026-06-29T00:00:00Z"
+    report = build_markout_report(
+        fills=[fill],
+        price_rows=[{"token_id": "yes-token", "timestamp": "2026-06-29T00:05:00Z", "price_mid": 0.25}],
+        orderbook_snapshots=[],
+        horizons=(300,),
+    )
+
+    assert report["fill_count"] == 1
+    assert report["available_markout_count"] == 2
+    assert report["markouts"][0]["entry_time"] == "2026-06-29T00:00:00Z"
+
+
+def test_missing_later_snapshot_does_not_hide_fill_count():
+    fill = _valid_crypto_touch_candidate(EV_safe=0.03, orderbook_snapshot_id="snap-1")
+    fill["entry_time"] = "2026-06-29T00:00:00Z"
+    report = build_markout_report(fills=[fill], price_rows=[], orderbook_snapshots=[], horizons=(300, 900))
+
+    assert report["fill_count"] == 1
+    assert report["markout_count"] == 3
+    assert report["available_markout_count"] == 0
+    reasons = {row["reason"]: row["count"] for row in report["missing_snapshot_reason_counts"]}
+    assert reasons["missing_later_snapshot"] == 3
 
 
 def test_probability_edge_resolved_audit_keeps_unresolved_pnl_null():
@@ -132,6 +171,8 @@ def _valid_crypto_touch_candidate(**overrides):
         "p_no_touch": 0.6,
         "p_trade_lcb": 0.32,
         "q_effective": 0.2,
+        "paper_only": True,
+        "live_order_path": False,
         "orderbook_snapshot": {"best_bid": 0.19, "best_ask": 0.2, "bid_ladder": [], "ask_ladder": []},
     }
     row.update(overrides)
@@ -177,3 +218,27 @@ def test_valid_crypto_touch_fill_gets_orderbook_snapshot_id():
 
     assert journal["rejected_fill_count"] == 0
     assert journal["fills"][0]["orderbook_snapshot_id"]
+
+
+def test_formal_fill_followup_snapshot_uses_current_orderbook():
+    fill = _valid_crypto_touch_candidate(EV_safe=0.03, orderbook_snapshot_id="snap-1")
+    fill["fill_id"] = "fill-1"
+    fill["entry_time"] = "2026-06-29T00:00:00Z"
+    report = build_formal_fill_followup_orderbook_snapshots(
+        fills=[fill],
+        active_markets=[
+            {
+                "market_slug": "btc-touch",
+                "token_ids": ["yes-token"],
+                "orderbooks": {"yes-token": {"best_bid": 0.21, "best_ask": 0.22, "spread": 0.01, "ask_depth_usdc_3c": 10}},
+            }
+        ],
+        recorded_at="2026-06-29T00:05:00Z",
+    )
+
+    assert report["snapshot_count"] == 1
+    snapshot = report["snapshots"][0]
+    assert snapshot["source"] == "crypto_touch_formal_fill_followup"
+    assert snapshot["fill_id"] == "fill-1"
+    assert snapshot["horizon_target"] == "300s"
+    assert snapshot["live_order_path"] is False

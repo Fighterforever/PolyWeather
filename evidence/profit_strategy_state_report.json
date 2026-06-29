@@ -79,6 +79,31 @@
         }
       }
     },
+    "crypto_touch_barrier": {
+      "available_markout_count": 15,
+      "by_horizon": {
+        "15m": -1.66666667,
+        "1h": -1.66666667,
+        "5m": -1.66666667,
+        "60s": -1.66666667,
+        "current": -1.66666667
+      },
+      "counts_for_live_gate": false,
+      "do_not_lower_threshold": true,
+      "live_order_path": false,
+      "mean_markout_cents": -1.66666667,
+      "near_miss_by_horizon": {
+        "15m": -1.5,
+        "1h": -1.45454545,
+        "5m": -1.5
+      },
+      "new_candidate_count": 2,
+      "new_paper_fill_count": 2,
+      "paper_fill_count": 3,
+      "paper_only": true,
+      "status": "crypto_touch_forward_markout_negative_reduce_priority",
+      "verdict": "continue_crypto_touch_sampling_insufficient_forward_fills"
+    },
     "dead_side_capture": {
       "dead_side_bid_available_count": 0,
       "dead_side_capture_candidate_count": 0,
@@ -789,6 +814,21 @@
     "profit_strategy_state_report": "evidence/profit_strategy_state_report.json"
   },
   "counts_for_live_gate": false,
+  "crypto_touch_forward_validation_summary": {
+    "do_not_lower_threshold": true,
+    "formal_available_markout_count": 15,
+    "formal_fill_count": 3,
+    "formal_mean_15m_markout": -1.66666667,
+    "formal_mean_1h_markout": -1.66666667,
+    "formal_mean_5m_markout": -1.66666667,
+    "live_order_path": false,
+    "near_miss_available_markout_count": 61,
+    "near_miss_mean_15m_markout": -1.5,
+    "near_miss_mean_1h_markout": -1.45454545,
+    "near_miss_mean_5m_markout": -1.5,
+    "near_miss_watch_count": 32,
+    "verdict": "continue_crypto_touch_sampling_insufficient_forward_fills"
+  },
   "data_collection": {
     "intraday_observation_collector_installed": true,
     "latest_observation_at_by_station": {
@@ -870,6 +910,28 @@
   },
   "live_order_path": false,
   "paper_only": true,
+  "polymarket_alpha_scoreboard_summary": {
+    "crypto_touch_do_not_lower_threshold": true,
+    "crypto_touch_formal_fill_count": 3,
+    "crypto_touch_formal_markout_count": 15,
+    "crypto_touch_status": "crypto_touch_forward_markout_negative_reduce_priority",
+    "final_next_focus": "probability_edge_forward_paper_markout",
+    "forward_paper_fill_count": 3,
+    "live_order_path": false,
+    "live_push_status": "collect_forward_markouts",
+    "maker_shadow_focus_quote_count": 0,
+    "maker_shadow_quote_count": 6,
+    "markout_mean": -0.01666667,
+    "model_oos_positive_categories": [],
+    "probability_model_blocker": "need_at_least_two_event_families_for_leave_family_out",
+    "resolved_pnl_cents": null,
+    "rule_confusion_candidate_count": 5266,
+    "strategy_count": 8,
+    "structural_candidate_count": 0,
+    "top_focus_categories": [],
+    "top_opportunity_category": "tech",
+    "weather_status": "research_monitoring_only_until_non_dust_due"
+  },
   "polymarket_weather_live_push_decision": {
     "bucket_family_payoff_matrix_arbitrage": {
       "best_lp_edge_cents": null,
@@ -1105,6 +1167,7 @@
   },
   "schema_version": "polyweather_profit_strategy_state_report.v3",
   "scope": "polymarket_only",
+  "updated_at": "2026-06-29T07:01:38Z",
   "web_first_alpha_research": {
     "data_source_coverage": {
       "closed_polymarket_markets": {

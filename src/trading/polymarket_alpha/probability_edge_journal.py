@@ -4,6 +4,7 @@ import json
 import math
 import hashlib
 from collections import defaultdict
+from dataclasses import asdict, is_dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
@@ -66,7 +67,7 @@ def _by_token(rows: Iterable[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]
         if token_id:
             grouped[token_id].append(row)
     for members in grouped.values():
-        members.sort(key=lambda row: str(row.get("timestamp") or ""))
+        members.sort(key=lambda row: str(row.get("timestamp") or row.get("recorded_at") or ""))
     return grouped
 
 
@@ -170,8 +171,19 @@ def build_probability_edge_fills_with_snapshots(
         fill = dict(candidate)
         fill["schema_version"] = f"{SCHEMA_VERSION}.fill"
         fill["timestamp"] = fill.get("timestamp") or fill.get("generated_at") or snapshot.get("recorded_at")
+        fill["entry_time"] = fill.get("entry_time") or fill.get("timestamp")
         fill["generated_at"] = fill.get("generated_at") or snapshot.get("recorded_at")
         fill["orderbook_snapshot_id"] = snapshot.get("orderbook_snapshot_id")
+        fill["fill_id"] = fill.get("fill_id") or _stable_id(
+            {
+                "market_slug": fill.get("market_slug"),
+                "token_id": fill.get("token_id"),
+                "side": fill.get("side"),
+                "entry_time": fill.get("entry_time"),
+                "q_effective": fill.get("q_effective"),
+                "EV_safe": fill.get("EV_safe"),
+            }
+        )
         fill["paper_only"] = True
         fill["counts_for_live_gate"] = False
         fill["live_order_path"] = False
@@ -209,12 +221,42 @@ def _crypto_touch_fill_rejection_reason(candidate: Dict[str, Any]) -> Optional[s
 def _first_after(rows: List[Dict[str, Any]], at: datetime, horizon_seconds: int) -> Optional[Dict[str, Any]]:
     target = at.timestamp() + int(horizon_seconds)
     for row in rows:
-        ts = _parse_utc(row.get("timestamp"))
+        ts = _parse_utc(row.get("timestamp") or row.get("recorded_at"))
         if ts is None:
+            continue
+        if int(horizon_seconds) == 0 and ts.timestamp() <= at.timestamp():
             continue
         if ts.timestamp() >= target:
             return row
     return None
+
+
+def _valid_probability_edge_fill(fill: Dict[str, Any], *, min_edge: float = 0.01) -> tuple[bool, Optional[str]]:
+    is_crypto_touch = (
+        str(fill.get("model_source") or "") == "crypto_lognormal_threshold_model"
+        or str(fill.get("probability_semantics") or "") == "touch_barrier"
+        or str(fill.get("semantics_type") or "") == "touch_barrier"
+    )
+    if not is_crypto_touch:
+        return True, None
+    if str(fill.get("semantics_type") or "") != "touch_barrier":
+        return False, "crypto_touch_semantics_mismatch"
+    if str(fill.get("probability_semantics") or "") != "touch_barrier":
+        return False, "crypto_touch_probability_semantics_mismatch"
+    if not bool(fill.get("high_since_start_verified")):
+        return False, "high_since_start_unverified"
+    if bool(fill.get("barrier_already_touched")):
+        return False, "barrier_already_touched"
+    if not fill.get("orderbook_snapshot_id"):
+        return False, "missing_orderbook_snapshot_id"
+    ev_safe = _safe_float(fill.get("EV_safe"))
+    if ev_safe is None or ev_safe < float(min_edge):
+        return False, "ev_below_min"
+    if fill.get("paper_only") is not True:
+        return False, "not_paper_only"
+    if fill.get("live_order_path") is not False:
+        return False, "live_order_path_not_false"
+    return True, None
 
 
 def _mean(values: List[float]) -> Optional[float]:
@@ -234,69 +276,111 @@ def _bucket_summary(rows: List[Dict[str, Any]], key: str, value_key: str) -> Lis
     ]
 
 
+def _count_by(rows: Iterable[Dict[str, Any]], key: str) -> List[Dict[str, Any]]:
+    counts: Dict[str, int] = defaultdict(int)
+    for row in rows:
+        counts[str(row.get(key) or "none")] += 1
+    return [{"reason": reason, "count": count} for reason, count in sorted(counts.items())]
+
+
 def build_markout_report(
     *,
     fills: Iterable[Dict[str, Any]],
     price_rows: Iterable[Dict[str, Any]],
     orderbook_snapshots: Iterable[Dict[str, Any]] = (),
     horizons: Tuple[int, ...] = (60, 300, 900, 3600),
+    min_edge: float = 0.01,
 ) -> Dict[str, Any]:
-    materialized_fills = [row for row in fills if isinstance(row, dict)]
+    raw_fills = [row for row in fills if isinstance(row, dict)]
+    invalid_fills: List[Dict[str, Any]] = []
+    materialized_fills: List[Dict[str, Any]] = []
+    for fill in raw_fills:
+        valid, reason = _valid_probability_edge_fill(fill, min_edge=float(min_edge))
+        if valid:
+            materialized_fills.append(fill)
+        else:
+            invalid_fills.append(
+                {
+                    "fill_id": fill.get("fill_id"),
+                    "market_slug": fill.get("market_slug"),
+                    "token_id": fill.get("token_id"),
+                    "reason": reason,
+                    "paper_only": True,
+                    "counts_for_live_gate": False,
+                    "live_order_path": False,
+                }
+            )
     histories = _by_token(price_rows)
     snapshot_histories = _by_token(orderbook_snapshots)
     markouts: List[Dict[str, Any]] = []
-    missing_snapshot_count = 0
     for fill in materialized_fills:
         token_id = str(fill.get("token_id") or "")
-        entry_time = _parse_utc(fill.get("timestamp") or fill.get("generated_at"))
+        entry_time = _parse_utc(fill.get("entry_time") or fill.get("timestamp") or fill.get("generated_at") or fill.get("recorded_at"))
         q_effective = _safe_float(fill.get("q_effective"))
-        if not token_id or entry_time is None or q_effective is None:
-            missing_snapshot_count += 1
-            continue
         token_history = histories.get(token_id) or []
         token_snapshots = snapshot_histories.get(token_id) or []
         for horizon in tuple(horizons) + (0,):
+            base_row = {
+                "schema_version": f"{SCHEMA_VERSION}.markout",
+                "fill_id": fill.get("fill_id"),
+                "market_slug": fill.get("market_slug"),
+                "token_id": token_id,
+                "category": fill.get("category"),
+                "side": fill.get("side"),
+                "asset": fill.get("asset"),
+                "semantics_type": fill.get("semantics_type"),
+                "model_source": fill.get("model_source"),
+                "entry_time": fill.get("entry_time") or fill.get("timestamp") or fill.get("generated_at") or fill.get("recorded_at"),
+                "future_time": None,
+                "horizon_seconds": horizon,
+                "horizon_label": "current" if horizon == 0 else f"{horizon}s",
+                "q_effective": q_effective,
+                "future_side_price": None,
+                "future_source": None,
+                "markout": None,
+                "markout_cents": None,
+                "missing_snapshot_reason": None,
+                "paper_only": True,
+                "counts_for_live_gate": False,
+                "live_order_path": False,
+            }
+            if not token_id:
+                markouts.append({**base_row, "missing_snapshot_reason": "missing_token_id"})
+                continue
+            if entry_time is None:
+                markouts.append({**base_row, "missing_snapshot_reason": "missing_entry_time"})
+                continue
+            if q_effective is None:
+                markouts.append({**base_row, "missing_snapshot_reason": "missing_entry_reference_price"})
+                continue
             future = _first_after(token_snapshots, entry_time, horizon) if token_snapshots else None
             future_source = "orderbook_snapshot"
             if future is None:
                 future = _first_after(token_history, entry_time, horizon)
                 future_source = "price_row"
             if future is None:
-                missing_snapshot_count += 1
+                markouts.append({**base_row, "missing_snapshot_reason": "missing_later_snapshot"})
                 continue
             exit_price = _safe_float(future.get("best_bid"))
             if exit_price is None:
                 exit_price = _safe_float(future.get("price_mid") or future.get("price"))
             if exit_price is None:
-                missing_snapshot_count += 1
+                markouts.append({**base_row, "missing_snapshot_reason": "missing_exit_bid_or_mid"})
                 continue
             markout_cents = round((exit_price - q_effective) * 100.0, 6)
             markouts.append(
                 {
-                    "schema_version": f"{SCHEMA_VERSION}.markout",
-                    "market_slug": fill.get("market_slug"),
-                    "token_id": token_id,
-                    "category": fill.get("category"),
-                    "side": fill.get("side"),
-                    "asset": fill.get("asset"),
-                    "semantics_type": fill.get("semantics_type"),
-                    "model_source": fill.get("model_source"),
-                    "entry_time": fill.get("timestamp") or fill.get("generated_at"),
+                    **base_row,
                     "future_time": future.get("timestamp") or future.get("recorded_at"),
-                    "horizon_seconds": horizon,
-                    "horizon_label": "current" if horizon == 0 else f"{horizon}s",
-                    "q_effective": q_effective,
                     "future_side_price": round(exit_price, 8),
                     "future_source": future_source,
                     "markout": round(exit_price - q_effective, 8),
                     "markout_cents": markout_cents,
-                    "paper_only": True,
-                    "counts_for_live_gate": False,
-                    "live_order_path": False,
                 }
             )
-    one_hour = [row for row in markouts if int(row.get("horizon_seconds") or 0) == 3600]
-    all_values = [_safe_float(row.get("markout_cents")) for row in markouts]
+    available_markouts = [row for row in markouts if row.get("markout_cents") is not None]
+    one_hour = [row for row in available_markouts if int(row.get("horizon_seconds") or 0) == 3600]
+    all_values = [_safe_float(row.get("markout_cents")) for row in available_markouts]
     all_values = [value for value in all_values if value is not None]
     one_hour_values = [_safe_float(row.get("markout_cents")) for row in one_hour]
     one_hour_values = [value for value in one_hour_values if value is not None]
@@ -307,9 +391,13 @@ def build_markout_report(
         "counts_for_live_gate": False,
         "live_order_path": False,
         "fill_count": len(materialized_fills),
+        "raw_fill_count": len(raw_fills),
+        "invalid_fill_count": len(invalid_fills),
+        "invalid_fills": invalid_fills,
         "markout_count": len(markouts),
-        "available_markout_count": len(markouts),
-        "missing_snapshot_count": missing_snapshot_count,
+        "available_markout_count": len(available_markouts),
+        "missing_snapshot_count": len(markouts) - len(available_markouts),
+        "missing_snapshot_reason_counts": _count_by(markouts, "missing_snapshot_reason"),
         "mean_markout": _mean([value / 100.0 for value in all_values]),
         "mean_markout_cents": _mean(all_values),
         "mean_markout_1h": _mean([value / 100.0 for value in one_hour_values]),
@@ -317,24 +405,119 @@ def build_markout_report(
         "markout_status": (
             "ready_waiting_for_probability_edge_fills"
             if not materialized_fills
-            else "no_forward_markout_yet"
-            if not markouts
+            else "missing_later_snapshot"
+            if not available_markouts
             else "forward_markout_positive"
             if (_mean(one_hour_values) or _mean(all_values) or 0.0) > 0
             else "forward_markout_nonpositive"
         ),
-        "by_horizon": _bucket_summary(markouts, "horizon_label", "markout_cents"),
-        "by_asset": _bucket_summary(markouts, "asset", "markout_cents"),
-        "by_semantics_type": _bucket_summary(markouts, "semantics_type", "markout_cents"),
-        "by_side": _bucket_summary(markouts, "side", "markout_cents"),
-        "by_category": _bucket_summary(markouts, "category", "markout_cents"),
-        "by_model_source": _bucket_summary(markouts, "model_source", "markout_cents"),
+        "by_horizon": _bucket_summary(available_markouts, "horizon_label", "markout_cents"),
+        "by_asset": _bucket_summary(available_markouts, "asset", "markout_cents"),
+        "by_semantics_type": _bucket_summary(available_markouts, "semantics_type", "markout_cents"),
+        "by_side": _bucket_summary(available_markouts, "side", "markout_cents"),
+        "by_category": _bucket_summary(available_markouts, "category", "markout_cents"),
+        "by_model_source": _bucket_summary(available_markouts, "model_source", "markout_cents"),
         "markouts": markouts,
     }
     if not materialized_fills:
         report["markout_status"] = "ready_waiting_for_valid_crypto_fills"
         report["legacy_markout_status"] = "ready_waiting_for_probability_edge_fills"
     return report
+
+
+def _normalize_book_payload(book: Any) -> Dict[str, Any]:
+    if book is None:
+        return {}
+    if is_dataclass(book):
+        return asdict(book)
+    if isinstance(book, dict):
+        return dict(book)
+    return {}
+
+
+def build_formal_fill_followup_orderbook_snapshots(
+    *,
+    fills: Iterable[Dict[str, Any]],
+    active_markets: Iterable[Dict[str, Any]] = (),
+    recorded_at: Optional[str] = None,
+    orderbook_fetcher: Optional[Any] = None,
+    horizons: Tuple[int, ...] = (300, 900, 3600, 21600, 86400),
+    min_edge: float = 0.01,
+) -> Dict[str, Any]:
+    recorded_at = recorded_at or _iso_now()
+    recorded_dt = _parse_utc(recorded_at) or datetime.now(timezone.utc)
+    active_by_token = _active_market_by_token(active_markets)
+    snapshots: List[Dict[str, Any]] = []
+    skipped: List[Dict[str, Any]] = []
+    for fill in fills:
+        if not isinstance(fill, dict):
+            continue
+        valid, reason = _valid_probability_edge_fill(fill, min_edge=float(min_edge))
+        if not valid:
+            skipped.append({"market_slug": fill.get("market_slug"), "token_id": fill.get("token_id"), "reason": reason})
+            continue
+        token_id = str(fill.get("token_id") or "")
+        entry_time = _parse_utc(fill.get("entry_time") or fill.get("timestamp") or fill.get("generated_at") or fill.get("recorded_at"))
+        book = {}
+        market = active_by_token.get(token_id) or {}
+        books = market.get("orderbooks") if isinstance(market.get("orderbooks"), dict) else {}
+        if isinstance(books.get(token_id), dict):
+            book = dict(books[token_id])
+        elif orderbook_fetcher is not None and token_id:
+            try:
+                book = _normalize_book_payload(orderbook_fetcher(token_id))
+            except Exception as exc:  # pragma: no cover - defensive for external API failures
+                skipped.append({"market_slug": fill.get("market_slug"), "token_id": token_id, "reason": f"orderbook_fetch_error:{exc}"})
+                continue
+        if not book:
+            skipped.append({"market_slug": fill.get("market_slug"), "token_id": token_id, "reason": "missing_followup_orderbook"})
+            continue
+        reached = []
+        if entry_time is not None:
+            elapsed = (recorded_dt - entry_time).total_seconds()
+            for horizon in horizons:
+                if elapsed >= int(horizon):
+                    reached.append("current" if int(horizon) == 0 else f"{int(horizon)}s")
+        payload = {
+            "market_slug": fill.get("market_slug"),
+            "token_id": token_id,
+            "recorded_at": recorded_at,
+            "best_bid": book.get("best_bid"),
+            "best_ask": book.get("best_ask"),
+            "source": "crypto_touch_formal_fill_followup",
+        }
+        snapshots.append(
+            {
+                "schema_version": f"{SCHEMA_VERSION}.formal_fill_followup_orderbook_snapshot",
+                "fill_id": fill.get("fill_id"),
+                "market_slug": fill.get("market_slug"),
+                "token_id": token_id,
+                "recorded_at": recorded_at,
+                "timestamp": recorded_at,
+                "horizon_target": reached[0] if reached else "current",
+                "horizon_targets_reached": reached,
+                "best_bid": _safe_float(book.get("best_bid")),
+                "best_ask": _safe_float(book.get("best_ask")),
+                "bid_ladder": book.get("bid_ladder") if isinstance(book.get("bid_ladder"), list) else book.get("bids") if isinstance(book.get("bids"), list) else [],
+                "ask_ladder": book.get("ask_ladder") if isinstance(book.get("ask_ladder"), list) else book.get("asks") if isinstance(book.get("asks"), list) else [],
+                "spread": _safe_float(book.get("spread")),
+                "depth": _safe_float(book.get("ask_depth_usdc_3c") or book.get("depth")),
+                "source": "crypto_touch_formal_fill_followup",
+                "orderbook_snapshot_id": _stable_id(payload),
+                "paper_only": True,
+                "counts_for_live_gate": False,
+                "live_order_path": False,
+            }
+        )
+    return {
+        "snapshots": snapshots,
+        "snapshot_count": len(snapshots),
+        "skipped_count": len(skipped),
+        "skipped": skipped,
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+    }
 
 
 def _resolved_payout_by_token(dataset_rows: Iterable[Dict[str, Any]]) -> Dict[str, float]:
@@ -420,6 +603,7 @@ def load_jsonl(path: str | Path) -> List[Dict[str, Any]]:
 
 __all__ = [
     "SCHEMA_VERSION",
+    "build_formal_fill_followup_orderbook_snapshots",
     "build_orderbook_snapshot",
     "build_markout_report",
     "build_probability_edge_fills_with_snapshots",

@@ -1,0 +1,100 @@
+{
+  "artifact_paths": {
+    "formal_fills": "evidence/polymarket_alpha/probability_edge_paper/fills.jsonl",
+    "formal_markouts": "evidence/polymarket_alpha/probability_edge_paper/markouts.jsonl",
+    "near_miss_markouts": "evidence/polymarket_alpha/crypto_touch_near_miss_markouts.jsonl",
+    "near_miss_watch": "evidence/polymarket_alpha/crypto_touch_near_miss_watch.jsonl"
+  },
+  "counts_for_live_gate": false,
+  "formal_fills": {
+    "available_markout_count": 15,
+    "by_asset": [
+      {
+        "available_markout_count": 10,
+        "bucket": "BTC",
+        "mean_markout_cents": -1.5
+      },
+      {
+        "available_markout_count": 5,
+        "bucket": "ETH",
+        "mean_markout_cents": -2.0
+      }
+    ],
+    "by_horizon": {
+      "15m": -1.66666667,
+      "1h": -1.66666667,
+      "5m": -1.66666667,
+      "60s": -1.66666667,
+      "current": -1.66666667
+    },
+    "by_spread": [
+      {
+        "available_markout_count": 15,
+        "bucket": "missing",
+        "mean_markout_cents": -1.66666667
+      }
+    ],
+    "by_threshold_distance": [
+      {
+        "available_markout_count": 10,
+        "bucket": "far_gt_15pct",
+        "mean_markout_cents": -2.0
+      },
+      {
+        "available_markout_count": 5,
+        "bucket": "within_15pct",
+        "mean_markout_cents": -1.0
+      }
+    ],
+    "fill_count": 3,
+    "mean_15m_markout": -1.66666667,
+    "mean_1h_markout": -1.66666667,
+    "mean_24h_markout": null,
+    "mean_5m_markout": -1.66666667,
+    "mean_6h_markout": null,
+    "mean_EV_safe": 0.01414939
+  },
+  "invalidated_old_fills": {
+    "invalidated_count": 0,
+    "reason_counts": []
+  },
+  "live_order_path": false,
+  "near_miss_watch": {
+    "available_markout_count": 61,
+    "by_asset": [
+      {
+        "available_markout_count": 37,
+        "bucket": "BTC",
+        "mean_markout_cents": -1.81081081
+      },
+      {
+        "available_markout_count": 24,
+        "bucket": "ETH",
+        "mean_markout_cents": -1.0
+      }
+    ],
+    "by_horizon": {
+      "15m": -1.5,
+      "1h": -1.45454545,
+      "5m": -1.5
+    },
+    "mean_15m_markout": -1.5,
+    "mean_1h_markout": -1.45454545,
+    "mean_24h_markout": null,
+    "mean_5m_markout": -1.5,
+    "mean_6h_markout": null,
+    "mean_EV_safe": 0.00516972,
+    "watch_count": 32
+  },
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_crypto_touch_forward_validation.v1",
+  "scope": "polymarket_only",
+  "verdict": {
+    "continue_crypto_touch_sampling": true,
+    "do_not_lower_threshold": true,
+    "keep_min_edge_threshold": true,
+    "paper_only_review_required": true,
+    "reduce_priority_if_negative_markout": false,
+    "status": "continue_crypto_touch_sampling_insufficient_forward_fills"
+  }
+}

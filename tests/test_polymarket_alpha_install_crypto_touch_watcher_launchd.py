@@ -31,7 +31,7 @@ def test_crypto_touch_watcher_launchd_plist_contains_paper_only_args(tmp_path):
     assert plist["StandardOutPath"].endswith("evidence/polymarket_alpha/logs/crypto_touch_watcher.out.log")
     assert plist["StandardErrorPath"].endswith("evidence/polymarket_alpha/logs/crypto_touch_watcher.err.log")
     argv = plist["ProgramArguments"]
-    assert "scripts/polymarket_alpha_crypto_touch_watcher.py" in argv[1]
+    assert "scripts/polymarket_alpha_crypto_touch_watcher_report.py" in argv[1]
     assert "--min-edge" in argv
     assert "0.01" in argv
     assert "--live" not in argv

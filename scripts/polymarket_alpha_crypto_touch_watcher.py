@@ -80,7 +80,15 @@ def main(argv: list[str] | None = None) -> None:
         ],
         [
             args.python_path,
+            "scripts/polymarket_alpha_probability_edge_markout_report.py",
+        ],
+        [
+            args.python_path,
             "scripts/polymarket_alpha_crypto_touch_watch_markout_report.py",
+        ],
+        [
+            args.python_path,
+            "scripts/polymarket_alpha_crypto_touch_forward_validation_report.py",
         ],
     ]
     results = [_run(command) for command in commands]
@@ -97,9 +105,12 @@ def main(argv: list[str] | None = None) -> None:
             "crypto_probability_edge_report": "evidence/polymarket_alpha/crypto_probability_edge_report.json",
             "active_probability_edge_report": "evidence/polymarket_alpha/active_probability_edge_report.json",
             "probability_edge_fills": "evidence/polymarket_alpha/probability_edge_paper/fills.jsonl",
+            "probability_edge_markout_report": "evidence/polymarket_alpha/probability_edge_paper/markout_report.json",
+            "probability_edge_fill_followup_orderbook_snapshots": "evidence/polymarket_alpha/probability_edge_paper/fill_followup_orderbook_snapshots.jsonl",
             "crypto_touch_near_miss_watch": "evidence/polymarket_alpha/crypto_touch_near_miss_watch.jsonl",
             "crypto_touch_near_miss_orderbook_snapshots": "evidence/polymarket_alpha/crypto_touch_near_miss_orderbook_snapshots.jsonl",
             "crypto_touch_near_miss_markout_report": "evidence/polymarket_alpha/crypto_touch_near_miss_markout_report.json",
+            "crypto_touch_forward_validation_report": "evidence/polymarket_alpha/crypto_touch_forward_validation_report.json",
         },
     }
     output = PROJECT_ROOT / args.summary_output

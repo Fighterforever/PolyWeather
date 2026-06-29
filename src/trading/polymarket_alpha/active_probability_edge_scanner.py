@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
 from src.trading.polymarket_alpha.probability_dataset import price_bucket, spread_bucket, time_to_close_bucket, write_json, write_jsonl
+from src.trading.polymarket_alpha.probability_edge_journal import build_formal_fill_followup_orderbook_snapshots
 
 
 SCHEMA_VERSION = "polyweather_polymarket_alpha_active_probability_edge.v2"
@@ -305,4 +306,12 @@ def load_jsonl(path: str | Path) -> List[Dict[str, Any]]:
     return rows
 
 
-__all__ = ["SCHEMA_VERSION", "load_json", "load_jsonl", "scan_active_probability_edges", "write_json", "write_jsonl"]
+__all__ = [
+    "SCHEMA_VERSION",
+    "build_formal_fill_followup_orderbook_snapshots",
+    "load_json",
+    "load_jsonl",
+    "scan_active_probability_edges",
+    "write_json",
+    "write_jsonl",
+]

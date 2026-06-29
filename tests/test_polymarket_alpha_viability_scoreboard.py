@@ -75,3 +75,25 @@ def test_polymarket_alpha_viability_collects_markouts_when_active_crypto_fills_e
     assert report["summary"]["live_push_status"] == "collect_forward_markouts"
     assert report["summary"]["final_next_focus"] == "probability_edge_forward_paper_markout"
     assert report["live_order_path"] is False
+
+
+def test_polymarket_alpha_viability_adds_crypto_touch_status():
+    report = build_alpha_viability_scoreboard(
+        opportunity_density_report={"top_categories": [{"category": "crypto"}]},
+        payoff_arbitrage_report={"structural_candidate_count": 0, "candidates": []},
+        maker_shadow_report={"quote_count": 0, "inferred_fill_count": 0},
+        rule_confusion_report={"candidate_count": 0},
+        active_probability_edge_report={"candidate_count": 3, "paper_fill_count": 3},
+        probability_markout_report={"markout_count": 12, "mean_markout": -0.01},
+        crypto_touch_validation_report={
+            "formal_fills": {"fill_count": 3, "available_markout_count": 12, "mean_5m_markout": -1.5},
+            "near_miss_watch": {"mean_5m_markout": -1.0},
+            "verdict": {"do_not_lower_threshold": True},
+        },
+    )
+
+    row = next(row for row in report["rows"] if row["strategy_id"] == "crypto_touch_barrier")
+    assert row["paper_fill_count"] == 3
+    assert row["main_blocker"] == "crypto_touch_forward_markout_negative_reduce_priority"
+    assert report["summary"]["crypto_touch_do_not_lower_threshold"] is True
+    assert report["live_order_path"] is False

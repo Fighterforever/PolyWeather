@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from src.trading.polymarket_alpha.active_probability_edge_scanner import scan_active_probability_edges
+from src.trading.polymarket_alpha.active_probability_edge_scanner import (
+    build_formal_fill_followup_orderbook_snapshots,
+    scan_active_probability_edges,
+)
+from scripts.polymarket_alpha_active_probability_edge_report import _merge_probability_edge_fills
 
 
 def _market(category: str = "crypto", **overrides):
@@ -224,3 +228,80 @@ def test_fill_schema_includes_trade_probability_fields():
     assert candidate["p_trade_lcb"] == 0.7
     assert "p_yes_lcb" in candidate
     assert "p_no_lcb" in candidate
+
+
+def test_active_scanner_exports_formal_fill_followup_snapshot_builder():
+    report = build_formal_fill_followup_orderbook_snapshots(
+        fills=[
+            {
+                "fill_id": "fill-1",
+                "market_slug": "btc-touch",
+                "token_id": "yes-token",
+                "side": "YES",
+                "semantics_type": "touch_barrier",
+                "probability_semantics": "touch_barrier",
+                "high_since_start_verified": True,
+                "barrier_already_touched": False,
+                "orderbook_snapshot_id": "entry-snap",
+                "EV_safe": 0.03,
+                "entry_time": "2026-06-29T00:00:00Z",
+                "q_effective": 0.2,
+                "paper_only": True,
+                "live_order_path": False,
+            }
+        ],
+        active_markets=[
+            {
+                "market_slug": "btc-touch",
+                "token_ids": ["yes-token"],
+                "orderbooks": {"yes-token": {"best_bid": 0.21, "best_ask": 0.22, "spread": 0.01, "ask_depth_usdc_3c": 20}},
+            }
+        ],
+        recorded_at="2026-06-29T00:05:00Z",
+    )
+
+    assert report["snapshot_count"] == 1
+    assert report["snapshots"][0]["source"] == "crypto_touch_formal_fill_followup"
+    assert report["snapshots"][0]["paper_only"] is True
+
+
+def test_active_report_merge_preserves_existing_formal_fills_when_no_new_candidate():
+    existing = [
+        {
+            "fill_id": "fill-1",
+            "market_slug": "btc-touch",
+            "token_id": "yes-token",
+            "side": "YES",
+            "timestamp": "2026-06-29T00:00:00Z",
+            "paper_only": True,
+            "live_order_path": False,
+        }
+    ]
+
+    assert _merge_probability_edge_fills(existing, []) == existing
+
+
+def test_active_report_merge_dedupes_repeated_token_fill_and_keeps_first_entry():
+    existing = [
+        {
+            "fill_id": "first",
+            "market_slug": "btc-touch",
+            "token_id": "yes-token",
+            "side": "YES",
+            "timestamp": "2026-06-29T00:00:00Z",
+        }
+    ]
+    repeated = [
+        {
+            "fill_id": "later",
+            "market_slug": "btc-touch",
+            "token_id": "yes-token",
+            "side": "YES",
+            "timestamp": "2026-06-29T00:01:00Z",
+        }
+    ]
+
+    merged = _merge_probability_edge_fills(existing, repeated)
+
+    assert len(merged) == 1
+    assert merged[0]["fill_id"] == "first"

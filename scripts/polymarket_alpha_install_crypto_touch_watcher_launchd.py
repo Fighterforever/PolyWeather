@@ -27,7 +27,7 @@ def build_program_arguments(args: argparse.Namespace) -> list[str]:
     repo_root = Path(args.repo_root).resolve()
     return [
         str(args.python_path or _default_python(repo_root)),
-        str(repo_root / "scripts" / "polymarket_alpha_crypto_touch_watcher.py"),
+        str(repo_root / "scripts" / "polymarket_alpha_crypto_touch_watcher_report.py"),
         "--python-path",
         str(args.python_path or _default_python(repo_root)),
         "--active-limit",
@@ -95,7 +95,7 @@ def install_launchd(args: argparse.Namespace, *, run=subprocess.run) -> Dict[str
             retry = _run(["launchctl", "bootstrap", domain, str(plist_path)], run=run)
             commands.append(retry)
             installed = retry["returncode"] == 0
-        if not installed and "Usage" in (bootstrap.get("stderr") or ""):
+        if not installed:
             fallback = _run(["launchctl", "load", str(plist_path)], run=run)
             commands.append(fallback)
             installed = fallback["returncode"] == 0

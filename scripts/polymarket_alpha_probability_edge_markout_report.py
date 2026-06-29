@@ -28,6 +28,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--fills", default=str(DEFAULT_PAPER / "fills.jsonl"))
     parser.add_argument("--price-rows", default=str(DEFAULT_ROOT / "probability_decision_snapshots.jsonl"))
     parser.add_argument("--orderbook-snapshots", default=str(DEFAULT_PAPER / "orderbook_snapshots.jsonl"))
+    parser.add_argument("--followup-orderbook-snapshots", default=str(DEFAULT_PAPER / "fill_followup_orderbook_snapshots.jsonl"))
+    parser.add_argument("--min-edge", type=float, default=0.01)
     parser.add_argument("--markouts-output", default=str(DEFAULT_PAPER / "markouts.jsonl"))
     parser.add_argument("--summary-output", default=str(DEFAULT_PAPER / "markout_report.json"))
     return parser.parse_args(argv)
@@ -38,7 +40,8 @@ def main(argv: list[str] | None = None) -> None:
     report = build_markout_report(
         fills=load_jsonl(args.fills),
         price_rows=load_jsonl(args.price_rows),
-        orderbook_snapshots=load_jsonl(args.orderbook_snapshots),
+        orderbook_snapshots=load_jsonl(args.orderbook_snapshots) + load_jsonl(args.followup_orderbook_snapshots),
+        min_edge=float(args.min_edge),
     )
     write_jsonl(args.markouts_output, report.get("markouts") or [])
     report["artifact_paths"] = {"markouts": str(args.markouts_output)}

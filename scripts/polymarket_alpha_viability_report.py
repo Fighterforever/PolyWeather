@@ -30,6 +30,7 @@ DEFAULT_ACTIVE_EDGE = DEFAULT_ROOT / "active_probability_edge_report.json"
 DEFAULT_FOCUS = DEFAULT_ROOT / "category_focus_report.json"
 DEFAULT_MARKOUT = DEFAULT_ROOT / "probability_edge_paper" / "markout_report.json"
 DEFAULT_RESOLVED_AUDIT = DEFAULT_ROOT / "probability_edge_paper" / "resolved_audit_report.json"
+DEFAULT_CRYPTO_TOUCH_VALIDATION = DEFAULT_ROOT / "crypto_touch_forward_validation_report.json"
 DEFAULT_OUTPUT = DEFAULT_ROOT / "alpha_viability_scoreboard.json"
 
 
@@ -46,6 +47,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--category-focus", default=str(DEFAULT_FOCUS))
     parser.add_argument("--probability-markout", default=str(DEFAULT_MARKOUT))
     parser.add_argument("--probability-resolved-audit", default=str(DEFAULT_RESOLVED_AUDIT))
+    parser.add_argument("--crypto-touch-validation", default=str(DEFAULT_CRYPTO_TOUCH_VALIDATION))
     parser.add_argument("--summary-output", default=str(DEFAULT_OUTPUT))
     return parser.parse_args(argv)
 
@@ -64,6 +66,7 @@ def main(argv: list[str] | None = None) -> None:
         probability_markout_report=load_json(args.probability_markout),
         probability_resolved_audit_report=load_json(args.probability_resolved_audit),
         maker_shadow_focus_report=load_json(args.maker_shadow_focus),
+        crypto_touch_validation_report=load_json(args.crypto_touch_validation),
     )
     write_json(args.summary_output, report)
     print(json.dumps(report.get("summary") or {}, ensure_ascii=False, indent=2, sort_keys=True))

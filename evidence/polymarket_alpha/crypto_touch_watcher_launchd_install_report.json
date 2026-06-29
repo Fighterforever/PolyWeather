@@ -13,28 +13,6 @@
         "gui/501",
         "/Users/leeyoma/Library/LaunchAgents/com.polyweather.crypto-touch-near-miss-watcher.plist"
       ],
-      "returncode": 5,
-      "stderr": "Bootstrap failed: 5: Input/output error\nTry re-running the command as root for richer errors.\n",
-      "stdout": ""
-    },
-    {
-      "command": [
-        "launchctl",
-        "bootout",
-        "gui/501",
-        "/Users/leeyoma/Library/LaunchAgents/com.polyweather.crypto-touch-near-miss-watcher.plist"
-      ],
-      "returncode": 0,
-      "stderr": "",
-      "stdout": ""
-    },
-    {
-      "command": [
-        "launchctl",
-        "bootstrap",
-        "gui/501",
-        "/Users/leeyoma/Library/LaunchAgents/com.polyweather.crypto-touch-near-miss-watcher.plist"
-      ],
       "returncode": 0,
       "stderr": "",
       "stdout": ""
@@ -74,7 +52,7 @@
   "plist_path": "/Users/leeyoma/Library/LaunchAgents/com.polyweather.crypto-touch-near-miss-watcher.plist",
   "program_arguments": [
     "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
-    "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/scripts/polymarket_alpha_crypto_touch_watcher.py",
+    "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/scripts/polymarket_alpha_crypto_touch_watcher_report.py",
     "--python-path",
     "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
     "--active-limit",
