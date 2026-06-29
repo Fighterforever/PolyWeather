@@ -101,6 +101,27 @@ def main(argv: list[str] | None = None) -> None:
         ],
         [
             args.python_path,
+            "scripts/polymarket_alpha_crypto_terminal_edge_report.py",
+            "--fetch-binance-spot",
+            "--min-edge",
+            str(args.min_edge),
+            "--cost",
+            str(args.cost),
+            "--generated-at",
+            generated_at,
+        ],
+        [
+            args.python_path,
+            "scripts/polymarket_alpha_microstructure_edge_report.py",
+            "--generated-at",
+            generated_at,
+        ],
+        [
+            args.python_path,
+            "scripts/polymarket_alpha_microstructure_markout_report.py",
+        ],
+        [
+            args.python_path,
             "scripts/polymarket_alpha_probability_edge_markout_report.py",
         ],
         [
@@ -118,6 +139,10 @@ def main(argv: list[str] | None = None) -> None:
         [
             args.python_path,
             "scripts/polymarket_alpha_crypto_touch_experiment_controller.py",
+        ],
+        [
+            args.python_path,
+            "scripts/polymarket_alpha_tournament_report.py",
         ],
     ]
     results = [_run(command) for command in commands]
@@ -145,11 +170,19 @@ def main(argv: list[str] | None = None) -> None:
             "crypto_touch_near_miss_markout_report": "evidence/polymarket_alpha/crypto_touch_near_miss_markout_report.json",
             "crypto_touch_forward_validation_report": "evidence/polymarket_alpha/crypto_touch_forward_validation_report.json",
             "crypto_touch_72h_experiment_report": "evidence/polymarket_alpha/crypto_touch_72h_experiment_report.json",
+            "crypto_terminal_edge_report": "evidence/polymarket_alpha/crypto_terminal_edge_report.json",
+            "microstructure_edge_report": "evidence/polymarket_alpha/microstructure_edge_report.json",
+            "microstructure_markout_report": "evidence/polymarket_alpha/microstructure_markout_report.json",
+            "alpha_tournament_scoreboard": "evidence/polymarket_alpha/alpha_tournament_scoreboard.json",
+            "vps_alpha_tournament_runner_report": "evidence/polymarket_alpha/vps_alpha_tournament_runner_report.json",
         },
     }
     output = PROJECT_ROOT / args.summary_output
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
+    vps_output = PROJECT_ROOT / "evidence/polymarket_alpha/vps_alpha_tournament_runner_report.json"
+    vps_output.parent.mkdir(parents=True, exist_ok=True)
+    vps_output.write_text(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
     if not report["success"]:
         raise SystemExit(1)

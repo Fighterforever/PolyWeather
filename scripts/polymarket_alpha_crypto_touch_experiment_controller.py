@@ -114,6 +114,23 @@ def build_crypto_touch_72h_experiment_report(
     active_probability_report: Dict[str, Any],
 ) -> Dict[str, Any]:
     formal_fill_count = len(formal_fills)
+    existing_formal_fill_count = formal_fill_count
+    valid_formal_fill_count = len(
+        [
+            row
+            for row in formal_fills
+            if isinstance(row, dict)
+            and row.get("invalidated") is not True
+            and row.get("excluded_from_markout") is not True
+        ]
+    )
+    new_formal_fill_count = int(active_probability_report.get("new_formal_fill_count") or 0)
+    shadow_watch_count = int(
+        active_probability_report.get("watch_count")
+        or active_probability_report.get("watch_row_count")
+        or len(near_miss_watch)
+        or 0
+    )
     formal_valid_markout_count = int(markout_report.get("available_markout_count") or 0)
     near_miss_watch_count = len(near_miss_watch)
     surface_supported_fill_count = _surface_supported_fill_count(formal_fills, surface_report)
@@ -169,6 +186,11 @@ def build_crypto_touch_72h_experiment_report(
         "generated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
         "run_count": 1,
         "formal_fill_count": formal_fill_count,
+        "existing_formal_fill_count": existing_formal_fill_count,
+        "old_formal_fill_count": existing_formal_fill_count,
+        "valid_formal_fill_count": valid_formal_fill_count,
+        "new_formal_fill_count": new_formal_fill_count,
+        "shadow_watch_count": shadow_watch_count,
         "formal_valid_markout_count": formal_valid_markout_count,
         "near_miss_watch_count": near_miss_watch_count,
         "surface_supported_fill_count": surface_supported_fill_count,
@@ -184,10 +206,9 @@ def build_crypto_touch_72h_experiment_report(
         "formal_fills_surface_supported_after_fix": surface_supported_fill_count,
         "formal_fills_vol_supported_count": formal_fills_vol_supported_count,
         "formal_fills_negative_markout_count": int(formal_fill_count if all_formal_negative else 0),
-        "old_formal_fill_count": active_probability_report.get("old_formal_fill_count"),
-        "new_formal_fill_count": active_probability_report.get("new_formal_fill_count"),
         "downgraded_due_surface_count": active_probability_report.get("downgraded_due_surface_count"),
         "downgraded_due_sensitivity_count": active_probability_report.get("downgraded_due_sensitivity_count"),
+        "raw_crypto_candidate_count": crypto_probability_report.get("candidate_count"),
         "crypto_candidate_count": crypto_probability_report.get("candidate_count"),
         "recommendation": recommendation,
         "keep_threshold_do_not_lower": bool(near_short_negative),

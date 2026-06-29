@@ -1,0 +1,22 @@
+{
+  "artifact_paths": {
+    "microstructure_markouts": "evidence/polymarket_alpha/microstructure_markouts.jsonl"
+  },
+  "available_markout_count": 0,
+  "by_category": [],
+  "by_signal_type": [],
+  "candidate_count": 21,
+  "counts_for_live_gate": false,
+  "live_order_path": false,
+  "mean_markout_by_horizon": [],
+  "mean_markout_cents": null,
+  "missing_snapshot_reason_counts": [
+    {
+      "count": 84,
+      "reason": "missing_snapshot_for_horizon"
+    }
+  ],
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_microstructure_edge.v1.markout_report",
+  "scope": "polymarket_only"
+}

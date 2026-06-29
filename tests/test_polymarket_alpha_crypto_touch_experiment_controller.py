@@ -72,3 +72,28 @@ def test_crypto_touch_72h_controller_reduces_priority_when_all_negative_and_frag
     assert report["surface_supported_fill_count"] == 1
     assert report["sensitivity_fragile_fill_count"] == 1
     assert report["recommendation"] == "shadow_only_pending_recalibration"
+
+
+def test_crypto_touch_72h_controller_count_consistency_uses_existing_and_new_formal_counts():
+    report = build_crypto_touch_72h_experiment_report(
+        crypto_probability_report={"candidate_count": 2},
+        formal_fills=[
+            {"market_slug": "btc-a", "token_id": "a", "side": "YES"},
+            {"market_slug": "btc-b", "token_id": "b", "side": "NO"},
+            {"market_slug": "btc-c", "token_id": "c", "side": "YES", "invalidated": True},
+        ],
+        markout_report={},
+        near_miss_watch=[{"watch_id": "near-1"}],
+        near_miss_markout_report={},
+        surface_report={},
+        sensitivity_report={},
+        active_probability_report={"old_formal_fill_count": 2, "new_formal_fill_count": 0, "watch_count": 7},
+    )
+
+    assert report["formal_fill_count"] == 3
+    assert report["existing_formal_fill_count"] == 3
+    assert report["old_formal_fill_count"] == 3
+    assert report["valid_formal_fill_count"] == 2
+    assert report["new_formal_fill_count"] == 0
+    assert report["shadow_watch_count"] == 7
+    assert report["raw_crypto_candidate_count"] == 2
