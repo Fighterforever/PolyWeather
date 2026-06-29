@@ -118,7 +118,21 @@ def main(argv: list[str] | None = None) -> None:
         ],
         [
             args.python_path,
+            "scripts/polymarket_alpha_microstructure_policy_sweep_report.py",
+        ],
+        [
+            args.python_path,
+            "scripts/polymarket_alpha_microstructure_runner.py",
+            "--generated-at",
+            generated_at,
+        ],
+        [
+            args.python_path,
             "scripts/polymarket_alpha_microstructure_markout_report.py",
+        ],
+        [
+            args.python_path,
+            "scripts/polymarket_alpha_microstructure_experiment_controller.py",
         ],
         [
             args.python_path,
@@ -172,7 +186,10 @@ def main(argv: list[str] | None = None) -> None:
             "crypto_touch_72h_experiment_report": "evidence/polymarket_alpha/crypto_touch_72h_experiment_report.json",
             "crypto_terminal_edge_report": "evidence/polymarket_alpha/crypto_terminal_edge_report.json",
             "microstructure_edge_report": "evidence/polymarket_alpha/microstructure_edge_report.json",
+            "microstructure_policy_sweep_report": "evidence/polymarket_alpha/microstructure_policy_sweep_report.json",
+            "microstructure_followup_snapshot_report": "evidence/polymarket_alpha/microstructure_followup_snapshot_report.json",
             "microstructure_markout_report": "evidence/polymarket_alpha/microstructure_markout_report.json",
+            "microstructure_experiment_report": "evidence/polymarket_alpha/microstructure_experiment_report.json",
             "alpha_tournament_scoreboard": "evidence/polymarket_alpha/alpha_tournament_scoreboard.json",
             "vps_alpha_tournament_runner_report": "evidence/polymarket_alpha/vps_alpha_tournament_runner_report.json",
         },

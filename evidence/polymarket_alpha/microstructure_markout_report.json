@@ -4,19 +4,25 @@
   },
   "available_markout_count": 0,
   "by_category": [],
-  "by_signal_type": [],
-  "candidate_count": 21,
+  "by_policy": [],
   "counts_for_live_gate": false,
   "live_order_path": false,
+  "maker_inferred_fill_count": 0,
+  "maker_quote_count": 21,
   "mean_markout_by_horizon": [],
   "mean_markout_cents": null,
   "missing_snapshot_reason_counts": [
     {
-      "count": 84,
-      "reason": "missing_snapshot_for_horizon"
+      "count": 40,
+      "reason": "missing_later_snapshot"
+    },
+    {
+      "count": 21,
+      "reason": "quote_not_filled"
     }
   ],
   "paper_only": true,
-  "schema_version": "polyweather_polymarket_alpha_microstructure_edge.v1.markout_report",
-  "scope": "polymarket_only"
+  "schema_version": "polyweather_polymarket_alpha_microstructure_policy_sweep.v1.markout_report",
+  "scope": "polymarket_only",
+  "taker_fill_count": 10
 }

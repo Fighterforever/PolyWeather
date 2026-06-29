@@ -120,7 +120,9 @@ def build_alpha_tournament_scoreboard(
     crypto_touch_validation_report: Optional[Dict[str, Any]] = None,
     crypto_terminal_report: Optional[Dict[str, Any]] = None,
     microstructure_report: Optional[Dict[str, Any]] = None,
+    microstructure_policy_sweep_report: Optional[Dict[str, Any]] = None,
     microstructure_markout_report: Optional[Dict[str, Any]] = None,
+    microstructure_experiment_report: Optional[Dict[str, Any]] = None,
     maker_shadow_report: Optional[Dict[str, Any]] = None,
     payoff_arbitrage_report: Optional[Dict[str, Any]] = None,
     global_oos_report: Optional[Dict[str, Any]] = None,
@@ -128,7 +130,9 @@ def build_alpha_tournament_scoreboard(
     crypto_touch_validation_report = crypto_touch_validation_report or {}
     crypto_terminal_report = crypto_terminal_report or {}
     microstructure_report = microstructure_report or {}
+    microstructure_policy_sweep_report = microstructure_policy_sweep_report or {}
     microstructure_markout_report = microstructure_markout_report or {}
+    microstructure_experiment_report = microstructure_experiment_report or {}
     maker_shadow_report = maker_shadow_report or {}
     payoff_arbitrage_report = payoff_arbitrage_report or {}
     global_oos_report = global_oos_report or {}
@@ -176,6 +180,42 @@ def build_alpha_tournament_scoreboard(
         main_blocker=_top_blocker(microstructure_report),
     )
 
+    micro_policy_lane = _lane(
+        lane_id="microstructure_policy_sweep",
+        candidate_count=_safe_int(microstructure_policy_sweep_report.get("policy_candidate_count")),
+        paper_fill_count=0,
+        watch_count=_safe_int(microstructure_policy_sweep_report.get("input_watch_count")),
+        sample_count=_safe_int(microstructure_policy_sweep_report.get("input_watch_count")),
+        main_blocker=_top_blocker(microstructure_policy_sweep_report),
+    )
+
+    micro_taker_lane = _lane(
+        lane_id="microstructure_taker",
+        candidate_count=_safe_int(microstructure_policy_sweep_report.get("taker_candidate_count")),
+        paper_fill_count=_safe_int(microstructure_experiment_report.get("taker_fill_count") or microstructure_policy_sweep_report.get("taker_fill_count")),
+        watch_count=0,
+        available_markout_count=_safe_int(microstructure_experiment_report.get("valid_markout_count") or microstructure_markout_report.get("available_markout_count")),
+        mean_5m_markout=_safe_float(microstructure_experiment_report.get("mean_5m_markout")) or _mean_horizon(microstructure_markout_report, "5m"),
+        mean_15m_markout=_safe_float(microstructure_experiment_report.get("mean_15m_markout")) or _mean_horizon(microstructure_markout_report, "15m"),
+        mean_1h_markout=_safe_float(microstructure_experiment_report.get("mean_1h_markout")) or _mean_horizon(microstructure_markout_report, "1h"),
+        sample_count=_safe_int(microstructure_experiment_report.get("taker_fill_count") or microstructure_policy_sweep_report.get("taker_fill_count")),
+        main_blocker=str(microstructure_experiment_report.get("recommendation") or _top_blocker(microstructure_policy_sweep_report)),
+    )
+
+    micro_maker_lane = _lane(
+        lane_id="microstructure_maker",
+        candidate_count=_safe_int(microstructure_policy_sweep_report.get("maker_candidate_count")),
+        paper_fill_count=_safe_int(microstructure_experiment_report.get("maker_inferred_fill_count") or microstructure_policy_sweep_report.get("maker_inferred_fill_count")),
+        watch_count=_safe_int(microstructure_experiment_report.get("maker_quote_count") or microstructure_policy_sweep_report.get("maker_quote_count")),
+        available_markout_count=0,
+        sample_count=_safe_int(microstructure_experiment_report.get("maker_quote_count") or microstructure_policy_sweep_report.get("maker_quote_count")),
+        main_blocker=str(microstructure_experiment_report.get("recommendation") or _top_blocker(microstructure_policy_sweep_report)),
+    )
+    if micro_maker_lane["watch_count"] >= 30 and micro_maker_lane["paper_fill_count"] == 0:
+        micro_maker_lane["status"] = "watch_only_no_inferred_fills"
+        micro_maker_lane["next_action"] = "keep_maker_shadow_only"
+        micro_maker_lane["priority"] = 35
+
     maker_lane = _lane(
         lane_id="maker_shadow",
         candidate_count=_safe_int(maker_shadow_report.get("quote_count")),
@@ -204,7 +244,17 @@ def build_alpha_tournament_scoreboard(
         main_blocker=str(global_oos_report.get("status") or global_oos_report.get("hard_conclusion") or _top_blocker(global_oos_report)),
     )
 
-    lanes = [touch_lane, terminal_lane, micro_lane, maker_lane, payoff_lane, oos_lane]
+    lanes = [
+        touch_lane,
+        terminal_lane,
+        micro_lane,
+        micro_policy_lane,
+        micro_taker_lane,
+        micro_maker_lane,
+        maker_lane,
+        payoff_lane,
+        oos_lane,
+    ]
     ranked = sorted(lanes, key=lambda row: int(row.get("priority") or 0), reverse=True)
     top_lane = ranked[0]["lane_id"] if ranked else None
     downgraded = [row["lane_id"] for row in lanes if str(row.get("status") or "").startswith("downgraded")]
