@@ -65,16 +65,16 @@
   "invalid_fill_count": 0,
   "invalid_fills": [],
   "live_order_path": false,
-  "markout_count": 15,
+  "markout_count": 21,
   "markout_status": "forward_markout_nonpositive",
   "mean_markout": -0.01833333,
   "mean_markout_1h": -0.01666667,
   "mean_markout_1h_cents": -1.66666667,
   "mean_markout_cents": -1.83333333,
-  "missing_snapshot_count": 9,
+  "missing_snapshot_count": 15,
   "missing_snapshot_reason_counts": [
     {
-      "count": 9,
+      "count": 15,
       "reason": "missing_snapshot_for_horizon"
     },
     {

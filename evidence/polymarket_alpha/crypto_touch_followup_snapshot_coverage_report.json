@@ -7,26 +7,32 @@
   "coverage_by_horizon": {
     "15m": {
       "covered_fill_count": 0,
+      "eligible_elapsed_fill_count": 3,
+      "gap_reason_counts": {
+        "watcher_started_after_horizon_tolerance": 3
+      },
       "matched_rows": [],
       "missing_fill_count": 3
     },
     "1h": {
       "covered_fill_count": 3,
+      "eligible_elapsed_fill_count": 3,
+      "gap_reason_counts": {},
       "matched_rows": [
         {
-          "fill_id": null,
+          "fill_id": "685d79f9abc0eef4ed2016ab",
           "match_lag_seconds": 425.0,
           "matched_snapshot_time": "2026-06-29T06:58:44Z",
           "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
         },
         {
-          "fill_id": null,
+          "fill_id": "ddf21d973c3a025fee33b7eb",
           "match_lag_seconds": 425.0,
           "matched_snapshot_time": "2026-06-29T06:58:44Z",
           "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
         },
         {
-          "fill_id": null,
+          "fill_id": "7c202dbe8f2e13ebcc8f308b",
           "match_lag_seconds": 425.0,
           "matched_snapshot_time": "2026-06-29T06:58:44Z",
           "token_id": "89384721767526056909881321094852287855436067743554155484781205764118128944311"
@@ -36,99 +42,133 @@
     },
     "24h": {
       "covered_fill_count": 0,
+      "eligible_elapsed_fill_count": 0,
+      "gap_reason_counts": {
+        "horizon_not_reached_by_latest_snapshot": 3
+      },
       "matched_rows": [],
       "missing_fill_count": 3
     },
     "5m": {
       "covered_fill_count": 0,
+      "eligible_elapsed_fill_count": 3,
+      "gap_reason_counts": {
+        "watcher_started_after_horizon_tolerance": 3
+      },
       "matched_rows": [],
       "missing_fill_count": 3
     },
     "60s": {
       "covered_fill_count": 0,
+      "eligible_elapsed_fill_count": 3,
+      "gap_reason_counts": {
+        "watcher_started_after_horizon_tolerance": 3
+      },
       "matched_rows": [],
       "missing_fill_count": 3
     },
     "6h": {
       "covered_fill_count": 0,
+      "eligible_elapsed_fill_count": 0,
+      "gap_reason_counts": {
+        "horizon_not_reached_by_latest_snapshot": 3
+      },
       "matched_rows": [],
       "missing_fill_count": 3
+    }
+  },
+  "coverage_gap_reason_by_horizon": {
+    "15m": {
+      "watcher_started_after_horizon_tolerance": 3
+    },
+    "1h": {},
+    "24h": {
+      "horizon_not_reached_by_latest_snapshot": 3
+    },
+    "5m": {
+      "watcher_started_after_horizon_tolerance": 3
+    },
+    "60s": {
+      "watcher_started_after_horizon_tolerance": 3
+    },
+    "6h": {
+      "horizon_not_reached_by_latest_snapshot": 3
     }
   },
   "fill_count": 3,
   "fill_tokens": [
     {
-      "fill_id": null,
+      "fill_id": "685d79f9abc0eef4ed2016ab",
       "market_slug": "will-ethereum-reach-2500-by-december-31-2026-from-june-8",
       "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
     },
     {
-      "fill_id": null,
+      "fill_id": "ddf21d973c3a025fee33b7eb",
       "market_slug": "will-bitcoin-reach-85000-by-december-31-2026-from-june-8",
       "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
     },
     {
-      "fill_id": null,
+      "fill_id": "7c202dbe8f2e13ebcc8f308b",
       "market_slug": "will-bitcoin-reach-90000-by-december-31-2026-113-862-581-343",
       "token_id": "89384721767526056909881321094852287855436067743554155484781205764118128944311"
     }
   ],
   "first_snapshot_after_entry": [
     {
-      "fill_id": null,
+      "fill_id": "685d79f9abc0eef4ed2016ab",
       "timestamp": "2026-06-29T06:58:44Z",
       "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
     },
     {
-      "fill_id": null,
+      "fill_id": "ddf21d973c3a025fee33b7eb",
       "timestamp": "2026-06-29T06:58:44Z",
       "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
     },
     {
-      "fill_id": null,
+      "fill_id": "7c202dbe8f2e13ebcc8f308b",
       "timestamp": "2026-06-29T06:58:44Z",
       "token_id": "89384721767526056909881321094852287855436067743554155484781205764118128944311"
     }
   ],
-  "followup_snapshot_count": 29,
+  "followup_snapshot_count": 80,
   "followup_snapshot_count_by_fill": [
     {
-      "count": 10,
-      "fill_id": null,
+      "count": 27,
+      "fill_id": "685d79f9abc0eef4ed2016ab",
       "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
     },
     {
-      "count": 10,
-      "fill_id": null,
+      "count": 27,
+      "fill_id": "ddf21d973c3a025fee33b7eb",
       "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
     },
     {
-      "count": 9,
-      "fill_id": null,
+      "count": 26,
+      "fill_id": "7c202dbe8f2e13ebcc8f308b",
       "token_id": "89384721767526056909881321094852287855436067743554155484781205764118128944311"
     }
   ],
   "last_snapshot_after_entry": [
     {
-      "fill_id": null,
-      "timestamp": "2026-06-29T07:50:55Z",
+      "fill_id": "685d79f9abc0eef4ed2016ab",
+      "timestamp": "2026-06-29T09:33:53Z",
       "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
     },
     {
-      "fill_id": null,
-      "timestamp": "2026-06-29T07:50:55Z",
+      "fill_id": "ddf21d973c3a025fee33b7eb",
+      "timestamp": "2026-06-29T09:33:53Z",
       "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
     },
     {
-      "fill_id": null,
-      "timestamp": "2026-06-29T07:50:55Z",
+      "fill_id": "7c202dbe8f2e13ebcc8f308b",
+      "timestamp": "2026-06-29T09:33:53Z",
       "token_id": "89384721767526056909881321094852287855436067743554155484781205764118128944311"
     }
   ],
   "live_order_path": false,
   "missing_horizon_by_fill": [
     {
-      "fill_id": null,
+      "fill_id": "685d79f9abc0eef4ed2016ab",
       "missing_horizons": [
         "60s",
         "5m",
@@ -139,7 +179,7 @@
       "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
     },
     {
-      "fill_id": null,
+      "fill_id": "ddf21d973c3a025fee33b7eb",
       "missing_horizons": [
         "60s",
         "5m",
@@ -150,7 +190,7 @@
       "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
     },
     {
-      "fill_id": null,
+      "fill_id": "7c202dbe8f2e13ebcc8f308b",
       "missing_horizons": [
         "60s",
         "5m",

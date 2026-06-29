@@ -20,6 +20,7 @@ from src.trading.polymarket_alpha.active_probability_edge_scanner import (  # no
 )
 from src.trading.polymarket_alpha.probability_edge_journal import build_probability_edge_fills_with_snapshots  # noqa: E402
 from src.trading.polymarket_alpha.probability_edge_journal import build_formal_fill_followup_orderbook_snapshots  # noqa: E402
+from src.trading.polymarket_alpha.probability_edge_journal import normalize_probability_edge_fill  # noqa: E402
 from src.trading.polymarket_readonly import PolymarketReadonlyClient  # noqa: E402
 
 
@@ -29,6 +30,8 @@ DEFAULT_MODEL = DEFAULT_ROOT / "probability_edge_model_report.json"
 DEFAULT_FOCUS = DEFAULT_ROOT / "category_focus_report.json"
 DEFAULT_CRYPTO = DEFAULT_ROOT / "crypto_probability_edge_report.json"
 DEFAULT_CRYPTO_CANDIDATES = DEFAULT_ROOT / "crypto_probability_candidates.jsonl"
+DEFAULT_SURFACE = DEFAULT_ROOT / "crypto_touch_surface_report.json"
+DEFAULT_SENSITIVITY = DEFAULT_ROOT / "crypto_touch_sensitivity_report.json"
 DEFAULT_REPORT = DEFAULT_ROOT / "active_probability_edge_report.json"
 DEFAULT_PAPER = DEFAULT_ROOT / "probability_edge_paper"
 
@@ -40,6 +43,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--focus-report", default=str(DEFAULT_FOCUS))
     parser.add_argument("--crypto-report", default=str(DEFAULT_CRYPTO))
     parser.add_argument("--crypto-candidates", default=str(DEFAULT_CRYPTO_CANDIDATES))
+    parser.add_argument("--surface-report", default=str(DEFAULT_SURFACE))
+    parser.add_argument("--sensitivity-report", default=str(DEFAULT_SENSITIVITY))
     parser.add_argument("--summary-output", default=str(DEFAULT_REPORT))
     parser.add_argument("--fills-output", default=str(DEFAULT_PAPER / "fills.jsonl"))
     parser.add_argument("--watch-rows-output", default=str(DEFAULT_PAPER / "watch_rows.jsonl"))
@@ -47,6 +52,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--fill-followup-orderbook-snapshots-output", default=str(DEFAULT_PAPER / "fill_followup_orderbook_snapshots.jsonl"))
     parser.add_argument("--generated-at", default=None)
     parser.add_argument("--min-edge", type=float, default=0.02)
+    parser.add_argument("--stricter-edge", type=float, default=0.02)
     parser.add_argument("--min-depth", type=float, default=10.0)
     parser.add_argument("--max-spread", type=float, default=0.15)
     parser.add_argument("--cost", type=float, default=0.01)
@@ -113,7 +119,10 @@ def main(argv: list[str] | None = None) -> None:
         model_report=load_json(args.model_report),
         focus_report=load_json(args.focus_report),
         crypto_report=crypto_report,
+        surface_report=load_json(args.surface_report),
+        sensitivity_report=load_json(args.sensitivity_report),
         min_edge=float(args.min_edge),
+        stricter_edge=float(args.stricter_edge),
         min_depth=float(args.min_depth),
         max_spread=float(args.max_spread),
         cost=float(args.cost),
@@ -125,7 +134,7 @@ def main(argv: list[str] | None = None) -> None:
     )
     new_fills = journal.get("fills") or []
     existing_fills = load_jsonl(args.fills_output)
-    merged_fills = _merge_probability_edge_fills(existing_fills, new_fills)
+    merged_fills = [normalize_probability_edge_fill(row) for row in _merge_probability_edge_fills(existing_fills, new_fills)]
     followup = build_formal_fill_followup_orderbook_snapshots(
         fills=merged_fills,
         active_markets=active_markets,
@@ -160,6 +169,8 @@ def main(argv: list[str] | None = None) -> None:
         "watch_rows": str(args.watch_rows_output),
         "orderbook_snapshots": str(args.orderbook_snapshots_output),
         "fill_followup_orderbook_snapshots": str(args.fill_followup_orderbook_snapshots_output),
+        "surface_report": str(args.surface_report),
+        "sensitivity_report": str(args.sensitivity_report),
     }
     write_json(args.summary_output, {key: value for key, value in report.items() if key not in {"candidates", "watch_rows"}})
     print(
@@ -169,6 +180,11 @@ def main(argv: list[str] | None = None) -> None:
                 "scanned_active_market_count": report.get("scanned_active_market_count"),
                 "model_ready_count": report.get("model_ready_count"),
                 "paper_fill_count": report.get("paper_fill_count"),
+                "old_formal_fill_count": report.get("old_formal_fill_count"),
+                "new_formal_fill_count": report.get("new_formal_fill_count"),
+                "downgraded_due_surface_count": report.get("downgraded_due_surface_count"),
+                "downgraded_due_sensitivity_count": report.get("downgraded_due_sensitivity_count"),
+                "watch_count": report.get("watch_count"),
                 "focus_categories": report.get("focus_categories"),
                 "live_order_path": report.get("live_order_path"),
             },

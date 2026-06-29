@@ -70,9 +70,30 @@ def main(argv: list[str] | None = None) -> None:
         ],
         [
             args.python_path,
+            "scripts/polymarket_alpha_crypto_touch_surface_report.py",
+            "--min-edge",
+            str(args.min_edge),
+        ],
+        [
+            args.python_path,
+            "scripts/polymarket_alpha_crypto_sensitivity_report.py",
+            "--no-fetch-realized-vol",
+            "--no-fetch-gamma-metadata",
+            "--no-fetch-orderbooks",
+            "--min-edge",
+            str(args.min_edge),
+            "--cost",
+            str(args.cost),
+            "--generated-at",
+            generated_at,
+        ],
+        [
+            args.python_path,
             "scripts/polymarket_alpha_active_probability_edge_report.py",
             "--min-edge",
             str(args.min_edge),
+            "--stricter-edge",
+            str(max(float(args.min_edge) * 2.0, float(args.min_edge))),
             "--cost",
             str(args.cost),
             "--generated-at",
@@ -88,17 +109,15 @@ def main(argv: list[str] | None = None) -> None:
         ],
         [
             args.python_path,
-            "scripts/polymarket_alpha_crypto_touch_surface_report.py",
-            "--min-edge",
-            str(args.min_edge),
-        ],
-        [
-            args.python_path,
             "scripts/polymarket_alpha_crypto_touch_watch_markout_report.py",
         ],
         [
             args.python_path,
             "scripts/polymarket_alpha_crypto_touch_forward_validation_report.py",
+        ],
+        [
+            args.python_path,
+            "scripts/polymarket_alpha_crypto_touch_experiment_controller.py",
         ],
     ]
     results = [_run(command) for command in commands]
@@ -119,10 +138,12 @@ def main(argv: list[str] | None = None) -> None:
             "probability_edge_fill_followup_orderbook_snapshots": "evidence/polymarket_alpha/probability_edge_paper/fill_followup_orderbook_snapshots.jsonl",
             "crypto_touch_followup_snapshot_coverage_report": "evidence/polymarket_alpha/crypto_touch_followup_snapshot_coverage_report.json",
             "crypto_touch_surface_report": "evidence/polymarket_alpha/crypto_touch_surface_report.json",
+            "crypto_touch_sensitivity_report": "evidence/polymarket_alpha/crypto_touch_sensitivity_report.json",
             "crypto_touch_near_miss_watch": "evidence/polymarket_alpha/crypto_touch_near_miss_watch.jsonl",
             "crypto_touch_near_miss_orderbook_snapshots": "evidence/polymarket_alpha/crypto_touch_near_miss_orderbook_snapshots.jsonl",
             "crypto_touch_near_miss_markout_report": "evidence/polymarket_alpha/crypto_touch_near_miss_markout_report.json",
             "crypto_touch_forward_validation_report": "evidence/polymarket_alpha/crypto_touch_forward_validation_report.json",
+            "crypto_touch_72h_experiment_report": "evidence/polymarket_alpha/crypto_touch_72h_experiment_report.json",
         },
     }
     output = PROJECT_ROOT / args.summary_output

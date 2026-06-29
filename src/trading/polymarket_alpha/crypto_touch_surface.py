@@ -86,13 +86,41 @@ def _row_key(row: Dict[str, Any]) -> str:
     return "|".join(str(row.get(field) or "") for field in ("market_slug", "token_id", "side"))
 
 
+def _market_side_key(row: Dict[str, Any]) -> str:
+    return str(row.get("market_slug") or "")
+
+
+def _fill_keys(rows: Iterable[Dict[str, Any]]) -> set[str]:
+    keys: set[str] = set()
+    for row in rows:
+        if isinstance(row, dict):
+            key = _row_key(row)
+            if key != "||":
+                keys.add(key)
+    return keys
+
+
 def build_crypto_touch_surface_report(
     *,
     crypto_probability_report: Dict[str, Any],
+    formal_fills: Iterable[Dict[str, Any]] = (),
+    near_miss_watch: Iterable[Dict[str, Any]] = (),
     min_edge: float = 0.01,
 ) -> Dict[str, Any]:
+    source_rows = _source_rows(crypto_probability_report)
+    formal_fill_keys = _fill_keys(formal_fills)
+    near_miss_keys = _fill_keys(near_miss_watch)
+    market_side_quotes: Dict[str, Dict[str, Any]] = defaultdict(dict)
+    for row in source_rows:
+        if not isinstance(row, dict):
+            continue
+        market_key = _market_side_key(row)
+        side = str(row.get("side") or "").upper()
+        if not market_key or side not in {"YES", "NO"}:
+            continue
+        market_side_quotes[market_key][side] = row
     by_key: Dict[str, Dict[str, Any]] = {}
-    for row in _source_rows(crypto_probability_report):
+    for row in source_rows:
         if not (
             row.get("semantics_type") == "touch_barrier"
             and row.get("probability_semantics") == "touch_barrier"
@@ -145,25 +173,52 @@ def build_crypto_touch_surface_report(
             ev_safe = _safe_float(row.get("EV_safe"))
             residual_supports_yes = residual > 0 and surface_residual <= 0.005
             no_monotonic_contradiction = not violation_flags[index]
+            side_quotes = market_side_quotes.get(str(row.get("market_slug") or ""), {})
+            yes_row = side_quotes.get("YES") or {}
+            no_row = side_quotes.get("NO") or {}
+            yes_best_ask = _safe_float(yes_row.get("best_ask"))
+            no_best_ask = _safe_float(no_row.get("best_ask"))
+            yes_best_bid = _safe_float(yes_row.get("best_bid"))
+            no_best_bid = _safe_float(no_row.get("best_bid"))
+            if yes_best_bid is None and no_best_ask is not None:
+                yes_best_bid = _clamp_probability(1.0 - no_best_ask)
+            if no_best_bid is None and yes_best_ask is not None:
+                no_best_bid = _clamp_probability(1.0 - yes_best_ask)
+            row_identity = _row_key(row)
+            residual_z = z_scores[index] if index < len(z_scores) else None
             base = {
                 "schema_version": f"{SCHEMA_VERSION}.row",
                 "group_id": group_id,
+                "group_member_count": len(sorted_rows),
                 "market_slug": row.get("market_slug"),
                 "token_id": row.get("token_id"),
                 "side": row.get("side"),
                 "asset": row.get("asset"),
                 "threshold": row.get("threshold"),
+                "spot": row.get("spot"),
                 "target_time": row.get("target_time"),
                 "market_creation_time": row.get("market_creation_time"),
+                "market_yes_mid": round(market_probability, 8),
+                "yes_best_bid": yes_best_bid,
+                "yes_best_ask": yes_best_ask,
+                "no_best_bid": no_best_bid,
+                "no_best_ask": no_best_ask,
                 "market_yes_probability": round(market_probability, 8),
                 "model_yes_probability": round(model_probability, 8),
+                "model_yes_touch_probability": round(model_probability, 8),
                 "fitted_surface_probability": round(surface_probability, 8),
+                "residual_model_minus_market": round(residual, 8),
+                "residual_market_minus_surface": round(surface_residual, 8),
                 "residual": round(residual, 8),
                 "surface_residual": round(surface_residual, 8),
-                "residual_z_score": z_scores[index] if index < len(z_scores) else None,
+                "residual_z_score": residual_z,
+                "surface_z_score": residual_z,
+                "monotonic_rank": index + 1,
                 "monotonic_violation": violation_flags[index],
                 "EV_safe": ev_safe,
-                "surface_supports_model_direction": residual_supports_yes and no_monotonic_contradiction,
+                "formal_fill_exists": row_identity in formal_fill_keys,
+                "near_miss_watch_exists": row_identity in near_miss_keys,
+                "surface_supports_model_direction": residual_supports_yes and no_monotonic_contradiction and (residual_z is None or residual_z >= 0),
                 "paper_only": True,
                 "counts_for_live_gate": False,
                 "live_order_path": False,
@@ -173,6 +228,7 @@ def build_crypto_touch_surface_report(
                 and ev_safe >= float(min_edge)
                 and residual_supports_yes
                 and no_monotonic_contradiction
+                and (residual_z is None or residual_z >= 0)
             ):
                 candidates.append(
                     {
@@ -192,6 +248,11 @@ def build_crypto_touch_surface_report(
                 )
             surface_rows.append(base)
 
+    surface_support_count_for_formal_fills = sum(
+        1 for row in surface_rows
+        if row.get("formal_fill_exists") and row.get("surface_supports_model_direction")
+    )
+    formal_fill_surface_row_count = sum(1 for row in surface_rows if row.get("formal_fill_exists"))
     return {
         "schema_version": SCHEMA_VERSION,
         "scope": "polymarket_only",
@@ -203,6 +264,8 @@ def build_crypto_touch_surface_report(
         "monotonic_violation_count": total_violations,
         "surface_near_miss_count": len(shadow_rows),
         "relative_value_candidate_count": len(candidates),
+        "surface_support_count_for_formal_fills": surface_support_count_for_formal_fills,
+        "unsupported_formal_fill_count": max(0, formal_fill_surface_row_count - surface_support_count_for_formal_fills),
         "top_relative_value_rows": sorted(candidates, key=lambda row: float(row.get("EV_safe") or -1e9), reverse=True)[:10],
         "shadow_relative_value_rows": sorted(shadow_rows, key=lambda row: abs(float(row.get("residual_z_score") or 0.0)), reverse=True)[:25],
         "rows": surface_rows,

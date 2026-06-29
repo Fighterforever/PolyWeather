@@ -111,6 +111,116 @@ def _source_counts(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return [{"model_source": key, "count": value} for key, value in sorted(counts.items())]
 
 
+def _candidate_identity(row: Dict[str, Any]) -> str:
+    return "|".join(str(row.get(field) or "") for field in ("market_slug", "token_id", "side"))
+
+
+def _surface_index(surface_report: Optional[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    if not isinstance(surface_report, dict):
+        return {}
+    rows: List[Dict[str, Any]] = []
+    for key in ("rows", "top_relative_value_rows", "shadow_relative_value_rows"):
+        for row in surface_report.get(key) or []:
+            if isinstance(row, dict):
+                rows.append(row)
+    return {
+        _candidate_identity(row): row
+        for row in rows
+        if _candidate_identity(row) != "||"
+    }
+
+
+def _sensitivity_index(sensitivity_report: Optional[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    if not isinstance(sensitivity_report, dict):
+        return {}
+    return {
+        _candidate_identity(row): row
+        for row in sensitivity_report.get("rows") or []
+        if isinstance(row, dict) and _candidate_identity(row) != "||"
+    }
+
+
+def _gate_crypto_candidates(
+    candidates: Iterable[Dict[str, Any]],
+    *,
+    surface_report: Optional[Dict[str, Any]] = None,
+    sensitivity_report: Optional[Dict[str, Any]] = None,
+    min_edge: float = 0.01,
+    stricter_edge: float = 0.02,
+) -> Dict[str, Any]:
+    surface_by_key = _surface_index(surface_report)
+    sensitivity_by_key = _sensitivity_index(sensitivity_report)
+    enforce_surface = bool(surface_by_key)
+    enforce_sensitivity = bool(sensitivity_by_key)
+    raw_candidates = [row for row in candidates if isinstance(row, dict)]
+    accepted: List[Dict[str, Any]] = []
+    watch_rows: List[Dict[str, Any]] = []
+    downgraded_surface = 0
+    downgraded_sensitivity = 0
+    for candidate in raw_candidates:
+        row = dict(candidate)
+        key = _candidate_identity(row)
+        ev_safe = _safe_float(row.get("EV_safe")) or 0.0
+        surface_row = surface_by_key.get(key)
+        group_size = int((surface_row or {}).get("group_member_count") or 0)
+        surface_too_sparse = enforce_surface and (surface_row is None or group_size < 2)
+        surface_supported = (
+            True
+            if not enforce_surface or surface_too_sparse
+            else bool((surface_row or {}).get("surface_supports_model_direction"))
+        )
+        sensitivity_row = sensitivity_by_key.get(key)
+        sensitivity_fragile = bool((sensitivity_row or {}).get("sensitivity_fragile")) if enforce_sensitivity else False
+        sensitivity_allowed = (not sensitivity_fragile) or ev_safe >= float(stricter_edge)
+        row.update(
+            {
+                "surface_support": bool(surface_supported),
+                "surface_group_too_sparse": bool(surface_too_sparse),
+                "surface_group_member_count": group_size if enforce_surface else None,
+                "surface_residual_z_score": (surface_row or {}).get("residual_z_score"),
+                "surface_residual_supports_model_direction": (surface_row or {}).get("surface_supports_model_direction"),
+                "sensitivity_fragile": bool(sensitivity_fragile),
+                "sensitivity_base_EV_safe": (sensitivity_row or {}).get("base_EV_safe"),
+                "sensitivity_model_confidence": (sensitivity_row or {}).get("model_confidence"),
+                "stricter_edge": float(stricter_edge),
+            }
+        )
+        reasons: List[str] = []
+        if ev_safe < float(min_edge):
+            reasons.append("ev_below_min")
+        if not surface_supported:
+            downgraded_surface += 1
+            reasons.append("surface_unsupported")
+        if not sensitivity_allowed:
+            downgraded_sensitivity += 1
+            reasons.append("sensitivity_fragile_below_stricter_edge")
+        if reasons:
+            watch_rows.append(
+                {
+                    **row,
+                    "candidate_downgraded_to_watch": True,
+                    "downgrade_reasons": reasons,
+                    "paper_only": True,
+                    "counts_for_live_gate": False,
+                    "live_order_path": False,
+                }
+            )
+            continue
+        accepted.append(row)
+    return {
+        "accepted_candidates": accepted,
+        "watch_rows": watch_rows,
+        "old_formal_fill_count": len(raw_candidates),
+        "new_formal_fill_count": len(accepted),
+        "downgraded_due_surface_count": downgraded_surface,
+        "downgraded_due_sensitivity_count": downgraded_sensitivity,
+        "watch_count": len(watch_rows),
+        "surface_gate_enforced": enforce_surface,
+        "sensitivity_gate_enforced": enforce_sensitivity,
+        "stricter_edge": float(stricter_edge),
+    }
+
+
 def _fill_identity(row: Dict[str, Any]) -> str:
     return str(row.get("fill_id") or f"{row.get('market_slug')}|{row.get('token_id')}|{row.get('side')}")
 
@@ -143,7 +253,7 @@ def build_formal_fill_followup_snapshot_coverage_report(
     count_by_fill: List[Dict[str, Any]] = []
     missing_by_fill: List[Dict[str, Any]] = []
     coverage: Dict[str, Dict[str, Any]] = {
-        _horizon_label(horizon): {"covered_fill_count": 0, "missing_fill_count": 0, "matched_rows": []}
+        _horizon_label(horizon): {"covered_fill_count": 0, "missing_fill_count": 0, "eligible_elapsed_fill_count": 0, "matched_rows": [], "gap_reason_counts": {}}
         for horizon in horizons
     }
     first_by_fill: List[Dict[str, Any]] = []
@@ -169,9 +279,12 @@ def build_formal_fill_followup_snapshot_coverage_report(
             label = _horizon_label(horizon)
             matched = None
             lag = None
+            target = None
+            tolerance = _horizon_tolerance_seconds(int(horizon))
             if entry_time is not None:
                 target = entry_time + timedelta(seconds=int(horizon))
-                tolerance = _horizon_tolerance_seconds(int(horizon))
+                if after_entry and after_entry[-1][0] >= target - timedelta(seconds=tolerance):
+                    coverage[label]["eligible_elapsed_fill_count"] += 1
                 for snap_time, snapshot in after_entry:
                     candidate_lag = (snap_time - target).total_seconds()
                     if abs(candidate_lag) <= tolerance and (lag is None or abs(candidate_lag) < abs(lag)):
@@ -180,6 +293,17 @@ def build_formal_fill_followup_snapshot_coverage_report(
             if matched is None:
                 coverage[label]["missing_fill_count"] += 1
                 missing_horizons.append(label)
+                if entry_time is None:
+                    gap_reason = "missing_entry_time"
+                elif not after_entry:
+                    gap_reason = "no_followup_snapshot_after_entry"
+                elif target is not None and after_entry[-1][0] < target - timedelta(seconds=tolerance):
+                    gap_reason = "horizon_not_reached_by_latest_snapshot"
+                elif target is not None and after_entry[0][0] > target + timedelta(seconds=tolerance):
+                    gap_reason = "watcher_started_after_horizon_tolerance"
+                else:
+                    gap_reason = "no_snapshot_within_tolerance"
+                coverage[label]["gap_reason_counts"][gap_reason] = coverage[label]["gap_reason_counts"].get(gap_reason, 0) + 1
             else:
                 coverage[label]["covered_fill_count"] += 1
                 coverage[label]["matched_rows"].append(
@@ -191,6 +315,10 @@ def build_formal_fill_followup_snapshot_coverage_report(
                     }
                 )
         missing_by_fill.append({"fill_id": fill.get("fill_id"), "token_id": token_id, "missing_horizons": missing_horizons})
+    coverage_gap_reason_by_horizon = {
+        horizon: dict(values.get("gap_reason_counts") or {})
+        for horizon, values in coverage.items()
+    }
     return {
         "schema_version": f"{SCHEMA_VERSION}.formal_fill_followup_snapshot_coverage",
         "scope": "polymarket_only",
@@ -204,6 +332,7 @@ def build_formal_fill_followup_snapshot_coverage_report(
         "first_snapshot_after_entry": first_by_fill,
         "last_snapshot_after_entry": last_by_fill,
         "coverage_by_horizon": coverage,
+        "coverage_gap_reason_by_horizon": coverage_gap_reason_by_horizon,
         "missing_horizon_by_fill": missing_by_fill,
         "snapshot_path": str(snapshot_path),
         "watcher_status": watcher_status or {"state": "unknown"},
@@ -216,7 +345,10 @@ def scan_active_probability_edges(
     model_report: Dict[str, Any],
     focus_report: Optional[Dict[str, Any]] = None,
     crypto_report: Optional[Dict[str, Any]] = None,
+    surface_report: Optional[Dict[str, Any]] = None,
+    sensitivity_report: Optional[Dict[str, Any]] = None,
     min_edge: float = 0.02,
+    stricter_edge: float = 0.02,
     min_depth: float = 10.0,
     max_spread: float = 0.15,
     cost: float = 0.01,
@@ -232,12 +364,22 @@ def scan_active_probability_edges(
         for row in ((crypto_report or {}).get("blocker_counts") or (crypto_report or {}).get("gap_reasons") or [])
         if isinstance(row, dict)
     ]
-    crypto_candidates = [
+    raw_crypto_candidates = [
         {**row, "priority_rank": 1}
         for row in ((crypto_report or {}).get("candidates") or [])
         if isinstance(row, dict) and row.get("live_order_path") is False
     ]
+    crypto_gate = _gate_crypto_candidates(
+        raw_crypto_candidates,
+        surface_report=surface_report,
+        sensitivity_report=sensitivity_report,
+        min_edge=float(min_edge),
+        stricter_edge=float(stricter_edge),
+    )
+    crypto_candidates = [{**row, "priority_rank": 1} for row in crypto_gate["accepted_candidates"]]
+    crypto_watch_rows = crypto_gate["watch_rows"]
     candidates.extend(crypto_candidates)
+    watch_rows.extend(crypto_watch_rows)
     model_ready = int((crypto_report or {}).get("model_ready_count") or len(crypto_candidates))
     lane_reports: Dict[str, Dict[str, Any]] = {
         "crypto_model_lane": {
@@ -247,8 +389,16 @@ def scan_active_probability_edges(
             "candidate_count": len(crypto_candidates),
             "paper_fill_count": len(crypto_candidates),
             "blocker_counts": crypto_blockers,
-            "top_watch_rows": ((crypto_report or {}).get("top_10_near_misses") or [])[:10],
+            "top_watch_rows": (crypto_watch_rows + ((crypto_report or {}).get("top_10_near_misses") or []))[:10],
             "top_candidates": crypto_candidates[:10],
+            "old_formal_fill_count": crypto_gate["old_formal_fill_count"],
+            "new_formal_fill_count": crypto_gate["new_formal_fill_count"],
+            "downgraded_due_surface_count": crypto_gate["downgraded_due_surface_count"],
+            "downgraded_due_sensitivity_count": crypto_gate["downgraded_due_sensitivity_count"],
+            "watch_count": crypto_gate["watch_count"],
+            "surface_gate_enforced": crypto_gate["surface_gate_enforced"],
+            "sensitivity_gate_enforced": crypto_gate["sensitivity_gate_enforced"],
+            "stricter_edge": crypto_gate["stricter_edge"],
             "live_order_path": False,
         },
         "global_oos_model_lane": {
@@ -408,6 +558,11 @@ def scan_active_probability_edges(
         "paper_fill_count": len(candidates),
         "by_model_source": _source_counts(candidates),
         "lane_reports": lane_reports,
+        "old_formal_fill_count": crypto_gate["old_formal_fill_count"],
+        "new_formal_fill_count": crypto_gate["new_formal_fill_count"],
+        "downgraded_due_surface_count": crypto_gate["downgraded_due_surface_count"],
+        "downgraded_due_sensitivity_count": crypto_gate["downgraded_due_sensitivity_count"],
+        "watch_count": crypto_gate["watch_count"],
         "focus_categories": sorted(focus),
         "watch_row_count": len(watch_rows),
         "blocker_counts": [{"reason": key, "count": count} for key, count in sorted(blockers.items())],

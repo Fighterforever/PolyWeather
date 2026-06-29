@@ -7,11 +7,11 @@ import urllib.request
 import hashlib
 from collections import Counter
 from dataclasses import asdict, is_dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
-from src.trading.polymarket_alpha.binance_crypto_history import verify_high_since_start
+from src.trading.polymarket_alpha.binance_crypto_history import binance_pair_for_asset, fetch_binance_klines, verify_high_since_start
 from src.trading.polymarket_alpha.crypto_market_semantics import classify_crypto_semantics, resolve_market_creation_time
 from src.trading.polymarket_alpha.probability_dataset import write_json, write_jsonl
 from src.trading.polymarket_readonly import PolymarketReadonlyClient
@@ -866,6 +866,62 @@ def _implied_touch_vol(
     return round((low + high) / 2.0, 8)
 
 
+def _realized_vol_from_klines(klines: Iterable[Dict[str, Any]]) -> Optional[float]:
+    closes: List[float] = []
+    for row in klines:
+        close = _safe_float(row.get("close"))
+        if close is not None and close > 0:
+            closes.append(close)
+    if len(closes) < 3:
+        return None
+    returns: List[float] = []
+    for previous, current in zip(closes, closes[1:]):
+        if previous > 0 and current > 0:
+            returns.append(math.log(current / previous))
+    if len(returns) < 2:
+        return None
+    mean_return = sum(returns) / len(returns)
+    variance = sum((value - mean_return) ** 2 for value in returns) / (len(returns) - 1)
+    return round(math.sqrt(variance) * math.sqrt(365.0 * 24.0 * 60.0), 8)
+
+
+def _realized_vol_windows(
+    *,
+    asset: str,
+    end_time: datetime,
+    cache_dir: str | Path,
+    allow_fetch: bool = False,
+) -> Dict[str, Any]:
+    pair = binance_pair_for_asset(asset)
+    if pair is None:
+        return {
+            "realized_vol_7d": None,
+            "realized_vol_30d": None,
+            "realized_vol_90d": None,
+            "realized_vol_gap_reason": "unsupported_binance_pair",
+        }
+    result: Dict[str, Any] = {}
+    gaps: List[str] = []
+    for days in (7, 30, 90):
+        start_time = (end_time - timedelta(days=days)).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+        end_iso = end_time.replace(microsecond=0).isoformat().replace("+00:00", "Z")
+        klines = fetch_binance_klines(
+            pair=pair,
+            start_time=start_time,
+            end_time=end_iso,
+            interval="1m",
+            cache_dir=cache_dir,
+            fetcher=None if allow_fetch else (lambda _url: []),
+            use_cache=True,
+        )
+        vol = _realized_vol_from_klines(klines.get("klines") or [])
+        result[f"realized_vol_{days}d"] = vol
+        if vol is None:
+            gaps.append(f"{days}d:{klines.get('gap_reason') or 'insufficient_kline_closes'}")
+    result["realized_vol_gap_reason"] = ";".join(gaps) if gaps else None
+    return result
+
+
 def build_crypto_touch_sensitivity_report(
     *,
     active_markets: Iterable[Dict[str, Any]],
@@ -892,6 +948,9 @@ def build_crypto_touch_sensitivity_report(
         )
     generated_dt = _parse_utc(base_report.get("generated_at") or generated_at) or datetime.now(timezone.utc)
     cost = float(kwargs.get("cost", 0.01))
+    realized_cache_dir = kwargs.get("high_since_start_cache_dir") or kwargs.get("cache_dir") or Path("evidence/polymarket_alpha/binance_klines")
+    fetch_realized_vol = bool(kwargs.get("fetch_realized_vol", False))
+    realized_vol_cache: Dict[str, Dict[str, Any]] = {}
     variant_rows: Dict[str, Dict[str, Any]] = {}
     base_key = "vol_1.0_haircut_0.08"
     sensitivity_source_rows: List[Dict[str, Any]] = []
@@ -924,6 +983,16 @@ def build_crypto_touch_sensitivity_report(
         years = max(1 / 365, (target_dt - generated_dt).total_seconds() / (365.0 * 86400.0))
         row_key = "|".join(str(row.get(field) or "") for field in ("market_slug", "token_id", "side"))
         model_vol = float(base_vols.get(asset, row.get("annual_vol") or 0.60))
+        realized_key = f"{asset}|{generated_dt.replace(microsecond=0).isoformat()}"
+        realized = realized_vol_cache.setdefault(
+            realized_key,
+            _realized_vol_windows(
+                asset=asset,
+                end_time=generated_dt,
+                cache_dir=realized_cache_dir,
+                allow_fetch=fetch_realized_vol,
+            ),
+        )
         market_yes_probability = q_effective if side == "YES" else 1.0 - q_effective
         implied_vol = _implied_touch_vol(
             spot=spot,
@@ -943,10 +1012,10 @@ def build_crypto_touch_sensitivity_report(
                 "market_creation_time": row.get("market_creation_time"),
                 "max_high_since_start": row.get("max_high_since_start"),
                 "probability_semantics": "touch_barrier",
-                "realized_vol_7d": None,
-                "realized_vol_30d": None,
-                "realized_vol_90d": None,
-                "realized_vol_gap_reason": "local_realized_vol_series_unavailable",
+                "realized_vol_7d": realized.get("realized_vol_7d"),
+                "realized_vol_30d": realized.get("realized_vol_30d"),
+                "realized_vol_90d": realized.get("realized_vol_90d"),
+                "realized_vol_gap_reason": realized.get("realized_vol_gap_reason"),
                 "model_vol": model_vol,
                 "market_implied_touch_vol": implied_vol,
                 "vol_edge": round(model_vol - implied_vol, 8) if implied_vol is not None else None,

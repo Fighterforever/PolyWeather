@@ -76,6 +76,8 @@ def main(argv: list[str] | None = None) -> None:
                     key: {
                         "covered_fill_count": value.get("covered_fill_count"),
                         "missing_fill_count": value.get("missing_fill_count"),
+                        "eligible_elapsed_fill_count": value.get("eligible_elapsed_fill_count"),
+                        "gap_reason_counts": value.get("gap_reason_counts"),
                     }
                     for key, value in (report.get("coverage_by_horizon") or {}).items()
                 },

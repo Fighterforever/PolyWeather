@@ -280,7 +280,6 @@ def test_valid_crypto_touch_fill_gets_orderbook_snapshot_id():
 
 def test_formal_fill_followup_snapshot_uses_current_orderbook():
     fill = _valid_crypto_touch_candidate(EV_safe=0.03, orderbook_snapshot_id="snap-1")
-    fill["fill_id"] = "fill-1"
     fill["entry_time"] = "2026-06-29T00:00:00Z"
     report = build_formal_fill_followup_orderbook_snapshots(
         fills=[fill],
@@ -297,6 +296,8 @@ def test_formal_fill_followup_snapshot_uses_current_orderbook():
     assert report["snapshot_count"] == 1
     snapshot = report["snapshots"][0]
     assert snapshot["source"] == "crypto_touch_formal_fill_followup"
-    assert snapshot["fill_id"] == "fill-1"
-    assert snapshot["horizon_target"] == "300s"
+    assert snapshot["fill_id"]
+    assert snapshot["horizon_target"] == "60s"
+    assert "60s" in snapshot["horizon_targets_reached"]
+    assert "300s" in snapshot["horizon_targets_reached"]
     assert snapshot["live_order_path"] is False

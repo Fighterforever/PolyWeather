@@ -38,6 +38,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--eth-spot", type=float, default=None)
     parser.add_argument("--fetch-binance-spot", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--fetch-orderbooks", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--fetch-realized-vol", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--max-orderbook-tokens", type=int, default=200)
     parser.add_argument("--btc-vol", type=float, default=0.55)
     parser.add_argument("--eth-vol", type=float, default=0.70)
@@ -78,6 +79,7 @@ def main(argv: list[str] | None = None) -> None:
         min_depth=float(args.min_depth),
         max_spread=float(args.max_spread),
         high_since_start_cache_dir=args.high_since_start_cache_dir,
+        fetch_realized_vol=bool(args.fetch_realized_vol),
     )
     write_json(args.summary_output, report)
     print(

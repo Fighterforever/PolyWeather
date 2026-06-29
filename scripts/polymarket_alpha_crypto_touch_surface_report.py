@@ -17,14 +17,19 @@ from src.trading.polymarket_alpha.crypto_touch_surface import (  # noqa: E402
     write_json,
     write_jsonl,
 )
+from src.trading.polymarket_alpha.probability_edge_journal import load_jsonl  # noqa: E402
 
 
 DEFAULT_ROOT = Path("evidence/polymarket_alpha")
+DEFAULT_PAPER = DEFAULT_ROOT / "probability_edge_paper"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build crypto touch barrier surface relative-value report.")
     parser.add_argument("--crypto-report", default=str(DEFAULT_ROOT / "crypto_probability_edge_report.json"))
+    parser.add_argument("--crypto-candidates", default=str(DEFAULT_ROOT / "crypto_probability_candidates.jsonl"))
+    parser.add_argument("--formal-fills", default=str(DEFAULT_PAPER / "fills.jsonl"))
+    parser.add_argument("--near-miss-watch", default=str(DEFAULT_ROOT / "crypto_touch_near_miss_watch.jsonl"))
     parser.add_argument("--summary-output", default=str(DEFAULT_ROOT / "crypto_touch_surface_report.json"))
     parser.add_argument("--rows-output", default=str(DEFAULT_ROOT / "crypto_touch_surface_rows.jsonl"))
     parser.add_argument("--min-edge", type=float, default=0.01)
@@ -33,16 +38,28 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
+    crypto_report = load_json(args.crypto_report)
+    candidates = load_jsonl(args.crypto_candidates)
+    if candidates:
+        crypto_report["candidates"] = candidates
+    near_miss_watch = load_jsonl(args.near_miss_watch)
+    if near_miss_watch:
+        crypto_report["near_miss_watch"] = near_miss_watch
     report = build_crypto_touch_surface_report(
-        crypto_probability_report=load_json(args.crypto_report),
+        crypto_probability_report=crypto_report,
+        formal_fills=load_jsonl(args.formal_fills),
+        near_miss_watch=near_miss_watch,
         min_edge=float(args.min_edge),
     )
     write_jsonl(args.rows_output, report.get("rows") or [])
     report["artifact_paths"] = {
         "crypto_report": str(args.crypto_report),
+        "crypto_candidates": str(args.crypto_candidates),
+        "formal_fills": str(args.formal_fills),
+        "near_miss_watch": str(args.near_miss_watch),
         "rows": str(args.rows_output),
     }
-    write_json(args.summary_output, {key: value for key, value in report.items() if key != "rows"})
+    write_json(args.summary_output, report)
     print(
         json.dumps(
             {

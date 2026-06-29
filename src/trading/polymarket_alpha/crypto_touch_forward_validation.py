@@ -58,6 +58,55 @@ def _count_by_key(rows: Iterable[Dict[str, Any]], key: str) -> Dict[str, int]:
     return dict(sorted(counts.items()))
 
 
+def _identity(row: Dict[str, Any]) -> str:
+    return "|".join(str(row.get(field) or "") for field in ("market_slug", "token_id", "side"))
+
+
+def _surface_supported_keys(surface_report: Optional[Dict[str, Any]]) -> set[str]:
+    if not isinstance(surface_report, dict):
+        return set()
+    keys: set[str] = set()
+    for row in (surface_report.get("rows") or []) + (surface_report.get("top_relative_value_rows") or []):
+        if isinstance(row, dict) and row.get("surface_supports_model_direction") is True:
+            key = _identity(row)
+            if key != "||":
+                keys.add(key)
+    return keys
+
+
+def _sensitivity_fragile_keys(sensitivity_report: Optional[Dict[str, Any]]) -> set[str]:
+    if not isinstance(sensitivity_report, dict):
+        return set()
+    keys: set[str] = set()
+    for row in sensitivity_report.get("rows") or []:
+        if isinstance(row, dict) and row.get("sensitivity_fragile") is True:
+            key = _identity(row)
+            if key != "||":
+                keys.add(key)
+    return keys
+
+
+def _annotate_fills(
+    fills: List[Dict[str, Any]],
+    *,
+    surface_report: Optional[Dict[str, Any]],
+    sensitivity_report: Optional[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    supported = _surface_supported_keys(surface_report)
+    fragile = _sensitivity_fragile_keys(sensitivity_report)
+    annotated: List[Dict[str, Any]] = []
+    for fill in fills:
+        key = _identity(fill)
+        annotated.append(
+            {
+                **fill,
+                "surface_support": key in supported,
+                "sensitivity_fragile": key in fragile,
+            }
+        )
+    return annotated
+
+
 def _bucket_rows(rows: Iterable[Dict[str, Any]], key: str) -> List[Dict[str, Any]]:
     grouped: Dict[str, List[float]] = defaultdict(list)
     for row in rows:
@@ -101,14 +150,21 @@ def _formal_fill_summary(fills: List[Dict[str, Any]], markouts: List[Dict[str, A
     by_horizon = _mean_by_horizon(available)
     threshold_groups: Dict[str, List[float]] = defaultdict(list)
     spread_groups: Dict[str, List[float]] = defaultdict(list)
+    surface_groups: Dict[str, List[float]] = defaultdict(list)
+    sensitivity_groups: Dict[str, List[float]] = defaultdict(list)
     fill_by_id = {str(row.get("fill_id") or row.get("token_id")): row for row in fills}
+    fill_by_token = {str(row.get("token_id") or ""): row for row in fills if row.get("token_id")}
     for row in available:
-        fill = fill_by_id.get(str(row.get("fill_id") or row.get("token_id"))) or {}
+        fill = fill_by_id.get(str(row.get("fill_id") or row.get("token_id"))) or fill_by_token.get(str(row.get("token_id") or "")) or {}
         threshold_groups[_threshold_distance_bucket(fill)].append(float(row["markout_cents"]))
         spread_groups[_spread_bucket(fill)].append(float(row["markout_cents"]))
+        surface_groups[f"surface_support_{bool(fill.get('surface_support'))}"].append(float(row["markout_cents"]))
+        sensitivity_groups[f"sensitivity_fragile_{bool(fill.get('sensitivity_fragile'))}"].append(float(row["markout_cents"]))
     return {
         "fill_count": len(fills),
         "mean_EV_safe": _mean(fill.get("EV_safe") for fill in fills),
+        "surface_supported_count": sum(1 for fill in fills if fill.get("surface_support")),
+        "sensitivity_fragile_count": sum(1 for fill in fills if fill.get("sensitivity_fragile")),
         "available_markout_count": len(available),
         "mean_5m_markout": by_horizon.get("5m"),
         "mean_15m_markout": by_horizon.get("15m"),
@@ -125,6 +181,14 @@ def _formal_fill_summary(fills: List[Dict[str, Any]], markouts: List[Dict[str, A
             {"bucket": bucket, "available_markout_count": len(values), "mean_markout_cents": _mean(values)}
             for bucket, values in sorted(spread_groups.items())
         ],
+        "by_surface_support": [
+            {"bucket": bucket, "available_markout_count": len(values), "mean_markout_cents": _mean(values)}
+            for bucket, values in sorted(surface_groups.items())
+        ],
+        "by_sensitivity_fragile": [
+            {"bucket": bucket, "available_markout_count": len(values), "mean_markout_cents": _mean(values)}
+            for bucket, values in sorted(sensitivity_groups.items())
+        ],
     }
 
 
@@ -138,14 +202,8 @@ def _horizon_markout_validity(markouts: List[Dict[str, Any]]) -> Dict[str, Dict[
 
 
 def _surface_support_count(fills: List[Dict[str, Any]], surface_report: Optional[Dict[str, Any]]) -> int:
-    if not isinstance(surface_report, dict):
-        return 0
-    supported = {
-        str(row.get("market_slug"))
-        for row in (surface_report.get("rows") or []) + (surface_report.get("top_relative_value_rows") or [])
-        if isinstance(row, dict) and row.get("surface_supports_model_direction") is True
-    }
-    return sum(1 for fill in fills if str(fill.get("market_slug")) in supported)
+    supported = _surface_supported_keys(surface_report)
+    return sum(1 for fill in fills if _identity(fill) in supported)
 
 
 def _near_miss_summary(watches: List[Dict[str, Any]], markouts: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -195,7 +253,8 @@ def build_crypto_touch_forward_validation_report(
     formal_markout_rows = [row for row in formal_markouts if isinstance(row, dict)]
     watch_rows = [row for row in near_miss_watch if isinstance(row, dict)]
     near_markout_rows = [row for row in near_miss_markouts if isinstance(row, dict)]
-    formal = _formal_fill_summary(fills, formal_markout_rows)
+    annotated_fills = _annotate_fills(fills, surface_report=surface_report, sensitivity_report=sensitivity_report)
+    formal = _formal_fill_summary(annotated_fills, formal_markout_rows)
     near = _near_miss_summary(watch_rows, near_markout_rows)
     horizon_validity = _horizon_markout_validity(formal_markout_rows)
     non_current_markouts = [
@@ -207,8 +266,8 @@ def build_crypto_touch_forward_validation_report(
         and _mean(row.get("markout_cents") for row in non_current_markouts) is not None
         and (_mean(row.get("markout_cents") for row in non_current_markouts) or 0.0) < 0
     )
-    surface_support_count = _surface_support_count(fills, surface_report)
-    sensitivity_fragile_count = int((sensitivity_report or {}).get("sensitivity_fragile_count") or 0)
+    surface_support_count = _surface_support_count(annotated_fills, surface_report)
+    sensitivity_fragile_count = formal.get("sensitivity_fragile_count") or 0
     near_short_negative = any(
         value is not None and value < 0
         for value in (near.get("mean_5m_markout"), near.get("mean_15m_markout"))
@@ -227,7 +286,10 @@ def build_crypto_touch_forward_validation_report(
     )
     if formal["fill_count"] > 0 and not non_current_markouts:
         verdict = "crypto_touch_waiting_for_valid_horizon_markout"
-    elif formal_non_current_negative and surface_support_count < formal["fill_count"]:
+    elif formal_non_current_negative and (
+        surface_support_count < formal["fill_count"]
+        or (formal["fill_count"] > 0 and sensitivity_fragile_count >= formal["fill_count"])
+    ):
         verdict = "crypto_touch_model_overoptimistic_reduce_priority"
     elif formal_values and _mean(formal_values) is not None and (_mean(formal_values) or 0.0) > 0 and surface_support_count > 0:
         verdict = "continue_crypto_touch_sampling"
@@ -254,10 +316,12 @@ def build_crypto_touch_forward_validation_report(
         "invalidated_old_fills": _invalidated_summary(invalidated_old_fills),
         "verdict": {
             "status": verdict,
+            "continue_sampling": bool(verdict in {"continue_crypto_touch_sampling", "continue_crypto_touch_sampling_insufficient_forward_fills"}),
             "continue_crypto_touch_sampling": bool(verdict in {"continue_crypto_touch_sampling", "continue_crypto_touch_sampling_insufficient_forward_fills"}),
             "keep_min_edge_threshold": True,
             "do_not_lower_threshold": bool(near_short_negative),
             "reduce_priority_if_negative_markout": bool(verdict in {"crypto_touch_model_overoptimistic_reduce_priority", "crypto_touch_forward_markout_negative_reduce_priority"}),
+            "pause_if_next_20_negative": True,
             "paper_only_review_required": True,
         },
     }

@@ -58,6 +58,34 @@ def _stable_id(payload: Dict[str, Any]) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:24]
 
 
+def _derived_fill_id(fill: Dict[str, Any]) -> str:
+    existing = str(fill.get("fill_id") or "").strip()
+    if existing:
+        return existing
+    return _stable_id(
+        {
+            "market_slug": fill.get("market_slug"),
+            "token_id": fill.get("token_id"),
+            "side": fill.get("side"),
+            "entry_time": fill.get("entry_time") or fill.get("timestamp") or fill.get("generated_at") or fill.get("recorded_at"),
+            "q_effective": fill.get("q_effective"),
+            "EV_safe": fill.get("EV_safe"),
+        }
+    )
+
+
+def normalize_probability_edge_fill(fill: Dict[str, Any]) -> Dict[str, Any]:
+    normalized = dict(fill)
+    timestamp = normalized.get("timestamp") or normalized.get("generated_at") or normalized.get("recorded_at")
+    normalized["entry_time"] = normalized.get("entry_time") or timestamp
+    normalized["timestamp"] = normalized.get("timestamp") or normalized.get("entry_time")
+    normalized["fill_id"] = _derived_fill_id(normalized)
+    normalized["paper_only"] = True
+    normalized["counts_for_live_gate"] = False
+    normalized["live_order_path"] = False
+    return normalized
+
+
 def _by_token(rows: Iterable[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
     grouped: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
     for row in rows:
@@ -174,21 +202,8 @@ def build_probability_edge_fills_with_snapshots(
         fill["entry_time"] = fill.get("entry_time") or fill.get("timestamp")
         fill["generated_at"] = fill.get("generated_at") or snapshot.get("recorded_at")
         fill["orderbook_snapshot_id"] = snapshot.get("orderbook_snapshot_id")
-        fill["fill_id"] = fill.get("fill_id") or _stable_id(
-            {
-                "market_slug": fill.get("market_slug"),
-                "token_id": fill.get("token_id"),
-                "side": fill.get("side"),
-                "entry_time": fill.get("entry_time"),
-                "q_effective": fill.get("q_effective"),
-                "EV_safe": fill.get("EV_safe"),
-            }
-        )
-        fill["paper_only"] = True
-        fill["counts_for_live_gate"] = False
-        fill["live_order_path"] = False
         fill.pop("orderbook_snapshot", None)
-        fills.append(fill)
+        fills.append(normalize_probability_edge_fill(fill))
     return {
         "fills": fills,
         "orderbook_snapshots": snapshots,
@@ -331,7 +346,7 @@ def build_markout_report(
     fills: Iterable[Dict[str, Any]],
     price_rows: Iterable[Dict[str, Any]],
     orderbook_snapshots: Iterable[Dict[str, Any]] = (),
-    horizons: Tuple[int, ...] = (60, 300, 900, 3600),
+    horizons: Tuple[int, ...] = (60, 300, 900, 3600, 21600, 86400),
     min_edge: float = 0.01,
 ) -> Dict[str, Any]:
     raw_fills = [row for row in fills if isinstance(row, dict)]
@@ -357,23 +372,24 @@ def build_markout_report(
     snapshot_histories = _by_token(orderbook_snapshots)
     markouts: List[Dict[str, Any]] = []
     for fill in materialized_fills:
-        token_id = str(fill.get("token_id") or "")
-        entry_time = _parse_utc(fill.get("entry_time") or fill.get("timestamp") or fill.get("generated_at") or fill.get("recorded_at"))
+        normalized_fill = normalize_probability_edge_fill(fill)
+        token_id = str(normalized_fill.get("token_id") or "")
+        entry_time = _parse_utc(normalized_fill.get("entry_time") or normalized_fill.get("timestamp") or normalized_fill.get("generated_at") or normalized_fill.get("recorded_at"))
         q_effective = _safe_float(fill.get("q_effective"))
         token_history = histories.get(token_id) or []
         token_snapshots = snapshot_histories.get(token_id) or []
         for horizon in tuple(horizons) + (0,):
             base_row = {
                 "schema_version": f"{SCHEMA_VERSION}.markout",
-                "fill_id": fill.get("fill_id"),
-                "market_slug": fill.get("market_slug"),
+                "fill_id": normalized_fill.get("fill_id"),
+                "market_slug": normalized_fill.get("market_slug"),
                 "token_id": token_id,
-                "category": fill.get("category"),
-                "side": fill.get("side"),
-                "asset": fill.get("asset"),
-                "semantics_type": fill.get("semantics_type"),
-                "model_source": fill.get("model_source"),
-                "entry_time": fill.get("entry_time") or fill.get("timestamp") or fill.get("generated_at") or fill.get("recorded_at"),
+                "category": normalized_fill.get("category"),
+                "side": normalized_fill.get("side"),
+                "asset": normalized_fill.get("asset"),
+                "semantics_type": normalized_fill.get("semantics_type"),
+                "model_source": normalized_fill.get("model_source"),
+                "entry_time": normalized_fill.get("entry_time") or normalized_fill.get("timestamp") or normalized_fill.get("generated_at") or normalized_fill.get("recorded_at"),
                 "future_time": None,
                 "target_time": None,
                 "matched_snapshot_time": None,
@@ -513,7 +529,7 @@ def build_formal_fill_followup_orderbook_snapshots(
     active_markets: Iterable[Dict[str, Any]] = (),
     recorded_at: Optional[str] = None,
     orderbook_fetcher: Optional[Any] = None,
-    horizons: Tuple[int, ...] = (300, 900, 3600, 21600, 86400),
+    horizons: Tuple[int, ...] = (60, 300, 900, 3600, 21600, 86400),
     min_edge: float = 0.01,
 ) -> Dict[str, Any]:
     recorded_at = recorded_at or _iso_now()
@@ -528,8 +544,10 @@ def build_formal_fill_followup_orderbook_snapshots(
         if not valid:
             skipped.append({"market_slug": fill.get("market_slug"), "token_id": fill.get("token_id"), "reason": reason})
             continue
-        token_id = str(fill.get("token_id") or "")
-        entry_time = _parse_utc(fill.get("entry_time") or fill.get("timestamp") or fill.get("generated_at") or fill.get("recorded_at"))
+        normalized_fill = normalize_probability_edge_fill(fill)
+        fill_id = str(normalized_fill.get("fill_id") or "")
+        token_id = str(normalized_fill.get("token_id") or "")
+        entry_time = _parse_utc(normalized_fill.get("entry_time") or normalized_fill.get("timestamp") or normalized_fill.get("generated_at") or normalized_fill.get("recorded_at"))
         book = {}
         market = active_by_token.get(token_id) or {}
         books = market.get("orderbooks") if isinstance(market.get("orderbooks"), dict) else {}
@@ -539,10 +557,10 @@ def build_formal_fill_followup_orderbook_snapshots(
             try:
                 book = _normalize_book_payload(orderbook_fetcher(token_id))
             except Exception as exc:  # pragma: no cover - defensive for external API failures
-                skipped.append({"market_slug": fill.get("market_slug"), "token_id": token_id, "reason": f"orderbook_fetch_error:{exc}"})
+                skipped.append({"fill_id": fill_id, "market_slug": normalized_fill.get("market_slug"), "token_id": token_id, "reason": f"orderbook_fetch_error:{exc}"})
                 continue
         if not book:
-            skipped.append({"market_slug": fill.get("market_slug"), "token_id": token_id, "reason": "missing_followup_orderbook"})
+            skipped.append({"fill_id": fill_id, "market_slug": normalized_fill.get("market_slug"), "token_id": token_id, "reason": "missing_followup_orderbook"})
             continue
         reached = []
         if entry_time is not None:
@@ -551,7 +569,8 @@ def build_formal_fill_followup_orderbook_snapshots(
                 if elapsed >= int(horizon):
                     reached.append("current" if int(horizon) == 0 else f"{int(horizon)}s")
         payload = {
-            "market_slug": fill.get("market_slug"),
+            "fill_id": fill_id,
+            "market_slug": normalized_fill.get("market_slug"),
             "token_id": token_id,
             "recorded_at": recorded_at,
             "best_bid": book.get("best_bid"),
@@ -561,8 +580,8 @@ def build_formal_fill_followup_orderbook_snapshots(
         snapshots.append(
             {
                 "schema_version": f"{SCHEMA_VERSION}.formal_fill_followup_orderbook_snapshot",
-                "fill_id": fill.get("fill_id"),
-                "market_slug": fill.get("market_slug"),
+                "fill_id": fill_id,
+                "market_slug": normalized_fill.get("market_slug"),
                 "token_id": token_id,
                 "recorded_at": recorded_at,
                 "timestamp": recorded_at,
@@ -681,6 +700,7 @@ __all__ = [
     "build_probability_edge_fills_with_snapshots",
     "build_resolved_audit_report",
     "load_jsonl",
+    "normalize_probability_edge_fill",
     "write_json",
     "write_jsonl",
 ]

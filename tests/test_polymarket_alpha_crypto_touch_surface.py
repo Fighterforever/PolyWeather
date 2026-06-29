@@ -74,6 +74,50 @@ def test_surface_candidate_requires_ev_and_residual_agreement():
     assert report["relative_value_candidate_count"] == 0
 
 
+def test_surface_residual_supports_candidate():
+    report = build_crypto_touch_surface_report(
+        crypto_probability_report={
+            "near_misses": [
+                _row(threshold=80000, best_ask=0.62, spread=0.04, p_yes_touch=0.60, EV_safe=-0.01),
+                _row(market_slug="btc-90k", token_id="yes-90", threshold=90000, best_ask=0.22, spread=0.04, p_yes_touch=0.42, EV_safe=0.02),
+                _row(market_slug="btc-100k", token_id="yes-100", threshold=100000, best_ask=0.12, spread=0.04, p_yes_touch=0.22, EV_safe=-0.01),
+            ]
+        },
+        formal_fills=[_row(market_slug="btc-90k", token_id="yes-90", threshold=90000)],
+        min_edge=0.01,
+    )
+
+    supported = [row for row in report["rows"] if row["market_slug"] == "btc-90k"][0]
+    assert supported["surface_supports_model_direction"] is True
+    assert supported["formal_fill_exists"] is True
+    assert report["surface_support_count_for_formal_fills"] == 1
+
+
+def test_surface_rejects_candidate_against_surface():
+    report = build_crypto_touch_surface_report(
+        crypto_probability_report={
+            "near_misses": [
+                _row(threshold=80000, best_ask=0.22, spread=0.04, p_yes_touch=0.20, EV_safe=0.02),
+                _row(market_slug="btc-90k", token_id="yes-90", threshold=90000, best_ask=0.30, spread=0.04, p_yes_touch=0.20, EV_safe=0.02),
+            ]
+        },
+        min_edge=0.01,
+    )
+
+    assert report["relative_value_candidate_count"] == 0
+
+
+def test_surface_handles_sparse_group():
+    report = build_crypto_touch_surface_report(
+        crypto_probability_report={"near_misses": [_row(best_ask=0.22, spread=0.04, p_yes_touch=0.42, EV_safe=0.02)]},
+        min_edge=0.01,
+    )
+
+    assert report["group_count"] == 1
+    assert report["rows"][0]["group_member_count"] == 1
+    assert report["rows"][0]["market_yes_mid"] == 0.2
+
+
 def test_surface_shadow_does_not_count_as_fill():
     report = build_crypto_touch_surface_report(
         crypto_probability_report={

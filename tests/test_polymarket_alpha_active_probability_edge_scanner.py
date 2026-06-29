@@ -106,6 +106,83 @@ def test_active_probability_edge_scanner_prioritizes_crypto_candidates():
     assert report["lane_reports"]["global_oos_model_lane"]["candidate_count"] == 0
 
 
+def test_crypto_candidate_downgraded_when_surface_unsupported():
+    crypto_candidate = {
+        "market_slug": "btc-over-100k",
+        "token_id": "yes-token",
+        "side": "YES",
+        "category": "crypto",
+        "model_source": "crypto_lognormal_threshold_model",
+        "EV_safe": 0.03,
+        "paper_only": True,
+        "live_order_path": False,
+    }
+    report = scan_active_probability_edges(
+        active_markets=[],
+        model_report=_model(False),
+        crypto_report={"candidates": [crypto_candidate]},
+        surface_report={"rows": [{**crypto_candidate, "group_member_count": 2, "surface_supports_model_direction": False}]},
+        min_edge=0.01,
+    )
+
+    assert report["candidate_count"] == 0
+    assert report["old_formal_fill_count"] == 1
+    assert report["new_formal_fill_count"] == 0
+    assert report["downgraded_due_surface_count"] == 1
+    assert report["lane_reports"]["crypto_model_lane"]["top_watch_rows"][0]["downgrade_reasons"] == ["surface_unsupported"]
+
+
+def test_crypto_candidate_downgraded_when_sensitivity_fragile_below_stricter_edge():
+    crypto_candidate = {
+        "market_slug": "btc-over-100k",
+        "token_id": "yes-token",
+        "side": "YES",
+        "category": "crypto",
+        "model_source": "crypto_lognormal_threshold_model",
+        "EV_safe": 0.015,
+        "paper_only": True,
+        "live_order_path": False,
+    }
+    report = scan_active_probability_edges(
+        active_markets=[],
+        model_report=_model(False),
+        crypto_report={"candidates": [crypto_candidate]},
+        surface_report={"rows": [{**crypto_candidate, "group_member_count": 2, "surface_supports_model_direction": True}]},
+        sensitivity_report={"rows": [{**crypto_candidate, "sensitivity_fragile": True}]},
+        min_edge=0.01,
+        stricter_edge=0.02,
+    )
+
+    assert report["candidate_count"] == 0
+    assert report["downgraded_due_sensitivity_count"] == 1
+    assert "sensitivity_fragile_below_stricter_edge" in report["watch_rows"][0]["downgrade_reasons"]
+
+
+def test_crypto_candidate_allowed_when_surface_sparse_and_sensitivity_clean():
+    crypto_candidate = {
+        "market_slug": "btc-over-100k",
+        "token_id": "yes-token",
+        "side": "YES",
+        "category": "crypto",
+        "model_source": "crypto_lognormal_threshold_model",
+        "EV_safe": 0.015,
+        "paper_only": True,
+        "live_order_path": False,
+    }
+    report = scan_active_probability_edges(
+        active_markets=[],
+        model_report=_model(False),
+        crypto_report={"candidates": [crypto_candidate]},
+        surface_report={"rows": [{**crypto_candidate, "group_member_count": 1, "surface_supports_model_direction": False}]},
+        sensitivity_report={"rows": [{**crypto_candidate, "sensitivity_fragile": False}]},
+        min_edge=0.01,
+    )
+
+    assert report["candidate_count"] == 1
+    assert report["candidates"][0]["surface_group_too_sparse"] is True
+    assert report["candidates"][0]["live_order_path"] is False
+
+
 def test_active_probability_edge_scanner_keeps_politics_neutral_stats_only():
     report = scan_active_probability_edges(
         active_markets=[_market(category="politics")],
