@@ -1,0 +1,17 @@
+{
+  "40_to_51_minute_support_count": 0,
+  "candidate_reward_window": null,
+  "confidence": "insufficient_window_observations",
+  "counts_for_live_gate": false,
+  "hour_boundary_cancel_recommendation": "unvalidated_cancel_at_hour_boundary",
+  "live_order_path": false,
+  "observations_count": 2,
+  "paper_only": true,
+  "reward_by_minute_of_hour": [
+    {
+      "minute": 55,
+      "reward_available_count": 0
+    }
+  ],
+  "schema_version": "polyweather_polymarket_alpha_weather_lp_reward_window.v1"
+}

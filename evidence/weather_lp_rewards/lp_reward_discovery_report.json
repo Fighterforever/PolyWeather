@@ -1,0 +1,23 @@
+{
+  "artifact_paths": {
+    "lp_reward_markets": "evidence/weather_lp_rewards/lp_reward_markets.jsonl"
+  },
+  "counts_for_live_gate": false,
+  "gap_counts": [
+    {
+      "count": 89,
+      "reason": "reward_metadata_missing"
+    }
+  ],
+  "generated_at": "2026-06-29T14:55:00Z",
+  "live_order_path": false,
+  "market_count": 89,
+  "paper_only": true,
+  "reward_available_count": 0,
+  "reward_by_city": [],
+  "reward_market_count": 0,
+  "reward_metadata_available_count": 0,
+  "reward_metadata_missing_count": 89,
+  "schema_version": "polyweather_polymarket_alpha_weather_lp_reward_discovery.v1",
+  "scope": "polymarket_weather_lp_rewards"
+}

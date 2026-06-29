@@ -33,6 +33,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--microstructure-attribution-report", default=str(DEFAULT_ROOT / "microstructure_taker_failure_attribution.json"))
     parser.add_argument("--microstructure-inverse-report", default=str(DEFAULT_ROOT / "microstructure_inverse_counterfactual_markout_report.json"))
     parser.add_argument("--maker-quote-sweep-report", default=str(DEFAULT_ROOT / "maker_quote_aggressiveness_sweep_report.json"))
+    parser.add_argument("--weather-lp-experiment-report", default="evidence/weather_lp_rewards/weather_lp_experiment_report.json")
     parser.add_argument("--maker-shadow-report", default=str(DEFAULT_ROOT / "maker_shadow" / "report.json"))
     parser.add_argument("--payoff-arbitrage-report", default=str(DEFAULT_ROOT / "payoff_arbitrage_report.json"))
     parser.add_argument("--global-oos-report", default=str(DEFAULT_ROOT / "probability_edge_model_report.json"))
@@ -52,6 +53,7 @@ def main(argv: list[str] | None = None) -> None:
         microstructure_attribution_report=load_json(args.microstructure_attribution_report),
         microstructure_inverse_report=load_json(args.microstructure_inverse_report),
         maker_quote_sweep_report=load_json(args.maker_quote_sweep_report),
+        weather_lp_experiment_report=load_json(args.weather_lp_experiment_report),
         maker_shadow_report=load_json(args.maker_shadow_report),
         payoff_arbitrage_report=load_json(args.payoff_arbitrage_report),
         global_oos_report=load_json(args.global_oos_report),
@@ -66,6 +68,7 @@ def main(argv: list[str] | None = None) -> None:
         "microstructure_attribution_report": str(args.microstructure_attribution_report),
         "microstructure_inverse_report": str(args.microstructure_inverse_report),
         "maker_quote_sweep_report": str(args.maker_quote_sweep_report),
+        "weather_lp_experiment_report": str(args.weather_lp_experiment_report),
         "maker_shadow_report": str(args.maker_shadow_report),
         "payoff_arbitrage_report": str(args.payoff_arbitrage_report),
         "global_oos_report": str(args.global_oos_report),

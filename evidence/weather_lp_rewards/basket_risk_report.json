@@ -1,0 +1,1436 @@
+{
+  "basket_count": 89,
+  "baskets": [
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-july-1-2026-27corbelow",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.009
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-july-1-2026-28c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.009
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-july-1-2026-29c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.01
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-july-1-2026-30c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.02
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-july-1-2026-31c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.2
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-july-1-2026-32c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.42
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-july-1-2026-33c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.3
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-july-1-2026-34c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.08
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-july-1-2026-35c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.039
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-july-1-2026-36c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.019
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-july-1-2026-37corhigher",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.01
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-29-2026-25corbelow",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-29-2026-26c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-29-2026-27c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.003
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-29-2026-28c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.028
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-29-2026-29c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.38
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-29-2026-30c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.6
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-29-2026-31c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.086
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-29-2026-32c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.007
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-29-2026-33c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.007
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-29-2026-34c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.003
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-29-2026-35corhigher",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.003
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-30-2026-26corbelow",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.005
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-30-2026-27c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.005
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-30-2026-28c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.007
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-30-2026-29c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.015
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-30-2026-30c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.08
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-30-2026-31c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.36
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-30-2026-32c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.45
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-30-2026-33c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.1
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-30-2026-34c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.016
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-30-2026-35c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.01
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-ankara-on-june-30-2026-36corhigher",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.007
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-july-1-2026-23corbelow",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.006
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-july-1-2026-24c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.006
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-july-1-2026-25c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.039
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-july-1-2026-26c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.05
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-july-1-2026-27c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.13
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-july-1-2026-28c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.47
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_executable_ask",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-july-1-2026-29c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-july-1-2026-30c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.06
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-july-1-2026-31c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.039
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-july-1-2026-32c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.013
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-july-1-2026-33corhigher",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.009
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-25corbelow",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-26c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-27c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-28c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.179
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-29c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.54
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-30c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.22
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-31c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.038
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-32c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.006
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-33c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.005
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-34c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.002
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-35corhigher",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-23corbelow",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.006
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-24c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.009
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-25c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.031
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-26c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.1
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-27c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.45
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-28c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.35
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-29c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.08
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-30c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.013
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-31c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.007
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-32c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.004
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-33corhigher",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.006
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-july-1-2026-27c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.35
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-13corbelow",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-14c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-15c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-16c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-17c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-18c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-19c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-20c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.001
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-21c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.87
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-22c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.12
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-23corhigher",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.049
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-30-2026-22corbelow",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.006
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-30-2026-23c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.009
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-30-2026-24c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.029
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-30-2026-25c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.11
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-30-2026-26c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.38
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-30-2026-27c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.33
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-30-2026-28c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:high_reward_dual_leg",
+      "total_entry_cost": 0.17
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-30-2026-29c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.032
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-30-2026-30c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.017
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-30-2026-31c",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.007
+    },
+    {
+      "basket_width": 1,
+      "blockers": [
+        "reward_metadata_missing",
+        "missing_reward_score"
+      ],
+      "counts_for_live_gate": false,
+      "decision": "reject",
+      "expensive_basket_blocker": null,
+      "live_order_path": false,
+      "market_slug": "highest-temperature-in-moscow-on-june-30-2026-32corhigher",
+      "paper_only": true,
+      "reward_counted_as_guaranteed_pnl": false,
+      "strategy_id": "weather_lp_reward_city_specific:low_price_single_leg",
+      "total_entry_cost": 0.006
+    }
+  ],
+  "counts_for_live_gate": false,
+  "expensive_basket_rejection_count": 0,
+  "live_order_path": false,
+  "paper_only": true,
+  "reward_counted_as_guaranteed_pnl": false,
+  "schema_version": "polyweather_polymarket_alpha_weather_lp_basket_risk.v1.report"
+}

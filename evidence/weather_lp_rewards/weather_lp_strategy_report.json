@@ -1,0 +1,18 @@
+{
+  "artifact_paths": {
+    "basket_risk": "evidence/weather_lp_rewards/basket_risk_report.json",
+    "candidates": "evidence/weather_lp_rewards/weather_lp_candidates.jsonl",
+    "rejected": "evidence/weather_lp_rewards/weather_lp_rejected_rows.jsonl",
+    "watch_rows": "evidence/weather_lp_rewards/weather_lp_watch_rows.jsonl"
+  },
+  "candidate_count": 0,
+  "counts_for_live_gate": false,
+  "expensive_basket_rejection_count": 0,
+  "input_market_count": 89,
+  "live_order_path": false,
+  "paper_only": true,
+  "reject_count": 89,
+  "rejected_count": 89,
+  "schema_version": "polyweather_polymarket_alpha_weather_lp_strategy.v1",
+  "watch_count": 0
+}

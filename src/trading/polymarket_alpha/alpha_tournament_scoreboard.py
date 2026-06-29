@@ -126,6 +126,7 @@ def build_alpha_tournament_scoreboard(
     microstructure_attribution_report: Optional[Dict[str, Any]] = None,
     microstructure_inverse_report: Optional[Dict[str, Any]] = None,
     maker_quote_sweep_report: Optional[Dict[str, Any]] = None,
+    weather_lp_experiment_report: Optional[Dict[str, Any]] = None,
     maker_shadow_report: Optional[Dict[str, Any]] = None,
     payoff_arbitrage_report: Optional[Dict[str, Any]] = None,
     global_oos_report: Optional[Dict[str, Any]] = None,
@@ -139,6 +140,7 @@ def build_alpha_tournament_scoreboard(
     microstructure_attribution_report = microstructure_attribution_report or {}
     microstructure_inverse_report = microstructure_inverse_report or {}
     maker_quote_sweep_report = maker_quote_sweep_report or {}
+    weather_lp_experiment_report = weather_lp_experiment_report or {}
     maker_shadow_report = maker_shadow_report or {}
     payoff_arbitrage_report = payoff_arbitrage_report or {}
     global_oos_report = global_oos_report or {}
@@ -288,9 +290,33 @@ def build_alpha_tournament_scoreboard(
         main_blocker=str(global_oos_report.get("status") or global_oos_report.get("hard_conclusion") or _top_blocker(global_oos_report)),
     )
 
+    weather_lp_lane = _lane(
+        lane_id="weather_lp_reward",
+        candidate_count=_safe_int(weather_lp_experiment_report.get("reward_market_count")),
+        paper_fill_count=_safe_int(weather_lp_experiment_report.get("inferred_fill_count")),
+        watch_count=_safe_int(weather_lp_experiment_report.get("paper_quote_count")),
+        available_markout_count=_safe_int(weather_lp_experiment_report.get("markout_count")),
+        mean_5m_markout=_safe_float(weather_lp_experiment_report.get("mean_5m_markout")),
+        mean_15m_markout=_safe_float(weather_lp_experiment_report.get("mean_15m_markout")),
+        mean_1h_markout=_safe_float(weather_lp_experiment_report.get("mean_1h_markout")),
+        sample_count=_safe_int(weather_lp_experiment_report.get("paper_quote_count")),
+        main_blocker=str(weather_lp_experiment_report.get("recommendation") or "not_run"),
+    )
+    weather_lp_lane["estimated_reward"] = weather_lp_experiment_report.get("estimated_reward_cents")
+    weather_lp_lane["net_estimated_pnl_with_reward"] = weather_lp_experiment_report.get("net_estimated_pnl_with_reward")
+    if weather_lp_experiment_report.get("recommendation") == "insufficient_reward_metadata":
+        weather_lp_lane["status"] = "insufficient_reward_metadata"
+        weather_lp_lane["next_action"] = "collect_reward_metadata"
+        weather_lp_lane["priority"] = 12
+    elif _safe_int(weather_lp_experiment_report.get("paper_quote_count")) >= 50 and (_safe_float(weather_lp_experiment_report.get("net_estimated_pnl_with_reward")) or 0.0) > 0:
+        weather_lp_lane["status"] = "paper_reward_lane_candidate"
+        weather_lp_lane["next_action"] = "continue_weather_lp_paper"
+        weather_lp_lane["priority"] = 80
+
     lanes = [
         touch_lane,
         terminal_lane,
+        weather_lp_lane,
         micro_lane,
         micro_policy_lane,
         micro_taker_lane,

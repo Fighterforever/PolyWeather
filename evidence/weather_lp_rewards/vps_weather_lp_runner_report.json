@@ -1,0 +1,89 @@
+{
+  "commands": [
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_ingest_external_strategy.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"live_order_path\": false,\n  \"strategy_id\": \"weather_lp_reward_city_specific\"\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_weather_lp_reward_discovery_report.py",
+        "--generated-at",
+        "2026-06-29T14:55:00Z"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"live_order_path\": false,\n  \"reward_market_count\": 0,\n  \"reward_metadata_missing_count\": 89\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_weather_city_regime_report.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"city_profile_count\": 6,\n  \"live_order_path\": false,\n  \"sufficient_profile_count\": 4\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_weather_smart_holder_report.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"gap_count\": 89,\n  \"live_order_path\": false,\n  \"smart_holder_signal_count\": 0\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_weather_lp_strategy_report.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"candidate_count\": 0,\n  \"live_order_path\": false,\n  \"reject_count\": 89,\n  \"watch_count\": 0\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_weather_lp_paper_cycle.py",
+        "--generated-at",
+        "2026-06-29T14:55:00Z"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"estimated_reward_cents\": 0,\n  \"inferred_fill_count\": 0,\n  \"live_order_path\": false,\n  \"paper_quote_count\": 0\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_weather_lp_reward_window_report.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"confidence\": \"insufficient_window_observations\",\n  \"live_order_path\": false,\n  \"observations_count\": 2,\n  \"support_40_51\": 0\n}\n"
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "scripts/polymarket_alpha_weather_lp_experiment_controller.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"live_order_path\": false,\n  \"paper_quote_count\": 0,\n  \"recommendation\": \"insufficient_reward_metadata\"\n}\n"
+    }
+  ],
+  "counts_for_live_gate": false,
+  "generated_at": "2026-06-29T14:55:00Z",
+  "live_order_path": false,
+  "paper_only": true,
+  "paper_quote_count": 0,
+  "recommendation": "insufficient_reward_metadata",
+  "reward_market_count": 0,
+  "schema_version": "polyweather_polymarket_alpha_weather_lp_runner.v1",
+  "success": true
+}

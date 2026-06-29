@@ -11,11 +11,12 @@
     "microstructure_markout_report": "evidence/polymarket_alpha/microstructure_markout_report.json",
     "microstructure_policy_sweep_report": "evidence/polymarket_alpha/microstructure_policy_sweep_report.json",
     "microstructure_report": "evidence/polymarket_alpha/microstructure_edge_report.json",
-    "payoff_arbitrage_report": "evidence/polymarket_alpha/payoff_arbitrage_report.json"
+    "payoff_arbitrage_report": "evidence/polymarket_alpha/payoff_arbitrage_report.json",
+    "weather_lp_experiment_report": "evidence/weather_lp_rewards/weather_lp_experiment_report.json"
   },
   "counts_for_live_gate": false,
   "final_decision": "paper_only_alpha_tournament_continue",
-  "lane_count": 9,
+  "lane_count": 10,
   "lanes": [
     {
       "available_markout_count": 9,
@@ -33,7 +34,7 @@
       "priority": 5,
       "sample_count": 3,
       "status": "downgraded_recalibration_pending",
-      "watch_count": 104
+      "watch_count": 107
     },
     {
       "available_markout_count": 0,
@@ -54,26 +55,46 @@
       "watch_count": 0
     },
     {
-      "available_markout_count": 1352,
-      "candidate_count": 20,
+      "available_markout_count": 0,
+      "candidate_count": 0,
+      "counts_for_live_gate": false,
+      "estimated_reward": 0,
+      "lane_id": "weather_lp_reward",
+      "live_order_path": false,
+      "main_blocker": "insufficient_reward_metadata",
+      "mean_15m_markout": null,
+      "mean_1h_markout": null,
+      "mean_5m_markout": null,
+      "net_estimated_pnl_with_reward": null,
+      "next_action": "collect_reward_metadata",
+      "paper_fill_count": 0,
+      "paper_only": true,
+      "priority": 12,
+      "sample_count": 0,
+      "status": "insufficient_reward_metadata",
+      "watch_count": 0
+    },
+    {
+      "available_markout_count": 0,
+      "candidate_count": 21,
       "counts_for_live_gate": false,
       "lane_id": "microstructure",
       "live_order_path": false,
       "main_blocker": "negative_taker_markout_and_no_promising_maker_mode",
-      "mean_15m_markout": -4.25806452,
-      "mean_1h_markout": -3.86136986,
-      "mean_5m_markout": -4.36321839,
+      "mean_15m_markout": null,
+      "mean_1h_markout": null,
+      "mean_5m_markout": null,
       "next_action": "move_focus_to_next_lane",
       "paper_fill_count": 0,
       "paper_only": true,
       "priority": 8,
-      "sample_count": 20,
+      "sample_count": 21,
       "status": "pause_microstructure_after_negative_taker_and_maker_sweep",
-      "watch_count": 20
+      "watch_count": 21
     },
     {
       "available_markout_count": 0,
-      "candidate_count": 934,
+      "candidate_count": 31,
       "counts_for_live_gate": false,
       "lane_id": "microstructure_policy_sweep",
       "live_order_path": false,
@@ -85,31 +106,31 @@
       "paper_fill_count": 0,
       "paper_only": true,
       "priority": 8,
-      "sample_count": 497,
+      "sample_count": 21,
       "status": "pause_microstructure_after_negative_taker_and_maker_sweep",
-      "watch_count": 497
+      "watch_count": 21
     },
     {
-      "available_markout_count": 1352,
-      "candidate_count": 437,
+      "available_markout_count": 0,
+      "candidate_count": 10,
       "counts_for_live_gate": false,
       "lane_id": "microstructure_taker",
       "live_order_path": false,
       "main_blocker": "follow_and_or_inverse_not_promising",
-      "mean_15m_markout": -4.25806452,
-      "mean_1h_markout": -3.86136986,
-      "mean_5m_markout": -4.36321839,
+      "mean_15m_markout": null,
+      "mean_1h_markout": null,
+      "mean_5m_markout": null,
       "next_action": "pause_taker_microstructure",
-      "paper_fill_count": 601,
+      "paper_fill_count": 10,
       "paper_only": true,
       "priority": 5,
-      "sample_count": 601,
+      "sample_count": 10,
       "status": "failed_negative_forward_markout",
       "watch_count": 0
     },
     {
       "available_markout_count": 0,
-      "candidate_count": 497,
+      "candidate_count": 21,
       "counts_for_live_gate": false,
       "lane_id": "microstructure_maker",
       "live_order_path": false,
@@ -121,9 +142,9 @@
       "paper_fill_count": 0,
       "paper_only": true,
       "priority": 5,
-      "sample_count": 497,
+      "sample_count": 21,
       "status": "maker_adverse_selection",
-      "watch_count": 497
+      "watch_count": 21
     },
     {
       "available_markout_count": 0,

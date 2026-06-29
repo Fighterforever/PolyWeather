@@ -51,3 +51,22 @@ def test_tournament_downgrades_microstructure_when_taker_and_maker_fail():
     assert lanes["microstructure_policy_sweep"]["priority"] <= 8
     assert report["top_lane"] != "microstructure_policy_sweep"
     assert "maker_shadow" in report["lanes_paused"]
+
+
+def test_tournament_weather_lp_waits_for_reward_metadata():
+    report = build_alpha_tournament_scoreboard(
+        weather_lp_experiment_report={
+            "reward_market_count": 0,
+            "paper_quote_count": 0,
+            "inferred_fill_count": 0,
+            "recommendation": "insufficient_reward_metadata",
+            "live_order_path": False,
+        },
+        payoff_arbitrage_report={"candidate_count": 1, "near_miss_count": 2},
+    )
+
+    lanes = {row["lane_id"]: row for row in report["lanes"]}
+    assert lanes["weather_lp_reward"]["status"] == "insufficient_reward_metadata"
+    assert lanes["weather_lp_reward"]["next_action"] == "collect_reward_metadata"
+    assert lanes["weather_lp_reward"]["live_order_path"] is False
+    assert report["top_lane"] != "weather_lp_reward"

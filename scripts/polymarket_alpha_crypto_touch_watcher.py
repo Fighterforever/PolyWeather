@@ -118,6 +118,14 @@ def main(argv: list[str] | None = None) -> None:
         ],
         [
             args.python_path,
+            "scripts/polymarket_alpha_weather_lp_runner.py",
+            "--python-path",
+            args.python_path,
+            "--generated-at",
+            generated_at,
+        ],
+        [
+            args.python_path,
             "scripts/polymarket_alpha_microstructure_policy_sweep_report.py",
         ],
         [
@@ -198,6 +206,8 @@ def main(argv: list[str] | None = None) -> None:
             "crypto_touch_72h_experiment_report": "evidence/polymarket_alpha/crypto_touch_72h_experiment_report.json",
             "crypto_terminal_edge_report": "evidence/polymarket_alpha/crypto_terminal_edge_report.json",
             "microstructure_edge_report": "evidence/polymarket_alpha/microstructure_edge_report.json",
+            "weather_lp_runner_report": "evidence/weather_lp_rewards/vps_weather_lp_runner_report.json",
+            "weather_lp_experiment_report": "evidence/weather_lp_rewards/weather_lp_experiment_report.json",
             "microstructure_policy_sweep_report": "evidence/polymarket_alpha/microstructure_policy_sweep_report.json",
             "microstructure_followup_snapshot_report": "evidence/polymarket_alpha/microstructure_followup_snapshot_report.json",
             "microstructure_markout_report": "evidence/polymarket_alpha/microstructure_markout_report.json",
