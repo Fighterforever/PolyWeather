@@ -4,6 +4,7 @@ import json
 import math
 import re
 import urllib.request
+import hashlib
 from collections import Counter
 from dataclasses import asdict, is_dataclass
 from datetime import datetime, timezone
@@ -397,6 +398,7 @@ def build_crypto_probability_edge_report(
     cost: float = 0.01,
     min_depth: float = 10.0,
     max_spread: float = 0.15,
+    model_haircut: float = 0.08,
     high_since_start_fetcher: Optional[Any] = None,
     high_since_start_cache_dir: str | Path = "evidence/polymarket_alpha/binance_klines",
 ) -> Dict[str, Any]:
@@ -430,6 +432,7 @@ def build_crypto_probability_edge_report(
     barrier_already_touched_count = 0
     verified_not_touched_count = 0
     near_miss_watch: List[Dict[str, Any]] = []
+    near_miss_orderbook_snapshots: List[Dict[str, Any]] = []
     for market in active_rows:
         if not isinstance(market, dict) or not market.get("active"):
             continue
@@ -522,13 +525,16 @@ def build_crypto_probability_edge_report(
         elif semantics_type == "ambiguous":
             gaps["ambiguous_crypto_market_semantics"] += 1
         p_yes = p_yes_touch if semantics_type == "touch_barrier" else p_yes_terminal
-        haircut = 0.08
+        haircut = float(model_haircut)
         p_lcb = max(0.0, p_yes - haircut)
         p_ucb = min(1.0, p_yes + haircut)
         model_ready_count += 1
         probability_details = {
             "semantics_type": semantics_type,
             "current_model_semantics": probability_semantics,
+            "spot": spot,
+            "annual_vol": annual_vol,
+            "generated_at": generated_at,
             "p_yes_terminal": round(p_yes_terminal, 8),
             "p_yes_touch": round(p_yes_touch, 8) if p_yes_touch is not None else None,
             "p_no_touch": round(1.0 - p_yes_touch, 8) if p_yes_touch is not None else None,
@@ -610,6 +616,9 @@ def build_crypto_probability_edge_report(
                     "threshold": side_row.get("threshold"),
                     "target_time": side_row.get("target_time"),
                     "side": side_row.get("side"),
+                    "spot": side_row.get("spot"),
+                    "annual_vol": side_row.get("annual_vol"),
+                    "generated_at": side_row.get("generated_at"),
                     "p_model": side_row.get("p_model"),
                     "p_lcb": side_row.get("p_lcb"),
                     "p_ucb": side_row.get("p_ucb"),
@@ -655,14 +664,30 @@ def build_crypto_probability_edge_report(
                 and ev_safe is not None
                 and -0.005 <= ev_safe < float(min_edge)
             ):
+                snapshot = _near_miss_orderbook_snapshot(
+                    market=market,
+                    side=str(near_row.get("side") or ""),
+                    near_row=near_row,
+                    recorded_at=generated_at,
+                )
+                if snapshot:
+                    near_miss_orderbook_snapshots.append(snapshot)
+                orderbook_snapshot_id = snapshot.get("orderbook_snapshot_id") if snapshot else None
+                watch_row = {
+                    **near_row,
+                    "watch_id": _stable_watch_id({**near_row, "entry_time": generated_at}),
+                    "entry_time": generated_at,
+                    "recorded_at": generated_at,
+                    "orderbook_snapshot_id": orderbook_snapshot_id,
+                    "probability_semantics": "touch_barrier",
+                    "high_since_start_verified": True,
+                    "barrier_already_touched": False,
+                    "paper_only": True,
+                    "counts_for_live_gate": False,
+                    "live_order_path": False,
+                }
                 near_miss_watch.append(
-                    {
-                        "watch_id": _stable_watch_id(near_row),
-                        **near_row,
-                        "paper_only": True,
-                        "counts_for_live_gate": False,
-                        "live_order_path": False,
-                    }
+                    watch_row
                 )
         watch_rows.append({
             "market_slug": market.get("market_slug"),
@@ -731,6 +756,8 @@ def build_crypto_probability_edge_report(
         "best_near_miss_EV_safe": near_miss_watch[0].get("EV_safe") if near_miss_watch else None,
         "near_miss_watch_by_asset": _count_by(near_miss_watch, "asset"),
         "near_miss_watch_by_side": _count_by(near_miss_watch, "side"),
+        "near_miss_orderbook_snapshot_count": len(near_miss_orderbook_snapshots),
+        "near_miss_orderbook_snapshot_id_null_count": sum(1 for row in near_miss_watch if not row.get("orderbook_snapshot_id")),
         "touch_barrier_market_count": touch_barrier_market_count,
         "high_since_start_verified_count": high_since_start_verified_count,
         "barrier_already_touched_count": barrier_already_touched_count,
@@ -746,8 +773,51 @@ def build_crypto_probability_edge_report(
             )
         ),
         "watch_rows": watch_rows,
+        "near_misses": near_misses,
         "near_miss_watch": near_miss_watch,
+        "near_miss_orderbook_snapshots": near_miss_orderbook_snapshots,
         "candidates": candidates,
+    }
+
+
+def _near_miss_orderbook_snapshot(
+    *,
+    market: Dict[str, Any],
+    side: str,
+    near_row: Dict[str, Any],
+    recorded_at: str,
+) -> Dict[str, Any]:
+    book = _book_for_outcome(market, side)
+    token_id = str(near_row.get("token_id") or "")
+    if not token_id or not book:
+        return {}
+    snapshot_payload = {
+        "token_id": token_id,
+        "best_bid": _safe_float(book.get("best_bid")),
+        "best_ask": _safe_float(book.get("best_ask")),
+        "recorded_at": recorded_at,
+        "source": "crypto_touch_near_miss_watch",
+    }
+    snapshot_id = hashlib.sha256(
+        json.dumps(snapshot_payload, ensure_ascii=False, sort_keys=True, default=str).encode("utf-8")
+    ).hexdigest()[:24]
+    return {
+        "schema_version": f"{SCHEMA_VERSION}.near_miss_orderbook_snapshot",
+        "orderbook_snapshot_id": snapshot_id,
+        "market_slug": market.get("market_slug"),
+        "token_id": token_id,
+        "side": side,
+        "best_bid": snapshot_payload["best_bid"],
+        "best_ask": snapshot_payload["best_ask"],
+        "bid_ladder": book.get("bid_ladder") or book.get("bids") or [],
+        "ask_ladder": book.get("ask_ladder") or book.get("asks") or [],
+        "spread": _safe_float(book.get("spread")) if book.get("spread") is not None else near_row.get("spread"),
+        "depth": _safe_float(book.get("ask_depth_usdc_3c")) if book.get("ask_depth_usdc_3c") is not None else near_row.get("depth"),
+        "recorded_at": recorded_at,
+        "source": "crypto_touch_near_miss_watch",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
     }
 
 
@@ -759,14 +829,121 @@ def _stable_watch_id(row: Dict[str, Any]) -> str:
             "side": row.get("side"),
             "market_creation_time": row.get("market_creation_time"),
             "target_time": row.get("target_time"),
+            "entry_time": row.get("entry_time") or row.get("recorded_at"),
         },
         ensure_ascii=False,
         sort_keys=True,
         default=str,
     )
-    import hashlib
-
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:24]
+
+
+def build_crypto_touch_sensitivity_report(
+    *,
+    active_markets: Iterable[Dict[str, Any]],
+    spot_prices: Optional[Dict[str, float]] = None,
+    annual_vols: Optional[Dict[str, float]] = None,
+    generated_at: Optional[str] = None,
+    vol_multipliers: Iterable[float] = (0.8, 1.0, 1.2),
+    haircuts: Iterable[float] = (0.05, 0.08, 0.10),
+    **kwargs: Any,
+) -> Dict[str, Any]:
+    active_rows = [dict(row) for row in active_markets if isinstance(row, dict)]
+    base_vols = annual_vols or {"BTC": 0.55, "ETH": 0.70}
+    base_report = build_crypto_probability_edge_report(
+        active_markets=active_rows,
+        spot_prices=spot_prices,
+        annual_vols=base_vols,
+        generated_at=generated_at,
+        model_haircut=0.08,
+        **kwargs,
+    )
+    generated_dt = _parse_utc(base_report.get("generated_at") or generated_at) or datetime.now(timezone.utc)
+    cost = float(kwargs.get("cost", 0.01))
+    variant_rows: Dict[str, Dict[str, Any]] = {}
+    base_key = "vol_1.0_haircut_0.08"
+    for row in base_report.get("near_misses") or []:
+        if not (
+            row.get("semantics_type") == "touch_barrier"
+            and row.get("high_since_start_verified") is True
+            and row.get("barrier_already_touched") is False
+            and row.get("best_ask") is not None
+        ):
+            continue
+        spot = _safe_float(row.get("spot"))
+        threshold = _safe_float(row.get("threshold"))
+        target_dt = _parse_utc(row.get("target_time"))
+        asset = str(row.get("asset") or "")
+        side = str(row.get("side") or "")
+        q_effective = _safe_float(row.get("q_effective") or row.get("best_ask"))
+        if spot is None or threshold is None or target_dt is None or q_effective is None:
+            continue
+        years = max(1 / 365, (target_dt - generated_dt).total_seconds() / (365.0 * 86400.0))
+        row_key = "|".join(str(row.get(field) or "") for field in ("market_slug", "token_id", "side"))
+        target = variant_rows.setdefault(
+            row_key,
+            {
+                "market_slug": row.get("market_slug"),
+                "token_id": row.get("token_id"),
+                "asset": row.get("asset"),
+                "side": row.get("side"),
+                "threshold": row.get("threshold"),
+                "target_time": row.get("target_time"),
+                "market_creation_time": row.get("market_creation_time"),
+                "max_high_since_start": row.get("max_high_since_start"),
+                "probability_semantics": "touch_barrier",
+                "q_effective": q_effective,
+                "paper_only": True,
+                "counts_for_live_gate": False,
+                "live_order_path": False,
+                "variant_EV_safe": {},
+            },
+        )
+        for vol_multiplier in vol_multipliers:
+            annual_vol = float(base_vols.get(asset, row.get("annual_vol") or 0.60)) * float(vol_multiplier)
+            p_yes = first_passage_probability_upper(
+                spot=spot,
+                threshold=threshold,
+                annual_vol=annual_vol,
+                years=years,
+            )
+            for haircut in haircuts:
+                p_yes_lcb = max(0.0, p_yes - float(haircut))
+                p_yes_ucb = min(1.0, p_yes + float(haircut))
+                p_no_lcb = max(0.0, 1.0 - p_yes_ucb)
+                p_trade_lcb = p_yes_lcb if side == "YES" else p_no_lcb
+                ev_safe = round(p_trade_lcb - q_effective - cost, 8)
+                variant_key = f"vol_{float(vol_multiplier):.1f}_haircut_{float(haircut):.2f}"
+                target["variant_EV_safe"][variant_key] = ev_safe
+                if variant_key == base_key:
+                    target["base_EV_safe"] = ev_safe
+                    target["p_trade_lcb"] = round(p_trade_lcb, 8)
+    rows = list(variant_rows.values())
+    for row in rows:
+        values = [
+            float(value)
+            for value in (row.get("variant_EV_safe") or {}).values()
+            if value is not None
+        ]
+        span = max(values) - min(values) if values else None
+        row["model_confidence"] = round(max(0.0, 1.0 - min(1.0, span * 10.0)), 6) if span is not None else None
+    rows.sort(key=lambda row: float(row.get("base_EV_safe") if row.get("base_EV_safe") is not None else -1e9), reverse=True)
+    for index, row in enumerate(rows, start=1):
+        row["sensitivity_rank"] = index
+    return {
+        "schema_version": f"{SCHEMA_VERSION}.touch_sensitivity",
+        "scope": "polymarket_only",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+        "generated_at": base_report.get("generated_at") or generated_at,
+        "verified_not_touched_market_side_count": len(rows),
+        "base_model_ready_count": base_report.get("model_ready_count"),
+        "base_near_miss_watch_count": base_report.get("near_miss_watch_count"),
+        "vol_multipliers": list(vol_multipliers),
+        "haircuts": list(haircuts),
+        "rows": rows,
+    }
 
 
 def _count_by(rows: Iterable[Dict[str, Any]], key: str) -> List[Dict[str, Any]]:
@@ -793,6 +970,7 @@ def load_jsonl(path: str | Path) -> List[Dict[str, Any]]:
 __all__ = [
     "SCHEMA_VERSION",
     "build_crypto_probability_edge_report",
+    "build_crypto_touch_sensitivity_report",
     "fetch_binance_spot",
     "fetch_binance_high_since_start",
     "fetch_missing_orderbooks_for_markets",

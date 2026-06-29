@@ -2,20 +2,55 @@
   "artifact_paths": {
     "markouts": "evidence/polymarket_alpha/crypto_touch_near_miss_markouts.jsonl"
   },
-  "available_markout_count": 0,
+  "available_markout_count": 8,
+  "by_asset": [
+    {
+      "asset": "BTC",
+      "available_markout_count": 5,
+      "mean_markout_cents": -1.8
+    },
+    {
+      "asset": "ETH",
+      "available_markout_count": 3,
+      "mean_markout_cents": -1.0
+    }
+  ],
+  "by_horizon": [
+    {
+      "available_markout_count": 6,
+      "horizon": "300",
+      "mean_markout_cents": -1.5
+    },
+    {
+      "available_markout_count": 2,
+      "horizon": "900",
+      "mean_markout_cents": -1.5
+    }
+  ],
+  "by_side": [
+    {
+      "available_markout_count": 8,
+      "mean_markout_cents": -1.5,
+      "side": "YES"
+    }
+  ],
   "counts_for_live_gate": false,
   "live_order_path": false,
-  "markout_row_count": 15,
-  "markout_status": "missing_later_snapshots",
-  "mean_markout_cents": null,
+  "markout_row_count": 50,
+  "markout_status": "markout_available",
+  "mean_markout_cents": -1.5,
   "missing_snapshot_reason_counts": [
     {
-      "count": 15,
-      "reason": "missing_entry_time"
+      "count": 42,
+      "reason": "missing_later_snapshot"
+    },
+    {
+      "count": 8,
+      "reason": "none"
     }
   ],
   "paper_only": true,
   "schema_version": "polyweather_polymarket_alpha_crypto_touch_watch_markout.v1",
   "scope": "polymarket_only",
-  "watch_count": 3
+  "watch_count": 10
 }

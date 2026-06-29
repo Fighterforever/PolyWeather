@@ -28,6 +28,7 @@ DEFAULT_REPORT = DEFAULT_ROOT / "crypto_probability_edge_report.json"
 DEFAULT_CANDIDATES = DEFAULT_ROOT / "crypto_probability_candidates.jsonl"
 DEFAULT_SEMANTICS_AUDIT = DEFAULT_ROOT / "crypto_semantics_audit_report.json"
 DEFAULT_NEAR_MISS_WATCH = DEFAULT_ROOT / "crypto_touch_near_miss_watch.jsonl"
+DEFAULT_NEAR_MISS_SNAPSHOTS = DEFAULT_ROOT / "crypto_touch_near_miss_orderbook_snapshots.jsonl"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -36,6 +37,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--summary-output", default=str(DEFAULT_REPORT))
     parser.add_argument("--candidates-output", default=str(DEFAULT_CANDIDATES))
     parser.add_argument("--near-miss-watch-output", default=str(DEFAULT_NEAR_MISS_WATCH))
+    parser.add_argument("--near-miss-orderbook-snapshots-output", default=str(DEFAULT_NEAR_MISS_SNAPSHOTS))
     parser.add_argument("--semantics-audit", default=str(DEFAULT_SEMANTICS_AUDIT))
     parser.add_argument("--high-since-start-cache-dir", default=str(DEFAULT_ROOT / "binance_klines"))
     parser.add_argument("--metadata-cache-dir", default=str(DEFAULT_ROOT / "gamma_market_metadata"))
@@ -51,9 +53,29 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--generated-at", default=None)
     parser.add_argument("--min-edge", type=float, default=0.02)
     parser.add_argument("--cost", type=float, default=0.01)
+    parser.add_argument("--model-haircut", type=float, default=0.08)
     parser.add_argument("--min-depth", type=float, default=10.0)
     parser.add_argument("--max-spread", type=float, default=0.15)
     return parser.parse_args(argv)
+
+
+def _merge_jsonl_by_key(path: str | Path, rows: list[dict], key: str, *, require_fields: tuple[str, ...] = ()) -> int:
+    existing = [
+        row for row in load_jsonl(path)
+        if row.get(key) and all(row.get(field) is not None for field in require_fields)
+    ]
+    merged: dict[str, dict] = {str(row[key]): row for row in existing}
+    for row in rows:
+        if not isinstance(row, dict) or not row.get(key):
+            continue
+        if any(row.get(field) is None for field in require_fields):
+            continue
+        merged[str(row[key])] = row
+    materialized = sorted(
+        merged.values(),
+        key=lambda row: str(row.get("entry_time") or row.get("recorded_at") or row.get("timestamp") or ""),
+    )
+    return write_jsonl(path, materialized)
 
 
 def _metadata_cache_path(cache_dir: str | Path, market: dict) -> Path:
@@ -131,13 +153,29 @@ def main(argv: list[str] | None = None) -> None:
         max_orderbook_tokens=int(args.max_orderbook_tokens),
         min_edge=float(args.min_edge),
         cost=float(args.cost),
+        model_haircut=float(args.model_haircut),
         min_depth=float(args.min_depth),
         max_spread=float(args.max_spread),
         high_since_start_cache_dir=args.high_since_start_cache_dir,
     )
     write_jsonl(args.candidates_output, report.get("candidates") or [])
-    write_jsonl(args.near_miss_watch_output, report.get("near_miss_watch") or [])
-    compact = {key: value for key, value in report.items() if key not in {"candidates", "watch_rows", "near_miss_watch"}}
+    _merge_jsonl_by_key(
+        args.near_miss_orderbook_snapshots_output,
+        report.get("near_miss_orderbook_snapshots") or [],
+        "orderbook_snapshot_id",
+        require_fields=("recorded_at",),
+    )
+    _merge_jsonl_by_key(
+        args.near_miss_watch_output,
+        report.get("near_miss_watch") or [],
+        "watch_id",
+        require_fields=("entry_time", "orderbook_snapshot_id"),
+    )
+    compact = {
+        key: value
+        for key, value in report.items()
+        if key not in {"candidates", "watch_rows", "near_miss_watch", "near_miss_orderbook_snapshots", "near_misses"}
+    }
     semantics_audit = {}
     audit_path = Path(args.semantics_audit)
     if audit_path.exists():
@@ -152,6 +190,7 @@ def main(argv: list[str] | None = None) -> None:
     compact["artifact_paths"] = {
         "crypto_probability_candidates": str(args.candidates_output),
         "crypto_touch_near_miss_watch": str(args.near_miss_watch_output),
+        "crypto_touch_near_miss_orderbook_snapshots": str(args.near_miss_orderbook_snapshots_output),
     }
     write_json(args.summary_output, compact)
     print(

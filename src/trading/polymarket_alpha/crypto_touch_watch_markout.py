@@ -91,7 +91,13 @@ def build_crypto_touch_watch_markout_report(
     markouts: List[Dict[str, Any]] = []
     for watch in watches:
         token_id = str(watch.get("token_id") or "")
-        entry_time = _parse_utc(watch.get("watch_time") or watch.get("generated_at") or watch.get("timestamp"))
+        entry_time = _parse_utc(
+            watch.get("entry_time")
+            or watch.get("recorded_at")
+            or watch.get("watch_time")
+            or watch.get("generated_at")
+            or watch.get("timestamp")
+        )
         entry_price = _safe_float(watch.get("q_effective") or watch.get("best_ask"))
         wid = _watch_id(watch)
         for horizon in horizons:
@@ -129,7 +135,7 @@ def build_crypto_touch_watch_markout_report(
                 future = _first_after(price_by_token.get(token_id) or [], entry_time, horizon)
                 source = "price_row"
             if future is None:
-                row["missing_snapshot_reason"] = "no_later_snapshot"
+                row["missing_snapshot_reason"] = "missing_later_snapshot"
                 markouts.append(row)
                 continue
             exit_price = _safe_float(future.get("best_bid") or future.get("price_mid") or future.get("price"))
@@ -157,11 +163,31 @@ def build_crypto_touch_watch_markout_report(
         "markout_row_count": len(markouts),
         "available_markout_count": len(available),
         "mean_markout_cents": round(sum(float(row["markout_cents"]) for row in available) / len(available), 8) if available else None,
+        "by_horizon": _mean_by(available, "horizon"),
+        "by_asset": _mean_by(available, "asset"),
+        "by_side": _mean_by(available, "side"),
         "missing_snapshot_reason_counts": _count_by(markouts, "missing_snapshot_reason"),
         "markout_status": "no_near_miss_watch_rows" if not watches else "missing_later_snapshots" if not available else "markout_available",
         "markouts": markouts,
     }
     return report
+
+
+def _mean_by(rows: Iterable[Dict[str, Any]], key: str) -> List[Dict[str, Any]]:
+    grouped: Dict[str, List[float]] = defaultdict(list)
+    for row in rows:
+        markout = _safe_float(row.get("markout_cents"))
+        if markout is None:
+            continue
+        grouped[str(row.get(key) or "missing")].append(markout)
+    return [
+        {
+            key: bucket,
+            "available_markout_count": len(values),
+            "mean_markout_cents": round(sum(values) / len(values), 8),
+        }
+        for bucket, values in sorted(grouped.items())
+    ]
 
 
 def _count_by(rows: Iterable[Dict[str, Any]], key: str) -> List[Dict[str, Any]]:

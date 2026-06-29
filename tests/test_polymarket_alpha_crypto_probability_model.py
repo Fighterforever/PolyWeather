@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from src.trading.polymarket_alpha.crypto_probability_model import (
     build_crypto_probability_edge_report,
+    build_crypto_touch_sensitivity_report,
     first_passage_probability_upper,
     lognormal_probability_above,
     parse_crypto_threshold_market,
@@ -217,6 +218,116 @@ def test_touch_near_miss_watch_not_candidate_or_fill():
     assert watch["probability_semantics"] == "touch_barrier"
     assert watch["counts_for_live_gate"] is False
     assert watch["EV_safe"] < 0.02
+    assert watch["entry_time"] == "2026-06-29T00:00:00Z"
+    assert watch["recorded_at"] == "2026-06-29T00:00:00Z"
+    assert watch["orderbook_snapshot_id"]
+    assert report["near_miss_orderbook_snapshot_id_null_count"] == 0
+    assert report["near_miss_orderbook_snapshots"][0]["source"] == "crypto_touch_near_miss_watch"
+
+
+def test_near_miss_watch_has_entry_time():
+    report = build_crypto_probability_edge_report(
+        active_markets=[
+            _market(
+                market_slug="will-bitcoin-reach-85000-by-december-31-2026-from-june-8",
+                title="Will Bitcoin reach $85,000 by December 31, 2026?",
+                question="Will Bitcoin reach $85,000 by December 31, 2026?",
+                description="This resolves Yes if any Binance candle High is at least $85,000 after market creation.",
+                token_id_by_outcome={"Yes": "yes-token", "No": "no-token"},
+                token_ids=["yes-token", "no-token"],
+                orderbooks={
+                    "yes-token": {"best_bid": 0.26, "best_ask": 0.27, "spread": 0.01, "ask_depth_usdc_3c": 100},
+                    "no-token": {"best_bid": 0.70, "best_ask": 0.73, "spread": 0.03, "ask_depth_usdc_3c": 100},
+                },
+            )
+        ],
+        spot_prices={"BTC": 60000},
+        generated_at="2026-06-29T00:00:00Z",
+        high_since_start_fetcher=lambda **kwargs: {
+            "max_high_since_start": 65000,
+            "high_since_start_verified": True,
+            "barrier_already_touched": False,
+        },
+        min_edge=0.02,
+        cost=0.01,
+    )
+
+    assert report["near_miss_watch_count"] >= 1
+    assert all(row.get("entry_time") for row in report["near_miss_watch"])
+
+
+def test_near_miss_watch_has_orderbook_snapshot_id():
+    report = build_crypto_probability_edge_report(
+        active_markets=[
+            _market(
+                market_slug="will-bitcoin-reach-85000-by-december-31-2026-from-june-8",
+                title="Will Bitcoin reach $85,000 by December 31, 2026?",
+                question="Will Bitcoin reach $85,000 by December 31, 2026?",
+                description="This resolves Yes if any Binance candle High is at least $85,000 after market creation.",
+                token_id_by_outcome={"Yes": "yes-token", "No": "no-token"},
+                token_ids=["yes-token", "no-token"],
+                orderbooks={
+                    "yes-token": {
+                        "best_bid": 0.26,
+                        "best_ask": 0.27,
+                        "spread": 0.01,
+                        "ask_depth_usdc_3c": 100,
+                        "bids": [{"price": 0.26, "size": 10}],
+                        "asks": [{"price": 0.27, "size": 10}],
+                    },
+                    "no-token": {"best_bid": 0.70, "best_ask": 0.73, "spread": 0.03, "ask_depth_usdc_3c": 100},
+                },
+            )
+        ],
+        spot_prices={"BTC": 60000},
+        generated_at="2026-06-29T00:00:00Z",
+        high_since_start_fetcher=lambda **kwargs: {
+            "max_high_since_start": 65000,
+            "high_since_start_verified": True,
+            "barrier_already_touched": False,
+        },
+        min_edge=0.02,
+        cost=0.01,
+    )
+
+    watch = report["near_miss_watch"][0]
+    snapshot_ids = {row["orderbook_snapshot_id"] for row in report["near_miss_orderbook_snapshots"]}
+    assert watch["orderbook_snapshot_id"] in snapshot_ids
+    assert watch["counts_for_live_gate"] is False
+
+
+def test_touch_sensitivity_report_is_diagnostic_only():
+    report = build_crypto_touch_sensitivity_report(
+        active_markets=[
+            _market(
+                market_slug="will-bitcoin-reach-85000-by-december-31-2026-from-june-8",
+                title="Will Bitcoin reach $85,000 by December 31, 2026?",
+                question="Will Bitcoin reach $85,000 by December 31, 2026?",
+                description="This resolves Yes if any Binance candle High is at least $85,000 after market creation.",
+                token_id_by_outcome={"Yes": "yes-token", "No": "no-token"},
+                token_ids=["yes-token", "no-token"],
+                orderbooks={
+                    "yes-token": {"best_bid": 0.26, "best_ask": 0.27, "spread": 0.01, "ask_depth_usdc_3c": 100},
+                    "no-token": {"best_bid": 0.70, "best_ask": 0.73, "spread": 0.03, "ask_depth_usdc_3c": 100},
+                },
+            )
+        ],
+        spot_prices={"BTC": 60000},
+        annual_vols={"BTC": 0.55},
+        generated_at="2026-06-29T00:00:00Z",
+        high_since_start_fetcher=lambda **kwargs: {
+            "max_high_since_start": 65000,
+            "high_since_start_verified": True,
+            "barrier_already_touched": False,
+        },
+        min_edge=0.02,
+        cost=0.01,
+    )
+
+    assert report["live_order_path"] is False
+    assert report["rows"]
+    assert report["rows"][0]["variant_EV_safe"]
+    assert "sensitivity_rank" in report["rows"][0]
 
 
 def test_proxy_creation_time_blocks_official_candidate_but_keeps_watch():

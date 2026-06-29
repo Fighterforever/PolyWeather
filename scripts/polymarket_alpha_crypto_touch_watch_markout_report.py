@@ -21,12 +21,13 @@ from src.trading.polymarket_alpha.crypto_touch_watch_markout import (  # noqa: E
 
 DEFAULT_ROOT = Path("evidence/polymarket_alpha")
 DEFAULT_PAPER = DEFAULT_ROOT / "probability_edge_paper"
+DEFAULT_NEAR_MISS_SNAPSHOTS = DEFAULT_ROOT / "crypto_touch_near_miss_orderbook_snapshots.jsonl"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Compute paper-only markouts for crypto touch near-miss watch rows.")
     parser.add_argument("--watch-rows", default=str(DEFAULT_ROOT / "crypto_touch_near_miss_watch.jsonl"))
-    parser.add_argument("--orderbook-snapshots", default=str(DEFAULT_PAPER / "orderbook_snapshots.jsonl"))
+    parser.add_argument("--orderbook-snapshots", default=str(DEFAULT_NEAR_MISS_SNAPSHOTS))
     parser.add_argument("--price-rows", default=str(DEFAULT_ROOT / "probability_decision_snapshots.jsonl"))
     parser.add_argument("--markouts-output", default=str(DEFAULT_ROOT / "crypto_touch_near_miss_markouts.jsonl"))
     parser.add_argument("--summary-output", default=str(DEFAULT_ROOT / "crypto_touch_near_miss_markout_report.json"))
