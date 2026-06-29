@@ -838,31 +838,74 @@ def _stable_watch_id(row: Dict[str, Any]) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:24]
 
 
+def _implied_touch_vol(
+    *,
+    spot: float,
+    threshold: float,
+    years: float,
+    target_probability: float,
+) -> Optional[float]:
+    if spot <= 0 or threshold <= 0 or years <= 0:
+        return None
+    target_probability = max(0.0, min(1.0, float(target_probability)))
+    if target_probability <= 0.0 or target_probability >= 1.0:
+        return None
+    low = 1e-6
+    high = 5.0
+    low_p = first_passage_probability_upper(spot=spot, threshold=threshold, annual_vol=low, years=years)
+    high_p = first_passage_probability_upper(spot=spot, threshold=threshold, annual_vol=high, years=years)
+    if not (low_p <= target_probability <= high_p):
+        return None
+    for _ in range(80):
+        mid = (low + high) / 2.0
+        mid_p = first_passage_probability_upper(spot=spot, threshold=threshold, annual_vol=mid, years=years)
+        if mid_p < target_probability:
+            low = mid
+        else:
+            high = mid
+    return round((low + high) / 2.0, 8)
+
+
 def build_crypto_touch_sensitivity_report(
     *,
     active_markets: Iterable[Dict[str, Any]],
+    crypto_probability_report: Optional[Dict[str, Any]] = None,
     spot_prices: Optional[Dict[str, float]] = None,
     annual_vols: Optional[Dict[str, float]] = None,
     generated_at: Optional[str] = None,
     vol_multipliers: Iterable[float] = (0.8, 1.0, 1.2),
+    cost_scenarios: Iterable[float] = (0.005, 0.01, 0.015),
     haircuts: Iterable[float] = (0.05, 0.08, 0.10),
     **kwargs: Any,
 ) -> Dict[str, Any]:
     active_rows = [dict(row) for row in active_markets if isinstance(row, dict)]
     base_vols = annual_vols or {"BTC": 0.55, "ETH": 0.70}
-    base_report = build_crypto_probability_edge_report(
-        active_markets=active_rows,
-        spot_prices=spot_prices,
-        annual_vols=base_vols,
-        generated_at=generated_at,
-        model_haircut=0.08,
-        **kwargs,
-    )
+    base_report = crypto_probability_report if isinstance(crypto_probability_report, dict) and crypto_probability_report else None
+    if base_report is None:
+        base_report = build_crypto_probability_edge_report(
+            active_markets=active_rows,
+            spot_prices=spot_prices,
+            annual_vols=base_vols,
+            generated_at=generated_at,
+            model_haircut=0.08,
+            **kwargs,
+        )
     generated_dt = _parse_utc(base_report.get("generated_at") or generated_at) or datetime.now(timezone.utc)
     cost = float(kwargs.get("cost", 0.01))
     variant_rows: Dict[str, Dict[str, Any]] = {}
     base_key = "vol_1.0_haircut_0.08"
-    for row in base_report.get("near_misses") or []:
+    sensitivity_source_rows: List[Dict[str, Any]] = []
+    seen_sensitivity_rows: set[str] = set()
+    for key in ("near_misses", "top_10_near_misses", "candidates", "near_miss_watch"):
+        for row in base_report.get(key) or []:
+            if not isinstance(row, dict):
+                continue
+            row_key = "|".join(str(row.get(field) or "") for field in ("market_slug", "token_id", "side"))
+            if row_key in seen_sensitivity_rows:
+                continue
+            seen_sensitivity_rows.add(row_key)
+            sensitivity_source_rows.append(row)
+    for row in sensitivity_source_rows:
         if not (
             row.get("semantics_type") == "touch_barrier"
             and row.get("high_since_start_verified") is True
@@ -880,6 +923,14 @@ def build_crypto_touch_sensitivity_report(
             continue
         years = max(1 / 365, (target_dt - generated_dt).total_seconds() / (365.0 * 86400.0))
         row_key = "|".join(str(row.get(field) or "") for field in ("market_slug", "token_id", "side"))
+        model_vol = float(base_vols.get(asset, row.get("annual_vol") or 0.60))
+        market_yes_probability = q_effective if side == "YES" else 1.0 - q_effective
+        implied_vol = _implied_touch_vol(
+            spot=spot,
+            threshold=threshold,
+            years=years,
+            target_probability=market_yes_probability,
+        )
         target = variant_rows.setdefault(
             row_key,
             {
@@ -892,15 +943,24 @@ def build_crypto_touch_sensitivity_report(
                 "market_creation_time": row.get("market_creation_time"),
                 "max_high_since_start": row.get("max_high_since_start"),
                 "probability_semantics": "touch_barrier",
+                "realized_vol_7d": None,
+                "realized_vol_30d": None,
+                "realized_vol_90d": None,
+                "realized_vol_gap_reason": "local_realized_vol_series_unavailable",
+                "model_vol": model_vol,
+                "market_implied_touch_vol": implied_vol,
+                "vol_edge": round(model_vol - implied_vol, 8) if implied_vol is not None else None,
                 "q_effective": q_effective,
                 "paper_only": True,
                 "counts_for_live_gate": False,
                 "live_order_path": False,
                 "variant_EV_safe": {},
+                "EV_safe_by_vol_multiplier": {},
+                "EV_safe_by_cost": {},
             },
         )
         for vol_multiplier in vol_multipliers:
-            annual_vol = float(base_vols.get(asset, row.get("annual_vol") or 0.60)) * float(vol_multiplier)
+            annual_vol = model_vol * float(vol_multiplier)
             p_yes = first_passage_probability_upper(
                 spot=spot,
                 threshold=threshold,
@@ -918,6 +978,15 @@ def build_crypto_touch_sensitivity_report(
                 if variant_key == base_key:
                     target["base_EV_safe"] = ev_safe
                     target["p_trade_lcb"] = round(p_trade_lcb, 8)
+            p_yes_base_haircut = max(0.0, p_yes - 0.08)
+            p_yes_base_ucb = min(1.0, p_yes + 0.08)
+            p_no_base_lcb = max(0.0, 1.0 - p_yes_base_ucb)
+            p_trade_base_lcb = p_yes_base_haircut if side == "YES" else p_no_base_lcb
+            target["EV_safe_by_vol_multiplier"][f"{float(vol_multiplier):.1f}x"] = round(p_trade_base_lcb - q_effective - cost, 8)
+        p_trade_lcb = _safe_float(target.get("p_trade_lcb"))
+        if p_trade_lcb is not None:
+            for cost_scenario in cost_scenarios:
+                target["EV_safe_by_cost"][f"{float(cost_scenario):.3f}"] = round(p_trade_lcb - q_effective - float(cost_scenario), 8)
     rows = list(variant_rows.values())
     for row in rows:
         values = [
@@ -927,6 +996,13 @@ def build_crypto_touch_sensitivity_report(
         ]
         span = max(values) - min(values) if values else None
         row["model_confidence"] = round(max(0.0, 1.0 - min(1.0, span * 10.0)), 6) if span is not None else None
+        scenario_values = list((row.get("EV_safe_by_vol_multiplier") or {}).values()) + list((row.get("EV_safe_by_cost") or {}).values())
+        base_ev = _safe_float(row.get("base_EV_safe"))
+        row["sensitivity_fragile"] = bool(
+            base_ev is not None
+            and base_ev > 0
+            and any(_safe_float(value) is not None and float(value) <= 0 for value in scenario_values)
+        )
     rows.sort(key=lambda row: float(row.get("base_EV_safe") if row.get("base_EV_safe") is not None else -1e9), reverse=True)
     for index, row in enumerate(rows, start=1):
         row["sensitivity_rank"] = index
@@ -941,7 +1017,9 @@ def build_crypto_touch_sensitivity_report(
         "base_model_ready_count": base_report.get("model_ready_count"),
         "base_near_miss_watch_count": base_report.get("near_miss_watch_count"),
         "vol_multipliers": list(vol_multipliers),
+        "cost_scenarios": list(cost_scenarios),
         "haircuts": list(haircuts),
+        "sensitivity_fragile_count": sum(1 for row in rows if row.get("sensitivity_fragile")),
         "rows": rows,
     }
 
@@ -975,6 +1053,7 @@ __all__ = [
     "fetch_binance_high_since_start",
     "fetch_missing_orderbooks_for_markets",
     "first_passage_probability_upper",
+    "_implied_touch_vol",
     "load_jsonl",
     "lognormal_probability_above",
     "parse_crypto_threshold_market",

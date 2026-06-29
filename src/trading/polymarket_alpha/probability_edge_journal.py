@@ -5,7 +5,7 @@ import math
 import hashlib
 from collections import defaultdict
 from dataclasses import asdict, is_dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
@@ -218,17 +218,60 @@ def _crypto_touch_fill_rejection_reason(candidate: Dict[str, Any]) -> Optional[s
     return None
 
 
-def _first_after(rows: List[Dict[str, Any]], at: datetime, horizon_seconds: int) -> Optional[Dict[str, Any]]:
-    target = at.timestamp() + int(horizon_seconds)
+def _row_time(row: Dict[str, Any]) -> Optional[datetime]:
+    return _parse_utc(row.get("timestamp") or row.get("recorded_at"))
+
+
+def _horizon_tolerance_seconds(horizon_seconds: int) -> int:
+    return {
+        60: 30,
+        300: 90,
+        900: 180,
+        3600: 600,
+        21600: 1800,
+        86400: 7200,
+    }.get(int(horizon_seconds), max(30, int(horizon_seconds) // 10))
+
+
+def _latest_after(rows: List[Dict[str, Any]], at: datetime) -> Optional[Dict[str, Any]]:
+    latest: Optional[Dict[str, Any]] = None
+    latest_ts: Optional[datetime] = None
+    for row in rows:
+        ts = _row_time(row)
+        if ts is None or ts <= at:
+            continue
+        if latest_ts is None or ts > latest_ts:
+            latest = row
+            latest_ts = ts
+    return latest
+
+
+def _nearest_for_horizon(rows: List[Dict[str, Any]], at: datetime, horizon_seconds: int) -> tuple[Optional[Dict[str, Any]], str, Optional[str], Optional[float]]:
+    if int(horizon_seconds) == 0:
+        latest = _latest_after(rows, at)
+        if latest is None:
+            return None, "missing_later_snapshot", None, None
+        ts = _row_time(latest)
+        return latest, "current_latest", ts.isoformat().replace("+00:00", "Z") if ts else None, None
+    target_dt = at + timedelta(seconds=int(horizon_seconds))
+    tolerance = _horizon_tolerance_seconds(int(horizon_seconds))
+    best: Optional[Dict[str, Any]] = None
+    best_lag: Optional[float] = None
     for row in rows:
         ts = _parse_utc(row.get("timestamp") or row.get("recorded_at"))
         if ts is None:
             continue
-        if int(horizon_seconds) == 0 and ts.timestamp() <= at.timestamp():
+        lag = (ts - target_dt).total_seconds()
+        if abs(lag) > tolerance:
             continue
-        if ts.timestamp() >= target:
-            return row
-    return None
+        if best_lag is None or abs(lag) < abs(best_lag):
+            best = row
+            best_lag = lag
+    target_time = target_dt.isoformat().replace("+00:00", "Z")
+    if best is None:
+        return None, "missing_snapshot_for_horizon", target_time, None
+    status = "exact" if float(best_lag or 0.0) == 0.0 else "within_tolerance"
+    return best, status, target_time, float(best_lag or 0.0)
 
 
 def _valid_probability_edge_fill(fill: Dict[str, Any], *, min_edge: float = 0.01) -> tuple[bool, Optional[str]]:
@@ -332,6 +375,10 @@ def build_markout_report(
                 "model_source": fill.get("model_source"),
                 "entry_time": fill.get("entry_time") or fill.get("timestamp") or fill.get("generated_at") or fill.get("recorded_at"),
                 "future_time": None,
+                "target_time": None,
+                "matched_snapshot_time": None,
+                "match_lag_seconds": None,
+                "horizon_match_status": None,
                 "horizon_seconds": horizon,
                 "horizon_label": "current" if horizon == 0 else f"{horizon}s",
                 "q_effective": q_effective,
@@ -353,25 +400,50 @@ def build_markout_report(
             if q_effective is None:
                 markouts.append({**base_row, "missing_snapshot_reason": "missing_entry_reference_price"})
                 continue
-            future = _first_after(token_snapshots, entry_time, horizon) if token_snapshots else None
+            future = None
+            match_status = "missing_snapshot_for_horizon" if int(horizon) != 0 else "missing_later_snapshot"
+            target_time = None
+            match_lag = None
+            if token_snapshots:
+                future, match_status, target_time, match_lag = _nearest_for_horizon(token_snapshots, entry_time, horizon)
             future_source = "orderbook_snapshot"
             if future is None:
-                future = _first_after(token_history, entry_time, horizon)
+                future, match_status, target_time, match_lag = _nearest_for_horizon(token_history, entry_time, horizon)
                 future_source = "price_row"
             if future is None:
-                markouts.append({**base_row, "missing_snapshot_reason": "missing_later_snapshot"})
+                markouts.append(
+                    {
+                        **base_row,
+                        "target_time": target_time,
+                        "horizon_match_status": match_status,
+                        "missing_snapshot_reason": match_status,
+                    }
+                )
                 continue
             exit_price = _safe_float(future.get("best_bid"))
             if exit_price is None:
                 exit_price = _safe_float(future.get("price_mid") or future.get("price"))
             if exit_price is None:
-                markouts.append({**base_row, "missing_snapshot_reason": "missing_exit_bid_or_mid"})
+                markouts.append(
+                    {
+                        **base_row,
+                        "target_time": target_time,
+                        "matched_snapshot_time": future.get("timestamp") or future.get("recorded_at"),
+                        "match_lag_seconds": match_lag,
+                        "horizon_match_status": match_status,
+                        "missing_snapshot_reason": "missing_exit_bid_or_mid",
+                    }
+                )
                 continue
             markout_cents = round((exit_price - q_effective) * 100.0, 6)
             markouts.append(
                 {
                     **base_row,
                     "future_time": future.get("timestamp") or future.get("recorded_at"),
+                    "target_time": target_time,
+                    "matched_snapshot_time": future.get("timestamp") or future.get("recorded_at"),
+                    "match_lag_seconds": match_lag,
+                    "horizon_match_status": match_status,
                     "future_side_price": round(exit_price, 8),
                     "future_source": future_source,
                     "markout": round(exit_price - q_effective, 8),

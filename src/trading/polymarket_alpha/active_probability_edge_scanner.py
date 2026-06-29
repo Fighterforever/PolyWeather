@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import math
 from collections import Counter
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
@@ -21,6 +22,41 @@ def _safe_float(value: Any) -> Optional[float]:
     if math.isnan(parsed) or math.isinf(parsed):
         return None
     return parsed
+
+
+def _parse_utc(value: Any) -> Optional[datetime]:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def _horizon_label(seconds: int) -> str:
+    return {
+        60: "60s",
+        300: "5m",
+        900: "15m",
+        3600: "1h",
+        21600: "6h",
+        86400: "24h",
+    }.get(int(seconds), f"{int(seconds)}s")
+
+
+def _horizon_tolerance_seconds(seconds: int) -> int:
+    return {
+        60: 30,
+        300: 90,
+        900: 180,
+        3600: 600,
+        21600: 1800,
+        86400: 7200,
+    }.get(int(seconds), max(30, int(seconds) // 10))
 
 
 def _model_oos_passed(model_report: Dict[str, Any]) -> bool:
@@ -73,6 +109,105 @@ def _books(row: Dict[str, Any]) -> List[tuple[str, Dict[str, Any], str]]:
 def _source_counts(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     counts = Counter(str(row.get("model_source") or "missing") for row in rows)
     return [{"model_source": key, "count": value} for key, value in sorted(counts.items())]
+
+
+def _fill_identity(row: Dict[str, Any]) -> str:
+    return str(row.get("fill_id") or f"{row.get('market_slug')}|{row.get('token_id')}|{row.get('side')}")
+
+
+def _snapshots_for_fill(fill: Dict[str, Any], snapshots: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    fill_id = str(fill.get("fill_id") or "")
+    token_id = str(fill.get("token_id") or "")
+    matched: List[Dict[str, Any]] = []
+    for snapshot in snapshots:
+        if not isinstance(snapshot, dict):
+            continue
+        if fill_id and str(snapshot.get("fill_id") or "") == fill_id:
+            matched.append(snapshot)
+        elif token_id and str(snapshot.get("token_id") or "") == token_id:
+            matched.append(snapshot)
+    matched.sort(key=lambda row: str(row.get("timestamp") or row.get("recorded_at") or ""))
+    return matched
+
+
+def build_formal_fill_followup_snapshot_coverage_report(
+    *,
+    fills: Iterable[Dict[str, Any]],
+    followup_snapshots: Iterable[Dict[str, Any]],
+    snapshot_path: str | Path = "evidence/polymarket_alpha/probability_edge_paper/fill_followup_orderbook_snapshots.jsonl",
+    watcher_status: Optional[Dict[str, Any]] = None,
+    horizons: tuple[int, ...] = (60, 300, 900, 3600, 21600, 86400),
+) -> Dict[str, Any]:
+    materialized_fills = [row for row in fills if isinstance(row, dict)]
+    materialized_snapshots = [row for row in followup_snapshots if isinstance(row, dict)]
+    count_by_fill: List[Dict[str, Any]] = []
+    missing_by_fill: List[Dict[str, Any]] = []
+    coverage: Dict[str, Dict[str, Any]] = {
+        _horizon_label(horizon): {"covered_fill_count": 0, "missing_fill_count": 0, "matched_rows": []}
+        for horizon in horizons
+    }
+    first_by_fill: List[Dict[str, Any]] = []
+    last_by_fill: List[Dict[str, Any]] = []
+    fill_tokens: List[Dict[str, Any]] = []
+    for fill in materialized_fills:
+        identity = _fill_identity(fill)
+        token_id = str(fill.get("token_id") or "")
+        entry_time = _parse_utc(fill.get("entry_time") or fill.get("timestamp") or fill.get("generated_at"))
+        snapshots = _snapshots_for_fill(fill, materialized_snapshots)
+        after_entry = []
+        for snapshot in snapshots:
+            snap_time = _parse_utc(snapshot.get("timestamp") or snapshot.get("recorded_at"))
+            if snap_time is not None and entry_time is not None and snap_time > entry_time:
+                after_entry.append((snap_time, snapshot))
+        fill_tokens.append({"fill_id": fill.get("fill_id"), "market_slug": fill.get("market_slug"), "token_id": token_id})
+        count_by_fill.append({"fill_id": fill.get("fill_id"), "token_id": token_id, "count": len(after_entry)})
+        if after_entry:
+            first_by_fill.append({"fill_id": fill.get("fill_id"), "token_id": token_id, "timestamp": after_entry[0][0].isoformat().replace("+00:00", "Z")})
+            last_by_fill.append({"fill_id": fill.get("fill_id"), "token_id": token_id, "timestamp": after_entry[-1][0].isoformat().replace("+00:00", "Z")})
+        missing_horizons: List[str] = []
+        for horizon in horizons:
+            label = _horizon_label(horizon)
+            matched = None
+            lag = None
+            if entry_time is not None:
+                target = entry_time + timedelta(seconds=int(horizon))
+                tolerance = _horizon_tolerance_seconds(int(horizon))
+                for snap_time, snapshot in after_entry:
+                    candidate_lag = (snap_time - target).total_seconds()
+                    if abs(candidate_lag) <= tolerance and (lag is None or abs(candidate_lag) < abs(lag)):
+                        matched = snapshot
+                        lag = candidate_lag
+            if matched is None:
+                coverage[label]["missing_fill_count"] += 1
+                missing_horizons.append(label)
+            else:
+                coverage[label]["covered_fill_count"] += 1
+                coverage[label]["matched_rows"].append(
+                    {
+                        "fill_id": fill.get("fill_id"),
+                        "token_id": token_id,
+                        "matched_snapshot_time": matched.get("timestamp") or matched.get("recorded_at"),
+                        "match_lag_seconds": lag,
+                    }
+                )
+        missing_by_fill.append({"fill_id": fill.get("fill_id"), "token_id": token_id, "missing_horizons": missing_horizons})
+    return {
+        "schema_version": f"{SCHEMA_VERSION}.formal_fill_followup_snapshot_coverage",
+        "scope": "polymarket_only",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+        "fill_count": len(materialized_fills),
+        "fill_tokens": fill_tokens,
+        "followup_snapshot_count": len(materialized_snapshots),
+        "followup_snapshot_count_by_fill": count_by_fill,
+        "first_snapshot_after_entry": first_by_fill,
+        "last_snapshot_after_entry": last_by_fill,
+        "coverage_by_horizon": coverage,
+        "missing_horizon_by_fill": missing_by_fill,
+        "snapshot_path": str(snapshot_path),
+        "watcher_status": watcher_status or {"state": "unknown"},
+    }
 
 
 def scan_active_probability_edges(
@@ -309,6 +444,7 @@ def load_jsonl(path: str | Path) -> List[Dict[str, Any]]:
 __all__ = [
     "SCHEMA_VERSION",
     "build_formal_fill_followup_orderbook_snapshots",
+    "build_formal_fill_followup_snapshot_coverage_report",
     "load_json",
     "load_jsonl",
     "scan_active_probability_edges",

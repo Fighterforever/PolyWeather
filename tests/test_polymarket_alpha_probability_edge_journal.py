@@ -67,7 +67,7 @@ def test_crypto_touch_formal_fills_counted_for_markout():
 
     assert report["fill_count"] == 1
     assert report["available_markout_count"] == 0
-    assert report["markouts"][0]["missing_snapshot_reason"] == "missing_later_snapshot"
+    assert report["markouts"][0]["missing_snapshot_reason"] == "missing_snapshot_for_horizon"
     assert report["markout_status"] == "missing_later_snapshot"
 
 
@@ -95,7 +95,65 @@ def test_missing_later_snapshot_does_not_hide_fill_count():
     assert report["markout_count"] == 3
     assert report["available_markout_count"] == 0
     reasons = {row["reason"]: row["count"] for row in report["missing_snapshot_reason_counts"]}
-    assert reasons["missing_later_snapshot"] == 3
+    assert reasons["missing_snapshot_for_horizon"] == 2
+    assert reasons["missing_later_snapshot"] == 1
+
+
+def test_markout_uses_horizon_tolerance():
+    fill = _valid_crypto_touch_candidate(EV_safe=0.03, orderbook_snapshot_id="snap-1")
+    fill["entry_time"] = "2026-06-29T00:00:00Z"
+    report = build_markout_report(
+        fills=[fill],
+        price_rows=[
+            {"token_id": "yes-token", "timestamp": "2026-06-29T00:04:20Z", "price_mid": 0.24},
+        ],
+        horizons=(300,),
+    )
+
+    five_min = next(row for row in report["markouts"] if row["horizon_seconds"] == 300)
+    assert five_min["horizon_match_status"] == "within_tolerance"
+    assert five_min["target_time"] == "2026-06-29T00:05:00Z"
+    assert five_min["matched_snapshot_time"] == "2026-06-29T00:04:20Z"
+    assert five_min["match_lag_seconds"] == -40.0
+
+
+def test_markout_does_not_reuse_1h_snapshot_for_5m():
+    fill = _valid_crypto_touch_candidate(EV_safe=0.03, orderbook_snapshot_id="snap-1")
+    fill["entry_time"] = "2026-06-29T00:00:00Z"
+    report = build_markout_report(
+        fills=[fill],
+        price_rows=[
+            {"token_id": "yes-token", "timestamp": "2026-06-29T01:00:00Z", "price_mid": 0.24},
+        ],
+        horizons=(300, 3600),
+    )
+
+    five_min = next(row for row in report["markouts"] if row["horizon_seconds"] == 300)
+    one_hour = next(row for row in report["markouts"] if row["horizon_seconds"] == 3600)
+    assert five_min["markout_cents"] is None
+    assert five_min["horizon_match_status"] == "missing_snapshot_for_horizon"
+    assert one_hour["horizon_match_status"] == "exact"
+    assert one_hour["matched_snapshot_time"] == "2026-06-29T01:00:00Z"
+
+
+def test_current_markout_uses_latest_snapshot_only_for_current():
+    fill = _valid_crypto_touch_candidate(EV_safe=0.03, orderbook_snapshot_id="snap-1")
+    fill["entry_time"] = "2026-06-29T00:00:00Z"
+    report = build_markout_report(
+        fills=[fill],
+        price_rows=[
+            {"token_id": "yes-token", "timestamp": "2026-06-29T00:01:00Z", "price_mid": 0.21},
+            {"token_id": "yes-token", "timestamp": "2026-06-29T01:00:00Z", "price_mid": 0.25},
+        ],
+        horizons=(60,),
+    )
+
+    one_min = next(row for row in report["markouts"] if row["horizon_seconds"] == 60)
+    current = next(row for row in report["markouts"] if row["horizon_seconds"] == 0)
+    assert one_min["horizon_match_status"] == "exact"
+    assert one_min["matched_snapshot_time"] == "2026-06-29T00:01:00Z"
+    assert current["horizon_match_status"] == "current_latest"
+    assert current["matched_snapshot_time"] == "2026-06-29T01:00:00Z"
 
 
 def test_probability_edge_resolved_audit_keeps_unresolved_pnl_null():

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from src.trading.polymarket_alpha.active_probability_edge_scanner import (
     build_formal_fill_followup_orderbook_snapshots,
+    build_formal_fill_followup_snapshot_coverage_report,
     scan_active_probability_edges,
 )
 from scripts.polymarket_alpha_active_probability_edge_report import _merge_probability_edge_fills
@@ -305,3 +306,32 @@ def test_active_report_merge_dedupes_repeated_token_fill_and_keeps_first_entry()
 
     assert len(merged) == 1
     assert merged[0]["fill_id"] == "first"
+
+
+def test_followup_snapshot_coverage_reports_missing_horizons():
+    report = build_formal_fill_followup_snapshot_coverage_report(
+        fills=[
+            {
+                "fill_id": "fill-1",
+                "market_slug": "btc-touch",
+                "token_id": "yes-token",
+                "entry_time": "2026-06-29T00:00:00Z",
+            }
+        ],
+        followup_snapshots=[
+            {
+                "fill_id": "fill-1",
+                "token_id": "yes-token",
+                "recorded_at": "2026-06-29T00:05:30Z",
+                "best_bid": 0.2,
+            }
+        ],
+        watcher_status={"state": "running"},
+    )
+
+    assert report["fill_count"] == 1
+    assert report["followup_snapshot_count_by_fill"][0]["count"] == 1
+    assert report["coverage_by_horizon"]["5m"]["covered_fill_count"] == 1
+    assert report["coverage_by_horizon"]["60s"]["missing_fill_count"] == 1
+    assert report["missing_horizon_by_fill"][0]["missing_horizons"] == ["60s", "15m", "1h", "6h", "24h"]
+    assert report["watcher_status"]["state"] == "running"

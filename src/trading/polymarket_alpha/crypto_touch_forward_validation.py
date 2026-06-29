@@ -51,6 +51,13 @@ def _mean_by_horizon(rows: Iterable[Dict[str, Any]]) -> Dict[str, Optional[float
     return {key: _mean(values) for key, values in sorted(grouped.items())}
 
 
+def _count_by_key(rows: Iterable[Dict[str, Any]], key: str) -> Dict[str, int]:
+    counts: Dict[str, int] = defaultdict(int)
+    for row in rows:
+        counts[str(row.get(key) or "missing")] += 1
+    return dict(sorted(counts.items()))
+
+
 def _bucket_rows(rows: Iterable[Dict[str, Any]], key: str) -> List[Dict[str, Any]]:
     grouped: Dict[str, List[float]] = defaultdict(list)
     for row in rows:
@@ -121,6 +128,26 @@ def _formal_fill_summary(fills: List[Dict[str, Any]], markouts: List[Dict[str, A
     }
 
 
+def _horizon_markout_validity(markouts: List[Dict[str, Any]]) -> Dict[str, Dict[str, int]]:
+    by_horizon: Dict[str, Dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    for row in markouts:
+        horizon = _horizon_key(row)
+        status = str(row.get("horizon_match_status") or row.get("missing_snapshot_reason") or "missing")
+        by_horizon[horizon][status] += 1
+    return {horizon: dict(sorted(counts.items())) for horizon, counts in sorted(by_horizon.items())}
+
+
+def _surface_support_count(fills: List[Dict[str, Any]], surface_report: Optional[Dict[str, Any]]) -> int:
+    if not isinstance(surface_report, dict):
+        return 0
+    supported = {
+        str(row.get("market_slug"))
+        for row in (surface_report.get("rows") or []) + (surface_report.get("top_relative_value_rows") or [])
+        if isinstance(row, dict) and row.get("surface_supports_model_direction") is True
+    }
+    return sum(1 for fill in fills if str(fill.get("market_slug")) in supported)
+
+
 def _near_miss_summary(watches: List[Dict[str, Any]], markouts: List[Dict[str, Any]]) -> Dict[str, Any]:
     available = [row for row in markouts if row.get("markout_cents") is not None]
     by_horizon = _mean_by_horizon(available)
@@ -160,6 +187,9 @@ def build_crypto_touch_forward_validation_report(
     near_miss_watch: Iterable[Dict[str, Any]],
     near_miss_markouts: Iterable[Dict[str, Any]],
     invalidated_old_fills: Iterable[Dict[str, Any]] = (),
+    followup_coverage_report: Optional[Dict[str, Any]] = None,
+    surface_report: Optional[Dict[str, Any]] = None,
+    sensitivity_report: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     fills = [row for row in formal_fills if isinstance(row, dict)]
     formal_markout_rows = [row for row in formal_markouts if isinstance(row, dict)]
@@ -167,6 +197,18 @@ def build_crypto_touch_forward_validation_report(
     near_markout_rows = [row for row in near_miss_markouts if isinstance(row, dict)]
     formal = _formal_fill_summary(fills, formal_markout_rows)
     near = _near_miss_summary(watch_rows, near_markout_rows)
+    horizon_validity = _horizon_markout_validity(formal_markout_rows)
+    non_current_markouts = [
+        row for row in formal_markout_rows
+        if row.get("markout_cents") is not None and _horizon_key(row) != "current"
+    ]
+    formal_non_current_negative = bool(
+        non_current_markouts
+        and _mean(row.get("markout_cents") for row in non_current_markouts) is not None
+        and (_mean(row.get("markout_cents") for row in non_current_markouts) or 0.0) < 0
+    )
+    surface_support_count = _surface_support_count(fills, surface_report)
+    sensitivity_fragile_count = int((sensitivity_report or {}).get("sensitivity_fragile_count") or 0)
     near_short_negative = any(
         value is not None and value < 0
         for value in (near.get("mean_5m_markout"), near.get("mean_15m_markout"))
@@ -183,7 +225,13 @@ def build_crypto_touch_forward_validation_report(
         and formal["mean_1h_markout"] > 0
         and formal["mean_6h_markout"] > 0
     )
-    if formal["fill_count"] < 20:
+    if formal["fill_count"] > 0 and not non_current_markouts:
+        verdict = "crypto_touch_waiting_for_valid_horizon_markout"
+    elif formal_non_current_negative and surface_support_count < formal["fill_count"]:
+        verdict = "crypto_touch_model_overoptimistic_reduce_priority"
+    elif formal_values and _mean(formal_values) is not None and (_mean(formal_values) or 0.0) > 0 and surface_support_count > 0:
+        verdict = "continue_crypto_touch_sampling"
+    elif formal["fill_count"] < 20:
         verdict = "continue_crypto_touch_sampling_insufficient_forward_fills"
     elif formal_negative:
         verdict = "crypto_touch_forward_markout_negative_reduce_priority"
@@ -198,6 +246,10 @@ def build_crypto_touch_forward_validation_report(
         "counts_for_live_gate": False,
         "live_order_path": False,
         "formal_fills": formal,
+        "formal_horizon_coverage": (followup_coverage_report or {}).get("coverage_by_horizon") if isinstance(followup_coverage_report, dict) else {},
+        "horizon_markout_validity": horizon_validity,
+        "surface_support_count": surface_support_count,
+        "sensitivity_fragile_count": sensitivity_fragile_count,
         "near_miss_watch": near,
         "invalidated_old_fills": _invalidated_summary(invalidated_old_fills),
         "verdict": {
@@ -205,7 +257,7 @@ def build_crypto_touch_forward_validation_report(
             "continue_crypto_touch_sampling": bool(verdict in {"continue_crypto_touch_sampling", "continue_crypto_touch_sampling_insufficient_forward_fills"}),
             "keep_min_edge_threshold": True,
             "do_not_lower_threshold": bool(near_short_negative),
-            "reduce_priority_if_negative_markout": bool(formal["fill_count"] >= 20 and formal_negative),
+            "reduce_priority_if_negative_markout": bool(verdict in {"crypto_touch_model_overoptimistic_reduce_priority", "crypto_touch_forward_markout_negative_reduce_priority"}),
             "paper_only_review_required": True,
         },
     }

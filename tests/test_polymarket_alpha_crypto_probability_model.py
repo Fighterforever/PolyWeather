@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from src.trading.polymarket_alpha.crypto_probability_model import (
+    _implied_touch_vol,
     build_crypto_probability_edge_report,
     build_crypto_touch_sensitivity_report,
     first_passage_probability_upper,
@@ -327,7 +328,54 @@ def test_touch_sensitivity_report_is_diagnostic_only():
     assert report["live_order_path"] is False
     assert report["rows"]
     assert report["rows"][0]["variant_EV_safe"]
+    assert "market_implied_touch_vol" in report["rows"][0]
+    assert "EV_safe_by_vol_multiplier" in report["rows"][0]
+    assert "EV_safe_by_cost" in report["rows"][0]
+    assert report["rows"][0]["realized_vol_gap_reason"] == "local_realized_vol_series_unavailable"
     assert "sensitivity_rank" in report["rows"][0]
+
+
+def test_touch_sensitivity_can_reuse_existing_crypto_probability_report():
+    report = build_crypto_touch_sensitivity_report(
+        active_markets=[],
+        crypto_probability_report={
+            "generated_at": "2026-06-29T00:00:00Z",
+            "model_ready_count": 1,
+            "near_miss_watch_count": 1,
+            "near_misses": [
+                {
+                    "market_slug": "btc-85k",
+                    "token_id": "yes-token",
+                    "asset": "BTC",
+                    "side": "YES",
+                    "threshold": 85000,
+                    "target_time": "2026-12-31T00:00:00Z",
+                    "market_creation_time": "2026-06-08T00:00:00Z",
+                    "semantics_type": "touch_barrier",
+                    "high_since_start_verified": True,
+                    "barrier_already_touched": False,
+                    "best_ask": 0.27,
+                    "q_effective": 0.27,
+                    "spot": 60000,
+                    "annual_vol": 0.55,
+                }
+            ],
+        },
+        annual_vols={"BTC": 0.55},
+        cost=0.01,
+    )
+
+    assert report["verified_not_touched_market_side_count"] == 1
+    assert report["rows"][0]["market_implied_touch_vol"] is not None
+
+
+def test_touch_implied_vol_increases_with_market_probability():
+    low = _implied_touch_vol(spot=60000, threshold=85000, years=0.5, target_probability=0.2)
+    high = _implied_touch_vol(spot=60000, threshold=85000, years=0.5, target_probability=0.5)
+
+    assert low is not None
+    assert high is not None
+    assert high > low
 
 
 def test_proxy_creation_time_blocks_official_candidate_but_keeps_watch():

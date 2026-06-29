@@ -15,6 +15,7 @@ from src.trading.polymarket_alpha.crypto_touch_forward_validation import (  # no
     build_crypto_touch_forward_validation_report,
     write_json,
 )
+from src.trading.polymarket_alpha.active_probability_edge_scanner import load_json  # noqa: E402
 from src.trading.polymarket_alpha.probability_edge_journal import load_jsonl  # noqa: E402
 
 
@@ -29,6 +30,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--near-miss-watch", default=str(DEFAULT_ROOT / "crypto_touch_near_miss_watch.jsonl"))
     parser.add_argument("--near-miss-markouts", default=str(DEFAULT_ROOT / "crypto_touch_near_miss_markouts.jsonl"))
     parser.add_argument("--invalidated-old-fills", default=str(DEFAULT_PAPER / "invalidated_fills.jsonl"))
+    parser.add_argument("--followup-coverage-report", default=str(DEFAULT_ROOT / "crypto_touch_followup_snapshot_coverage_report.json"))
+    parser.add_argument("--surface-report", default=str(DEFAULT_ROOT / "crypto_touch_surface_report.json"))
+    parser.add_argument("--sensitivity-report", default=str(DEFAULT_ROOT / "crypto_touch_sensitivity_report.json"))
     parser.add_argument("--summary-output", default=str(DEFAULT_ROOT / "crypto_touch_forward_validation_report.json"))
     return parser.parse_args(argv)
 
@@ -41,12 +45,18 @@ def main(argv: list[str] | None = None) -> None:
         near_miss_watch=load_jsonl(args.near_miss_watch),
         near_miss_markouts=load_jsonl(args.near_miss_markouts),
         invalidated_old_fills=load_jsonl(args.invalidated_old_fills),
+        followup_coverage_report=load_json(args.followup_coverage_report),
+        surface_report=load_json(args.surface_report),
+        sensitivity_report=load_json(args.sensitivity_report),
     )
     report["artifact_paths"] = {
         "formal_fills": str(args.formal_fills),
         "formal_markouts": str(args.formal_markouts),
         "near_miss_watch": str(args.near_miss_watch),
         "near_miss_markouts": str(args.near_miss_markouts),
+        "followup_coverage_report": str(args.followup_coverage_report),
+        "surface_report": str(args.surface_report),
+        "sensitivity_report": str(args.sensitivity_report),
     }
     write_json(args.summary_output, report)
     print(

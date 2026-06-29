@@ -2,77 +2,62 @@
   "artifact_paths": {
     "markouts": "evidence/polymarket_alpha/probability_edge_paper/markouts.jsonl"
   },
-  "available_markout_count": 15,
+  "available_markout_count": 6,
   "by_asset": [
     {
       "bucket": "BTC",
-      "mean": -1.5,
-      "sample_count": 10
+      "mean": -1.75,
+      "sample_count": 4
     },
     {
       "bucket": "ETH",
       "mean": -2.0,
-      "sample_count": 5
+      "sample_count": 2
     }
   ],
   "by_category": [
     {
       "bucket": "bitcoin",
-      "mean": -1.5,
-      "sample_count": 10
+      "mean": -1.75,
+      "sample_count": 4
     },
     {
       "bucket": "ethereum",
       "mean": -2.0,
-      "sample_count": 5
+      "sample_count": 2
     }
   ],
   "by_horizon": [
-    {
-      "bucket": "300s",
-      "mean": -1.66666667,
-      "sample_count": 3
-    },
     {
       "bucket": "3600s",
       "mean": -1.66666667,
       "sample_count": 3
     },
     {
-      "bucket": "60s",
-      "mean": -1.66666667,
-      "sample_count": 3
-    },
-    {
-      "bucket": "900s",
-      "mean": -1.66666667,
-      "sample_count": 3
-    },
-    {
       "bucket": "current",
-      "mean": -1.66666667,
+      "mean": -2.0,
       "sample_count": 3
     }
   ],
   "by_model_source": [
     {
       "bucket": "crypto_lognormal_threshold_model",
-      "mean": -1.66666667,
-      "sample_count": 15
+      "mean": -1.83333333,
+      "sample_count": 6
     }
   ],
   "by_semantics_type": [
     {
       "bucket": "touch_barrier",
-      "mean": -1.66666667,
-      "sample_count": 15
+      "mean": -1.83333333,
+      "sample_count": 6
     }
   ],
   "by_side": [
     {
       "bucket": "YES",
-      "mean": -1.66666667,
-      "sample_count": 15
+      "mean": -1.83333333,
+      "sample_count": 6
     }
   ],
   "counts_for_live_gate": false,
@@ -82,14 +67,18 @@
   "live_order_path": false,
   "markout_count": 15,
   "markout_status": "forward_markout_nonpositive",
-  "mean_markout": -0.01666667,
+  "mean_markout": -0.01833333,
   "mean_markout_1h": -0.01666667,
   "mean_markout_1h_cents": -1.66666667,
-  "mean_markout_cents": -1.66666667,
-  "missing_snapshot_count": 0,
+  "mean_markout_cents": -1.83333333,
+  "missing_snapshot_count": 9,
   "missing_snapshot_reason_counts": [
     {
-      "count": 15,
+      "count": 9,
+      "reason": "missing_snapshot_for_horizon"
+    },
+    {
+      "count": 6,
       "reason": "none"
     }
   ],

@@ -84,6 +84,16 @@ def main(argv: list[str] | None = None) -> None:
         ],
         [
             args.python_path,
+            "scripts/polymarket_alpha_crypto_touch_followup_snapshot_report.py",
+        ],
+        [
+            args.python_path,
+            "scripts/polymarket_alpha_crypto_touch_surface_report.py",
+            "--min-edge",
+            str(args.min_edge),
+        ],
+        [
+            args.python_path,
             "scripts/polymarket_alpha_crypto_touch_watch_markout_report.py",
         ],
         [
@@ -107,6 +117,8 @@ def main(argv: list[str] | None = None) -> None:
             "probability_edge_fills": "evidence/polymarket_alpha/probability_edge_paper/fills.jsonl",
             "probability_edge_markout_report": "evidence/polymarket_alpha/probability_edge_paper/markout_report.json",
             "probability_edge_fill_followup_orderbook_snapshots": "evidence/polymarket_alpha/probability_edge_paper/fill_followup_orderbook_snapshots.jsonl",
+            "crypto_touch_followup_snapshot_coverage_report": "evidence/polymarket_alpha/crypto_touch_followup_snapshot_coverage_report.json",
+            "crypto_touch_surface_report": "evidence/polymarket_alpha/crypto_touch_surface_report.json",
             "crypto_touch_near_miss_watch": "evidence/polymarket_alpha/crypto_touch_near_miss_watch.jsonl",
             "crypto_touch_near_miss_orderbook_snapshots": "evidence/polymarket_alpha/crypto_touch_near_miss_orderbook_snapshots.jsonl",
             "crypto_touch_near_miss_markout_report": "evidence/polymarket_alpha/crypto_touch_near_miss_markout_report.json",

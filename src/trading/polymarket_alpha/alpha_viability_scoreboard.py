@@ -118,7 +118,13 @@ def build_alpha_viability_scoreboard(
     if crypto_formal_mean is None:
         crypto_formal_mean = _safe_float(crypto_formal.get("mean_15m_markout"))
     near_negative = bool(crypto_verdict.get("do_not_lower_threshold"))
-    if crypto_formal_fill_count > 0 and crypto_formal_markout_count == 0:
+    explicit_crypto_status = str(crypto_verdict.get("status") or "")
+    if explicit_crypto_status in {
+        "crypto_touch_model_overoptimistic_reduce_priority",
+        "crypto_touch_waiting_for_valid_horizon_markout",
+    }:
+        crypto_touch_status = explicit_crypto_status
+    elif crypto_formal_fill_count > 0 and crypto_formal_markout_count == 0:
         crypto_touch_status = "crypto_touch_forward_paper_started_waiting_markout"
     elif crypto_formal_mean is not None and crypto_formal_mean > 0 and crypto_formal_fill_count < 20:
         crypto_touch_status = "crypto_touch_forward_markout_positive_insufficient_sample"

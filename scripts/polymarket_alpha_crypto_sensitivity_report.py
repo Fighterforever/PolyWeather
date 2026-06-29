@@ -21,12 +21,14 @@ from src.trading.polymarket_alpha.crypto_probability_model import (  # noqa: E40
 
 DEFAULT_ROOT = Path("evidence/polymarket_alpha")
 DEFAULT_ACTIVE = DEFAULT_ROOT / "active_markets_snapshot.jsonl"
+DEFAULT_CRYPTO_REPORT = DEFAULT_ROOT / "crypto_probability_edge_report.json"
 DEFAULT_REPORT = DEFAULT_ROOT / "crypto_touch_sensitivity_report.json"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build paper-only crypto touch model sensitivity diagnostics.")
     parser.add_argument("--active-markets", default=str(DEFAULT_ACTIVE))
+    parser.add_argument("--crypto-report", default=str(DEFAULT_CRYPTO_REPORT))
     parser.add_argument("--summary-output", default=str(DEFAULT_REPORT))
     parser.add_argument("--high-since-start-cache-dir", default=str(DEFAULT_ROOT / "binance_klines"))
     parser.add_argument("--metadata-cache-dir", default=str(DEFAULT_ROOT / "gamma_market_metadata"))
@@ -49,6 +51,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
+    crypto_report = {}
+    crypto_report_path = Path(args.crypto_report)
+    if crypto_report_path.exists():
+        parsed = json.loads(crypto_report_path.read_text(encoding="utf-8"))
+        crypto_report = parsed if isinstance(parsed, dict) else {}
     spot_prices = {}
     if args.btc_spot is not None:
         spot_prices["BTC"] = float(args.btc_spot)
@@ -60,6 +67,7 @@ def main(argv: list[str] | None = None) -> None:
     spot_prices = {key: value for key, value in spot_prices.items() if value is not None}
     report = build_crypto_touch_sensitivity_report(
         active_markets=_enrich_active_markets(args),
+        crypto_probability_report=crypto_report,
         spot_prices=spot_prices,
         annual_vols={"BTC": float(args.btc_vol), "ETH": float(args.eth_vol)},
         generated_at=args.generated_at,
@@ -76,6 +84,7 @@ def main(argv: list[str] | None = None) -> None:
         json.dumps(
             {
                 "verified_not_touched_market_side_count": report.get("verified_not_touched_market_side_count"),
+                "sensitivity_fragile_count": report.get("sensitivity_fragile_count"),
                 "live_order_path": report.get("live_order_path"),
                 "summary_output": args.summary_output,
             },

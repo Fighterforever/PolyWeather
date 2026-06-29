@@ -80,29 +80,81 @@
       }
     },
     "crypto_touch_barrier": {
-      "available_markout_count": 15,
+      "available_markout_count": 6,
       "by_horizon": {
-        "15m": -1.66666667,
         "1h": -1.66666667,
-        "5m": -1.66666667,
-        "60s": -1.66666667,
-        "current": -1.66666667
+        "current": -2.0
       },
       "counts_for_live_gate": false,
+      "coverage_by_horizon": {
+        "15m": {
+          "covered_fill_count": 0,
+          "matched_rows": [],
+          "missing_fill_count": 3
+        },
+        "1h": {
+          "covered_fill_count": 3,
+          "matched_rows": [
+            {
+              "fill_id": null,
+              "match_lag_seconds": 425.0,
+              "matched_snapshot_time": "2026-06-29T06:58:44Z",
+              "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
+            },
+            {
+              "fill_id": null,
+              "match_lag_seconds": 425.0,
+              "matched_snapshot_time": "2026-06-29T06:58:44Z",
+              "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
+            },
+            {
+              "fill_id": null,
+              "match_lag_seconds": 425.0,
+              "matched_snapshot_time": "2026-06-29T06:58:44Z",
+              "token_id": "89384721767526056909881321094852287855436067743554155484781205764118128944311"
+            }
+          ],
+          "missing_fill_count": 0
+        },
+        "24h": {
+          "covered_fill_count": 0,
+          "matched_rows": [],
+          "missing_fill_count": 3
+        },
+        "5m": {
+          "covered_fill_count": 0,
+          "matched_rows": [],
+          "missing_fill_count": 3
+        },
+        "60s": {
+          "covered_fill_count": 0,
+          "matched_rows": [],
+          "missing_fill_count": 3
+        },
+        "6h": {
+          "covered_fill_count": 0,
+          "matched_rows": [],
+          "missing_fill_count": 3
+        }
+      },
       "do_not_lower_threshold": true,
       "live_order_path": false,
-      "mean_markout_cents": -1.66666667,
+      "mean_markout_cents": -1.83333333,
       "near_miss_by_horizon": {
-        "15m": -1.5,
-        "1h": -1.45454545,
-        "5m": -1.5
+        "15m": -1.51851852,
+        "1h": -1.5,
+        "5m": -1.54285714
       },
       "new_candidate_count": 2,
       "new_paper_fill_count": 2,
       "paper_fill_count": 3,
       "paper_only": true,
-      "status": "crypto_touch_forward_markout_negative_reduce_priority",
-      "verdict": "continue_crypto_touch_sampling_insufficient_forward_fills"
+      "relative_value_candidate_count": 2,
+      "sensitivity_fragile_count": 5,
+      "status": "crypto_touch_model_overoptimistic_reduce_priority",
+      "surface_group_count": 9,
+      "surface_support_count": 2,
+      "verdict": "crypto_touch_model_overoptimistic_reduce_priority"
     },
     "dead_side_capture": {
       "dead_side_bid_available_count": 0,
@@ -816,18 +868,90 @@
   "counts_for_live_gate": false,
   "crypto_touch_forward_validation_summary": {
     "do_not_lower_threshold": true,
-    "formal_available_markout_count": 15,
+    "formal_available_markout_count": 6,
+    "formal_by_horizon": {
+      "1h": -1.66666667,
+      "current": -2.0
+    },
     "formal_fill_count": 3,
-    "formal_mean_15m_markout": -1.66666667,
-    "formal_mean_1h_markout": -1.66666667,
-    "formal_mean_5m_markout": -1.66666667,
+    "formal_horizon_coverage": {
+      "15m": {
+        "covered_fill_count": 0,
+        "matched_rows": [],
+        "missing_fill_count": 3
+      },
+      "1h": {
+        "covered_fill_count": 3,
+        "matched_rows": [
+          {
+            "fill_id": null,
+            "match_lag_seconds": 425.0,
+            "matched_snapshot_time": "2026-06-29T06:58:44Z",
+            "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
+          },
+          {
+            "fill_id": null,
+            "match_lag_seconds": 425.0,
+            "matched_snapshot_time": "2026-06-29T06:58:44Z",
+            "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
+          },
+          {
+            "fill_id": null,
+            "match_lag_seconds": 425.0,
+            "matched_snapshot_time": "2026-06-29T06:58:44Z",
+            "token_id": "89384721767526056909881321094852287855436067743554155484781205764118128944311"
+          }
+        ],
+        "missing_fill_count": 0
+      },
+      "24h": {
+        "covered_fill_count": 0,
+        "matched_rows": [],
+        "missing_fill_count": 3
+      },
+      "5m": {
+        "covered_fill_count": 0,
+        "matched_rows": [],
+        "missing_fill_count": 3
+      },
+      "60s": {
+        "covered_fill_count": 0,
+        "matched_rows": [],
+        "missing_fill_count": 3
+      },
+      "6h": {
+        "covered_fill_count": 0,
+        "matched_rows": [],
+        "missing_fill_count": 3
+      }
+    },
+    "horizon_markout_validity": {
+      "15m": {
+        "missing_snapshot_for_horizon": 3
+      },
+      "1h": {
+        "within_tolerance": 3
+      },
+      "5m": {
+        "missing_snapshot_for_horizon": 3
+      },
+      "60s": {
+        "missing_snapshot_for_horizon": 3
+      },
+      "current": {
+        "current_latest": 3
+      }
+    },
     "live_order_path": false,
-    "near_miss_available_markout_count": 61,
-    "near_miss_mean_15m_markout": -1.5,
-    "near_miss_mean_1h_markout": -1.45454545,
-    "near_miss_mean_5m_markout": -1.5,
-    "near_miss_watch_count": 32,
-    "verdict": "continue_crypto_touch_sampling_insufficient_forward_fills"
+    "near_miss_by_horizon": {
+      "15m": -1.51851852,
+      "1h": -1.5,
+      "5m": -1.54285714
+    },
+    "near_miss_watch_count": 44,
+    "sensitivity_fragile_count": 5,
+    "surface_support_count": 2,
+    "verdict": "crypto_touch_model_overoptimistic_reduce_priority"
   },
   "data_collection": {
     "intraday_observation_collector_installed": true,
@@ -913,8 +1037,8 @@
   "polymarket_alpha_scoreboard_summary": {
     "crypto_touch_do_not_lower_threshold": true,
     "crypto_touch_formal_fill_count": 3,
-    "crypto_touch_formal_markout_count": 15,
-    "crypto_touch_status": "crypto_touch_forward_markout_negative_reduce_priority",
+    "crypto_touch_formal_markout_count": 6,
+    "crypto_touch_status": "crypto_touch_model_overoptimistic_reduce_priority",
     "final_next_focus": "probability_edge_forward_paper_markout",
     "forward_paper_fill_count": 3,
     "live_order_path": false,
