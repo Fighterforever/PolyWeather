@@ -16,6 +16,7 @@ from src.trading.polymarket_alpha.weather_lp_paper_journal import build_weather_
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--candidates", default="evidence/weather_lp_rewards/weather_lp_candidates.jsonl")
+    parser.add_argument("--reward-markets", default="evidence/weather_lp_rewards/lp_reward_markets.jsonl")
     parser.add_argument("--summary-output", default="evidence/weather_lp_rewards/paper_cycle_report.json")
     parser.add_argument("--quotes-output", default="evidence/weather_lp_rewards/paper_quotes.jsonl")
     parser.add_argument("--quote-updates-output", default="evidence/weather_lp_rewards/paper_quote_updates.jsonl")
@@ -27,7 +28,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
-    report = build_weather_lp_paper_cycle(candidates=load_jsonl(args.candidates), generated_at=args.generated_at)
+    report = build_weather_lp_paper_cycle(
+        candidates=load_jsonl(args.candidates),
+        existing_quotes=load_jsonl(args.quotes_output),
+        existing_updates=load_jsonl(args.quote_updates_output),
+        reward_markets=load_jsonl(args.reward_markets),
+        generated_at=args.generated_at,
+    )
     write_jsonl(args.quotes_output, report.get("quotes") or [])
     write_jsonl(args.quote_updates_output, report.get("quote_updates") or [])
     write_jsonl(args.fills_output, report.get("fills") or [])

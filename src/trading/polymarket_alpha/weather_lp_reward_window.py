@@ -22,7 +22,15 @@ def _minute(value: Any) -> Optional[int]:
 
 def build_weather_lp_reward_window_report(observations: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
     rows = [row for row in observations if isinstance(row, dict)]
-    by_minute: Dict[int, Dict[str, int]] = defaultdict(lambda: {"reward_metadata_available_count": 0, "reward_qualified_quote_count": 0, "observation_count": 0})
+    by_minute: Dict[int, Dict[str, Any]] = defaultdict(
+        lambda: {
+            "reward_metadata_available_count": 0,
+            "reward_qualified_quote_count": 0,
+            "paper_quote_count": 0,
+            "reward_points_proxy": 0.0,
+            "observation_count": 0,
+        }
+    )
     support = 0
     outside_support = 0
     metadata_available_total = 0
@@ -35,14 +43,18 @@ def build_weather_lp_reward_window_report(observations: Iterable[Dict[str, Any]]
             continue
         metadata_count = int(row.get("reward_metadata_available_count") or row.get("reward_available_count") or row.get("reward_market_count") or 0)
         qualified_count = int(row.get("reward_qualified_quote_count") or 0)
+        paper_quote_count = int(row.get("paper_quote_count") or row.get("paper_quote_candidate_count") or 0)
+        reward_points = float(row.get("mean_reward_points_proxy") or row.get("reward_points_proxy") or 0.0)
         by_minute[int(minute)]["reward_metadata_available_count"] += metadata_count
         by_minute[int(minute)]["reward_qualified_quote_count"] += qualified_count
+        by_minute[int(minute)]["paper_quote_count"] += paper_quote_count
+        by_minute[int(minute)]["reward_points_proxy"] += reward_points
         by_minute[int(minute)]["observation_count"] += 1
         metadata_available_total += metadata_count
         qualified_total += qualified_count
-        if 40 <= int(minute) <= 51 and metadata_count > 0:
+        if 40 <= int(minute) <= 51 and qualified_count > 0:
             support += 1
-        elif metadata_count > 0:
+        elif qualified_count > 0:
             outside_support += 1
     if len(rows) < 12:
         recommendation = "insufficient_observations"
@@ -66,7 +78,11 @@ def build_weather_lp_reward_window_report(observations: Iterable[Dict[str, Any]]
         "reward_metadata_available_observation_total": metadata_available_total,
         "reward_qualified_quote_observation_total": qualified_total,
         "by_minute_of_hour": [
-            {"minute": key, **value}
+            {
+                "minute": key,
+                **value,
+                "mean_reward_points_proxy": round(float(value["reward_points_proxy"]) / max(1, int(value["observation_count"])), 8),
+            }
             for key, value in sorted(by_minute.items())
         ],
         "reward_by_minute_of_hour": [

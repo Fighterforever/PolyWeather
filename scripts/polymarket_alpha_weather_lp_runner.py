@@ -46,8 +46,13 @@ def main(argv: list[str] | None = None) -> None:
         [args.python_path, "scripts/polymarket_alpha_weather_smart_holder_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_strategy_report.py", "--generated-at", generated_at],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_paper_cycle.py", "--generated-at", generated_at],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_quote_update_report.py", "--generated-at", generated_at],
+        [args.python_path, "scripts/polymarket_alpha_reward_allocation_audit_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_risk_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_window_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_cancellation_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_experiment_controller.py"],
+        [args.python_path, "scripts/polymarket_alpha_tournament_report.py"],
     ]
     results = [_run(command) for command in commands]
     experiment = _load("evidence/weather_lp_rewards/weather_lp_experiment_report.json")
@@ -61,8 +66,10 @@ def main(argv: list[str] | None = None) -> None:
         "min_incentive_size_found_count": discovery.get("min_incentive_size_found_count", 0),
         "max_incentive_spread_found_count": discovery.get("max_incentive_spread_found_count", 0),
         "paper_quote_count": experiment.get("paper_quote_count", 0),
+        "quote_update_count": experiment.get("quote_update_count", 0),
         "reward_points_proxy": experiment.get("reward_points_proxy"),
         "estimated_reward_cents_proxy": experiment.get("estimated_reward_cents_proxy"),
+        "reward_to_risk_proxy": experiment.get("reward_to_risk_proxy"),
         "recommendation": experiment.get("recommendation"),
         "commands": results,
         "paper_only": True,

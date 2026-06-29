@@ -264,6 +264,86 @@ def audit_weather_reward_metadata(
     }
 
 
+def audit_reward_allocation_conversion(
+    *,
+    reward_metadata_rows: Iterable[Dict[str, Any]],
+    quote_updates: Iterable[Dict[str, Any]] = (),
+) -> Dict[str, Any]:
+    update_by_slug: Dict[str, float] = {}
+    for row in quote_updates:
+        if not isinstance(row, dict):
+            continue
+        slug = str(row.get("market_slug") or "")
+        if not slug:
+            continue
+        update_by_slug[slug] = max(
+            update_by_slug.get(slug, 0.0),
+            float(row.get("cumulative_reward_points_proxy") or row.get("q_min_proxy") or 0.0),
+        )
+    rows: List[Dict[str, Any]] = []
+    for row in reward_metadata_rows:
+        if not isinstance(row, dict):
+            continue
+        allocation = row.get("reward_allocation")
+        allocation_value: Optional[float]
+        try:
+            allocation_value = float(allocation) if allocation is not None else None
+        except (TypeError, ValueError):
+            allocation_value = None
+        total_score = row.get("total_market_q_score")
+        try:
+            total_score_value = float(total_score) if total_score is not None else None
+        except (TypeError, ValueError):
+            total_score_value = None
+        slug = str(row.get("market_slug") or "")
+        our_score = update_by_slug.get(slug)
+        estimated_share = None
+        estimated_cents = None
+        gap_reason = None
+        if allocation_value is None:
+            gap_reason = "reward_allocation_unavailable_in_market_objects"
+        elif total_score_value is None or total_score_value <= 0:
+            gap_reason = "total_competitor_q_score_unavailable"
+        elif our_score is None:
+            gap_reason = "our_q_min_proxy_unavailable"
+        else:
+            estimated_share = min(1.0, max(0.0, float(our_score) / total_score_value))
+            estimated_cents = round(estimated_share * allocation_value, 8)
+        rows.append(
+            {
+                "schema_version": f"{SCHEMA_VERSION}.allocation_row",
+                "market_slug": row.get("market_slug"),
+                "condition_id": row.get("condition_id"),
+                "reward_allocation_raw": allocation,
+                "reward_epoch": row.get("reward_epoch"),
+                "total_market_q_score_available": total_score_value is not None,
+                "total_competitor_score_available": total_score_value is not None,
+                "our_q_min_proxy": our_score,
+                "estimated_share_if_total_available": estimated_share,
+                "estimated_reward_cents_proxy": estimated_cents,
+                "gap_reason": gap_reason,
+                "paper_only": True,
+                "counts_for_live_gate": False,
+                "live_order_path": False,
+            }
+        )
+    gap_counts = Counter(str(row.get("gap_reason") or "none") for row in rows)
+    return {
+        "schema_version": f"{SCHEMA_VERSION}.allocation_audit",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+        "market_count": len(rows),
+        "reward_allocation_available_count": len([row for row in rows if row.get("reward_allocation_raw") is not None]),
+        "total_market_q_score_available_count": len([row for row in rows if row.get("total_market_q_score_available")]),
+        "estimated_reward_cents_available_count": len([row for row in rows if row.get("estimated_reward_cents_proxy") is not None]),
+        "estimated_reward_cents_proxy": None,
+        "estimated_reward_cents_proxy_gap_reason": "requires_reward_allocation_and_total_competitor_q_score",
+        "gap_counts": [{"reason": key, "count": value} for key, value in sorted(gap_counts.items())],
+        "rows": rows,
+    }
+
+
 def load_jsonl(path: str | Path) -> List[Dict[str, Any]]:
     source = Path(path)
     if not source.exists():
@@ -284,6 +364,7 @@ __all__ = [
     "SCHEMA_VERSION",
     "PolymarketRewardMetadataClient",
     "audit_weather_reward_metadata",
+    "audit_reward_allocation_conversion",
     "load_jsonl",
     "write_json",
     "write_jsonl",

@@ -86,6 +86,8 @@ def main(argv: list[str] | None = None) -> None:
                         "minute_of_hour": minute,
                         "reward_metadata_available_count": compact.get("reward_metadata_available_count"),
                         "reward_qualified_quote_count": compact.get("reward_qualified_quote_count"),
+                        "paper_quote_count": compact.get("paper_quote_candidate_count"),
+                        "reward_points_proxy": sum(float(row.get("reward_score") or 0.0) for row in report.get("candidates") or []),
                         "reward_market_count": compact.get("reward_metadata_available_count"),
                         "market_slugs": [row.get("market_slug") for row in report.get("candidates") or []][:25],
                         "paper_only": True,

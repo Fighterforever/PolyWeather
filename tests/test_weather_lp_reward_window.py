@@ -18,3 +18,21 @@ def test_reward_window_counts_40_51_support():
     assert report["40_to_51_minute_support_count"] == 12
     assert report["candidate_reward_window"] == "40-51"
     assert report["recommendation"] == "40_51_window_supported"
+
+
+def test_reward_window_reports_quote_and_reward_points_by_minute():
+    report = build_weather_lp_reward_window_report(
+        [
+            {
+                "generated_at": "2026-06-29T10:45:00Z",
+                "reward_metadata_available_count": 2,
+                "reward_qualified_quote_count": 1,
+                "paper_quote_count": 1,
+                "reward_points_proxy": 0.5,
+            }
+        ]
+    )
+
+    row = report["by_minute_of_hour"][0]
+    assert row["paper_quote_count"] == 1
+    assert row["mean_reward_points_proxy"] == 0.5

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from src.trading.polymarket_alpha.polymarket_reward_metadata import audit_weather_reward_metadata
+from src.trading.polymarket_alpha.polymarket_reward_metadata import audit_reward_allocation_conversion, audit_weather_reward_metadata
 
 
 class FakeRewardClient:
@@ -50,3 +50,15 @@ def test_reward_metadata_audit_outputs_no_condition_gap():
 
     assert report["reward_metadata_available_count"] == 0
     assert report["rows"][0]["gap_reason"] == "no_condition_id"
+
+
+def test_reward_allocation_audit_does_not_fake_dollar_conversion():
+    report = audit_reward_allocation_conversion(
+        reward_metadata_rows=[{"market_slug": "weather", "condition_id": "0xabc", "reward_allocation": None}],
+        quote_updates=[{"market_slug": "weather", "cumulative_reward_points_proxy": 12.0}],
+    )
+
+    assert report["estimated_reward_cents_available_count"] == 0
+    assert report["estimated_reward_cents_proxy"] is None
+    assert report["rows"][0]["gap_reason"] == "reward_allocation_unavailable_in_market_objects"
+    assert report["live_order_path"] is False
