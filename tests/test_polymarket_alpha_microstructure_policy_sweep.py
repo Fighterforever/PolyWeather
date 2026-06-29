@@ -51,10 +51,10 @@ def test_policy_sweep_accounts_for_watch_rows_and_separates_taker_maker():
     )
 
     assert report["input_watch_count"] == 1
-    assert report["policy_variant_count"] == 3
-    assert report["taker_fill_count"] == 1
+    assert report["policy_variant_count"] == 5
+    assert report["taker_fill_count"] == 2
     assert report["maker_quote_count"] == 1
-    assert {row["policy_id"] for row in report["candidates"]} == {"taker_follow_imbalance", "maker_spread_capture"}
+    assert {row["policy_id"] for row in report["candidates"]} == {"taker_follow_imbalance", "taker_inverse_imbalance", "maker_spread_capture"}
     assert all(row["live_order_path"] is False for row in report["candidates"])
 
 
@@ -67,7 +67,8 @@ def test_policy_sweep_buy_no_requires_direct_no_book():
 
     blockers = {row["reason"]: row["count"] for row in report["blocker_counts"]}
     assert blockers["taker_follow_imbalance:missing_no_token"] == 1
-    assert report["taker_fill_count"] == 0
+    assert report["inverse_candidate_count"] == 1
+    assert report["taker_fill_count"] == 1
     assert report["maker_quote_count"] == 1
 
 
@@ -84,7 +85,7 @@ def test_policy_followup_snapshots_track_fills_quotes_and_recent_watch_rows():
         recorded_at="2026-06-30T00:05:00Z",
     )
 
-    assert report["snapshot_count"] == 3
+    assert report["snapshot_count"] == 4
     assert all(row["live_order_path"] is False for row in report["snapshots"])
 
 
@@ -105,8 +106,8 @@ def test_policy_markout_reports_quote_not_filled_and_taker_markout():
         orderbook_snapshots=followup["snapshots"],
     )
 
-    assert report["taker_fill_count"] == 1
+    assert report["taker_fill_count"] == 2
     assert report["maker_quote_count"] == 1
-    assert report["available_markout_count"] == 1
+    assert report["available_markout_count"] == 2
     reasons = {row["reason"]: row["count"] for row in report["missing_snapshot_reason_counts"]}
     assert reasons["quote_not_filled"] == 1

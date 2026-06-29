@@ -123,6 +123,9 @@ def build_alpha_tournament_scoreboard(
     microstructure_policy_sweep_report: Optional[Dict[str, Any]] = None,
     microstructure_markout_report: Optional[Dict[str, Any]] = None,
     microstructure_experiment_report: Optional[Dict[str, Any]] = None,
+    microstructure_attribution_report: Optional[Dict[str, Any]] = None,
+    microstructure_inverse_report: Optional[Dict[str, Any]] = None,
+    maker_quote_sweep_report: Optional[Dict[str, Any]] = None,
     maker_shadow_report: Optional[Dict[str, Any]] = None,
     payoff_arbitrage_report: Optional[Dict[str, Any]] = None,
     global_oos_report: Optional[Dict[str, Any]] = None,
@@ -133,6 +136,9 @@ def build_alpha_tournament_scoreboard(
     microstructure_policy_sweep_report = microstructure_policy_sweep_report or {}
     microstructure_markout_report = microstructure_markout_report or {}
     microstructure_experiment_report = microstructure_experiment_report or {}
+    microstructure_attribution_report = microstructure_attribution_report or {}
+    microstructure_inverse_report = microstructure_inverse_report or {}
+    maker_quote_sweep_report = maker_quote_sweep_report or {}
     maker_shadow_report = maker_shadow_report or {}
     payoff_arbitrage_report = payoff_arbitrage_report or {}
     global_oos_report = global_oos_report or {}
@@ -189,6 +195,12 @@ def build_alpha_tournament_scoreboard(
         main_blocker=_top_blocker(microstructure_policy_sweep_report),
     )
 
+    taker_failed = str(microstructure_attribution_report.get("microstructure_taker_status") or "") == "failed_negative_forward_markout"
+    inverse_decision = str(microstructure_inverse_report.get("decision") or "")
+    maker_sweep_recommendation = str(maker_quote_sweep_report.get("mode_recommendation") or "")
+    inverse_promising = inverse_decision == "microstructure_taker_direction_maybe_inverted"
+    maker_promising = maker_sweep_recommendation == "promising_shadow_mode"
+
     micro_taker_lane = _lane(
         lane_id="microstructure_taker",
         candidate_count=_safe_int(microstructure_policy_sweep_report.get("taker_candidate_count")),
@@ -201,6 +213,16 @@ def build_alpha_tournament_scoreboard(
         sample_count=_safe_int(microstructure_experiment_report.get("taker_fill_count") or microstructure_policy_sweep_report.get("taker_fill_count")),
         main_blocker=str(microstructure_experiment_report.get("recommendation") or _top_blocker(microstructure_policy_sweep_report)),
     )
+    if taker_failed and inverse_promising:
+        micro_taker_lane["status"] = "inverse_candidate_promising"
+        micro_taker_lane["next_action"] = "paper_test_inverse_only"
+        micro_taker_lane["priority"] = 65
+        micro_taker_lane["main_blocker"] = "follow_imbalance_failed_inverse_promising"
+    elif taker_failed:
+        micro_taker_lane["status"] = "failed_negative_forward_markout"
+        micro_taker_lane["next_action"] = "pause_taker_microstructure"
+        micro_taker_lane["priority"] = 5
+        micro_taker_lane["main_blocker"] = "follow_and_or_inverse_not_promising"
 
     micro_maker_lane = _lane(
         lane_id="microstructure_maker",
@@ -211,7 +233,19 @@ def build_alpha_tournament_scoreboard(
         sample_count=_safe_int(microstructure_experiment_report.get("maker_quote_count") or microstructure_policy_sweep_report.get("maker_quote_count")),
         main_blocker=str(microstructure_experiment_report.get("recommendation") or _top_blocker(microstructure_policy_sweep_report)),
     )
-    if micro_maker_lane["watch_count"] >= 30 and micro_maker_lane["paper_fill_count"] == 0:
+    if maker_sweep_recommendation == "promising_shadow_mode":
+        micro_maker_lane["status"] = "promising_shadow_mode"
+        micro_maker_lane["next_action"] = "focused_maker_shadow_paper"
+        micro_maker_lane["priority"] = 75
+        micro_maker_lane["main_blocker"] = ""
+        micro_maker_lane["available_markout_count"] = _safe_int(maker_quote_sweep_report.get("inferred_fill_count"))
+        micro_maker_lane["mean_1h_markout"] = _best_maker_mode_markout(maker_quote_sweep_report)
+    elif maker_sweep_recommendation in {"maker_adverse_selection", "reject_maker_for_now", "maker_no_fill_even_aggressive"}:
+        micro_maker_lane["status"] = maker_sweep_recommendation
+        micro_maker_lane["next_action"] = "downgrade_maker_microstructure"
+        micro_maker_lane["priority"] = 5
+        micro_maker_lane["main_blocker"] = maker_sweep_recommendation
+    elif micro_maker_lane["watch_count"] >= 30 and micro_maker_lane["paper_fill_count"] == 0:
         micro_maker_lane["status"] = "watch_only_no_inferred_fills"
         micro_maker_lane["next_action"] = "keep_maker_shadow_only"
         micro_maker_lane["priority"] = 35
@@ -226,6 +260,16 @@ def build_alpha_tournament_scoreboard(
         sample_count=_safe_int(maker_shadow_report.get("quote_count")),
         main_blocker=_top_blocker(maker_shadow_report),
     )
+    if maker_sweep_recommendation == "promising_shadow_mode":
+        maker_lane["status"] = "promising_shadow_mode"
+        maker_lane["next_action"] = "focused_maker_shadow_paper"
+        maker_lane["priority"] = max(int(maker_lane.get("priority") or 0), 75)
+        maker_lane["main_blocker"] = ""
+    elif maker_sweep_recommendation in {"maker_adverse_selection", "reject_maker_for_now", "maker_no_fill_even_aggressive"}:
+        maker_lane["status"] = maker_sweep_recommendation
+        maker_lane["next_action"] = "downgrade_maker_shadow"
+        maker_lane["priority"] = 5
+        maker_lane["main_blocker"] = maker_sweep_recommendation
 
     payoff_lane = _lane(
         lane_id="payoff_arbitrage",
@@ -255,9 +299,21 @@ def build_alpha_tournament_scoreboard(
         payoff_lane,
         oos_lane,
     ]
+    if taker_failed and not inverse_promising and not maker_promising:
+        for lane in lanes:
+            if lane["lane_id"] in {"microstructure", "microstructure_policy_sweep"}:
+                lane["status"] = "pause_microstructure_after_negative_taker_and_maker_sweep"
+                lane["next_action"] = "move_focus_to_next_lane"
+                lane["priority"] = min(int(lane.get("priority") or 0), 8)
+                lane["main_blocker"] = "negative_taker_markout_and_no_promising_maker_mode"
     ranked = sorted(lanes, key=lambda row: int(row.get("priority") or 0), reverse=True)
     top_lane = ranked[0]["lane_id"] if ranked else None
     downgraded = [row["lane_id"] for row in lanes if str(row.get("status") or "").startswith("downgraded")]
+    paused = [
+        row["lane_id"]
+        for row in lanes
+        if any(token in str(row.get("status") or "") for token in ("failed", "pause", "adverse_selection", "reject"))
+    ]
     return {
         "schema_version": SCHEMA_VERSION,
         "scope": "polymarket_only",
@@ -268,8 +324,14 @@ def build_alpha_tournament_scoreboard(
         "lanes": lanes,
         "top_lane": top_lane,
         "lanes_downgraded": downgraded,
+        "lanes_paused": paused,
         "next_focus": top_lane,
         "final_decision": "paper_only_alpha_tournament_continue" if top_lane else "no_active_lane",
+        "microstructure_decision_inputs": {
+            "taker_failed": taker_failed,
+            "inverse_decision": inverse_decision,
+            "maker_sweep_recommendation": maker_sweep_recommendation,
+        },
     }
 
 
@@ -282,6 +344,20 @@ def _top_blocker(report: Dict[str, Any]) -> str:
     if report.get("candidate_count") == 0:
         return "no_current_candidate"
     return ""
+
+
+def _best_maker_mode_markout(report: Dict[str, Any]) -> Optional[float]:
+    rows = report.get("inferred_fill_count_by_mode") or report.get("mean_markout_by_mode") or []
+    best: Optional[float] = None
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        value = _safe_float(row.get("mean_markout_cents"))
+        if value is None:
+            continue
+        if best is None or value > best:
+            best = value
+    return best
 
 
 def load_json(path: str | Path) -> Dict[str, Any]:

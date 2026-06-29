@@ -41,6 +41,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--max-spread", type=float, default=0.18)
     parser.add_argument("--min-depth", type=float, default=25.0)
     parser.add_argument("--maker-margin", type=float, default=0.01)
+    parser.add_argument("--no-inverse", action="store_true", help="Disable inverse imbalance counterfactual generation.")
+    parser.add_argument("--no-baseline", action="store_true", help="Disable no-trade spread baseline accounting.")
     return parser.parse_args(argv)
 
 
@@ -65,6 +67,8 @@ def main(argv: list[str] | None = None) -> None:
         max_spread=float(args.max_spread),
         min_depth=float(args.min_depth),
         maker_margin=float(args.maker_margin),
+        include_inverse=not bool(args.no_inverse),
+        include_baseline=not bool(args.no_baseline),
     )
     _merge_jsonl(args.candidates_output, report.get("candidates") or [], "candidate_id")
     _merge_jsonl(args.taker_fills_output, report.get("taker_fills") or [], "fill_id")
@@ -81,6 +85,7 @@ def main(argv: list[str] | None = None) -> None:
             {
                 "input_watch_count": report.get("input_watch_count"),
                 "policy_candidate_count": report.get("policy_candidate_count"),
+                "inverse_candidate_count": report.get("inverse_candidate_count"),
                 "taker_fill_count": report.get("taker_fill_count"),
                 "maker_quote_count": report.get("maker_quote_count"),
                 "live_order_path": report.get("live_order_path"),

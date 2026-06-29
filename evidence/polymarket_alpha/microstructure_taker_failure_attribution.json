@@ -1,0 +1,372 @@
+{
+  "adverse_selection_patterns": [
+    {
+      "bucket": "spread_2_4c",
+      "mean_markout_cents": -2.62534819,
+      "sample_count": 718,
+      "section": "by_spread_bucket"
+    },
+    {
+      "bucket": "spread_4_8c",
+      "mean_markout_cents": -5.2562724,
+      "sample_count": 558,
+      "section": "by_spread_bucket"
+    },
+    {
+      "bucket": "spread_8_15c",
+      "mean_markout_cents": -8.88461538,
+      "sample_count": 52,
+      "section": "by_spread_bucket"
+    },
+    {
+      "bucket": "spread_ge_15c",
+      "mean_markout_cents": -16.125,
+      "sample_count": 24,
+      "section": "by_spread_bucket"
+    },
+    {
+      "bucket": "imbalance_ge_75",
+      "mean_markout_cents": -3.0,
+      "sample_count": 92,
+      "section": "by_depth_imbalance_bucket"
+    },
+    {
+      "bucket": "imbalance_le_neg_75",
+      "mean_markout_cents": -4.00168971,
+      "sample_count": 651,
+      "section": "by_depth_imbalance_bucket"
+    },
+    {
+      "bucket": "imbalance_neg_75_to_neg_40",
+      "mean_markout_cents": -5.86833977,
+      "sample_count": 259,
+      "section": "by_depth_imbalance_bucket"
+    },
+    {
+      "bucket": "imbalance_pos_40_to_75",
+      "mean_markout_cents": -3.61714286,
+      "sample_count": 350,
+      "section": "by_depth_imbalance_bucket"
+    },
+    {
+      "bucket": "price_10_30c",
+      "mean_markout_cents": -3.66861598,
+      "sample_count": 513,
+      "section": "by_price_bucket"
+    },
+    {
+      "bucket": "price_30_70c",
+      "mean_markout_cents": -8.62244898,
+      "sample_count": 98,
+      "section": "by_price_bucket"
+    },
+    {
+      "bucket": "price_70_90c",
+      "mean_markout_cents": -5.06735751,
+      "sample_count": 193,
+      "section": "by_price_bucket"
+    },
+    {
+      "bucket": "price_ge_90c",
+      "mean_markout_cents": -3.59182156,
+      "sample_count": 538,
+      "section": "by_price_bucket"
+    },
+    {
+      "bucket": "price_lt_10c",
+      "mean_markout_cents": -2.96,
+      "sample_count": 10,
+      "section": "by_price_bucket"
+    },
+    {
+      "bucket": "ge_30d",
+      "mean_markout_cents": -4.23838538,
+      "sample_count": 1313,
+      "section": "by_time_to_close_bucket"
+    },
+    {
+      "bucket": "lt_1h",
+      "mean_markout_cents": -2.61538462,
+      "sample_count": 39,
+      "section": "by_time_to_close_bucket"
+    }
+  ],
+  "answers": {
+    "follow_imbalance_systematically_negative": true,
+    "loss_concentrated_by_category": {
+      "concentrated": false,
+      "top_category": "world_affairs",
+      "top_category_mean_markout_cents": -7.62765957,
+      "top_category_sample_share": 0.069527
+    },
+    "loss_concentrated_by_imbalance_direction": true,
+    "loss_concentrated_in_large_spread": true
+  },
+  "available_markout_count": 1352,
+  "best_categories": [
+    {
+      "bucket": "india",
+      "mean_markout_cents": -2.0,
+      "sample_count": 216
+    },
+    {
+      "bucket": "courts",
+      "mean_markout_cents": -2.61538462,
+      "sample_count": 39
+    },
+    {
+      "bucket": "politics",
+      "mean_markout_cents": -2.84210526,
+      "sample_count": 38
+    },
+    {
+      "bucket": "exchange",
+      "mean_markout_cents": -3.0,
+      "sample_count": 54
+    },
+    {
+      "bucket": "world",
+      "mean_markout_cents": -3.05952381,
+      "sample_count": 420
+    },
+    {
+      "bucket": "music",
+      "mean_markout_cents": -5.0,
+      "sample_count": 54
+    },
+    {
+      "bucket": "starmer",
+      "mean_markout_cents": -5.54415954,
+      "sample_count": 351
+    },
+    {
+      "bucket": "tech",
+      "mean_markout_cents": -7.5,
+      "sample_count": 86
+    },
+    {
+      "bucket": "world_affairs",
+      "mean_markout_cents": -7.62765957,
+      "sample_count": 94
+    }
+  ],
+  "by_category": [
+    {
+      "bucket": "courts",
+      "mean_markout_cents": -2.61538462,
+      "sample_count": 39
+    },
+    {
+      "bucket": "exchange",
+      "mean_markout_cents": -3.0,
+      "sample_count": 54
+    },
+    {
+      "bucket": "india",
+      "mean_markout_cents": -2.0,
+      "sample_count": 216
+    },
+    {
+      "bucket": "music",
+      "mean_markout_cents": -5.0,
+      "sample_count": 54
+    },
+    {
+      "bucket": "politics",
+      "mean_markout_cents": -2.84210526,
+      "sample_count": 38
+    },
+    {
+      "bucket": "starmer",
+      "mean_markout_cents": -5.54415954,
+      "sample_count": 351
+    },
+    {
+      "bucket": "tech",
+      "mean_markout_cents": -7.5,
+      "sample_count": 86
+    },
+    {
+      "bucket": "world",
+      "mean_markout_cents": -3.05952381,
+      "sample_count": 420
+    },
+    {
+      "bucket": "world_affairs",
+      "mean_markout_cents": -7.62765957,
+      "sample_count": 94
+    }
+  ],
+  "by_depth_imbalance_bucket": [
+    {
+      "bucket": "imbalance_ge_75",
+      "mean_markout_cents": -3.0,
+      "sample_count": 92
+    },
+    {
+      "bucket": "imbalance_le_neg_75",
+      "mean_markout_cents": -4.00168971,
+      "sample_count": 651
+    },
+    {
+      "bucket": "imbalance_neg_75_to_neg_40",
+      "mean_markout_cents": -5.86833977,
+      "sample_count": 259
+    },
+    {
+      "bucket": "imbalance_pos_40_to_75",
+      "mean_markout_cents": -3.61714286,
+      "sample_count": 350
+    }
+  ],
+  "by_policy": [
+    {
+      "bucket": "taker_follow_imbalance",
+      "mean_markout_cents": -4.07438692,
+      "sample_count": 734
+    },
+    {
+      "bucket": "taker_inverse_imbalance",
+      "mean_markout_cents": -4.33074434,
+      "sample_count": 618
+    }
+  ],
+  "by_price_bucket": [
+    {
+      "bucket": "price_10_30c",
+      "mean_markout_cents": -3.66861598,
+      "sample_count": 513
+    },
+    {
+      "bucket": "price_30_70c",
+      "mean_markout_cents": -8.62244898,
+      "sample_count": 98
+    },
+    {
+      "bucket": "price_70_90c",
+      "mean_markout_cents": -5.06735751,
+      "sample_count": 193
+    },
+    {
+      "bucket": "price_ge_90c",
+      "mean_markout_cents": -3.59182156,
+      "sample_count": 538
+    },
+    {
+      "bucket": "price_lt_10c",
+      "mean_markout_cents": -2.96,
+      "sample_count": 10
+    }
+  ],
+  "by_spread_bucket": [
+    {
+      "bucket": "spread_2_4c",
+      "mean_markout_cents": -2.62534819,
+      "sample_count": 718
+    },
+    {
+      "bucket": "spread_4_8c",
+      "mean_markout_cents": -5.2562724,
+      "sample_count": 558
+    },
+    {
+      "bucket": "spread_8_15c",
+      "mean_markout_cents": -8.88461538,
+      "sample_count": 52
+    },
+    {
+      "bucket": "spread_ge_15c",
+      "mean_markout_cents": -16.125,
+      "sample_count": 24
+    }
+  ],
+  "by_time_to_close_bucket": [
+    {
+      "bucket": "ge_30d",
+      "mean_markout_cents": -4.23838538,
+      "sample_count": 1313
+    },
+    {
+      "bucket": "lt_1h",
+      "mean_markout_cents": -2.61538462,
+      "sample_count": 39
+    }
+  ],
+  "conclusion": "failed_negative_forward_markout",
+  "counts_for_live_gate": false,
+  "immediate_filter_recommendations": [
+    "do_not_follow_negative_imbalance_until_inverse_test",
+    "exclude_extreme_prices_for_taker",
+    "tighten_max_spread"
+  ],
+  "live_order_path": false,
+  "mean_markout_by_horizon": [
+    {
+      "bucket": "300",
+      "mean_markout_cents": -4.36321839,
+      "sample_count": 522
+    },
+    {
+      "bucket": "3600",
+      "mean_markout_cents": -3.86136986,
+      "sample_count": 365
+    },
+    {
+      "bucket": "900",
+      "mean_markout_cents": -4.25806452,
+      "sample_count": 465
+    }
+  ],
+  "microstructure_taker_status": "failed_negative_forward_markout",
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_microstructure_experiment_analysis.v1",
+  "scope": "polymarket_only",
+  "taker_fill_count": 601,
+  "worst_categories": [
+    {
+      "bucket": "world_affairs",
+      "mean_markout_cents": -7.62765957,
+      "sample_count": 94
+    },
+    {
+      "bucket": "tech",
+      "mean_markout_cents": -7.5,
+      "sample_count": 86
+    },
+    {
+      "bucket": "starmer",
+      "mean_markout_cents": -5.54415954,
+      "sample_count": 351
+    },
+    {
+      "bucket": "music",
+      "mean_markout_cents": -5.0,
+      "sample_count": 54
+    },
+    {
+      "bucket": "world",
+      "mean_markout_cents": -3.05952381,
+      "sample_count": 420
+    },
+    {
+      "bucket": "exchange",
+      "mean_markout_cents": -3.0,
+      "sample_count": 54
+    },
+    {
+      "bucket": "politics",
+      "mean_markout_cents": -2.84210526,
+      "sample_count": 38
+    },
+    {
+      "bucket": "courts",
+      "mean_markout_cents": -2.61538462,
+      "sample_count": 39
+    },
+    {
+      "bucket": "india",
+      "mean_markout_cents": -2.0,
+      "sample_count": 216
+    }
+  ]
+}

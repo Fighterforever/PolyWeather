@@ -169,6 +169,8 @@ def build_microstructure_policy_sweep(
     max_spread: float = 0.18,
     min_depth: float = 25.0,
     maker_margin: float = 0.01,
+    include_inverse: bool = True,
+    include_baseline: bool = True,
 ) -> Dict[str, Any]:
     watches = [row for row in watch_rows if isinstance(row, dict)]
     markets = _market_by_slug(active_markets)
@@ -194,12 +196,14 @@ def build_microstructure_policy_sweep(
         spread = _safe_float(row.get("spread"))
 
         # Policy 1: taker follow imbalance.
+        follow_side: Optional[str] = None
         if imbalance is None:
             blockers["taker_follow_imbalance:missing_imbalance"] += 1
         elif abs(imbalance) < float(imbalance_threshold):
             blockers["taker_follow_imbalance:imbalance_below_threshold"] += 1
         else:
             side = "YES" if imbalance >= float(imbalance_threshold) else "NO"
+            follow_side = side
             quote, gap = _direct_side_quote(market, side)
             if quote is None:
                 blockers[f"taker_follow_imbalance:{gap}"] += 1
@@ -235,7 +239,49 @@ def build_microstructure_policy_sweep(
                 fill = {**candidate, "schema_version": f"{SCHEMA_VERSION}.taker_fill", "fill_id": candidate["candidate_id"], "source": "microstructure_policy_sweep"}
                 taker_fills.append(fill)
 
-        # Policy 2: taker mean reversion.
+        # Policy 2: inverse of the same imbalance signal.
+        if include_inverse:
+            if imbalance is None:
+                blockers["taker_inverse_imbalance:missing_imbalance"] += 1
+            elif abs(imbalance) < float(imbalance_threshold):
+                blockers["taker_inverse_imbalance:imbalance_below_threshold"] += 1
+            else:
+                side = "NO" if (follow_side or ("YES" if imbalance >= float(imbalance_threshold) else "NO")) == "YES" else "YES"
+                quote, gap = _direct_side_quote(market, side)
+                if quote is None:
+                    blockers[f"taker_inverse_imbalance:{gap}"] += 1
+                elif quote.get("best_ask") is not None and (
+                    quote["best_ask"] < 0.005
+                    or (quote.get("ask_depth") is not None and float(quote.get("ask_depth") or 0.0) < float(min_depth))
+                    or quote.get("spread") is None
+                    or float(quote.get("spread") or 999.0) > float(max_spread)
+                ):
+                    reason = (
+                        "dust_price"
+                        if quote["best_ask"] < 0.005
+                        else "depth_insufficient"
+                        if quote.get("ask_depth") is not None and float(quote.get("ask_depth") or 0.0) < float(min_depth)
+                        else "spread_too_wide_or_missing"
+                    )
+                    blockers[f"taker_inverse_imbalance:{reason}"] += 1
+                else:
+                    candidate = _base_candidate(
+                        row,
+                        policy_id="taker_inverse_imbalance",
+                        action=f"buy_{side.lower()}",
+                        side=side,
+                        token_id=str(quote["token_id"]),
+                        entry_price=float(quote["best_ask"]),
+                        q_effective=float(quote["best_ask"]),
+                        spread=quote.get("spread"),
+                        bid_depth=quote.get("bid_depth"),
+                        ask_depth=quote.get("ask_depth"),
+                        orderbook_snapshot_id=row.get("orderbook_snapshot_id"),
+                    )
+                    candidates.append(candidate)
+                    taker_fills.append({**candidate, "schema_version": f"{SCHEMA_VERSION}.taker_fill", "fill_id": candidate["candidate_id"], "source": "microstructure_policy_sweep_counterfactual"})
+
+        # Policy 3: taker mean reversion.
         momentum = _safe_float(row.get("price_momentum_5m") or row.get("price_momentum_15m"))
         if momentum is None:
             blockers["taker_mean_reversion:missing_momentum"] += 1
@@ -263,7 +309,16 @@ def build_microstructure_policy_sweep(
                 candidates.append(candidate)
                 taker_fills.append({**candidate, "schema_version": f"{SCHEMA_VERSION}.taker_fill", "fill_id": candidate["candidate_id"], "source": "microstructure_policy_sweep"})
 
-        # Policy 3: maker spread capture.
+        # Policy 4: no-trade spread baseline. This deliberately creates no fill.
+        if include_baseline:
+            if spread is None:
+                blockers["spread_only_no_direction:missing_spread"] += 1
+            elif spread < float(min_spread):
+                blockers["spread_only_no_direction:spread_below_min"] += 1
+            else:
+                by_policy["spread_only_no_direction"] += 1
+
+        # Policy 5: maker spread capture.
         if spread is None or spread < float(min_spread):
             blockers["maker_spread_capture:spread_below_min"] += 1
         elif ask_depth is None or ask_depth < float(min_depth):
@@ -307,6 +362,7 @@ def build_microstructure_policy_sweep(
     for candidate in candidates:
         by_policy[str(candidate.get("policy_id") or "missing")] += 1
         by_category[str(candidate.get("category") or "missing")] += 1
+    evaluated_variants = 3 + (1 if include_inverse else 0) + (1 if include_baseline else 0)
     return {
         "schema_version": SCHEMA_VERSION,
         "scope": "polymarket_only",
@@ -314,9 +370,10 @@ def build_microstructure_policy_sweep(
         "counts_for_live_gate": False,
         "live_order_path": False,
         "input_watch_count": len(watches),
-        "policy_variant_count": len(watches) * 3,
+        "policy_variant_count": len(watches) * evaluated_variants,
         "policy_candidate_count": len(candidates),
         "taker_candidate_count": len(taker_fills),
+        "inverse_candidate_count": len([row for row in candidates if row.get("policy_id") == "taker_inverse_imbalance"]),
         "maker_candidate_count": len(maker_quotes),
         "taker_fill_count": len(taker_fills),
         "maker_quote_count": len(maker_quotes),

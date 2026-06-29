@@ -1,0 +1,175 @@
+{
+  "adverse_selection_by_mode": [
+    {
+      "adverse_selection_count": 497,
+      "mode": "passive_mid_plus_0_5c"
+    },
+    {
+      "adverse_selection_count": 328,
+      "mode": "passive_mid_plus_1c"
+    },
+    {
+      "adverse_selection_count": 135,
+      "mode": "passive_mid_plus_2c"
+    },
+    {
+      "adverse_selection_count": 0,
+      "mode": "join_best_bid"
+    },
+    {
+      "adverse_selection_count": 497,
+      "mode": "improve_best_bid_by_1_tick"
+    },
+    {
+      "adverse_selection_count": 497,
+      "mode": "improve_best_ask_by_1_tick"
+    },
+    {
+      "adverse_selection_count": 497,
+      "mode": "inside_spread_25pct"
+    },
+    {
+      "adverse_selection_count": 497,
+      "mode": "inside_spread_50pct"
+    }
+  ],
+  "artifact_paths": {
+    "rows": "evidence/polymarket_alpha/maker_quote_aggressiveness_rows.jsonl"
+  },
+  "best_mode": "improve_best_bid_by_1_tick",
+  "blocker_counts": [
+    {
+      "count": 24,
+      "reason": "passive_mid_plus_1c:quote_not_inside_or_at_touch"
+    },
+    {
+      "count": 321,
+      "reason": "passive_mid_plus_2c:quote_not_inside_or_at_touch"
+    }
+  ],
+  "counts_for_live_gate": false,
+  "inferred_fill_count": 3631,
+  "inferred_fill_count_by_mode": [
+    {
+      "adverse_selection_count": 497,
+      "inferred_fill_count": 497,
+      "mean_markout_cents": -1.62796781,
+      "mode": "passive_mid_plus_0_5c",
+      "sweep_quote_count": 497
+    },
+    {
+      "adverse_selection_count": 328,
+      "inferred_fill_count": 473,
+      "mean_markout_cents": -1.18520085,
+      "mode": "passive_mid_plus_1c",
+      "sweep_quote_count": 473
+    },
+    {
+      "adverse_selection_count": 135,
+      "inferred_fill_count": 176,
+      "mean_markout_cents": -1.69318182,
+      "mode": "passive_mid_plus_2c",
+      "sweep_quote_count": 176
+    },
+    {
+      "adverse_selection_count": 0,
+      "inferred_fill_count": 497,
+      "mean_markout_cents": 0.0,
+      "mode": "join_best_bid",
+      "sweep_quote_count": 497
+    },
+    {
+      "adverse_selection_count": 497,
+      "inferred_fill_count": 497,
+      "mean_markout_cents": -1.0,
+      "mode": "improve_best_bid_by_1_tick",
+      "sweep_quote_count": 497
+    },
+    {
+      "adverse_selection_count": 497,
+      "inferred_fill_count": 497,
+      "mean_markout_cents": -1.0,
+      "mode": "improve_best_ask_by_1_tick",
+      "sweep_quote_count": 497
+    },
+    {
+      "adverse_selection_count": 497,
+      "inferred_fill_count": 497,
+      "mean_markout_cents": -1.0639839,
+      "mode": "inside_spread_25pct",
+      "sweep_quote_count": 497
+    },
+    {
+      "adverse_selection_count": 497,
+      "inferred_fill_count": 497,
+      "mean_markout_cents": -2.12796781,
+      "mode": "inside_spread_50pct",
+      "sweep_quote_count": 497
+    }
+  ],
+  "live_order_path": false,
+  "mean_markout_by_mode": [
+    {
+      "adverse_selection_count": 497,
+      "inferred_fill_count": 497,
+      "mean_markout_cents": -1.62796781,
+      "mode": "passive_mid_plus_0_5c",
+      "sweep_quote_count": 497
+    },
+    {
+      "adverse_selection_count": 328,
+      "inferred_fill_count": 473,
+      "mean_markout_cents": -1.18520085,
+      "mode": "passive_mid_plus_1c",
+      "sweep_quote_count": 473
+    },
+    {
+      "adverse_selection_count": 135,
+      "inferred_fill_count": 176,
+      "mean_markout_cents": -1.69318182,
+      "mode": "passive_mid_plus_2c",
+      "sweep_quote_count": 176
+    },
+    {
+      "adverse_selection_count": 0,
+      "inferred_fill_count": 497,
+      "mean_markout_cents": 0.0,
+      "mode": "join_best_bid",
+      "sweep_quote_count": 497
+    },
+    {
+      "adverse_selection_count": 497,
+      "inferred_fill_count": 497,
+      "mean_markout_cents": -1.0,
+      "mode": "improve_best_bid_by_1_tick",
+      "sweep_quote_count": 497
+    },
+    {
+      "adverse_selection_count": 497,
+      "inferred_fill_count": 497,
+      "mean_markout_cents": -1.0,
+      "mode": "improve_best_ask_by_1_tick",
+      "sweep_quote_count": 497
+    },
+    {
+      "adverse_selection_count": 497,
+      "inferred_fill_count": 497,
+      "mean_markout_cents": -1.0639839,
+      "mode": "inside_spread_25pct",
+      "sweep_quote_count": 497
+    },
+    {
+      "adverse_selection_count": 497,
+      "inferred_fill_count": 497,
+      "mean_markout_cents": -2.12796781,
+      "mode": "inside_spread_50pct",
+      "sweep_quote_count": 497
+    }
+  ],
+  "mode_recommendation": "maker_adverse_selection",
+  "original_quote_count": 497,
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_maker_quote_sweep.v1",
+  "scope": "polymarket_only",
+  "sweep_quote_count": 3631
+}

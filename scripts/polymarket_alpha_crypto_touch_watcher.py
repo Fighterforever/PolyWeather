@@ -132,6 +132,18 @@ def main(argv: list[str] | None = None) -> None:
         ],
         [
             args.python_path,
+            "scripts/polymarket_alpha_microstructure_attribution_report.py",
+        ],
+        [
+            args.python_path,
+            "scripts/polymarket_alpha_microstructure_counterfactual_markout_report.py",
+        ],
+        [
+            args.python_path,
+            "scripts/polymarket_alpha_maker_quote_sweep_report.py",
+        ],
+        [
+            args.python_path,
             "scripts/polymarket_alpha_microstructure_experiment_controller.py",
         ],
         [
@@ -189,6 +201,9 @@ def main(argv: list[str] | None = None) -> None:
             "microstructure_policy_sweep_report": "evidence/polymarket_alpha/microstructure_policy_sweep_report.json",
             "microstructure_followup_snapshot_report": "evidence/polymarket_alpha/microstructure_followup_snapshot_report.json",
             "microstructure_markout_report": "evidence/polymarket_alpha/microstructure_markout_report.json",
+            "microstructure_taker_failure_attribution": "evidence/polymarket_alpha/microstructure_taker_failure_attribution.json",
+            "microstructure_inverse_counterfactual_markout_report": "evidence/polymarket_alpha/microstructure_inverse_counterfactual_markout_report.json",
+            "maker_quote_aggressiveness_sweep_report": "evidence/polymarket_alpha/maker_quote_aggressiveness_sweep_report.json",
             "microstructure_experiment_report": "evidence/polymarket_alpha/microstructure_experiment_report.json",
             "alpha_tournament_scoreboard": "evidence/polymarket_alpha/alpha_tournament_scoreboard.json",
             "vps_alpha_tournament_runner_report": "evidence/polymarket_alpha/vps_alpha_tournament_runner_report.json",
