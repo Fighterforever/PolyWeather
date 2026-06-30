@@ -51,6 +51,7 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
     lifecycle = _load(args.lifecycle_audit_report)
     reward_share = _load(args.reward_share_report)
     allocation = _load(args.reward_allocation_audit_report)
+    cohort_report = _load(args.measurement_cohort_report)
     cancellation = _load(args.cancellation_policy_report)
     window = _load(args.reward_window_report)
     holder = _load(args.smart_holder_report)
@@ -64,11 +65,17 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
     reward_to_risk = reward_risk.get("reward_to_risk_proxy")
     valid_by_horizon = reward_risk.get("valid_markout_count_by_horizon") or []
     valid_counts = {str(row.get("horizon")): int(row.get("count") or 0) for row in valid_by_horizon if isinstance(row, dict)}
+    not_old_by_horizon = reward_risk.get("cohort_not_old_enough_count_by_horizon") or []
+    not_old_counts = {str(row.get("horizon")): int(row.get("count") or 0) for row in not_old_by_horizon if isinstance(row, dict)}
     lifecycle_conclusion = lifecycle.get("conclusion")
     if discovery.get("reward_metadata_available_count", 0) == 0:
         recommendation = "reward_metadata_pipeline_broken_or_no_rewards"
+    elif int(cohort_report.get("active_cohort_count") or reward_risk.get("active_cohort_count") or 0) == 0:
+        recommendation = "create_measurement_cohorts_before_profit_judgment"
     elif lifecycle_conclusion not in (None, "lifecycle_ok", "missing_horizon_updates_after_entry"):
         recommendation = "fix_quote_lifecycle_before_profit_judgment"
+    elif sum(valid_counts.get(key, 0) for key in ("5m", "15m", "1h")) == 0 and sum(not_old_counts.get(key, 0) for key in ("5m", "15m", "1h")) > 0:
+        recommendation = "waiting_for_cohort_horizon_markout"
     elif quote_update_count >= 100 and sum(valid_counts.get(key, 0) for key in ("5m", "15m", "1h")) == 0:
         recommendation = "markout_pipeline_still_broken"
     elif quote_update_count < 100:
@@ -132,6 +139,8 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "quote_update_count": quote_update_count,
         "unique_quote_id_count": lifecycle.get("unique_quote_id_count"),
         "updates_per_quote_median": lifecycle.get("updates_per_quote_median"),
+        "active_cohort_count": cohort_report.get("active_cohort_count") or reward_risk.get("active_cohort_count"),
+        "cohort_created_count": cohort_report.get("cohort_created_count") or cohort_report.get("cohorts_created_count"),
         "lifecycle_audit_conclusion": lifecycle_conclusion,
         "lifecycle_missing_horizon_reason_counts": lifecycle.get("missing_horizon_reason_counts"),
         "cumulative_reward_points_proxy": reward_points_proxy,
@@ -144,11 +153,15 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "mean_markout_5m": _mean(reward_risk, "mean_5m_markout"),
         "mean_markout_15m": _mean(reward_risk, "mean_15m_markout"),
         "mean_markout_1h": _mean(reward_risk, "mean_1h_markout"),
+        "mean_markout_6h": _mean(reward_risk, "mean_6h_markout"),
+        "mean_markout_24h": _mean(reward_risk, "mean_24h_markout"),
         "mean_markout_current": _mean(reward_risk, "mean_current_markout"),
         "valid_markout_count_by_horizon": reward_risk.get("valid_markout_count_by_horizon"),
         "mean_5m_markout": _mean(reward_risk, "mean_5m_markout"),
         "mean_15m_markout": _mean(reward_risk, "mean_15m_markout"),
         "mean_1h_markout": _mean(reward_risk, "mean_1h_markout"),
+        "mean_6h_markout": _mean(reward_risk, "mean_6h_markout"),
+        "mean_24h_markout": _mean(reward_risk, "mean_24h_markout"),
         "mean_current_markout": _mean(reward_risk, "mean_current_markout"),
         "reward_to_risk_proxy": reward_to_risk,
         "exact_reward_conversion_available": bool(reward_risk.get("exact_reward_conversion_available_count")),
@@ -159,6 +172,11 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "visible_reward_share_p90": reward_share.get("visible_reward_share_p90"),
         "visible_share_exceeds_break_even_count": reward_share.get("quotes_where_visible_share_exceeds_break_even"),
         "allocation_exact_available": bool(allocation.get("estimated_reward_cents_available_count")),
+        "allocation_available_count": reward_share.get("allocation_available_count") or allocation.get("reward_allocation_available_count"),
+        "visible_proxy_reward_available": bool(reward_share.get("visible_proxy_reward_cents_count")),
+        "break_even_share_current_median": reward_share.get("median_break_even_share_current") or reward_risk.get("break_even_share_median"),
+        "break_even_share_minus_1c_median": reward_share.get("median_break_even_share_under_minus_1c"),
+        "break_even_share_minus_3c_median": reward_share.get("median_break_even_share_under_minus_3c"),
         "allocation_audit_gap_counts": allocation.get("gap_counts"),
         "scenario_reward_0_5pct_share": reward_risk.get("scenario_reward_0_5pct_share"),
         "scenario_reward_1pct_share": reward_risk.get("scenario_reward_1pct_share"),
@@ -182,6 +200,9 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "expensive_basket_rejection_count": strategy.get("expensive_basket_rejection_count", 0),
         "smart_holder_signal_count": holder.get("smart_holder_signal_count", 0),
         "time_window_confidence": window.get("window_confidence") or window.get("confidence"),
+        "next_expected_5m_markout_time": cohort_report.get("next_expected_5m_markout_time") or reward_risk.get("next_expected_5m_markout_time"),
+        "next_expected_15m_markout_time": cohort_report.get("next_expected_15m_markout_time") or reward_risk.get("next_expected_15m_markout_time"),
+        "next_expected_1h_markout_time": cohort_report.get("next_expected_1h_markout_time") or reward_risk.get("next_expected_1h_markout_time"),
         "recommendation": recommendation,
         "paper_only": True,
         "counts_for_live_gate": False,
@@ -197,6 +218,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--quote-update-report", default="evidence/weather_lp_rewards/paper_quote_update_report.json")
     parser.add_argument("--reward-risk-report", default="evidence/weather_lp_rewards/reward_vs_risk_report.json")
     parser.add_argument("--lifecycle-audit-report", default="evidence/weather_lp_rewards/quote_lifecycle_audit_report.json")
+    parser.add_argument("--measurement-cohort-report", default="evidence/weather_lp_rewards/measurement_cohort_report.json")
     parser.add_argument("--reward-share-report", default="evidence/weather_lp_rewards/reward_share_estimator_report.json")
     parser.add_argument("--reward-allocation-audit-report", default="evidence/weather_lp_rewards/reward_allocation_audit_report.json")
     parser.add_argument("--cancellation-policy-report", default="evidence/weather_lp_rewards/cancellation_policy_report.json")

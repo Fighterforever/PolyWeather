@@ -74,6 +74,31 @@ def test_reward_risk_does_not_reuse_current_update_for_missing_horizon():
     assert status_by_horizon["current"] == "current_latest"
 
 
+def test_reward_risk_uses_measurement_cohorts_for_horizon_markout():
+    report = build_weather_lp_reward_risk_report(
+        quotes=[{"quote_id": "q1", "quote_start_time": "2026-06-29T10:00:00Z", "quote_price": 0.5}],
+        measurement_cohorts=[
+            {
+                "cohort_id": "c1",
+                "quote_id": "q1",
+                "stable_quote_key": "stable",
+                "cohort_start_time": "2026-06-30T10:00:00Z",
+                "entry_midpoint_at_cohort_start": 0.5,
+                "quote_price": 0.49,
+                "status": "active",
+                "target_5m": "2026-06-30T10:05:00Z",
+            }
+        ],
+        quote_updates=[
+            {"quote_id": "q1", "update_time": "2026-06-30T10:05:00Z", "current_midpoint": 0.52, "price_markout_from_entry": 2.0}
+        ],
+    )
+
+    assert report["active_cohort_count"] == 1
+    assert report["valid_markout_count_by_horizon"][0] == {"horizon": "5m", "count": 1}
+    assert report["mean_5m_markout"] == 3.0
+
+
 def test_reward_share_estimator_uses_visible_orderbook_proxy_only():
     report = build_weather_lp_reward_share_report(
         quotes=[
@@ -109,3 +134,29 @@ def test_reward_share_estimator_uses_visible_orderbook_proxy_only():
     assert row["our_visible_reward_share_proxy"] is not None
     assert row["estimated_reward_cents_proxy"] is not None
     assert report["live_order_path"] is False
+
+
+def test_reward_share_outputs_stress_break_even_scenarios():
+    report = build_weather_lp_reward_share_report(
+        quotes=[{"quote_id": "q1", "market_slug": "m", "token_id": "t", "quote_price": 0.49, "quote_size": 50, "q_min_proxy": 10.0, "quote_status": "active"}],
+        reward_markets=[
+            {
+                "market_slug": "m",
+                "token_id": "t",
+                "best_bid": 0.49,
+                "best_ask": 0.51,
+                "bid_depth": 50,
+                "ask_depth": 50,
+                "min_incentive_size": 50,
+                "max_incentive_spread": 0.05,
+                "reward_allocation": 100.0,
+            }
+        ],
+        quote_updates=[{"quote_id": "q1", "q_min_proxy": 10.0, "markout_from_quote_price": 0.0}],
+    )
+
+    row = report["rows"][0]
+    assert row["hidden_competitor_multiplier_scenarios"]["10x"] is not None
+    assert row["break_even_share_if_markout_minus_1c"] == 0.01
+    assert row["break_even_share_if_markout_minus_3c"] == 0.03
+    assert report["median_break_even_share_under_minus_1c"] == 0.01

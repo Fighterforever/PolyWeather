@@ -16,6 +16,7 @@ def test_weather_lp_controller_requires_reward_metadata(tmp_path: Path):
     updates = tmp_path / "updates.json"
     risk = tmp_path / "risk.json"
     lifecycle = tmp_path / "lifecycle.json"
+    cohort = tmp_path / "cohort.json"
     share = tmp_path / "share.json"
     allocation = tmp_path / "allocation.json"
     cancellation = tmp_path / "cancellation.json"
@@ -27,6 +28,7 @@ def test_weather_lp_controller_requires_reward_metadata(tmp_path: Path):
     updates.write_text(json.dumps({}), encoding="utf-8")
     risk.write_text(json.dumps({}), encoding="utf-8")
     lifecycle.write_text(json.dumps({}), encoding="utf-8")
+    cohort.write_text(json.dumps({}), encoding="utf-8")
     share.write_text(json.dumps({}), encoding="utf-8")
     allocation.write_text(json.dumps({}), encoding="utf-8")
     cancellation.write_text(json.dumps({}), encoding="utf-8")
@@ -43,6 +45,7 @@ def test_weather_lp_controller_requires_reward_metadata(tmp_path: Path):
             quote_update_report=updates,
             reward_risk_report=risk,
             lifecycle_audit_report=lifecycle,
+            measurement_cohort_report=cohort,
             reward_share_report=share,
             reward_allocation_audit_report=allocation,
             cancellation_policy_report=cancellation,
@@ -64,6 +67,7 @@ def test_weather_lp_controller_requires_enough_quote_updates(tmp_path: Path):
     updates = tmp_path / "updates.json"
     risk = tmp_path / "risk.json"
     lifecycle = tmp_path / "lifecycle.json"
+    cohort = tmp_path / "cohort.json"
     share = tmp_path / "share.json"
     allocation = tmp_path / "allocation.json"
     cancellation = tmp_path / "cancellation.json"
@@ -77,6 +81,7 @@ def test_weather_lp_controller_requires_enough_quote_updates(tmp_path: Path):
     updates.write_text(json.dumps({"quote_update_count": 20, "cumulative_reward_points_proxy": 3.0}), encoding="utf-8")
     risk.write_text(json.dumps({"quote_update_count": 20, "cumulative_reward_points_proxy": 3.0, "mean_current_markout": -0.2}), encoding="utf-8")
     lifecycle.write_text(json.dumps({"conclusion": "missing_horizon_updates_after_entry", "unique_quote_id_count": 20, "updates_per_quote_median": 1}), encoding="utf-8")
+    cohort.write_text(json.dumps({"active_cohort_count": 20, "cohort_created_count": 20}), encoding="utf-8")
     share.write_text(json.dumps({"visible_reward_share_median": 0.01, "quotes_where_visible_share_exceeds_break_even": 0}), encoding="utf-8")
     allocation.write_text(json.dumps({"estimated_reward_cents_available_count": 0, "gap_counts": []}), encoding="utf-8")
     cancellation.write_text(json.dumps({"cancellation_policy_recommendation": "continue_collecting_policy_updates"}), encoding="utf-8")
@@ -93,6 +98,7 @@ def test_weather_lp_controller_requires_enough_quote_updates(tmp_path: Path):
             quote_update_report=updates,
             reward_risk_report=risk,
             lifecycle_audit_report=lifecycle,
+            measurement_cohort_report=cohort,
             reward_share_report=share,
             reward_allocation_audit_report=allocation,
             cancellation_policy_report=cancellation,
@@ -118,6 +124,7 @@ def test_weather_lp_controller_flags_missing_strict_horizon_after_many_updates(t
     updates = tmp_path / "updates.json"
     risk = tmp_path / "risk.json"
     lifecycle = tmp_path / "lifecycle.json"
+    cohort = tmp_path / "cohort.json"
     share = tmp_path / "share.json"
     allocation = tmp_path / "allocation.json"
     cancellation = tmp_path / "cancellation.json"
@@ -145,6 +152,7 @@ def test_weather_lp_controller_flags_missing_strict_horizon_after_many_updates(t
         encoding="utf-8",
     )
     lifecycle.write_text(json.dumps({"conclusion": "missing_horizon_updates_after_entry"}), encoding="utf-8")
+    cohort.write_text(json.dumps({"active_cohort_count": 20}), encoding="utf-8")
     share.write_text(json.dumps({}), encoding="utf-8")
     allocation.write_text(json.dumps({"estimated_reward_cents_available_count": 0}), encoding="utf-8")
     cancellation.write_text(json.dumps({}), encoding="utf-8")
@@ -161,6 +169,7 @@ def test_weather_lp_controller_flags_missing_strict_horizon_after_many_updates(t
             quote_update_report=updates,
             reward_risk_report=risk,
             lifecycle_audit_report=lifecycle,
+            measurement_cohort_report=cohort,
             reward_share_report=share,
             reward_allocation_audit_report=allocation,
             cancellation_policy_report=cancellation,
@@ -172,3 +181,67 @@ def test_weather_lp_controller_flags_missing_strict_horizon_after_many_updates(t
     )
 
     assert report["recommendation"] == "markout_pipeline_still_broken"
+
+
+def test_weather_lp_controller_waits_for_young_cohort_horizon(tmp_path: Path):
+    discovery = tmp_path / "discovery.json"
+    strategy = tmp_path / "strategy.json"
+    paper = tmp_path / "paper.json"
+    updates = tmp_path / "updates.json"
+    risk = tmp_path / "risk.json"
+    lifecycle = tmp_path / "lifecycle.json"
+    cohort = tmp_path / "cohort.json"
+    share = tmp_path / "share.json"
+    allocation = tmp_path / "allocation.json"
+    cancellation = tmp_path / "cancellation.json"
+    optimizer = tmp_path / "optimizer.json"
+    quote_updates = tmp_path / "updates.jsonl"
+    window = tmp_path / "window.json"
+    holder = tmp_path / "holder.json"
+    discovery.write_text(json.dumps({"reward_metadata_available_count": 89}), encoding="utf-8")
+    strategy.write_text(json.dumps({}), encoding="utf-8")
+    paper.write_text(json.dumps({"paper_quote_count": 20}), encoding="utf-8")
+    updates.write_text(json.dumps({"quote_update_count": 120}), encoding="utf-8")
+    risk.write_text(
+        json.dumps(
+            {
+                "quote_update_count": 120,
+                "active_cohort_count": 20,
+                "valid_markout_count_by_horizon": [{"horizon": "5m", "count": 0}, {"horizon": "15m", "count": 0}, {"horizon": "1h", "count": 0}],
+                "cohort_not_old_enough_count_by_horizon": [{"horizon": "5m", "count": 20}, {"horizon": "15m", "count": 20}, {"horizon": "1h", "count": 20}],
+            }
+        ),
+        encoding="utf-8",
+    )
+    lifecycle.write_text(json.dumps({"conclusion": "missing_horizon_updates_after_entry"}), encoding="utf-8")
+    cohort.write_text(json.dumps({"active_cohort_count": 20, "cohort_created_count": 20, "next_expected_5m_markout_time": "2026-06-30T10:05:00Z"}), encoding="utf-8")
+    share.write_text(json.dumps({}), encoding="utf-8")
+    allocation.write_text(json.dumps({}), encoding="utf-8")
+    cancellation.write_text(json.dumps({}), encoding="utf-8")
+    optimizer.write_text(json.dumps({}), encoding="utf-8")
+    quote_updates.write_text("", encoding="utf-8")
+    window.write_text(json.dumps({}), encoding="utf-8")
+    holder.write_text(json.dumps({}), encoding="utf-8")
+
+    report = build_report(
+        Namespace(
+            discovery_report=discovery,
+            strategy_report=strategy,
+            paper_cycle_report=paper,
+            quote_update_report=updates,
+            reward_risk_report=risk,
+            lifecycle_audit_report=lifecycle,
+            measurement_cohort_report=cohort,
+            reward_share_report=share,
+            reward_allocation_audit_report=allocation,
+            cancellation_policy_report=cancellation,
+            quote_optimizer_report=optimizer,
+            quote_updates=quote_updates,
+            reward_window_report=window,
+            smart_holder_report=holder,
+        )
+    )
+
+    assert report["active_cohort_count"] == 20
+    assert report["recommendation"] == "waiting_for_cohort_horizon_markout"
+    assert report["next_expected_5m_markout_time"] == "2026-06-30T10:05:00Z"

@@ -22,6 +22,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build paper-only weather LP reward-vs-risk ledger.")
     parser.add_argument("--quotes", default="evidence/weather_lp_rewards/paper_quotes.jsonl")
     parser.add_argument("--quote-updates", default="evidence/weather_lp_rewards/paper_quote_updates.jsonl")
+    parser.add_argument("--measurement-cohorts", default="evidence/weather_lp_rewards/measurement_cohorts.jsonl")
     parser.add_argument("--city-regimes", default="evidence/weather_lp_rewards/city_regime_table.jsonl")
     parser.add_argument("--rows-output", default="evidence/weather_lp_rewards/reward_vs_risk_rows.jsonl")
     parser.add_argument("--summary-output", default="evidence/weather_lp_rewards/reward_vs_risk_report.json")
@@ -34,6 +35,7 @@ def main(argv: list[str] | None = None) -> None:
     report = build_weather_lp_reward_risk_report(
         quotes=load_jsonl(args.quotes),
         quote_updates=load_jsonl(args.quote_updates),
+        measurement_cohorts=load_jsonl(args.measurement_cohorts),
         city_regimes=load_jsonl(args.city_regimes),
     )
     write_jsonl(args.rows_output, report.get("rows") or [])

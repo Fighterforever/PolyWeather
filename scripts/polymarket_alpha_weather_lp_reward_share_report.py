@@ -23,6 +23,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--quotes", default="evidence/weather_lp_rewards/paper_quotes.jsonl")
     parser.add_argument("--reward-markets", default="evidence/weather_lp_rewards/lp_reward_markets.jsonl")
     parser.add_argument("--quote-updates", default="evidence/weather_lp_rewards/paper_quote_updates.jsonl")
+    parser.add_argument("--measurement-cohorts", default="evidence/weather_lp_rewards/measurement_cohorts.jsonl")
     parser.add_argument("--rows-output", default="evidence/weather_lp_rewards/reward_share_estimator_rows.jsonl")
     parser.add_argument("--summary-output", default="evidence/weather_lp_rewards/reward_share_estimator_report.json")
     return parser.parse_args(argv)
@@ -34,6 +35,7 @@ def main(argv: list[str] | None = None) -> None:
         quotes=load_jsonl(args.quotes),
         reward_markets=load_jsonl(args.reward_markets),
         quote_updates=load_jsonl(args.quote_updates),
+        measurement_cohorts=load_jsonl(args.measurement_cohorts),
     )
     write_jsonl(args.rows_output, report.get("rows") or [])
     compact = {key: value for key, value in report.items() if key != "rows"}
