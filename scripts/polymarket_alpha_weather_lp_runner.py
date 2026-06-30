@@ -32,20 +32,30 @@ def _load(path: str | Path) -> Dict[str, Any]:
 def _write_safety_status(*, generated_at: str) -> Dict[str, Any]:
     timers = _run(["systemctl", "list-timers", "--all", "--no-pager"])
     units = _run(["systemctl", "list-units", "--all", "--no-pager"])
+    unit_files = _run(["systemctl", "list-unit-files", "--no-pager"])
     ports = _run(["ss", "-tulpn"])
     disk = _run(["df", "-h", "/", "/opt"])
     memory = _run(["free", "-m"])
     text = "\n".join([timers.get("stdout", ""), units.get("stdout", "")]).lower()
+    unit_file_lines = [
+        line.strip()
+        for line in str(unit_files.get("stdout") or "").splitlines()
+        if any(key in line.lower() for key in ("polyweather", "polymarket", "weather"))
+    ]
+    disabled_timers = [line.split()[0] for line in unit_file_lines if line.split() and line.split()[0].endswith(".timer") and "disabled" in line]
+    disabled_services = [line.split()[0] for line in unit_file_lines if line.split() and line.split()[0].endswith(".service") and "disabled" in line]
     report = {
         "schema_version": "polyweather_vps_safety_status.v1",
         "generated_at": generated_at,
         "kept_timers": ["polyweather-weather-lp-reward.timer"] if "polyweather-weather-lp-reward.timer" in text else [],
-        "disabled_timers": ["polyweather-crypto-touch-watcher.timer"] if "polyweather-crypto-touch-watcher.timer" in text else [],
+        "disabled_timers": disabled_timers,
+        "disabled_services": disabled_services,
         "active_ports": ports,
         "disk_usage": disk,
         "memory_usage": memory,
         "timer_status_raw": timers,
         "unit_status_raw": units,
+        "unit_file_status_raw": unit_files,
         "paper_only": True,
         "counts_for_live_gate": False,
         "live_order_path": False,
