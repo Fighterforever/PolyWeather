@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from src.trading.polymarket_alpha.probability_dataset import write_json, write_jsonl
+from src.trading.polymarket_alpha.liquidity_reward_score import order_score
+from src.trading.polymarket_alpha.weather_lp_paper_journal import stable_quote_key
 
 
 SCHEMA_VERSION = "polyweather_polymarket_alpha_weather_lp_reward_risk.v1"
@@ -67,6 +69,12 @@ def _markout_row_for_horizon(quote: Dict[str, Any], rows: List[Dict[str, Any]], 
     base = {
         "schema_version": f"{SCHEMA_VERSION}.markout_row",
         "quote_id": quote_id,
+        "stable_quote_key": quote.get("stable_quote_key") or stable_quote_key(quote),
+        "market_slug": quote.get("market_slug"),
+        "token_id": quote.get("token_id"),
+        "city": quote.get("city"),
+        "station_code": quote.get("station_code"),
+        "strategy_variant": quote.get("strategy_variant"),
         "horizon": horizon,
         "quote_entry_time": _iso(start) if start else None,
         "target_time": None,
@@ -79,6 +87,8 @@ def _markout_row_for_horizon(quote: Dict[str, Any], rows: List[Dict[str, Any]], 
         "current_best_bid": None,
         "current_best_ask": None,
         "markout_cents": None,
+        "markout_from_entry_midpoint": None,
+        "markout_from_quote_price": None,
         "paper_only": True,
         "counts_for_live_gate": False,
         "live_order_path": False,
@@ -119,7 +129,15 @@ def _markout_row_for_horizon(quote: Dict[str, Any], rows: List[Dict[str, Any]], 
     base["matched_midpoint"] = matched_mid
     base["current_best_bid"] = selected.get("current_best_bid")
     base["current_best_ask"] = selected.get("current_best_ask")
-    base["markout_cents"] = _markout_value(selected)
+    midpoint_markout = _safe_float(selected.get("markout_from_entry_midpoint"))
+    if midpoint_markout is None and matched_mid is not None and entry_midpoint is not None:
+        midpoint_markout = round((matched_mid - entry_midpoint) * 100.0, 8)
+    quote_markout = _markout_value(selected)
+    if quote_markout is None and matched_mid is not None and entry_quote_price is not None:
+        quote_markout = round((matched_mid - entry_quote_price) * 100.0, 8)
+    base["markout_from_entry_midpoint"] = midpoint_markout
+    base["markout_from_quote_price"] = quote_markout
+    base["markout_cents"] = quote_markout
     return base
 
 
@@ -178,6 +196,7 @@ def build_weather_lp_reward_risk_report(
     city_regimes: Iterable[Dict[str, Any]] = (),
 ) -> Dict[str, Any]:
     quote_rows = [row for row in quotes if isinstance(row, dict)]
+    active_quote_rows = [row for row in quote_rows if str(row.get("quote_status") or "active") == "active"]
     update_rows = [row for row in quote_updates if isinstance(row, dict)]
     updates_by_quote = _quote_updates_by_quote(update_rows)
     regime_by_city = {str(row.get("city") or "").lower(): row for row in city_regimes if isinstance(row, dict)}
@@ -263,7 +282,8 @@ def build_weather_lp_reward_risk_report(
         "counts_for_live_gate": False,
         "live_order_path": False,
         "paper_quote_count": len(quote_rows),
-        "active_quote_count": len(quote_summaries),
+        "active_quote_count": len(active_quote_rows),
+        "closed_quote_count": len(quote_rows) - len(active_quote_rows),
         "update_count": len(update_rows),
         "quote_update_count": len(update_rows),
         "cumulative_reward_points_proxy": reward_points_total,
@@ -301,6 +321,144 @@ def build_weather_lp_reward_risk_report(
     }
     summary["city_basket_attribution"] = build_city_basket_attribution(summary, city_regimes=city_regimes)
     return summary
+
+
+def _market_lookup(markets: Iterable[Dict[str, Any]]) -> tuple[Dict[str, Dict[str, Any]], Dict[str, Dict[str, Any]]]:
+    by_token: Dict[str, Dict[str, Any]] = {}
+    by_slug: Dict[str, Dict[str, Any]] = {}
+    for row in markets:
+        if not isinstance(row, dict):
+            continue
+        slug = str(row.get("market_slug") or "")
+        if slug:
+            by_slug[slug] = row
+        for key in ("token_id", "yes_token_id", "no_token_id"):
+            token = str(row.get(key) or "")
+            if token:
+                by_token[token] = row
+    return by_token, by_slug
+
+
+def _latest_update_by_quote(updates: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    latest: Dict[str, Dict[str, Any]] = {}
+    for row in updates:
+        if not isinstance(row, dict):
+            continue
+        quote_id = str(row.get("quote_id") or "")
+        when = _parse_utc(row.get("update_time") or row.get("generated_at"))
+        if not quote_id or when is None:
+            continue
+        previous = latest.get(quote_id)
+        previous_when = _parse_utc(previous.get("update_time") or previous.get("generated_at")) if previous else None
+        if previous_when is None or when >= previous_when:
+            latest[quote_id] = row
+    return latest
+
+
+def _visible_competitor_q_proxy(market: Dict[str, Any]) -> Optional[float]:
+    bid = _safe_float(market.get("best_bid") or market.get("yes_best_bid"))
+    ask = _safe_float(market.get("best_ask") or market.get("yes_best_ask"))
+    if bid is None or ask is None:
+        return None
+    midpoint = (bid + ask) / 2.0
+    max_spread = _safe_float(market.get("max_incentive_spread"))
+    min_size = _safe_float(market.get("min_incentive_size"))
+    if max_spread is None or min_size is None:
+        return None
+    bid_depth = _safe_float(market.get("bid_depth") or market.get("yes_bid_depth"))
+    ask_depth = _safe_float(market.get("ask_depth") or market.get("yes_ask_depth"))
+    bid_score = order_score(max_spread, abs(midpoint - bid), size=bid_depth, min_incentive_size=min_size)
+    ask_score = order_score(max_spread, abs(ask - midpoint), size=ask_depth, min_incentive_size=min_size)
+    return round(bid_score + ask_score, 8)
+
+
+def build_weather_lp_reward_share_report(
+    *,
+    quotes: Iterable[Dict[str, Any]],
+    reward_markets: Iterable[Dict[str, Any]],
+    quote_updates: Iterable[Dict[str, Any]] = (),
+) -> Dict[str, Any]:
+    quote_rows = [row for row in quotes if isinstance(row, dict)]
+    active_quotes = [row for row in quote_rows if str(row.get("quote_status") or "active") == "active"]
+    latest_updates = _latest_update_by_quote(quote_updates)
+    by_token, by_slug = _market_lookup(reward_markets)
+    rows: List[Dict[str, Any]] = []
+    for quote in active_quotes:
+        quote_id = str(quote.get("quote_id") or "")
+        latest = latest_updates.get(quote_id) or {}
+        market = by_token.get(str(quote.get("token_id") or "")) or by_slug.get(str(quote.get("market_slug") or "")) or {}
+        visible_competitor = _visible_competitor_q_proxy(market)
+        our_q = _safe_float(latest.get("q_min_proxy") or quote.get("q_min_proxy"))
+        visible_total = None
+        share = None
+        if our_q is not None and visible_competitor is not None:
+            visible_total = max(0.0, our_q + visible_competitor)
+            share = round(our_q / visible_total, 8) if visible_total > 0 else None
+        allocation = _safe_float(market.get("reward_allocation") or quote.get("reward_allocation"))
+        current_markout = _safe_float(latest.get("markout_from_quote_price") or latest.get("price_markout_from_entry"))
+        markout_loss = max(0.0, -float(current_markout or 0.0))
+        break_even_share = None
+        if allocation is not None and allocation > 0:
+            break_even_share = round(markout_loss / allocation, 8)
+        scenario_0_5 = round(float(allocation) * 0.005, 8) if allocation is not None else None
+        scenario_1 = round(float(allocation) * 0.01, 8) if allocation is not None else None
+        if visible_competitor is None:
+            gap = "visible_orderbook_depth_unavailable"
+        elif our_q is None:
+            gap = "our_q_min_proxy_unavailable"
+        elif allocation is None:
+            gap = "reward_allocation_unavailable_for_dollar_conversion"
+        else:
+            gap = None
+        rows.append(
+            {
+                "schema_version": f"{SCHEMA_VERSION}.reward_share_row",
+                "quote_id": quote_id,
+                "stable_quote_key": quote.get("stable_quote_key") or stable_quote_key(quote),
+                "market_slug": quote.get("market_slug"),
+                "token_id": quote.get("token_id"),
+                "city": quote.get("city"),
+                "our_q_min_proxy": our_q,
+                "visible_competitor_q_proxy": visible_competitor,
+                "visible_total_q_proxy": visible_total,
+                "our_visible_reward_share_proxy": share,
+                "data_source": "visible_orderbook_proxy",
+                "reward_allocation_if_available": allocation,
+                "estimated_reward_cents_proxy": round(float(allocation) * float(share), 8) if allocation is not None and share is not None else None,
+                "reward_cents_if_share_0_5pct": scenario_0_5,
+                "reward_cents_if_share_1pct": scenario_1,
+                "break_even_reward_share": break_even_share,
+                "visible_share_exceeds_break_even": bool(share is not None and break_even_share is not None and share >= break_even_share),
+                "markout_loss_to_cover_cents": round(markout_loss, 8),
+                "gap_reason": gap,
+                "paper_only": True,
+                "counts_for_live_gate": False,
+                "live_order_path": False,
+            }
+        )
+    shares = [float(row.get("our_visible_reward_share_proxy")) for row in rows if row.get("our_visible_reward_share_proxy") is not None]
+    break_evens = [float(row.get("break_even_reward_share")) for row in rows if row.get("break_even_reward_share") is not None]
+    gap_counts = Counter(str(row.get("gap_reason") or "none") for row in rows)
+    return {
+        "schema_version": f"{SCHEMA_VERSION}.reward_share_report",
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+        "quote_count": len(active_quotes),
+        "markets_scored": len(rows),
+        "visible_competitor_score_available_count": len([row for row in rows if row.get("visible_competitor_q_proxy") is not None]),
+        "visible_reward_share_p10": _percentile(shares, 0.1),
+        "visible_reward_share_median": _percentile(shares, 0.5),
+        "visible_reward_share_p90": _percentile(shares, 0.9),
+        "break_even_share_median": _percentile(break_evens, 0.5),
+        "break_even_share_p90": _percentile(break_evens, 0.9),
+        "quotes_where_visible_share_exceeds_break_even": len([row for row in rows if row.get("visible_share_exceeds_break_even")]),
+        "scenario_reward_0_5pct_share": _mean(row.get("reward_cents_if_share_0_5pct") for row in rows),
+        "scenario_reward_1pct_share": _mean(row.get("reward_cents_if_share_1pct") for row in rows),
+        "reward_share_confidence": "visible_orderbook_proxy_only" if shares else "insufficient_visible_orderbook_proxy",
+        "gap_counts": [{"reason": key, "count": value} for key, value in sorted(gap_counts.items())],
+        "rows": rows,
+    }
 
 
 def _group_by_quote_minute(rows: List[Dict[str, Any]], quotes: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -384,6 +542,7 @@ __all__ = [
     "SCHEMA_VERSION",
     "build_weather_lp_reward_risk_report",
     "build_city_basket_attribution",
+    "build_weather_lp_reward_share_report",
     "load_jsonl",
     "write_json",
     "write_jsonl",

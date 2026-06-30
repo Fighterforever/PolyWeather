@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from src.trading.polymarket_alpha.weather_lp_paper_journal import build_weather_lp_paper_cycle, build_weather_lp_quote_update_ledger
+from src.trading.polymarket_alpha.weather_lp_paper_journal import (
+    build_weather_lp_paper_cycle,
+    build_weather_lp_quote_lifecycle_audit,
+    build_weather_lp_quote_update_ledger,
+)
 
 
 def test_paper_cycle_separates_reward_from_price_pnl():
@@ -90,3 +94,53 @@ def test_paper_cycle_reuses_existing_quote_id_and_updates():
     assert report["quotes"][0]["quote_id"] == "stable"
     assert report["quote_update_count"] == 1
     assert report["quote_updates"][0]["quote_id"] == "stable"
+
+
+def test_paper_cycle_closes_old_quote_when_price_changes():
+    report = build_weather_lp_paper_cycle(
+        candidates=[
+            {
+                "decision": "paper_quote",
+                "market_slug": "m",
+                "token_id": "t",
+                "strategy_variant": "single_sided_low_risk_quote",
+                "quote_price": 0.50,
+                "quote_size": 50,
+                "max_incentive_spread": 0.05,
+                "min_incentive_size": 50,
+                "reward_score_at_entry": {"q_min": 10, "qualifies_for_reward": True},
+            }
+        ],
+        existing_quotes=[
+            {
+                "quote_id": "old",
+                "market_slug": "m",
+                "token_id": "t",
+                "side": "YES",
+                "strategy_variant": "single_sided_low_risk_quote",
+                "quote_price": 0.49,
+                "quote_size": 50,
+                "quote_status": "active",
+                "quote_start_time": "2026-06-29T09:00:00Z",
+            }
+        ],
+        generated_at="2026-06-29T09:05:00Z",
+    )
+
+    statuses = {row["quote_id"]: row["quote_status"] for row in report["quotes"]}
+    assert statuses["old"] == "cancelled"
+    assert any(row.get("close_reason") == "quote_price_changed" for row in report["quotes"])
+    assert report["active_quote_count"] == 1
+
+
+def test_quote_lifecycle_audit_explains_missing_horizon_updates():
+    report = build_weather_lp_quote_lifecycle_audit(
+        quotes=[{"quote_id": "q1", "market_slug": "m", "token_id": "t", "quote_start_time": "2026-06-29T10:00:00Z"}],
+        quote_updates=[{"quote_id": "q1", "update_time": "2026-06-29T11:00:00Z"}],
+    )
+
+    reasons = {row["reason"]: row["count"] for row in report["missing_horizon_reason_counts"]}
+    assert report["unique_quote_id_count"] == 1
+    assert report["updates_per_quote_median"] == 1
+    assert reasons["horizon_match_too_strict"] >= 1
+    assert report["live_order_path"] is False

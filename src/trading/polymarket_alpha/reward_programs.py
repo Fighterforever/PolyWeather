@@ -80,8 +80,11 @@ def extract_liquidity_reward_metadata(payload: Dict[str, Any]) -> Dict[str, Any]
         payload,
         ("reward_allocation", "rewardAllocation", "rewardsDailyRate", "rewards_daily_rate", "liquidityReward"),
     )
+    rewards_daily_rate = _first_present(payload, ("rewardsDailyRate", "rewards_daily_rate", "dailyRewardRate"))
     if reward_allocation is None and rewards:
         reward_allocation = _first_present(rewards, ("rates", "rate", "dailyRate", "allocation"))
+    if rewards_daily_rate is None and rewards:
+        rewards_daily_rate = _first_present(rewards, ("dailyRate", "rate"))
 
     min_size_float = safe_float(min_size)
     max_spread_float = normalize_reward_spread(max_spread)
@@ -109,6 +112,9 @@ def extract_liquidity_reward_metadata(payload: Dict[str, Any]) -> Dict[str, Any]
         "max_incentive_spread": max_spread_float,
         "max_incentive_spread_raw": safe_float(max_spread),
         "reward_allocation": reward_allocation,
+        "rewards_daily_rate": rewards_daily_rate,
+        "rewards_epoch": _first_present(payload, ("rewardsEpoch", "rewards_epoch", "epoch")),
+        "total_market_q_score": _first_present(payload, ("total_market_q_score", "totalMarketQScore", "totalQScore")),
         "reward_program_type": reward_program_type,
         "raw_field_names_found": field_names,
         "gap_reason": gap_reason,

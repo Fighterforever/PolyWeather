@@ -50,6 +50,41 @@ def _stable_id(payload: Dict[str, Any]) -> str:
     return hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()[:24]
 
 
+def _price_bucket(value: Any, *, tick: float = 0.0005) -> str:
+    parsed = _safe_float(value)
+    if parsed is None:
+        return "missing"
+    return f"{round(parsed / tick) * tick:.4f}"
+
+
+def stable_quote_key(row: Dict[str, Any]) -> str:
+    parts = [
+        str(row.get("market_slug") or ""),
+        str(row.get("token_id") or row.get("yes_token_id") or ""),
+        str(row.get("side") or "YES").upper(),
+        str(row.get("strategy_variant") or row.get("strategy_id") or ""),
+        _price_bucket(row.get("quote_price")),
+        str(_safe_float(row.get("quote_size") or row.get("size") or row.get("min_incentive_size")) or "missing"),
+        str(row.get("intended_reward_window") or row.get("time_window") or "unvalidated"),
+        str(row.get("city") or ""),
+        str(row.get("station_code") or ""),
+    ]
+    return "|".join(parts)
+
+
+def _stable_base_key(row: Dict[str, Any]) -> str:
+    parts = [
+        str(row.get("market_slug") or ""),
+        str(row.get("token_id") or row.get("yes_token_id") or ""),
+        str(row.get("side") or "YES").upper(),
+        str(row.get("strategy_variant") or row.get("strategy_id") or ""),
+        str(row.get("intended_reward_window") or row.get("time_window") or "unvalidated"),
+        str(row.get("city") or ""),
+        str(row.get("station_code") or ""),
+    ]
+    return "|".join(parts)
+
+
 def _quote_key(row: Dict[str, Any]) -> Tuple[str, str, str]:
     return (
         str(row.get("market_slug") or ""),
@@ -118,7 +153,7 @@ def build_weather_lp_quote_update_ledger(
 ) -> Dict[str, Any]:
     generated_at = generated_at or _now()
     now_dt = _parse_utc(generated_at) or datetime.now(timezone.utc)
-    quote_rows = [row for row in quotes if isinstance(row, dict)]
+    quote_rows = [row for row in quotes if isinstance(row, dict) and str(row.get("quote_status") or "active") == "active"]
     existing = [row for row in existing_updates if isinstance(row, dict)]
     latest_by_quote = _latest_update_by_quote(existing)
     by_token, by_slug = _market_lookup(reward_markets)
@@ -179,6 +214,7 @@ def build_weather_lp_quote_update_ledger(
         update = {
             "schema_version": f"{SCHEMA_VERSION}.quote_update.v2",
             "quote_id": quote_id,
+            "stable_quote_key": quote.get("stable_quote_key") or stable_quote_key(quote),
             "market_slug": quote.get("market_slug"),
             "token_id": quote.get("token_id"),
             "city": quote.get("city"),
@@ -287,17 +323,37 @@ def build_weather_lp_paper_cycle(
     quotes: List[Dict[str, Any]] = []
     fills: List[Dict[str, Any]] = []
     markouts: List[Dict[str, Any]] = []
-    previous_by_key = {_quote_key(row): row for row in existing_quotes if isinstance(row, dict)}
+    previous_rows = [row for row in existing_quotes if isinstance(row, dict)]
+    active_previous_rows = [row for row in previous_rows if str(row.get("quote_status") or "active") == "active"]
+    closed_previous_rows = [row for row in previous_rows if str(row.get("quote_status") or "active") != "active"]
+    quotes.extend(closed_previous_rows)
+    previous_by_stable = {str(row.get("stable_quote_key") or stable_quote_key(row)): row for row in active_previous_rows}
+    previous_by_base = defaultdict(list)
+    for row in active_previous_rows:
+        previous_by_base[_stable_base_key(row)].append(row)
+    current_stable_keys: set[str] = set()
+    current_base_keys: set[str] = set()
     for candidate in candidates:
         if not isinstance(candidate, dict) or candidate.get("decision") != "paper_quote":
             continue
-        key = (
-            str(candidate.get("market_slug") or ""),
-            str(candidate.get("token_id") or ""),
-            str(candidate.get("strategy_variant") or candidate.get("strategy_id") or ""),
-        )
-        previous = previous_by_key.get(key) or {}
-        quote_id = str(previous.get("quote_id") or _stable_id({"market_slug": candidate.get("market_slug"), "token_id": candidate.get("token_id"), "strategy_variant": candidate.get("strategy_variant") or candidate.get("strategy_id")}))
+        candidate_for_key = {
+            **candidate,
+            "intended_reward_window": candidate.get("time_window") or "unvalidated",
+            "quote_size": candidate.get("quote_size") or candidate.get("min_incentive_size"),
+        }
+        stable_key = stable_quote_key(candidate_for_key)
+        base_key = _stable_base_key(candidate_for_key)
+        current_stable_keys.add(stable_key)
+        current_base_keys.add(base_key)
+        previous = previous_by_stable.get(stable_key) or {}
+        if not previous:
+            legacy_matches = [
+                row
+                for row in previous_by_base.get(base_key, [])
+                if row.get("quote_price") is None or row.get("quote_size") is None
+            ]
+            previous = legacy_matches[0] if legacy_matches else {}
+        quote_id = str(previous.get("quote_id") or _stable_id({"stable_quote_key": stable_key}))
         reward_points = float(candidate.get("reward_estimate") or 0.0)
         reward_allocation = candidate.get("reward_allocation")
         estimated_reward_cents = None
@@ -306,6 +362,8 @@ def build_weather_lp_paper_cycle(
         quote = {
             "schema_version": f"{SCHEMA_VERSION}.quote",
             "quote_id": quote_id,
+            "stable_quote_key": stable_key,
+            "quote_status": "active",
             "strategy_id": candidate.get("strategy_id"),
             "market_slug": candidate.get("market_slug"),
             "token_id": candidate.get("token_id"),
@@ -352,6 +410,20 @@ def build_weather_lp_paper_cycle(
             "live_order_path": False,
         }
         quotes.append(quote)
+    for previous in active_previous_rows:
+        previous_stable = str(previous.get("stable_quote_key") or stable_quote_key(previous))
+        if previous_stable in current_stable_keys:
+            continue
+        base_key = _stable_base_key(previous)
+        closed = dict(previous)
+        closed["quote_status"] = "cancelled"
+        closed["quote_end_time"] = generated_at
+        closed["close_reason"] = "quote_price_changed" if base_key in current_base_keys else "quote_no_longer_selected"
+        closed["paper_only"] = True
+        closed["counts_for_live_gate"] = False
+        closed["live_order_path"] = False
+        quotes.append(closed)
+    active_quote_rows = [row for row in quotes if str(row.get("quote_status") or "active") == "active"]
     update_report = build_weather_lp_quote_update_ledger(
         quotes=quotes,
         reward_markets=reward_markets,
@@ -367,7 +439,8 @@ def build_weather_lp_paper_cycle(
         "counts_for_live_gate": False,
         "live_order_path": False,
         "paper_quote_count": len(quotes),
-        "active_quote_count": len(quotes),
+        "active_quote_count": len(active_quote_rows),
+        "closed_quote_count": len(quotes) - len(active_quote_rows),
         "inferred_fill_count": len(fills),
         "markout_count": len(markouts),
         "quote_update_count": update_report.get("quote_update_count", 0),
@@ -406,10 +479,116 @@ def load_jsonl(path: str | Path) -> List[Dict[str, Any]]:
     return rows
 
 
+def build_weather_lp_quote_lifecycle_audit(
+    *,
+    quotes: Iterable[Dict[str, Any]],
+    quote_updates: Iterable[Dict[str, Any]],
+) -> Dict[str, Any]:
+    quote_rows = [row for row in quotes if isinstance(row, dict)]
+    update_rows = [row for row in quote_updates if isinstance(row, dict)]
+    quote_ids = {str(row.get("quote_id") or "") for row in quote_rows if row.get("quote_id")}
+    updates_by_quote: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+    unlinked = 0
+    for row in update_rows:
+        quote_id = str(row.get("quote_id") or "")
+        if quote_id not in quote_ids:
+            unlinked += 1
+        updates_by_quote[quote_id].append(row)
+    for rows in updates_by_quote.values():
+        rows.sort(key=lambda row: _parse_utc(row.get("update_time") or row.get("generated_at")) or datetime.min.replace(tzinfo=timezone.utc))
+    counts = [len(updates_by_quote.get(str(row.get("quote_id") or ""), [])) for row in quote_rows if row.get("quote_id")]
+    first_by_quote: Dict[str, Optional[str]] = {}
+    last_by_quote: Dict[str, Optional[str]] = {}
+    time_on_book: Dict[str, Optional[float]] = {}
+    eligible = {"5m": 0, "15m": 0, "1h": 0}
+    reason_counts: Counter[str] = Counter()
+    problem_quotes: List[Dict[str, Any]] = []
+    quote_ids_by_stable_key: Dict[str, set[str]] = defaultdict(set)
+    for quote in quote_rows:
+        quote_id = str(quote.get("quote_id") or "")
+        quote_ids_by_stable_key[str(quote.get("stable_quote_key") or stable_quote_key(quote))].add(quote_id)
+        rows = updates_by_quote.get(quote_id, [])
+        start = _parse_utc(quote.get("entry_time") or quote.get("quote_start_time"))
+        end = _parse_utc(quote.get("quote_end_time"))
+        if rows:
+            first_by_quote[quote_id] = rows[0].get("update_time") or rows[0].get("generated_at")
+            last_by_quote[quote_id] = rows[-1].get("update_time") or rows[-1].get("generated_at")
+        else:
+            first_by_quote[quote_id] = None
+            last_by_quote[quote_id] = None
+        if start and rows:
+            last_time = _parse_utc(rows[-1].get("update_time") or rows[-1].get("generated_at"))
+            time_on_book[quote_id] = round((last_time - start).total_seconds(), 3) if last_time else None
+        else:
+            time_on_book[quote_id] = None
+        for horizon, seconds, tolerance in (("5m", 300, 90), ("15m", 900, 180), ("1h", 3600, 600)):
+            if start is None:
+                reason_counts["report_path_missing"] += 1
+                continue
+            target = start.timestamp() + seconds
+            if end is not None and end.timestamp() < target:
+                reason_counts["quote_expired_before_horizon"] += 1
+                continue
+            update_times = [
+                (_parse_utc(row.get("update_time") or row.get("generated_at")) or datetime.min.replace(tzinfo=timezone.utc)).timestamp()
+                for row in rows
+            ]
+            if any(abs(value - target) <= tolerance for value in update_times):
+                eligible[horizon] += 1
+            elif any(value >= target for value in update_times):
+                reason_counts["horizon_match_too_strict"] += 1
+                if len(problem_quotes) < 10:
+                    problem_quotes.append({"quote_id": quote_id, "horizon": horizon, "reason": "horizon_match_too_strict", "target_epoch": target, "sample_update_times": update_times[:5]})
+            else:
+                reason_counts["no_update_after_target_time"] += 1
+                if len(problem_quotes) < 10:
+                    problem_quotes.append({"quote_id": quote_id, "horizon": horizon, "reason": "no_update_after_target_time"})
+    changed_each_run = sum(1 for ids in quote_ids_by_stable_key.values() if len(ids) > 1)
+    if changed_each_run:
+        reason_counts["quote_id_changed_each_run"] += changed_each_run
+    if unlinked:
+        reason_counts["update_not_linked_to_quote"] += unlinked
+    median = None
+    if counts:
+        sorted_counts = sorted(counts)
+        median = sorted_counts[len(sorted_counts) // 2]
+    conclusion = "lifecycle_ok"
+    if changed_each_run:
+        conclusion = "quote_id_instability_detected"
+    elif sum(eligible.values()) == 0 and update_rows:
+        conclusion = "missing_horizon_updates_after_entry"
+    return {
+        "schema_version": f"{SCHEMA_VERSION}.lifecycle_audit",
+        "paper_quote_count": len(quote_rows),
+        "quote_update_count": len(update_rows),
+        "unique_quote_id_count": len(quote_ids),
+        "updates_per_quote": {
+            "min": min(counts) if counts else 0,
+            "median": median,
+            "max": max(counts) if counts else 0,
+        },
+        "updates_per_quote_median": median,
+        "first_update_time_by_quote": first_by_quote,
+        "last_update_time_by_quote": last_by_quote,
+        "time_on_book_seconds_by_quote": time_on_book,
+        "quotes_with_5m_eligible_updates": eligible["5m"],
+        "quotes_with_15m_eligible_updates": eligible["15m"],
+        "quotes_with_1h_eligible_updates": eligible["1h"],
+        "missing_horizon_reason_counts": [{"reason": key, "count": value} for key, value in sorted(reason_counts.items())],
+        "sample_problem_quotes": problem_quotes,
+        "conclusion": conclusion,
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+    }
+
+
 __all__ = [
     "SCHEMA_VERSION",
     "build_weather_lp_paper_cycle",
     "build_weather_lp_quote_update_ledger",
+    "build_weather_lp_quote_lifecycle_audit",
+    "stable_quote_key",
     "load_jsonl",
     "write_json",
     "write_jsonl",

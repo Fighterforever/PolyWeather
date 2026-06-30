@@ -48,6 +48,9 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
     paper = _load(args.paper_cycle_report)
     quote_updates = _load(args.quote_update_report)
     reward_risk = _load(args.reward_risk_report)
+    lifecycle = _load(args.lifecycle_audit_report)
+    reward_share = _load(args.reward_share_report)
+    allocation = _load(args.reward_allocation_audit_report)
     cancellation = _load(args.cancellation_policy_report)
     window = _load(args.reward_window_report)
     holder = _load(args.smart_holder_report)
@@ -59,10 +62,23 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
     quote_count = int(paper.get("paper_quote_count") or 0)
     quote_update_count = int(reward_risk.get("quote_update_count") or quote_updates.get("quote_update_count") or paper.get("quote_update_count") or 0)
     reward_to_risk = reward_risk.get("reward_to_risk_proxy")
+    valid_by_horizon = reward_risk.get("valid_markout_count_by_horizon") or []
+    valid_counts = {str(row.get("horizon")): int(row.get("count") or 0) for row in valid_by_horizon if isinstance(row, dict)}
+    lifecycle_conclusion = lifecycle.get("conclusion")
     if discovery.get("reward_metadata_available_count", 0) == 0:
         recommendation = "reward_metadata_pipeline_broken_or_no_rewards"
+    elif lifecycle_conclusion not in (None, "lifecycle_ok", "missing_horizon_updates_after_entry"):
+        recommendation = "fix_quote_lifecycle_before_profit_judgment"
+    elif quote_update_count >= 100 and sum(valid_counts.get(key, 0) for key in ("5m", "15m", "1h")) == 0:
+        recommendation = "markout_pipeline_still_broken"
     elif quote_update_count < 100:
         recommendation = "continue_weather_lp_paper_insufficient_updates"
+    elif (
+        reward_risk.get("mean_current_markout") is not None
+        and float(reward_risk.get("mean_current_markout")) >= 0
+        and reward_share.get("quotes_where_visible_share_exceeds_break_even")
+    ):
+        recommendation = "continue_weather_lp_paper_visible_share_covers_break_even"
     elif reward_risk.get("mean_current_markout") is not None and float(reward_risk.get("mean_current_markout")) < -1.0 and (reward_risk.get("break_even_share_p90") is None or float(reward_risk.get("break_even_share_p90") or 0) > 0.01):
         recommendation = "reduce_weather_lp_strategy"
     elif reward_to_risk is not None and float(reward_to_risk) < 1.0:
@@ -114,6 +130,10 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "paper_quote_count": quote_count,
         "active_quote_count": paper.get("active_quote_count", quote_count),
         "quote_update_count": quote_update_count,
+        "unique_quote_id_count": lifecycle.get("unique_quote_id_count"),
+        "updates_per_quote_median": lifecycle.get("updates_per_quote_median"),
+        "lifecycle_audit_conclusion": lifecycle_conclusion,
+        "lifecycle_missing_horizon_reason_counts": lifecycle.get("missing_horizon_reason_counts"),
         "cumulative_reward_points_proxy": reward_points_proxy,
         "inferred_fill_count": paper.get("inferred_fill_count", 0),
         "estimated_reward_points": paper.get("estimated_reward_points"),
@@ -134,8 +154,16 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "exact_reward_conversion_available": bool(reward_risk.get("exact_reward_conversion_available_count")),
         "break_even_share_median": reward_risk.get("break_even_share_median"),
         "break_even_share_p90": reward_risk.get("break_even_share_p90"),
+        "visible_reward_share_median": reward_share.get("visible_reward_share_median"),
+        "visible_reward_share_p10": reward_share.get("visible_reward_share_p10"),
+        "visible_reward_share_p90": reward_share.get("visible_reward_share_p90"),
+        "visible_share_exceeds_break_even_count": reward_share.get("quotes_where_visible_share_exceeds_break_even"),
+        "allocation_exact_available": bool(allocation.get("estimated_reward_cents_available_count")),
+        "allocation_audit_gap_counts": allocation.get("gap_counts"),
         "scenario_reward_0_5pct_share": reward_risk.get("scenario_reward_0_5pct_share"),
         "scenario_reward_1pct_share": reward_risk.get("scenario_reward_1pct_share"),
+        "share_scenario_reward_0_5pct_share": reward_share.get("scenario_reward_0_5pct_share"),
+        "share_scenario_reward_1pct_share": reward_share.get("scenario_reward_1pct_share"),
         "adverse_selection_count": reward_risk.get("adverse_selection_count", paper.get("adverse_selection_count", 0)),
         "net_estimated_pnl_with_reward": pnl_with,
         "net_estimated_pnl_with_reward_proxy": pnl_with,
@@ -168,6 +196,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--paper-cycle-report", default="evidence/weather_lp_rewards/paper_cycle_report.json")
     parser.add_argument("--quote-update-report", default="evidence/weather_lp_rewards/paper_quote_update_report.json")
     parser.add_argument("--reward-risk-report", default="evidence/weather_lp_rewards/reward_vs_risk_report.json")
+    parser.add_argument("--lifecycle-audit-report", default="evidence/weather_lp_rewards/quote_lifecycle_audit_report.json")
+    parser.add_argument("--reward-share-report", default="evidence/weather_lp_rewards/reward_share_estimator_report.json")
+    parser.add_argument("--reward-allocation-audit-report", default="evidence/weather_lp_rewards/reward_allocation_audit_report.json")
     parser.add_argument("--cancellation-policy-report", default="evidence/weather_lp_rewards/cancellation_policy_report.json")
     parser.add_argument("--quote-optimizer-report", default="evidence/weather_lp_rewards/quote_optimizer_report.json")
     parser.add_argument("--quote-updates", default="evidence/weather_lp_rewards/paper_quote_updates.jsonl")

@@ -48,7 +48,9 @@ def main(argv: list[str] | None = None) -> None:
         [args.python_path, "scripts/polymarket_alpha_weather_lp_strategy_report.py", "--generated-at", generated_at],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_paper_cycle.py", "--generated-at", generated_at],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_quote_update_report.py", "--generated-at", generated_at],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_quote_lifecycle_audit_report.py"],
         [args.python_path, "scripts/polymarket_alpha_reward_allocation_audit_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_share_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_risk_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_window_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_cancellation_report.py"],
@@ -60,6 +62,9 @@ def main(argv: list[str] | None = None) -> None:
     discovery = _load("evidence/weather_lp_rewards/lp_reward_discovery_report.json")
     optimizer = _load("evidence/weather_lp_rewards/quote_optimizer_report.json")
     reward_risk = _load("evidence/weather_lp_rewards/reward_vs_risk_report.json")
+    lifecycle = _load("evidence/weather_lp_rewards/quote_lifecycle_audit_report.json")
+    reward_share = _load("evidence/weather_lp_rewards/reward_share_estimator_report.json")
+    allocation = _load("evidence/weather_lp_rewards/reward_allocation_audit_report.json")
     report = {
         "schema_version": "polyweather_polymarket_alpha_weather_lp_runner.v1",
         "generated_at": generated_at,
@@ -70,6 +75,9 @@ def main(argv: list[str] | None = None) -> None:
         "max_incentive_spread_found_count": discovery.get("max_incentive_spread_found_count", 0),
         "paper_quote_count": experiment.get("paper_quote_count", 0),
         "quote_update_count": experiment.get("quote_update_count", 0),
+        "unique_quote_id_count": experiment.get("unique_quote_id_count") or lifecycle.get("unique_quote_id_count"),
+        "updates_per_quote_median": experiment.get("updates_per_quote_median") or lifecycle.get("updates_per_quote_median"),
+        "lifecycle_audit_conclusion": experiment.get("lifecycle_audit_conclusion") or lifecycle.get("conclusion"),
         "reward_points_proxy": experiment.get("reward_points_proxy"),
         "cumulative_reward_points_proxy": experiment.get("cumulative_reward_points_proxy"),
         "estimated_reward_cents_proxy": experiment.get("estimated_reward_cents_proxy"),
@@ -78,6 +86,9 @@ def main(argv: list[str] | None = None) -> None:
         "mean_markout_1h": experiment.get("mean_1h_markout"),
         "mean_markout_current": experiment.get("mean_current_markout"),
         "reward_to_risk_proxy": experiment.get("reward_to_risk_proxy"),
+        "visible_reward_share_median": experiment.get("visible_reward_share_median") or reward_share.get("visible_reward_share_median"),
+        "break_even_share_median": experiment.get("break_even_share_median") or reward_risk.get("break_even_share_median"),
+        "allocation_exact_available": experiment.get("allocation_exact_available") or bool(allocation.get("estimated_reward_cents_available_count")),
         "experiment_recommendation": experiment.get("recommendation"),
         "recommendation": experiment.get("recommendation"),
         "quote_optimizer_selected_count": optimizer.get("selected_quote_count"),
@@ -90,6 +101,8 @@ def main(argv: list[str] | None = None) -> None:
             "quote_optimizer": "evidence/weather_lp_rewards/quote_optimizer_report.json",
             "paper_quotes": "evidence/weather_lp_rewards/paper_quotes.jsonl",
             "paper_quote_updates": "evidence/weather_lp_rewards/paper_quote_updates.jsonl",
+            "quote_lifecycle_audit": "evidence/weather_lp_rewards/quote_lifecycle_audit_report.json",
+            "reward_share_estimator": "evidence/weather_lp_rewards/reward_share_estimator_report.json",
             "reward_vs_risk": "evidence/weather_lp_rewards/reward_vs_risk_report.json",
             "reward_allocation_audit": "evidence/weather_lp_rewards/reward_allocation_audit_report.json",
             "reward_window": "evidence/weather_lp_rewards/reward_window_report.json",
