@@ -15,7 +15,7 @@ def test_manual_kill_switch_ready_when_required_fields_exist():
     assert report["checklist_status"] == "ready"
     assert report["manual_operator_required"] is True
     assert report["do_not_auto_trade"] is True
-    assert report["max_total_capital_at_risk"] <= 70
+    assert report["max_total_capital_at_risk"] == 70.0
     assert report["markout_loss_cancel_threshold"] == "-3c"
     assert report["live_order_path"] is False
     assert "live_order_path=false" in render_markdown(report)

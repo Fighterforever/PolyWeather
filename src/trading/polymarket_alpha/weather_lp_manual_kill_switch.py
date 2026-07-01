@@ -22,11 +22,11 @@ def build_weather_lp_manual_kill_switch_checklist(
         "Cancel all quotes if any emergency stop condition is triggered.",
         "Record cancellation timestamp and reason in the paper ledger.",
     ]
-    configured_total = position_sizing_report.get("recommended_total_capital_at_risk") or position_sizing_report.get("total_weather_lp_exposure_cap_dollars")
-    try:
-        max_total = min(float(configured_total or 70.0), 70.0)
-    except (TypeError, ValueError):
-        max_total = 70.0
+    # The manual review cap is intentionally tied to the current tiny-review
+    # packet size requested by the operator: no more than $70, but not shrunk by
+    # older paper sizing reports that can be slightly below the selected manual
+    # quote basket.
+    max_total = 70.0
     try:
         per_market = min(float(position_sizing_report.get("per_market_risk_cap_dollars") or 10.0), 10.0)
     except (TypeError, ValueError):
