@@ -55,6 +55,11 @@ def build_weather_lp_tiny_live_gap_report(
         profitability_simulation_report.get("exact_reward_available")
         or weather_lp_experiment_report.get("exact_reward_available")
     )
+    manual_kill_switch_ready = bool(
+        kill_switch_policy_report.get("manual_kill_switch_ready")
+        or manual_kill_switch_checklist.get("ready")
+        or manual_kill_switch_checklist.get("checklist_status") == "ready"
+    )
     controls_ready = {
         "expensive_basket_filter": bool(position_sizing_report.get("expensive_basket_filter_ready", True)),
         "cancellation_policy": bool(kill_switch_policy_report.get("cancellation_policy_ready", True)),
@@ -62,7 +67,7 @@ def build_weather_lp_tiny_live_gap_report(
         "quote_size_limit": bool(position_sizing_report.get("quote_size_limit_ready")),
         "max_daily_loss": bool(kill_switch_policy_report.get("daily_stop_loss_ready")),
         "max_capital_at_risk": bool(position_sizing_report.get("max_total_capital_at_risk_ready")),
-        "manual_kill_switch": bool(kill_switch_policy_report.get("manual_kill_switch_ready")),
+        "manual_kill_switch": manual_kill_switch_ready,
     }
     missing_controls = [key for key, value in controls_ready.items() if not value]
     paper_quote_count = int(weather_lp_experiment_report.get("paper_quote_count") or profitability_simulation_report.get("quote_count") or 0)

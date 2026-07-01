@@ -15,8 +15,10 @@ from src.trading.polymarket_alpha.weather_lp_reward_payout_audit import (  # noq
     load_csv,
     load_json,
     load_jsonl,
+    render_manual_template_markdown,
     write_json,
     write_manual_template,
+    write_text,
 )
 
 
@@ -29,6 +31,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--reward-allocation-audit-report", default="evidence/weather_lp_rewards/reward_allocation_audit_report.json")
     parser.add_argument("--payout-csv", default="")
     parser.add_argument("--manual-template-output", default="evidence/weather_lp_rewards/reward_payout_manual_template.csv")
+    parser.add_argument("--manual-template-md-output", default="evidence/weather_lp_rewards/reward_payout_manual_template.md")
     parser.add_argument("--summary-output", default="evidence/weather_lp_rewards/reward_payout_audit_report.json")
     parser.add_argument("--generated-at", default=None)
     return parser.parse_args(argv)
@@ -47,6 +50,7 @@ def main(argv: list[str] | None = None) -> None:
         generated_at=args.generated_at,
     )
     write_manual_template(args.manual_template_output, quote_rows, report)
+    write_text(args.manual_template_md_output, render_manual_template_markdown(report, quote_rows))
     write_json(args.summary_output, report)
     print(json.dumps({"audit_status": report.get("audit_status"), "payout_gap_reason": report.get("payout_gap_reason"), "live_order_path": False}, indent=2, sort_keys=True))
 

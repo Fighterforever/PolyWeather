@@ -84,21 +84,34 @@ def build_weather_lp_reward_payout_audit_report(
         "payout_amount": payout_amount,
         "payout_source": "manual_csv" if payout_materialized else None,
         "payout_gap_reason": gap_reason or "none",
+        "reward_payout_gap_reason": gap_reason or "none",
         "minimum_payout_threshold": None,
+        "minimum_payout_threshold_if_known": None,
+        "below_minimum_payout_risk": "unknown_without_wallet_statement",
         "next_audit_time_utc": (audit_dt + timedelta(hours=24)).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "next_reward_audit_time_utc": (audit_dt + timedelta(hours=24)).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "manual_audit_required": not bool(payout_materialized),
         "quote_count": len(quote_rows),
         "quote_update_count": len(update_rows),
         "reward_allocation_available_count": allocation_available,
         "manual_template_columns": [
-            "date_utc",
-            "wallet",
+            "audit_date_utc",
+            "wallet_or_account_note",
             "market_slug",
-            "expected_reward_low",
+            "quote_id",
+            "token_id",
+            "city",
+            "strategy_variant",
+            "expected_reward_conservative",
             "expected_reward_base",
-            "expected_reward_high",
+            "expected_reward_optimistic",
+            "expected_reward_visible_proxy",
             "actual_reward_received",
-            "transaction_hash_or_note",
+            "payout_time_utc",
+            "tx_hash_or_statement_ref",
+            "discrepancy_amount",
             "discrepancy_reason",
+            "notes",
         ],
         "paper_only": True,
         "counts_for_live_gate": False,
@@ -117,18 +130,50 @@ def write_manual_template(path: str | Path, rows: Iterable[Dict[str, Any]], repo
         for row in materialized:
             writer.writerow(
                 {
-                    "date_utc": report.get("audit_date_utc"),
-                    "wallet": "",
+                    "audit_date_utc": report.get("audit_date_utc"),
+                    "wallet_or_account_note": "",
                     "market_slug": row.get("market_slug"),
-                    "expected_reward_low": report.get("expected_reward_scenarios", {}).get("conservative"),
+                    "quote_id": row.get("quote_id"),
+                    "token_id": row.get("token_id"),
+                    "city": row.get("city"),
+                    "strategy_variant": row.get("strategy_variant"),
+                    "expected_reward_conservative": report.get("expected_reward_scenarios", {}).get("conservative"),
                     "expected_reward_base": report.get("expected_reward_scenarios", {}).get("base"),
-                    "expected_reward_high": report.get("expected_reward_scenarios", {}).get("optimistic"),
+                    "expected_reward_optimistic": report.get("expected_reward_scenarios", {}).get("optimistic"),
+                    "expected_reward_visible_proxy": report.get("expected_reward_scenarios", {}).get("visible_share_proxy"),
                     "actual_reward_received": "",
-                    "transaction_hash_or_note": "",
+                    "payout_time_utc": "",
+                    "tx_hash_or_statement_ref": "",
+                    "discrepancy_amount": "",
                     "discrepancy_reason": "",
+                    "notes": "",
                 }
             )
     return len(materialized)
+
+
+def render_manual_template_markdown(report: Dict[str, Any], rows: Iterable[Dict[str, Any]]) -> str:
+    materialized = [row for row in rows if isinstance(row, dict)]
+    lines = [
+        "# Weather LP Reward Payout Manual Audit Template",
+        "",
+        f"Audit date UTC: {report.get('audit_date_utc')}",
+        f"Audit status: {report.get('audit_status')}",
+        f"Reward payout gap reason: {report.get('reward_payout_gap_reason')}",
+        "",
+        "This template is for manual payout reconciliation only. It does not prove payout and does not enable live trading.",
+        "",
+        "## Expected Reward Scenarios",
+    ]
+    for key, value in (report.get("expected_reward_scenarios") or {}).items():
+        lines.append(f"- {key}: {value}")
+    lines.extend(["", "## Rows To Fill"])
+    for row in materialized[:50]:
+        lines.append(
+            f"- market={row.get('market_slug')} quote_id={row.get('quote_id')} token_id={row.get('token_id')} actual_reward_received=____ tx_hash_or_statement_ref=____"
+        )
+    lines.extend(["", "live_order_path=false"])
+    return "\n".join(lines) + "\n"
 
 
 def load_json(path: str | Path) -> Dict[str, Any]:
@@ -155,6 +200,12 @@ def load_jsonl(path: str | Path) -> List[Dict[str, Any]]:
     return rows
 
 
+def write_text(path: str | Path, text: str) -> None:
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(text, encoding="utf-8")
+
+
 def load_csv(path: str | Path) -> List[Dict[str, Any]]:
     source = Path(path)
     if not source.exists():
@@ -169,6 +220,8 @@ __all__ = [
     "load_csv",
     "load_json",
     "load_jsonl",
+    "render_manual_template_markdown",
     "write_json",
     "write_manual_template",
+    "write_text",
 ]

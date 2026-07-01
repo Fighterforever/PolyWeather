@@ -69,6 +69,7 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
     manual_sheet = _load(getattr(args, "manual_order_sheet_report", "")) if getattr(args, "manual_order_sheet_report", None) else {}
     impact_sim = _load(getattr(args, "impact_simulator_report", "")) if getattr(args, "impact_simulator_report", None) else {}
     manual_kill = _load(getattr(args, "manual_kill_switch_checklist", "")) if getattr(args, "manual_kill_switch_checklist", None) else {}
+    manual_review_packet = _load(getattr(args, "manual_review_packet", "")) if getattr(args, "manual_review_packet", None) else {}
     cancellation = _load(args.cancellation_policy_report)
     window = _load(args.reward_window_report)
     holder = _load(args.smart_holder_report)
@@ -163,6 +164,20 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         if not kill_ready:
             parts.append("kill_switch_required")
         recommendation = "__".join(parts)
+    reward_payout_audit_ready = payout_audit.get("audit_status") in {"manual_audit_required", "payout_observed"}
+    manual_review_packet_ready = bool(manual_review_packet.get("manual_review_packet_ready"))
+    if manual_review_packet_ready and manual_quote_count > 0 and impact_ready:
+        parts = ["manual_tiny_live_review_artifacts_ready_but_live_disabled"]
+        if exact_missing:
+            parts.append("reward_payout_audit_required")
+        if not kill_ready:
+            parts.append("kill_switch_required")
+        recommendation = "__".join(parts)
+    final_stage = "paper_only"
+    if manual_quote_count > 0 or manual_review_packet_ready:
+        final_stage = "manual_review_partial"
+    if manual_review_packet_ready and kill_ready and manual_quote_count > 0:
+        final_stage = "manual_review_ready_but_live_disabled"
     city_rows = reward_risk.get("by_city") or []
     best_city = None
     worst_city = None
@@ -267,6 +282,7 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "manual_order_sheet_path": str(getattr(args, "manual_order_sheet_report", "")),
         "impact_simulator_path": str(getattr(args, "impact_simulator_report", "")),
         "kill_switch_checklist_path": str(getattr(args, "manual_kill_switch_checklist", "")),
+        "manual_review_packet_path": str(getattr(args, "manual_review_packet", "")),
         "manual_quote_count": manual_quote_count,
         "total_manual_quote_capital_at_risk": manual_sheet.get("total_capital_at_risk_if_all_manual_quotes_used"),
         "conservative_scenario_net_cents": conservative_net,
@@ -285,8 +301,13 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         },
         "tiny_live_gap_status": tiny_live_gap.get("final_status"),
         "reward_payout_audit_status": payout_audit.get("audit_status"),
+        "reward_payout_audit_ready": reward_payout_audit_ready,
         "impact_simulation_ready": impact_ready,
         "kill_switch_ready": kill_ready,
+        "manual_review_packet_ready": manual_review_packet_ready,
+        "suggested_human_decision": manual_review_packet.get("suggested_human_decision"),
+        "manual_review_remaining_blockers": manual_review_packet.get("remaining_blockers"),
+        "final_stage": final_stage,
         "position_sizing_summary": {
             "recommended_total_capital_at_risk": position_sizing.get("recommended_total_capital_at_risk"),
             "recommended_quote_count": position_sizing.get("recommended_quote_count"),
@@ -348,6 +369,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--manual-order-sheet-report", default="evidence/weather_lp_rewards/manual_tiny_live_order_sheet_report.json")
     parser.add_argument("--impact-simulator-report", default="evidence/weather_lp_rewards/tiny_live_impact_simulator_report.json")
     parser.add_argument("--manual-kill-switch-checklist", default="evidence/weather_lp_rewards/manual_kill_switch_checklist.json")
+    parser.add_argument("--manual-review-packet", default="evidence/weather_lp_rewards/manual_tiny_live_review_packet.json")
     parser.add_argument("--cancellation-policy-report", default="evidence/weather_lp_rewards/cancellation_policy_report.json")
     parser.add_argument("--quote-optimizer-report", default="evidence/weather_lp_rewards/quote_optimizer_report.json")
     parser.add_argument("--quote-updates", default="evidence/weather_lp_rewards/paper_quote_updates.jsonl")

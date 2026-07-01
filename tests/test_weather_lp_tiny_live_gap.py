@@ -38,3 +38,28 @@ def test_tiny_live_gap_accepts_base_positive_but_still_blocks_live():
     assert "manual_order_sheet_not_ready" in report["tiny_live_not_allowed_reason"]
     assert report["final_status"] == "paper_only_needs_more_evidence"
     assert report["live_order_path"] is False
+
+
+def test_tiny_live_gap_uses_manual_kill_switch_checklist_ready():
+    report = build_weather_lp_tiny_live_gap_report(
+        profitability_simulation_report={"scenario_status": {"base_positive": True}},
+        weather_lp_experiment_report={"quote_update_count": 600},
+        reward_risk_report={
+            "valid_markout_count_by_horizon": [
+                {"horizon": "5m", "count": 20},
+                {"horizon": "15m", "count": 20},
+                {"horizon": "1h", "count": 20},
+                {"horizon": "6h", "count": 20},
+            ]
+        },
+        position_sizing_report={"quote_size_limit_ready": True, "max_total_capital_at_risk_ready": True, "city_exposure_cap_ready": True},
+        kill_switch_policy_report={"daily_stop_loss_ready": True, "manual_kill_switch_ready": False, "cancellation_policy_ready": True},
+        manual_kill_switch_checklist={"checklist_status": "ready", "ready": True},
+        manual_order_sheet_report={"suggested_manual_quote_count": 1},
+        impact_simulator_report={"impact_simulation_ready": True},
+        reward_payout_audit_report={"audit_status": "manual_audit_required"},
+    )
+
+    assert "manual_kill_switch" not in report["missing_controls"]
+    assert "manual_kill_switch_not_ready" not in report["remaining_blockers"]
+    assert report["kill_switch_ready"] is True
