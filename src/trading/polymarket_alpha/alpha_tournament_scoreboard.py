@@ -308,6 +308,9 @@ def build_alpha_tournament_scoreboard(
     weather_lp_lane["quote_update_count"] = _safe_int(weather_lp_experiment_report.get("quote_update_count"))
     weather_lp_lane["reward_to_risk_proxy"] = weather_lp_experiment_report.get("reward_to_risk_proxy")
     weather_lp_lane["net_estimated_pnl_with_reward"] = weather_lp_experiment_report.get("net_estimated_pnl_with_reward")
+    weather_lp_lane["scenario_status"] = weather_lp_experiment_report.get("scenario_status")
+    weather_lp_lane["base_scenario_net_cents"] = weather_lp_experiment_report.get("base_scenario_net_cents")
+    weather_lp_lane["conservative_scenario_net_cents"] = weather_lp_experiment_report.get("conservative_scenario_net_cents")
     if weather_lp_experiment_report.get("recommendation") in {"insufficient_reward_metadata", "reward_metadata_pipeline_broken_or_no_rewards"}:
         weather_lp_lane["status"] = str(weather_lp_experiment_report.get("recommendation"))
         weather_lp_lane["next_action"] = "collect_reward_metadata"
@@ -329,6 +332,14 @@ def build_alpha_tournament_scoreboard(
         weather_lp_lane["status"] = "weather_lp_top_paper_lane"
         weather_lp_lane["next_action"] = "continue_weather_lp_paper"
         weather_lp_lane["priority"] = 90
+    if weather_lp_experiment_report.get("recommendation") == "continue_weather_lp_paper_prepare_tiny_live_review_artifacts_but_do_not_enable_live":
+        weather_lp_lane["status"] = "weather_lp_top_paper_lane_scenarios_positive"
+        weather_lp_lane["next_action"] = "continue_weather_lp_paper_no_live"
+        weather_lp_lane["priority"] = 92
+    elif weather_lp_experiment_report.get("recommendation") == "continue_weather_lp_paper_collect_more_reward_allocation":
+        weather_lp_lane["status"] = "weather_lp_top_paper_lane_collect_reward_allocation"
+        weather_lp_lane["next_action"] = "collect_reward_allocation_and_continue_paper"
+        weather_lp_lane["priority"] = 91
     elif _safe_int(weather_lp_experiment_report.get("paper_quote_count")) >= 50 and (_safe_float(weather_lp_experiment_report.get("net_estimated_pnl_with_reward")) or 0.0) > 0:
         weather_lp_lane["status"] = "paper_reward_lane_candidate"
         weather_lp_lane["next_action"] = "continue_weather_lp_paper"

@@ -26,6 +26,13 @@ def _mean(report: Dict[str, Any], key: str) -> Any:
     return report.get(key)
 
 
+def _safe_float(value: Any) -> float | None:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def _load_rows(path: str | Path) -> list[dict[str, Any]]:
     source = Path(path)
     if not source.exists():
@@ -54,6 +61,10 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
     cohort_report = _load(args.measurement_cohort_report)
     dollarization = _load(args.reward_dollarization_report)
     dashboard = _load(args.profitability_dashboard)
+    profitability_simulation = _load(getattr(args, "profitability_simulation_report", "")) if getattr(args, "profitability_simulation_report", None) else {}
+    tiny_live_gap = _load(getattr(args, "tiny_live_gap_report", "")) if getattr(args, "tiny_live_gap_report", None) else {}
+    position_sizing = _load(getattr(args, "position_sizing_report", "")) if getattr(args, "position_sizing_report", None) else {}
+    kill_switch = _load(getattr(args, "kill_switch_policy_report", "")) if getattr(args, "kill_switch_policy_report", None) else {}
     cancellation = _load(args.cancellation_policy_report)
     window = _load(args.reward_window_report)
     holder = _load(args.smart_holder_report)
@@ -121,6 +132,22 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         recommendation = "weather_lp_candidate_for_longer_paper_review"
     else:
         recommendation = "continue_weather_lp_paper"
+    scenario = profitability_simulation.get("scenario_table") or {}
+    scenario_status = profitability_simulation.get("scenario_status") or {}
+    stress_table = profitability_simulation.get("stress_table") or {}
+    conservative_net = scenario.get("conservative_net")
+    base_net = scenario.get("base_net")
+    optimistic_net = scenario.get("optimistic_net")
+    if scenario:
+        current_markout_value = _safe_float(reward_risk.get("mean_current_markout"))
+        if current_markout_value is not None and current_markout_value < 0:
+            recommendation = "reduce_weather_lp_strategy"
+        elif _safe_float(conservative_net) is not None and _safe_float(base_net) is not None and float(conservative_net) < 0 and float(base_net) > 0:
+            recommendation = "continue_weather_lp_paper_collect_more_reward_allocation"
+        elif bool(scenario_status.get("conservative_positive")) and bool(scenario_status.get("base_positive")):
+            recommendation = "continue_weather_lp_paper_prepare_tiny_live_review_artifacts_but_do_not_enable_live"
+        elif _safe_float(stress_table.get("minus_3c")) is not None and float(stress_table.get("minus_3c")) < 0:
+            recommendation = "tighten_cancellation_and_sizing"
     city_rows = reward_risk.get("by_city") or []
     best_city = None
     worst_city = None
@@ -217,6 +244,32 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "observed_markout_total_cents": dollarization.get("observed_markout_total_cents"),
         "break_even_daily_allocation_for_minus_3c": dollarization.get("break_even_daily_allocation_median"),
         "profitability_dashboard_path": str(args.profitability_dashboard),
+        "profitability_simulation_path": str(getattr(args, "profitability_simulation_report", "")),
+        "tiny_live_gap_report_path": str(getattr(args, "tiny_live_gap_report", "")),
+        "position_sizing_report_path": str(getattr(args, "position_sizing_report", "")),
+        "kill_switch_policy_report_path": str(getattr(args, "kill_switch_policy_report", "")),
+        "conservative_scenario_net_cents": conservative_net,
+        "base_scenario_net_cents": base_net,
+        "optimistic_scenario_net_cents": optimistic_net,
+        "conservative_roi": (profitability_simulation.get("roi_table") or {}).get("conservative"),
+        "base_roi": (profitability_simulation.get("roi_table") or {}).get("base"),
+        "optimistic_roi": (profitability_simulation.get("roi_table") or {}).get("optimistic"),
+        "scenario_status": scenario_status,
+        "profitability_stress_table": stress_table,
+        "tiny_live_gap_summary": {
+            "current_status": tiny_live_gap.get("current_status"),
+            "tiny_live_not_allowed_reason": tiny_live_gap.get("tiny_live_not_allowed_reason"),
+            "missing_controls": tiny_live_gap.get("missing_controls"),
+        },
+        "position_sizing_summary": {
+            "recommended_total_capital_at_risk": position_sizing.get("recommended_total_capital_at_risk"),
+            "recommended_quote_count": position_sizing.get("recommended_quote_count"),
+            "rejected_quote_count": position_sizing.get("rejected_quote_count"),
+        },
+        "kill_switch_summary": {
+            "recommended_action": kill_switch.get("recommended_action"),
+            "missing_controls": kill_switch.get("missing_controls"),
+        },
         "share_scenario_reward_0_5pct_share": reward_share.get("scenario_reward_0_5pct_share"),
         "share_scenario_reward_1pct_share": reward_share.get("scenario_reward_1pct_share"),
         "adverse_selection_count": reward_risk.get("adverse_selection_count", paper.get("adverse_selection_count", 0)),
@@ -261,6 +314,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--reward-allocation-audit-report", default="evidence/weather_lp_rewards/reward_allocation_audit_report.json")
     parser.add_argument("--reward-dollarization-report", default="evidence/weather_lp_rewards/reward_dollarization_report.json")
     parser.add_argument("--profitability-dashboard", default="evidence/weather_lp_rewards/weather_lp_profitability_dashboard.json")
+    parser.add_argument("--profitability-simulation-report", default="evidence/weather_lp_rewards/profitability_simulation_report.json")
+    parser.add_argument("--tiny-live-gap-report", default="evidence/weather_lp_rewards/weather_lp_tiny_live_gap_report.json")
+    parser.add_argument("--position-sizing-report", default="evidence/weather_lp_rewards/position_sizing_report.json")
+    parser.add_argument("--kill-switch-policy-report", default="evidence/weather_lp_rewards/kill_switch_policy_report.json")
     parser.add_argument("--cancellation-policy-report", default="evidence/weather_lp_rewards/cancellation_policy_report.json")
     parser.add_argument("--quote-optimizer-report", default="evidence/weather_lp_rewards/quote_optimizer_report.json")
     parser.add_argument("--quote-updates", default="evidence/weather_lp_rewards/paper_quote_updates.jsonl")

@@ -94,6 +94,10 @@ def main(argv: list[str] | None = None) -> None:
         [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_share_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_risk_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_dollarization_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_profitability_simulation_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_position_sizing_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_kill_switch_policy_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_tiny_live_gap_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_profitability_dashboard.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_window_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_cancellation_report.py"],
@@ -111,6 +115,10 @@ def main(argv: list[str] | None = None) -> None:
     allocation = _load("evidence/weather_lp_rewards/reward_allocation_audit_report.json")
     dollarization = _load("evidence/weather_lp_rewards/reward_dollarization_report.json")
     dashboard = _load("evidence/weather_lp_rewards/weather_lp_profitability_dashboard.json")
+    profitability_simulation = _load("evidence/weather_lp_rewards/profitability_simulation_report.json")
+    tiny_live_gap = _load("evidence/weather_lp_rewards/weather_lp_tiny_live_gap_report.json")
+    position_sizing = _load("evidence/weather_lp_rewards/position_sizing_report.json")
+    kill_switch = _load("evidence/weather_lp_rewards/kill_switch_policy_report.json")
     safety = _write_safety_status(generated_at=generated_at)
     report = {
         "schema_version": "polyweather_polymarket_alpha_weather_lp_runner.v1",
@@ -148,6 +156,24 @@ def main(argv: list[str] | None = None) -> None:
         "observed_markout_total_cents": experiment.get("observed_markout_total_cents") or dollarization.get("observed_markout_total_cents"),
         "break_even_daily_allocation_for_minus_3c": experiment.get("break_even_daily_allocation_for_minus_3c") or dollarization.get("break_even_daily_allocation_median"),
         "profitability_dashboard_recommendation": dashboard.get("recommendation"),
+        "profitability_simulation_scenario_table": profitability_simulation.get("scenario_table"),
+        "profitability_simulation_roi_table": profitability_simulation.get("roi_table"),
+        "profitability_simulation_stress_table": profitability_simulation.get("stress_table"),
+        "total_capital_locked_proxy": profitability_simulation.get("total_capital_locked_proxy"),
+        "tiny_live_gap_summary": {
+            "current_status": tiny_live_gap.get("current_status"),
+            "tiny_live_not_allowed_reason": tiny_live_gap.get("tiny_live_not_allowed_reason"),
+            "missing_controls": tiny_live_gap.get("missing_controls"),
+        },
+        "position_sizing_summary": {
+            "recommended_total_capital_at_risk": position_sizing.get("recommended_total_capital_at_risk"),
+            "recommended_quote_count": position_sizing.get("recommended_quote_count"),
+            "rejected_quote_count": position_sizing.get("rejected_quote_count"),
+        },
+        "kill_switch_summary": {
+            "recommended_action": kill_switch.get("recommended_action"),
+            "missing_controls": kill_switch.get("missing_controls"),
+        },
         "next_expected_5m_markout_time": experiment.get("next_expected_5m_markout_time") or cohort.get("next_expected_5m_markout_time"),
         "next_expected_15m_markout_time": experiment.get("next_expected_15m_markout_time") or cohort.get("next_expected_15m_markout_time"),
         "next_expected_1h_markout_time": experiment.get("next_expected_1h_markout_time") or cohort.get("next_expected_1h_markout_time"),
@@ -174,6 +200,10 @@ def main(argv: list[str] | None = None) -> None:
             "reward_share_estimator": "evidence/weather_lp_rewards/reward_share_estimator_report.json",
             "reward_vs_risk": "evidence/weather_lp_rewards/reward_vs_risk_report.json",
             "reward_dollarization": "evidence/weather_lp_rewards/reward_dollarization_report.json",
+            "profitability_simulation": "evidence/weather_lp_rewards/profitability_simulation_report.json",
+            "tiny_live_gap": "evidence/weather_lp_rewards/weather_lp_tiny_live_gap_report.json",
+            "position_sizing": "evidence/weather_lp_rewards/position_sizing_report.json",
+            "kill_switch_policy": "evidence/weather_lp_rewards/kill_switch_policy_report.json",
             "profitability_dashboard": "evidence/weather_lp_rewards/weather_lp_profitability_dashboard.json",
             "reward_allocation_audit": "evidence/weather_lp_rewards/reward_allocation_audit_report.json",
             "reward_window": "evidence/weather_lp_rewards/reward_window_report.json",
