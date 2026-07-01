@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from collections import Counter
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import requests
 
@@ -14,6 +14,24 @@ from src.trading.polymarket_alpha.reward_programs import extract_liquidity_rewar
 SCHEMA_VERSION = "polyweather_polymarket_alpha_reward_metadata.v1"
 GAMMA_BASE_URL = "https://gamma-api.polymarket.com"
 CLOB_BASE_URL = "https://clob.polymarket.com"
+ALLOCATION_FIELD_NAMES = {
+    "rewards",
+    "reward",
+    "rewardDailyRate",
+    "rewardsDailyRate",
+    "rewardsMinSize",
+    "rewardsMaxSpread",
+    "rewardAllocation",
+    "rewardsAllocation",
+    "liquidityReward",
+    "liquidityRewards",
+    "epochReward",
+    "dailyReward",
+    "makerReward",
+    "incentive",
+    "incentives",
+    "umaReward",
+}
 
 
 def _text(value: Any) -> str:
@@ -35,6 +53,49 @@ def _parse_json_list(value: Any) -> List[Any]:
             return []
         return parsed if isinstance(parsed, list) else []
     return []
+
+
+def _safe_float(value: Any) -> Optional[float]:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _flatten_reward_fields(payload: Dict[str, Any], *, prefix: str = "") -> Dict[str, Any]:
+    fields: Dict[str, Any] = {}
+    for key, value in payload.items():
+        dotted = f"{prefix}.{key}" if prefix else str(key)
+        key_match = any(name.lower() in str(key).lower() for name in ALLOCATION_FIELD_NAMES)
+        dotted_match = any(name.lower() in dotted.lower() for name in ALLOCATION_FIELD_NAMES)
+        if key_match or dotted_match:
+            fields[dotted] = value
+        if isinstance(value, dict):
+            fields.update(_flatten_reward_fields(value, prefix=dotted))
+    return fields
+
+
+def _allocation_value_from_fields(fields: Dict[str, Any]) -> Tuple[Optional[float], Optional[str], Optional[str], Optional[str]]:
+    candidates = (
+        ("rewardAllocation", "usd", "epoch"),
+        ("rewardsAllocation", "usd", "epoch"),
+        ("rewardDailyRate", "usd", "daily"),
+        ("rewardsDailyRate", "usd", "daily"),
+        ("dailyReward", "usd", "daily"),
+        ("epochReward", "usd", "epoch"),
+        ("liquidityReward", "usd", "epoch"),
+        ("liquidityRewards", "usd", "epoch"),
+        ("rewards.rates", "usd", "daily_or_epoch"),
+        ("rewards.dailyRate", "usd", "daily"),
+        ("umaReward", "usd", "resolution_not_lp"),
+    )
+    for name, unit, period in candidates:
+        for field, value in fields.items():
+            if field.endswith(name) or field == name:
+                parsed = _safe_float(value)
+                if parsed is not None:
+                    return parsed, unit, period, field
+    return None, None, None, None
 
 
 def _condition_id(row: Dict[str, Any], gamma_market: Optional[Dict[str, Any]] = None) -> str:
@@ -284,10 +345,17 @@ def audit_reward_allocation_conversion(
             float(row.get("cumulative_reward_points_proxy") or row.get("q_min_proxy") or 0.0),
         )
     rows: List[Dict[str, Any]] = []
+    raw_field_rows: List[Dict[str, Any]] = []
     for row in reward_metadata_rows:
         if not isinstance(row, dict):
             continue
+        raw_fields = _flatten_reward_fields(row)
+        for field_name in row.get("raw_field_names_found") or row.get("fields_found") or []:
+            raw_fields.setdefault(str(field_name), row.get(str(field_name)))
+        raw_allocation_value, raw_allocation_unit, raw_allocation_period, raw_allocation_source = _allocation_value_from_fields(raw_fields)
         allocation = row.get("reward_allocation")
+        if allocation is None:
+            allocation = raw_allocation_value
         allocation_value: Optional[float]
         try:
             allocation_value = float(allocation) if allocation is not None else None
@@ -317,17 +385,50 @@ def audit_reward_allocation_conversion(
                 "schema_version": f"{SCHEMA_VERSION}.allocation_row",
                 "market_slug": row.get("market_slug"),
                 "condition_id": row.get("condition_id"),
-                "fields_found": row.get("raw_field_names_found") or row.get("fields_found") or [],
+                "event_slug": row.get("event_slug"),
+                "city": row.get("city"),
+                "fields_found": sorted(set((row.get("raw_field_names_found") or row.get("fields_found") or []) + list(raw_fields.keys()))),
+                "raw_reward_fields_found": sorted(raw_fields.keys()),
                 "reward_allocation_raw": allocation,
+                "reward_allocation_value": allocation_value,
+                "reward_allocation_unit": raw_allocation_unit,
+                "reward_allocation_period": raw_allocation_period,
+                "reward_allocation_source": raw_allocation_source,
                 "rewards_daily_rate": row.get("rewards_daily_rate"),
                 "reward_epoch": row.get("reward_epoch") or row.get("rewards_epoch"),
                 "rewards_epoch": row.get("rewards_epoch") or row.get("reward_epoch"),
+                "min_incentive_size": row.get("min_incentive_size"),
+                "max_incentive_spread": row.get("max_incentive_spread"),
                 "total_market_q_score_available": total_score_value is not None,
+                "total_market_q_score_source": "reward_metadata_rows.total_market_q_score" if total_score_value is not None else None,
                 "total_market_score_available": total_score_value is not None,
                 "total_competitor_score_available": total_score_value is not None,
                 "our_q_min_proxy": our_score,
                 "estimated_share_if_total_available": estimated_share,
                 "estimated_reward_cents_proxy": estimated_cents,
+                "gap_reason": gap_reason,
+                "paper_only": True,
+                "counts_for_live_gate": False,
+                "live_order_path": False,
+            }
+        )
+        raw_field_rows.append(
+            {
+                "schema_version": f"{SCHEMA_VERSION}.allocation_raw_fields_row",
+                "market_slug": row.get("market_slug"),
+                "condition_id": row.get("condition_id"),
+                "event_slug": row.get("event_slug"),
+                "city": row.get("city"),
+                "raw_reward_fields_found": sorted(raw_fields.keys()),
+                "raw_reward_field_values": raw_fields,
+                "reward_allocation_value": allocation_value,
+                "reward_allocation_unit": raw_allocation_unit,
+                "reward_allocation_period": raw_allocation_period,
+                "reward_allocation_source": raw_allocation_source,
+                "min_incentive_size": row.get("min_incentive_size"),
+                "max_incentive_spread": row.get("max_incentive_spread"),
+                "total_market_q_score_available": total_score_value is not None,
+                "total_market_q_score_source": "reward_metadata_rows.total_market_q_score" if total_score_value is not None else None,
                 "gap_reason": gap_reason,
                 "paper_only": True,
                 "counts_for_live_gate": False,
@@ -348,6 +449,7 @@ def audit_reward_allocation_conversion(
         "estimated_reward_cents_proxy_gap_reason": "requires_reward_allocation_and_total_competitor_q_score",
         "gap_counts": [{"reason": key, "count": value} for key, value in sorted(gap_counts.items())],
         "rows": rows,
+        "raw_field_rows": raw_field_rows,
     }
 
 

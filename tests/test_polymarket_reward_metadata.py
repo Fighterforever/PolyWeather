@@ -61,7 +61,30 @@ def test_reward_allocation_audit_does_not_fake_dollar_conversion():
 
     assert report["estimated_reward_cents_available_count"] == 0
     assert report["estimated_reward_cents_proxy"] is None
-    assert report["rows"][0]["fields_found"] == ["rewards.rate"]
+    assert "rewards.rate" in report["rows"][0]["fields_found"]
     assert report["rows"][0]["total_market_score_available"] is False
     assert report["rows"][0]["gap_reason"] == "reward_allocation_unavailable_in_market_objects"
     assert report["live_order_path"] is False
+
+
+def test_reward_allocation_audit_outputs_raw_allocation_fields():
+    report = audit_reward_allocation_conversion(
+        reward_metadata_rows=[
+            {
+                "market_slug": "weather",
+                "condition_id": "0xabc",
+                "rewardDailyRate": 5,
+                "rewards": {"min_size": 50, "max_spread": 4.5},
+                "min_incentive_size": 50,
+                "max_incentive_spread": 0.045,
+            }
+        ],
+        quote_updates=[{"market_slug": "weather", "cumulative_reward_points_proxy": 12.0}],
+    )
+
+    raw_row = report["raw_field_rows"][0]
+    assert report["reward_allocation_available_count"] == 1
+    assert raw_row["reward_allocation_value"] == 5.0
+    assert raw_row["reward_allocation_period"] == "daily"
+    assert "rewardDailyRate" in raw_row["raw_reward_fields_found"]
+    assert raw_row["live_order_path"] is False

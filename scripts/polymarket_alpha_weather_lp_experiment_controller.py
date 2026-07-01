@@ -52,6 +52,8 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
     reward_share = _load(args.reward_share_report)
     allocation = _load(args.reward_allocation_audit_report)
     cohort_report = _load(args.measurement_cohort_report)
+    dollarization = _load(args.reward_dollarization_report)
+    dashboard = _load(args.profitability_dashboard)
     cancellation = _load(args.cancellation_policy_report)
     window = _load(args.reward_window_report)
     holder = _load(args.smart_holder_report)
@@ -68,6 +70,18 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
     not_old_by_horizon = reward_risk.get("cohort_not_old_enough_count_by_horizon") or []
     not_old_counts = {str(row.get("horizon")): int(row.get("count") or 0) for row in not_old_by_horizon if isinstance(row, dict)}
     lifecycle_conclusion = lifecycle.get("conclusion")
+    exact_reward_available = bool(dollarization.get("exact_reward_cents_available_count"))
+    dollar_scenarios_positive = any(
+        float(dollarization.get(key) or 0.0) > 0
+        for key in (
+            "scenario_total_reward_if_daily_allocation_1",
+            "scenario_total_reward_if_daily_allocation_5",
+            "scenario_total_reward_if_daily_allocation_10",
+            "scenario_total_reward_if_daily_allocation_25",
+            "scenario_total_reward_if_daily_allocation_50",
+        )
+    )
+    observed_markout_total = dollarization.get("observed_markout_total_cents")
     if discovery.get("reward_metadata_available_count", 0) == 0:
         recommendation = "reward_metadata_pipeline_broken_or_no_rewards"
     elif int(cohort_report.get("active_cohort_count") or reward_risk.get("active_cohort_count") or 0) == 0:
@@ -80,6 +94,17 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         recommendation = "markout_pipeline_still_broken"
     elif quote_update_count < 100:
         recommendation = "continue_weather_lp_paper_insufficient_updates"
+    elif (
+        observed_markout_total is not None
+        and float(observed_markout_total) >= 0
+        and not exact_reward_available
+        and dollar_scenarios_positive
+    ):
+        recommendation = "continue_weather_lp_paper_exact_reward_unknown_but_scenarios_positive"
+    elif not exact_reward_available and dollar_scenarios_positive:
+        recommendation = "continue_weather_lp_paper_need_exact_allocation"
+    elif observed_markout_total is not None and float(observed_markout_total) < 0 and not dollar_scenarios_positive:
+        recommendation = "tighten_or_pause_if_reward_scenarios_insufficient"
     elif (
         reward_risk.get("mean_current_markout") is not None
         and float(reward_risk.get("mean_current_markout")) >= 0
@@ -172,14 +197,26 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "visible_reward_share_p90": reward_share.get("visible_reward_share_p90"),
         "visible_share_exceeds_break_even_count": reward_share.get("quotes_where_visible_share_exceeds_break_even"),
         "allocation_exact_available": bool(allocation.get("estimated_reward_cents_available_count")),
+        "exact_reward_available": exact_reward_available,
         "allocation_available_count": reward_share.get("allocation_available_count") or allocation.get("reward_allocation_available_count"),
         "visible_proxy_reward_available": bool(reward_share.get("visible_proxy_reward_cents_count")),
         "break_even_share_current_median": reward_share.get("median_break_even_share_current") or reward_risk.get("break_even_share_median"),
         "break_even_share_minus_1c_median": reward_share.get("median_break_even_share_under_minus_1c"),
         "break_even_share_minus_3c_median": reward_share.get("median_break_even_share_under_minus_3c"),
         "allocation_audit_gap_counts": allocation.get("gap_counts"),
-        "scenario_reward_0_5pct_share": reward_risk.get("scenario_reward_0_5pct_share"),
-        "scenario_reward_1pct_share": reward_risk.get("scenario_reward_1pct_share"),
+        "scenario_reward_0_5pct_share": dollarization.get("scenario_total_reward_if_0_5pct_share") or reward_risk.get("scenario_reward_0_5pct_share"),
+        "scenario_reward_1pct_share": dollarization.get("scenario_total_reward_if_1pct_share") or reward_risk.get("scenario_reward_1pct_share"),
+        "scenario_reward_2pct_share": dollarization.get("scenario_total_reward_if_2pct_share"),
+        "scenario_reward_5pct_share": dollarization.get("scenario_total_reward_if_5pct_share"),
+        "scenario_reward_visible_median_share": dollarization.get("scenario_total_reward_if_daily_allocation_10"),
+        "scenario_reward_daily_allocation_1": dollarization.get("scenario_total_reward_if_daily_allocation_1"),
+        "scenario_reward_daily_allocation_5": dollarization.get("scenario_total_reward_if_daily_allocation_5"),
+        "scenario_reward_daily_allocation_10": dollarization.get("scenario_total_reward_if_daily_allocation_10"),
+        "scenario_reward_daily_allocation_25": dollarization.get("scenario_total_reward_if_daily_allocation_25"),
+        "scenario_reward_daily_allocation_50": dollarization.get("scenario_total_reward_if_daily_allocation_50"),
+        "observed_markout_total_cents": dollarization.get("observed_markout_total_cents"),
+        "break_even_daily_allocation_for_minus_3c": dollarization.get("break_even_daily_allocation_median"),
+        "profitability_dashboard_path": str(args.profitability_dashboard),
         "share_scenario_reward_0_5pct_share": reward_share.get("scenario_reward_0_5pct_share"),
         "share_scenario_reward_1pct_share": reward_share.get("scenario_reward_1pct_share"),
         "adverse_selection_count": reward_risk.get("adverse_selection_count", paper.get("adverse_selection_count", 0)),
@@ -200,6 +237,7 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "expensive_basket_rejection_count": strategy.get("expensive_basket_rejection_count", 0),
         "smart_holder_signal_count": holder.get("smart_holder_signal_count", 0),
         "time_window_confidence": window.get("window_confidence") or window.get("confidence"),
+        "profitability_dashboard_recommendation": dashboard.get("recommendation"),
         "next_expected_5m_markout_time": cohort_report.get("next_expected_5m_markout_time") or reward_risk.get("next_expected_5m_markout_time"),
         "next_expected_15m_markout_time": cohort_report.get("next_expected_15m_markout_time") or reward_risk.get("next_expected_15m_markout_time"),
         "next_expected_1h_markout_time": cohort_report.get("next_expected_1h_markout_time") or reward_risk.get("next_expected_1h_markout_time"),
@@ -221,6 +259,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--measurement-cohort-report", default="evidence/weather_lp_rewards/measurement_cohort_report.json")
     parser.add_argument("--reward-share-report", default="evidence/weather_lp_rewards/reward_share_estimator_report.json")
     parser.add_argument("--reward-allocation-audit-report", default="evidence/weather_lp_rewards/reward_allocation_audit_report.json")
+    parser.add_argument("--reward-dollarization-report", default="evidence/weather_lp_rewards/reward_dollarization_report.json")
+    parser.add_argument("--profitability-dashboard", default="evidence/weather_lp_rewards/weather_lp_profitability_dashboard.json")
     parser.add_argument("--cancellation-policy-report", default="evidence/weather_lp_rewards/cancellation_policy_report.json")
     parser.add_argument("--quote-optimizer-report", default="evidence/weather_lp_rewards/quote_optimizer_report.json")
     parser.add_argument("--quote-updates", default="evidence/weather_lp_rewards/paper_quote_updates.jsonl")

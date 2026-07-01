@@ -93,6 +93,8 @@ def main(argv: list[str] | None = None) -> None:
         [args.python_path, "scripts/polymarket_alpha_weather_lp_measurement_cohort_report.py", "--generated-at", generated_at],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_share_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_risk_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_dollarization_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_profitability_dashboard.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_window_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_cancellation_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_experiment_controller.py"],
@@ -107,6 +109,8 @@ def main(argv: list[str] | None = None) -> None:
     cohort = _load("evidence/weather_lp_rewards/measurement_cohort_report.json")
     reward_share = _load("evidence/weather_lp_rewards/reward_share_estimator_report.json")
     allocation = _load("evidence/weather_lp_rewards/reward_allocation_audit_report.json")
+    dollarization = _load("evidence/weather_lp_rewards/reward_dollarization_report.json")
+    dashboard = _load("evidence/weather_lp_rewards/weather_lp_profitability_dashboard.json")
     safety = _write_safety_status(generated_at=generated_at)
     report = {
         "schema_version": "polyweather_polymarket_alpha_weather_lp_runner.v1",
@@ -138,6 +142,12 @@ def main(argv: list[str] | None = None) -> None:
         "break_even_share_minus_1c_median": experiment.get("break_even_share_minus_1c_median") or reward_share.get("median_break_even_share_under_minus_1c"),
         "break_even_share_minus_3c_median": experiment.get("break_even_share_minus_3c_median") or reward_share.get("median_break_even_share_under_minus_3c"),
         "allocation_exact_available": experiment.get("allocation_exact_available") or bool(allocation.get("estimated_reward_cents_available_count")),
+        "exact_reward_available": experiment.get("exact_reward_available") or bool(dollarization.get("exact_reward_cents_available_count")),
+        "scenario_reward_daily_allocation_10": experiment.get("scenario_reward_daily_allocation_10") or dollarization.get("scenario_total_reward_if_daily_allocation_10"),
+        "scenario_reward_visible_median_share": experiment.get("scenario_reward_visible_median_share"),
+        "observed_markout_total_cents": experiment.get("observed_markout_total_cents") or dollarization.get("observed_markout_total_cents"),
+        "break_even_daily_allocation_for_minus_3c": experiment.get("break_even_daily_allocation_for_minus_3c") or dollarization.get("break_even_daily_allocation_median"),
+        "profitability_dashboard_recommendation": dashboard.get("recommendation"),
         "next_expected_5m_markout_time": experiment.get("next_expected_5m_markout_time") or cohort.get("next_expected_5m_markout_time"),
         "next_expected_15m_markout_time": experiment.get("next_expected_15m_markout_time") or cohort.get("next_expected_15m_markout_time"),
         "next_expected_1h_markout_time": experiment.get("next_expected_1h_markout_time") or cohort.get("next_expected_1h_markout_time"),
@@ -163,6 +173,8 @@ def main(argv: list[str] | None = None) -> None:
             "measurement_cohort_report": "evidence/weather_lp_rewards/measurement_cohort_report.json",
             "reward_share_estimator": "evidence/weather_lp_rewards/reward_share_estimator_report.json",
             "reward_vs_risk": "evidence/weather_lp_rewards/reward_vs_risk_report.json",
+            "reward_dollarization": "evidence/weather_lp_rewards/reward_dollarization_report.json",
+            "profitability_dashboard": "evidence/weather_lp_rewards/weather_lp_profitability_dashboard.json",
             "reward_allocation_audit": "evidence/weather_lp_rewards/reward_allocation_audit_report.json",
             "reward_window": "evidence/weather_lp_rewards/reward_window_report.json",
             "cancellation_policy": "evidence/weather_lp_rewards/cancellation_policy_report.json",

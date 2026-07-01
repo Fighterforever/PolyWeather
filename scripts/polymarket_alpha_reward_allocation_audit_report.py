@@ -14,6 +14,7 @@ from src.trading.polymarket_alpha.polymarket_reward_metadata import (  # noqa: E
     audit_reward_allocation_conversion,
     load_jsonl,
     write_json,
+    write_jsonl,
 )
 
 
@@ -22,6 +23,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--reward-metadata-rows", default="evidence/weather_lp_rewards/reward_metadata_rows.jsonl")
     parser.add_argument("--quote-updates", default="evidence/weather_lp_rewards/paper_quote_updates.jsonl")
     parser.add_argument("--summary-output", default="evidence/weather_lp_rewards/reward_allocation_audit_report.json")
+    parser.add_argument("--raw-fields-output", default="evidence/weather_lp_rewards/reward_allocation_raw_fields.jsonl")
     return parser.parse_args(argv)
 
 
@@ -31,7 +33,9 @@ def main(argv: list[str] | None = None) -> None:
         reward_metadata_rows=load_jsonl(args.reward_metadata_rows),
         quote_updates=load_jsonl(args.quote_updates),
     )
-    write_json(args.summary_output, report)
+    write_jsonl(args.raw_fields_output, report.get("raw_field_rows") or [])
+    compact = {key: value for key, value in report.items() if key != "raw_field_rows"}
+    write_json(args.summary_output, compact)
     print(
         json.dumps(
             {
