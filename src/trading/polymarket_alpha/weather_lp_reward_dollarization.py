@@ -303,7 +303,9 @@ def build_weather_lp_reward_dollarization_report(
     stress_minus_3_total = round(sum(float(row.get("stress_markout_minus_3c") or 0.0) for row in rows), 8)
     stress_minus_5_total = round(sum(float(row.get("stress_markout_minus_5c") or 0.0) for row in rows), 8)
     time_on_book_total_seconds = sum(float(row.get("time_on_book_seconds") or 0.0) for row in rows)
-    break_even_shares = [float(row.get("break_even_share_for_minus_3c")) for row in rows if row.get("break_even_share_for_minus_3c") is not None]
+    break_even_minus_1 = [float(row.get("break_even_share_for_minus_1c")) for row in rows if row.get("break_even_share_for_minus_1c") is not None]
+    break_even_minus_3 = [float(row.get("break_even_share_for_minus_3c")) for row in rows if row.get("break_even_share_for_minus_3c") is not None]
+    break_even_minus_5 = [float(row.get("break_even_share_for_minus_5c")) for row in rows if row.get("break_even_share_for_minus_5c") is not None]
     break_even_allocations = [float(row.get("break_even_daily_allocation_for_minus_3c_stress")) for row in rows if row.get("break_even_daily_allocation_for_minus_3c_stress") is not None]
     scenario_totals_by_share = {
         label: round(sum(float(row.get(f"scenario_reward_cents_if_share_{label}") or 0.0) for row in rows), 8)
@@ -319,7 +321,7 @@ def build_weather_lp_reward_dollarization_report(
         conclusion_parts.append("scenario_positive_exact_unavailable")
     if observed_markout_total > 0 and any(value > 0 for value in scenario_totals_by_allocation.values()):
         conclusion_parts.append("reward_adds_to_positive_markout_paper_only")
-    median_break_even_share = _percentile(break_even_shares, 0.5)
+    median_break_even_share = _percentile(break_even_minus_3, 0.5)
     if median_break_even_share is not None and median_break_even_share <= 0.01:
         conclusion_parts.append("stress_resilient_at_1pct_share")
     elif median_break_even_share is not None and median_break_even_share > 0.05:
@@ -354,8 +356,14 @@ def build_weather_lp_reward_dollarization_report(
         "stress_minus_1c_total_cents": stress_minus_1_total,
         "stress_minus_3c_total_cents": stress_minus_3_total,
         "stress_minus_5c_total_cents": stress_minus_5_total,
-        "break_even_share_median": _percentile(break_even_shares, 0.5),
-        "break_even_share_p90": _percentile(break_even_shares, 0.9),
+        "break_even_share_median": _percentile(break_even_minus_3, 0.5),
+        "break_even_share_p90": _percentile(break_even_minus_3, 0.9),
+        "break_even_share_minus_1c_median": _percentile(break_even_minus_1, 0.5),
+        "break_even_share_minus_1c_p90": _percentile(break_even_minus_1, 0.9),
+        "break_even_share_minus_3c_median": _percentile(break_even_minus_3, 0.5),
+        "break_even_share_minus_3c_p90": _percentile(break_even_minus_3, 0.9),
+        "break_even_share_minus_5c_median": _percentile(break_even_minus_5, 0.5),
+        "break_even_share_minus_5c_p90": _percentile(break_even_minus_5, 0.9),
         "break_even_daily_allocation_median": _percentile(break_even_allocations, 0.5),
         "break_even_daily_allocation_p90": _percentile(break_even_allocations, 0.9),
         "time_on_book_total_seconds": round(time_on_book_total_seconds, 3),

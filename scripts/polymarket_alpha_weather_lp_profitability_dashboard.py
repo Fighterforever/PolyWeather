@@ -141,6 +141,9 @@ def build_dashboard(args: argparse.Namespace) -> Dict[str, Any]:
         },
         "break_even_summary": {
             **_break_even_share_table(rows),
+            "break_even_share_minus_1c_median": dollar.get("break_even_share_minus_1c_median"),
+            "break_even_share_minus_3c_median": dollar.get("break_even_share_minus_3c_median"),
+            "break_even_share_minus_5c_median": dollar.get("break_even_share_minus_5c_median"),
             "break_even_daily_allocation_median": dollar.get("break_even_daily_allocation_median"),
             "break_even_daily_allocation_p90": dollar.get("break_even_daily_allocation_p90"),
         },
