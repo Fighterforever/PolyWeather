@@ -470,3 +470,109 @@ def test_weather_lp_controller_surfaces_manual_review_packet(tmp_path: Path):
     assert report["suggested_human_decision"] == "prepare_manual_tiny_live_review_but_reward_payout_audit_required"
     assert report["recommendation"] == "manual_tiny_live_review_artifacts_ready_but_live_disabled__reward_payout_audit_required"
     assert report["live_order_path"] is False
+
+
+def test_weather_lp_controller_surfaces_manual_payout_audit_plan(tmp_path: Path):
+    paths = {}
+    for name in (
+        "discovery",
+        "strategy",
+        "paper",
+        "updates",
+        "risk",
+        "lifecycle",
+        "cohort",
+        "share",
+        "allocation",
+        "dollarization",
+        "dashboard",
+        "cancellation",
+        "optimizer",
+        "window",
+        "holder",
+        "profitability",
+        "tiny_gap",
+        "position",
+        "kill_policy",
+        "payout",
+        "manual_sheet",
+        "impact",
+        "manual_kill",
+        "manual_packet",
+        "manual_plan",
+        "selected_quotes",
+        "manual_result",
+    ):
+        paths[name] = tmp_path / f"{name}.json"
+    quote_updates = tmp_path / "updates.jsonl"
+    for name, payload in {
+        "discovery": {"reward_metadata_available_count": 89},
+        "strategy": {},
+        "paper": {"paper_quote_count": 20},
+        "updates": {"quote_update_count": 600},
+        "risk": {"quote_update_count": 600, "valid_markout_count_by_horizon": [{"horizon": "5m", "count": 20}, {"horizon": "15m", "count": 20}, {"horizon": "1h", "count": 20}]},
+        "lifecycle": {"conclusion": "lifecycle_ok"},
+        "cohort": {"active_cohort_count": 20},
+        "share": {},
+        "allocation": {},
+        "dollarization": {"exact_reward_cents_available_count": 0},
+        "dashboard": {},
+        "cancellation": {},
+        "optimizer": {},
+        "window": {},
+        "holder": {},
+        "profitability": {"exact_reward_available": False, "scenario_status": {"base_positive": True}, "scenario_table": {"base_net": 100, "conservative_net": -50}},
+        "tiny_gap": {"final_status": "manual_payout_audit_plan_ready_but_not_executed"},
+        "position": {},
+        "kill_policy": {},
+        "payout": {"audit_status": "manual_audit_required"},
+        "manual_sheet": {"suggested_manual_quote_count": 2},
+        "impact": {"impact_simulation_ready": True},
+        "manual_kill": {"ready": True},
+        "manual_packet": {"manual_review_packet_ready": True},
+        "manual_plan": {"plan_status": "ready_for_user_manual_audit"},
+        "selected_quotes": {"selected_quote_count": 3, "total_selected_capital_at_risk": 21},
+        "manual_result": {"audit_status": "waiting_for_manual_audit", "audit_verdict": "insufficient_manual_data"},
+    }.items():
+        paths[name].write_text(json.dumps(payload), encoding="utf-8")
+    quote_updates.write_text("", encoding="utf-8")
+
+    report = build_report(
+        Namespace(
+            discovery_report=paths["discovery"],
+            strategy_report=paths["strategy"],
+            paper_cycle_report=paths["paper"],
+            quote_update_report=paths["updates"],
+            reward_risk_report=paths["risk"],
+            lifecycle_audit_report=paths["lifecycle"],
+            measurement_cohort_report=paths["cohort"],
+            reward_share_report=paths["share"],
+            reward_allocation_audit_report=paths["allocation"],
+            reward_dollarization_report=paths["dollarization"],
+            profitability_dashboard=paths["dashboard"],
+            cancellation_policy_report=paths["cancellation"],
+            quote_optimizer_report=paths["optimizer"],
+            quote_updates=quote_updates,
+            reward_window_report=paths["window"],
+            smart_holder_report=paths["holder"],
+            profitability_simulation_report=paths["profitability"],
+            tiny_live_gap_report=paths["tiny_gap"],
+            position_sizing_report=paths["position"],
+            kill_switch_policy_report=paths["kill_policy"],
+            reward_payout_audit_report=paths["payout"],
+            manual_order_sheet_report=paths["manual_sheet"],
+            impact_simulator_report=paths["impact"],
+            manual_kill_switch_checklist=paths["manual_kill"],
+            manual_review_packet=paths["manual_packet"],
+            manual_payout_audit_plan=paths["manual_plan"],
+            selected_audit_quotes_report=paths["selected_quotes"],
+            manual_payout_audit_result=paths["manual_result"],
+        )
+    )
+
+    assert report["manual_payout_audit_plan_ready"] is True
+    assert report["selected_manual_audit_quote_count"] == 3
+    assert report["manual_payout_audit_result_status"] == "waiting_for_manual_audit"
+    assert report["final_stage"] == "manual_payout_audit_plan_ready_but_live_disabled"
+    assert report["recommendation"] == "prepare_manual_payout_audit__do_not_enable_auto_live__wait_for_user_manual_audit_result"
+    assert report["live_order_path"] is False

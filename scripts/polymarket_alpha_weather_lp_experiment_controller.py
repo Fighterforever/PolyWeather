@@ -70,6 +70,9 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
     impact_sim = _load(getattr(args, "impact_simulator_report", "")) if getattr(args, "impact_simulator_report", None) else {}
     manual_kill = _load(getattr(args, "manual_kill_switch_checklist", "")) if getattr(args, "manual_kill_switch_checklist", None) else {}
     manual_review_packet = _load(getattr(args, "manual_review_packet", "")) if getattr(args, "manual_review_packet", None) else {}
+    manual_payout_plan = _load(getattr(args, "manual_payout_audit_plan", "")) if getattr(args, "manual_payout_audit_plan", None) else {}
+    selected_audit_quotes = _load(getattr(args, "selected_audit_quotes_report", "")) if getattr(args, "selected_audit_quotes_report", None) else {}
+    manual_payout_result = _load(getattr(args, "manual_payout_audit_result", "")) if getattr(args, "manual_payout_audit_result", None) else {}
     cancellation = _load(args.cancellation_policy_report)
     window = _load(args.reward_window_report)
     holder = _load(args.smart_holder_report)
@@ -173,11 +176,18 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         if not kill_ready:
             parts.append("kill_switch_required")
         recommendation = "__".join(parts)
+    manual_payout_plan_ready = manual_payout_plan.get("plan_status") == "ready_for_user_manual_audit"
+    selected_manual_audit_quote_count = int(selected_audit_quotes.get("selected_quote_count") or 0)
+    manual_payout_audit_status = manual_payout_result.get("audit_status") or "waiting_for_manual_audit"
+    if manual_payout_plan_ready and selected_manual_audit_quote_count > 0 and manual_payout_audit_status != "manual_audit_ingested":
+        recommendation = "prepare_manual_payout_audit__do_not_enable_auto_live__wait_for_user_manual_audit_result"
     final_stage = "paper_only"
     if manual_quote_count > 0 or manual_review_packet_ready:
         final_stage = "manual_review_partial"
     if manual_review_packet_ready and kill_ready and manual_quote_count > 0:
         final_stage = "manual_review_ready_but_live_disabled"
+    if manual_payout_plan_ready and selected_manual_audit_quote_count > 0:
+        final_stage = "manual_payout_audit_plan_ready_but_live_disabled"
     city_rows = reward_risk.get("by_city") or []
     best_city = None
     worst_city = None
@@ -283,6 +293,9 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "impact_simulator_path": str(getattr(args, "impact_simulator_report", "")),
         "kill_switch_checklist_path": str(getattr(args, "manual_kill_switch_checklist", "")),
         "manual_review_packet_path": str(getattr(args, "manual_review_packet", "")),
+        "manual_payout_audit_plan_path": str(getattr(args, "manual_payout_audit_plan", "")),
+        "selected_audit_quotes_path": str(getattr(args, "selected_audit_quotes_report", "")),
+        "manual_payout_audit_result_path": str(getattr(args, "manual_payout_audit_result", "")),
         "manual_quote_count": manual_quote_count,
         "total_manual_quote_capital_at_risk": manual_sheet.get("total_capital_at_risk_if_all_manual_quotes_used"),
         "conservative_scenario_net_cents": conservative_net,
@@ -307,6 +320,11 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "manual_review_packet_ready": manual_review_packet_ready,
         "suggested_human_decision": manual_review_packet.get("suggested_human_decision"),
         "manual_review_remaining_blockers": manual_review_packet.get("remaining_blockers"),
+        "manual_payout_audit_plan_ready": manual_payout_plan_ready,
+        "selected_manual_audit_quote_count": selected_manual_audit_quote_count,
+        "selected_manual_audit_capital_at_risk": selected_audit_quotes.get("total_selected_capital_at_risk"),
+        "manual_payout_audit_result_status": manual_payout_audit_status,
+        "manual_payout_audit_verdict": manual_payout_result.get("audit_verdict"),
         "final_stage": final_stage,
         "position_sizing_summary": {
             "recommended_total_capital_at_risk": position_sizing.get("recommended_total_capital_at_risk"),
@@ -370,6 +388,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--impact-simulator-report", default="evidence/weather_lp_rewards/tiny_live_impact_simulator_report.json")
     parser.add_argument("--manual-kill-switch-checklist", default="evidence/weather_lp_rewards/manual_kill_switch_checklist.json")
     parser.add_argument("--manual-review-packet", default="evidence/weather_lp_rewards/manual_tiny_live_review_packet.json")
+    parser.add_argument("--manual-payout-audit-plan", default="evidence/weather_lp_rewards/manual_tiny_live_payout_audit_plan.json")
+    parser.add_argument("--selected-audit-quotes-report", default="evidence/weather_lp_rewards/manual_audit_selected_quotes.json")
+    parser.add_argument("--manual-payout-audit-result", default="evidence/weather_lp_rewards/manual_payout_audit_result.json")
     parser.add_argument("--cancellation-policy-report", default="evidence/weather_lp_rewards/cancellation_policy_report.json")
     parser.add_argument("--quote-optimizer-report", default="evidence/weather_lp_rewards/quote_optimizer_report.json")
     parser.add_argument("--quote-updates", default="evidence/weather_lp_rewards/paper_quote_updates.jsonl")

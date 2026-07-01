@@ -28,6 +28,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--manual-order-sheet-report", default="evidence/weather_lp_rewards/manual_tiny_live_order_sheet_report.json")
     parser.add_argument("--impact-simulator-report", default="evidence/weather_lp_rewards/tiny_live_impact_simulator_report.json")
     parser.add_argument("--manual-kill-switch-checklist", default="evidence/weather_lp_rewards/manual_kill_switch_checklist.json")
+    parser.add_argument("--manual-payout-audit-plan-report", default="evidence/weather_lp_rewards/manual_tiny_live_payout_audit_plan.json")
+    parser.add_argument("--selected-audit-quotes-report", default="evidence/weather_lp_rewards/manual_audit_selected_quotes.json")
+    parser.add_argument("--manual-payout-audit-result", default="evidence/weather_lp_rewards/manual_payout_audit_result.json")
     parser.add_argument("--summary-output", default="evidence/weather_lp_rewards/weather_lp_tiny_live_gap_report.json")
     return parser.parse_args(argv)
 
@@ -44,6 +47,9 @@ def main(argv: list[str] | None = None) -> None:
         manual_order_sheet_report=load_json(args.manual_order_sheet_report),
         impact_simulator_report=load_json(args.impact_simulator_report),
         manual_kill_switch_checklist=load_json(args.manual_kill_switch_checklist),
+        manual_payout_audit_plan_report=load_json(args.manual_payout_audit_plan_report),
+        selected_audit_quotes_report=load_json(args.selected_audit_quotes_report),
+        manual_payout_audit_result=load_json(args.manual_payout_audit_result),
     )
     write_json(args.summary_output, report)
     print(json.dumps({"current_status": report["current_status"], "reason": report["tiny_live_not_allowed_reason"], "live_order_path": False}, indent=2, sort_keys=True))

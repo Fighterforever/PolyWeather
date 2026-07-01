@@ -101,6 +101,10 @@ def main(argv: list[str] | None = None) -> None:
         [args.python_path, "scripts/polymarket_alpha_weather_lp_manual_kill_switch_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_manual_order_sheet_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_live_impact_simulator_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_manual_audit_quote_selector.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_manual_payout_audit_plan.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_manual_execution_checklist.py"],
+        [args.python_path, "scripts/polymarket_alpha_ingest_manual_payout_audit.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_tiny_live_gap_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_manual_review_packet.py", "--generated-at", generated_at],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_profitability_dashboard.py"],
@@ -129,6 +133,9 @@ def main(argv: list[str] | None = None) -> None:
     impact_sim = _load("evidence/weather_lp_rewards/tiny_live_impact_simulator_report.json")
     manual_kill = _load("evidence/weather_lp_rewards/manual_kill_switch_checklist.json")
     manual_review_packet = _load("evidence/weather_lp_rewards/manual_tiny_live_review_packet.json")
+    selected_audit_quotes = _load("evidence/weather_lp_rewards/manual_audit_selected_quotes.json")
+    manual_payout_plan = _load("evidence/weather_lp_rewards/manual_tiny_live_payout_audit_plan.json")
+    manual_payout_result = _load("evidence/weather_lp_rewards/manual_payout_audit_result.json")
     safety = _write_safety_status(generated_at=generated_at)
     report = {
         "schema_version": "polyweather_polymarket_alpha_weather_lp_runner.v1",
@@ -193,6 +200,10 @@ def main(argv: list[str] | None = None) -> None:
         "manual_review_packet_ready": manual_review_packet.get("manual_review_packet_ready"),
         "suggested_human_decision": manual_review_packet.get("suggested_human_decision"),
         "manual_review_remaining_blockers": manual_review_packet.get("remaining_blockers"),
+        "selected_manual_audit_quote_count": selected_audit_quotes.get("selected_quote_count"),
+        "selected_manual_audit_capital_at_risk": selected_audit_quotes.get("total_selected_capital_at_risk"),
+        "manual_payout_audit_plan_ready": manual_payout_plan.get("plan_status") == "ready_for_user_manual_audit",
+        "manual_payout_audit_result_status": manual_payout_result.get("audit_status"),
         "next_expected_5m_markout_time": experiment.get("next_expected_5m_markout_time") or cohort.get("next_expected_5m_markout_time"),
         "next_expected_15m_markout_time": experiment.get("next_expected_15m_markout_time") or cohort.get("next_expected_15m_markout_time"),
         "next_expected_1h_markout_time": experiment.get("next_expected_1h_markout_time") or cohort.get("next_expected_1h_markout_time"),
@@ -222,6 +233,11 @@ def main(argv: list[str] | None = None) -> None:
             "profitability_simulation": "evidence/weather_lp_rewards/profitability_simulation_report.json",
             "tiny_live_gap": "evidence/weather_lp_rewards/weather_lp_tiny_live_gap_report.json",
             "manual_review_packet": "evidence/weather_lp_rewards/manual_tiny_live_review_packet.json",
+            "manual_audit_selected_quotes": "evidence/weather_lp_rewards/manual_audit_selected_quotes.json",
+            "manual_payout_audit_plan": "evidence/weather_lp_rewards/manual_tiny_live_payout_audit_plan.json",
+            "manual_execution_checklist": "evidence/weather_lp_rewards/manual_execution_checklist.json",
+            "manual_payout_audit_template": "evidence/weather_lp_rewards/manual_payout_audit_template.csv",
+            "manual_payout_audit_result": "evidence/weather_lp_rewards/manual_payout_audit_result.json",
             "position_sizing": "evidence/weather_lp_rewards/position_sizing_report.json",
             "kill_switch_policy": "evidence/weather_lp_rewards/kill_switch_policy_report.json",
             "reward_payout_audit": "evidence/weather_lp_rewards/reward_payout_audit_report.json",

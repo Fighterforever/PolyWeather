@@ -3,8 +3,12 @@ from __future__ import annotations
 from pathlib import Path
 
 from src.trading.polymarket_alpha.weather_lp_reward_payout_audit import (
+    MANUAL_PAYOUT_AUDIT_TEMPLATE_V2_COLUMNS,
+    build_manual_payout_audit_result,
     build_weather_lp_reward_payout_audit_report,
+    render_manual_payout_template_v2_markdown,
     render_manual_template_markdown,
+    write_empty_manual_payout_audit_template_v2,
     write_manual_template,
 )
 
@@ -43,3 +47,47 @@ def test_payout_audit_does_not_fake_payout():
 
     assert report["payout_observed"] is False
     assert report["payout_amount"] is None
+
+
+def test_manual_payout_audit_template_v2_is_empty_for_user_fill(tmp_path: Path):
+    output = tmp_path / "manual_payout_audit_template.csv"
+    count = write_empty_manual_payout_audit_template_v2(output)
+
+    assert count == 0
+    text = output.read_text(encoding="utf-8")
+    assert "actual_reward_received" in text
+    assert len(text.strip().splitlines()) == 1
+    rendered = render_manual_payout_template_v2_markdown()
+    assert "operator_notes" in rendered
+    assert MANUAL_PAYOUT_AUDIT_TEMPLATE_V2_COLUMNS[0] == "audit_id"
+
+
+def test_manual_payout_audit_ingest_waits_when_csv_missing():
+    report = build_manual_payout_audit_result(filled_rows=[], filled_csv_exists=False)
+
+    assert report["audit_status"] == "waiting_for_manual_audit"
+    assert report["audit_verdict"] == "insufficient_manual_data"
+    assert report["live_order_path"] is False
+
+
+def test_manual_payout_audit_ingest_compares_expected_actual():
+    report = build_manual_payout_audit_result(
+        filled_rows=[
+            {
+                "expected_reward_low": "1",
+                "expected_reward_base": "2",
+                "expected_reward_high": "4",
+                "actual_reward_received": "2.5",
+                "actual_markout": "-0.4",
+                "fill_occurred": "true",
+                "adverse_selection_notes": "small fill",
+            }
+        ],
+        filled_csv_exists=True,
+    )
+
+    assert report["audit_status"] == "manual_audit_ingested"
+    assert report["audit_verdict"] == "reward_payout_confirmed"
+    assert report["actual_vs_expected_ratio"] == 1.25
+    assert report["fill_count"] == 1
+    assert report["live_order_path"] is False

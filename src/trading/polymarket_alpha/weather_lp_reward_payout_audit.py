@@ -10,6 +10,34 @@ from src.trading.polymarket_alpha.probability_dataset import write_json
 
 
 SCHEMA_VERSION = "polyweather_polymarket_alpha_weather_lp_reward_payout_audit.v1"
+MANUAL_PAYOUT_AUDIT_TEMPLATE_V2_COLUMNS = [
+    "audit_id",
+    "wallet_or_account_note",
+    "date_utc",
+    "market_slug",
+    "token_id",
+    "outcome",
+    "quote_price",
+    "quote_size",
+    "order_start_time_utc",
+    "order_cancel_time_utc",
+    "time_on_book_minutes",
+    "reward_qualified_minutes",
+    "expected_reward_low",
+    "expected_reward_base",
+    "expected_reward_high",
+    "actual_reward_received",
+    "payout_time_utc",
+    "payout_source",
+    "tx_hash_or_statement_ref",
+    "below_minimum_payout_possible",
+    "discrepancy_amount",
+    "discrepancy_reason",
+    "actual_markout",
+    "fill_occurred",
+    "adverse_selection_notes",
+    "operator_notes",
+]
 
 
 def _now_iso() -> str:
@@ -152,6 +180,92 @@ def write_manual_template(path: str | Path, rows: Iterable[Dict[str, Any]], repo
     return len(materialized)
 
 
+def write_empty_manual_payout_audit_template_v2(path: str | Path) -> int:
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with target.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=MANUAL_PAYOUT_AUDIT_TEMPLATE_V2_COLUMNS)
+        writer.writeheader()
+    return 0
+
+
+def render_manual_payout_template_v2_markdown() -> str:
+    lines = [
+        "# Weather LP Manual Payout Audit Template v2",
+        "",
+        "Fill this after a user-run manual UI-only audit. Leave unknown fields blank; do not invent payout.",
+        "",
+        "## Required Columns",
+    ]
+    for column in MANUAL_PAYOUT_AUDIT_TEMPLATE_V2_COLUMNS:
+        lines.append(f"- {column}")
+    lines.extend(["", "live_order_path=false"])
+    return "\n".join(lines) + "\n"
+
+
+def build_manual_payout_audit_result(
+    *,
+    filled_rows: Iterable[Dict[str, Any]],
+    filled_csv_exists: bool,
+) -> Dict[str, Any]:
+    rows = [row for row in filled_rows if isinstance(row, dict)]
+    if not filled_csv_exists:
+        return {
+            "schema_version": f"{SCHEMA_VERSION}.manual_result.v1",
+            "audit_status": "waiting_for_manual_audit",
+            "audit_verdict": "insufficient_manual_data",
+            "actual_reward_total": None,
+            "expected_low": None,
+            "expected_base": None,
+            "expected_high": None,
+            "actual_vs_expected_ratio": None,
+            "actual_markout": None,
+            "fill_count": 0,
+            "adverse_selection_notes": [],
+            "next_action": "wait_for_user_manual_audit_result",
+            "manual_review_required": True,
+            "paper_only": True,
+            "counts_for_live_gate": False,
+            "live_order_path": False,
+        }
+    actual_reward_total = sum(_safe_float(row.get("actual_reward_received")) or 0.0 for row in rows)
+    expected_low = sum(_safe_float(row.get("expected_reward_low")) or 0.0 for row in rows)
+    expected_base = sum(_safe_float(row.get("expected_reward_base")) or 0.0 for row in rows)
+    expected_high = sum(_safe_float(row.get("expected_reward_high")) or 0.0 for row in rows)
+    actual_markout_values = [_safe_float(row.get("actual_markout")) for row in rows]
+    actual_markout = sum(value or 0.0 for value in actual_markout_values if value is not None)
+    fill_count = sum(1 for row in rows if str(row.get("fill_occurred") or "").strip().lower() in {"1", "true", "yes", "y"})
+    notes = [str(row.get("adverse_selection_notes")) for row in rows if row.get("adverse_selection_notes")]
+    if not rows:
+        verdict = "insufficient_manual_data"
+    elif actual_reward_total <= 0:
+        verdict = "no_reward_received"
+    elif expected_base > 0 and actual_reward_total < expected_low:
+        verdict = "reward_below_expected"
+    else:
+        verdict = "reward_payout_confirmed"
+    ratio = actual_reward_total / expected_base if expected_base else None
+    next_action = "continue_manual_audit_review" if verdict == "reward_payout_confirmed" else "keep_live_disabled_until_reward_payout_confirmed"
+    return {
+        "schema_version": f"{SCHEMA_VERSION}.manual_result.v1",
+        "audit_status": "manual_audit_ingested",
+        "audit_verdict": verdict,
+        "actual_reward_total": round(actual_reward_total, 8),
+        "expected_low": round(expected_low, 8),
+        "expected_base": round(expected_base, 8),
+        "expected_high": round(expected_high, 8),
+        "actual_vs_expected_ratio": round(ratio, 8) if ratio is not None else None,
+        "actual_markout": round(actual_markout, 8),
+        "fill_count": fill_count,
+        "adverse_selection_notes": notes,
+        "next_action": next_action,
+        "manual_review_required": True,
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+    }
+
+
 def render_manual_template_markdown(report: Dict[str, Any], rows: Iterable[Dict[str, Any]]) -> str:
     materialized = [row for row in rows if isinstance(row, dict)]
     lines = [
@@ -215,12 +329,16 @@ def load_csv(path: str | Path) -> List[Dict[str, Any]]:
 
 
 __all__ = [
+    "MANUAL_PAYOUT_AUDIT_TEMPLATE_V2_COLUMNS",
     "SCHEMA_VERSION",
+    "build_manual_payout_audit_result",
     "build_weather_lp_reward_payout_audit_report",
     "load_csv",
     "load_json",
     "load_jsonl",
     "render_manual_template_markdown",
+    "render_manual_payout_template_v2_markdown",
+    "write_empty_manual_payout_audit_template_v2",
     "write_json",
     "write_manual_template",
     "write_text",

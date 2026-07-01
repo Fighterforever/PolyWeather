@@ -35,6 +35,17 @@ def _by_quote(rows: Iterable[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     return {str(row.get("quote_id")): row for row in rows if isinstance(row, dict) and row.get("quote_id")}
 
 
+def _by_market_token(rows: Iterable[Dict[str, Any]]) -> Dict[tuple[str, str], Dict[str, Any]]:
+    indexed: Dict[tuple[str, str], Dict[str, Any]] = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        key = (str(row.get("market_slug") or ""), str(row.get("token_id") or ""))
+        if key[0] and key[1]:
+            indexed[key] = row
+    return indexed
+
+
 def build_weather_lp_manual_order_sheet(
     *,
     quote_optimizer_report: Dict[str, Any],
@@ -136,6 +147,196 @@ def build_weather_lp_manual_order_sheet(
     }
 
 
+def select_manual_payout_audit_quotes(
+    *,
+    manual_order_rows: Iterable[Dict[str, Any]],
+    impact_rows: Iterable[Dict[str, Any]] = (),
+    profitability_rows: Iterable[Dict[str, Any]] = (),
+    max_quote_count: int = 3,
+    max_total_capital_at_risk: float = 25.0,
+) -> Dict[str, Any]:
+    """Select a small manual audit set from paper-only manual review rows.
+
+    This returns human-review rows only. It intentionally does not create an
+    executable order payload or any API instruction.
+    """
+
+    impacts = _by_market_token(impact_rows)
+    profits = _by_market_token(profitability_rows)
+    selected: List[Dict[str, Any]] = []
+    rejected: List[Dict[str, Any]] = []
+    cumulative_capital = 0.0
+    candidates: List[tuple[float, Dict[str, Any], List[str], Dict[str, Any], Dict[str, Any]]] = []
+    for row in manual_order_rows:
+        if not isinstance(row, dict):
+            continue
+        market_slug = str(row.get("market_slug") or "")
+        token_id = str(row.get("token_id") or "")
+        key = (market_slug, token_id)
+        impact = impacts.get(key, {})
+        profit = profits.get(key, {})
+        reasons: List[str] = []
+        quote_price = _safe_float(row.get("suggested_quote_price"))
+        min_size = _safe_float(row.get("min_incentive_size"))
+        original_size = _safe_float(row.get("suggested_quote_size"))
+        audit_size = max(value for value in (min_size or 0.0, original_size or 0.0) if value is not None)
+        capital = _safe_float(row.get("capital_at_risk"))
+        if capital is None and quote_price is not None:
+            capital = quote_price * audit_size
+        current_markout = _safe_float(row.get("current_markout"))
+        if current_markout is None:
+            current_markout = _safe_float(profit.get("current_markout"))
+        if current_markout is None:
+            current_markout = _safe_float(profit.get("observed_markout_cents"))
+        conservative_reward = _safe_float(row.get("conservative_scenario_reward"))
+        conservative_net = _safe_float((profit.get("net_pnl_cents_by_scenario") or {}).get("conservative"))
+        basket_total_cost = _safe_float(row.get("basket_total_cost"))
+        distance = _safe_float(row.get("quote_distance_from_midpoint"))
+        if not row.get("qualifies_for_reward"):
+            reasons.append("not_reward_qualified")
+        if min_size is None:
+            reasons.append("missing_min_incentive_size")
+        if quote_price is None:
+            reasons.append("missing_quote_price")
+        if _safe_float(row.get("max_incentive_spread")) is None:
+            reasons.append("missing_max_incentive_spread")
+        if _safe_float(row.get("visible_reward_share_proxy")) is None:
+            reasons.append("missing_visible_reward_share_proxy")
+        if current_markout is None or current_markout < 0:
+            reasons.append("current_markout_negative_or_missing")
+        if _safe_float(row.get("base_scenario_reward")) is None or float(row.get("base_scenario_reward") or 0.0) <= 0:
+            reasons.append("base_scenario_not_positive")
+        if conservative_reward is not None and conservative_reward < -100.0:
+            reasons.append("conservative_reward_catastrophic")
+        if conservative_net is not None and conservative_net < -100.0:
+            reasons.append("conservative_net_catastrophic")
+        if capital is None or capital <= 0:
+            reasons.append("missing_capital_at_risk")
+        if basket_total_cost is not None and basket_total_cost >= 0.98:
+            reasons.append("expensive_basket_near_full_payout")
+        if not impact:
+            reasons.append("missing_impact_simulation")
+        if impact and impact.get("quote_would_cross_or_take"):
+            reasons.append("quote_would_cross_or_take")
+        if impact and impact.get("quote_would_be_resting") is False:
+            reasons.append("quote_would_not_be_resting")
+        if impact and impact.get("impact_warning"):
+            reasons.append(str(impact.get("impact_warning")))
+        if not row.get("cancellation_rule"):
+            reasons.append("missing_cancellation_rule")
+        if str(row.get("city_regime") or "").lower() == "volatile":
+            reasons.append("volatile_city_avoid_for_first_audit")
+        if reasons:
+            rejected.append(
+                {
+                    "market_slug": market_slug,
+                    "token_id": token_id,
+                    "city": row.get("city"),
+                    "rejected_reason": list(dict.fromkeys(reasons)),
+                    "manual_execution_only": True,
+                    "paper_only": True,
+                    "counts_for_live_gate": False,
+                    "live_order_path": False,
+                }
+            )
+            continue
+        reward_score = _safe_float(row.get("visible_reward_share_proxy")) or 0.0
+        risk_score = capital or 999.0
+        distance_score = abs(distance or 0.0)
+        score = (risk_score * 100.0) + (distance_score * 10.0) - reward_score
+        candidates.append((score, row, [], impact, profit))
+    for _, row, _, impact, profit in sorted(candidates, key=lambda item: item[0]):
+        if len(selected) >= max_quote_count:
+            rejected.append(
+                {
+                    "market_slug": row.get("market_slug"),
+                    "token_id": row.get("token_id"),
+                    "city": row.get("city"),
+                    "rejected_reason": ["audit_quote_count_cap_reached"],
+                    "manual_execution_only": True,
+                    "paper_only": True,
+                    "counts_for_live_gate": False,
+                    "live_order_path": False,
+                }
+            )
+            continue
+        quote_price = _safe_float(row.get("suggested_quote_price")) or 0.0
+        min_size = _safe_float(row.get("min_incentive_size")) or 0.0
+        original_size = _safe_float(row.get("suggested_quote_size")) or 0.0
+        audit_size = max(min_size, original_size)
+        capital = _safe_float(row.get("capital_at_risk"))
+        if capital is None:
+            capital = quote_price * audit_size
+        if cumulative_capital + float(capital or 0.0) > max_total_capital_at_risk:
+            rejected.append(
+                {
+                    "market_slug": row.get("market_slug"),
+                    "token_id": row.get("token_id"),
+                    "city": row.get("city"),
+                    "rejected_reason": ["audit_capital_cap_would_be_exceeded"],
+                    "manual_execution_only": True,
+                    "paper_only": True,
+                    "counts_for_live_gate": False,
+                    "live_order_path": False,
+                }
+            )
+            continue
+        current_markout = _safe_float(row.get("current_markout"))
+        if current_markout is None:
+            current_markout = _safe_float(profit.get("current_markout"))
+        if current_markout is None:
+            current_markout = _safe_float(profit.get("observed_markout_cents"))
+        selected.append(
+            {
+                "rank": len(selected) + 1,
+                "market_slug": row.get("market_slug"),
+                "city": row.get("city"),
+                "token_id": row.get("token_id"),
+                "side": row.get("side"),
+                "suggested_quote_price": quote_price,
+                "suggested_quote_size": audit_size,
+                "capital_at_risk": round(float(capital or 0.0), 8),
+                "min_incentive_size": row.get("min_incentive_size"),
+                "max_incentive_spread": row.get("max_incentive_spread"),
+                "distance_from_midpoint": row.get("quote_distance_from_midpoint"),
+                "visible_reward_share_proxy": row.get("visible_reward_share_proxy"),
+                "expected_reward_low": row.get("conservative_scenario_reward"),
+                "expected_reward_base": row.get("base_scenario_reward"),
+                "expected_reward_high": (profit.get("estimated_reward_cents_by_scenario") or {}).get("optimistic"),
+                "current_markout": current_markout,
+                "cancel_rules": row.get("cancellation_rule"),
+                "selected_reason": [
+                    "reward_qualified",
+                    "resting_quote",
+                    "non_negative_markout",
+                    "low_capital_first_audit",
+                    "manual_ui_only",
+                ],
+                "quote_size_note": "audit_size_uses_min_incentive_size_when_needed",
+                "manual_execution_only": True,
+                "manual_review_required": True,
+                "paper_only": True,
+                "counts_for_live_gate": False,
+                "live_order_path": False,
+            }
+        )
+        cumulative_capital += float(capital or 0.0)
+    return {
+        "schema_version": f"{SCHEMA_VERSION}.manual_payout_audit_selector.v1",
+        "selected_quote_count": len(selected),
+        "total_selected_capital_at_risk": round(cumulative_capital, 8),
+        "max_quote_count": max_quote_count,
+        "max_total_capital_at_risk": max_total_capital_at_risk,
+        "selected_quotes": selected,
+        "rejected_quotes": rejected,
+        "manual_execution_only": True,
+        "manual_review_required": True,
+        "paper_only": True,
+        "counts_for_live_gate": False,
+        "live_order_path": False,
+    }
+
+
 def write_csv(path: str | Path, rows: Iterable[Dict[str, Any]]) -> int:
     materialized = [row for row in rows if isinstance(row, dict)]
     columns = [
@@ -177,16 +378,37 @@ def load_jsonl(path: str | Path) -> List[Dict[str, Any]]:
     source = Path(path)
     if not source.exists():
         return []
+    text = source.read_text(encoding="utf-8")
+    try:
+        parsed = json.loads(text)
+    except json.JSONDecodeError:
+        parsed = None
+    if isinstance(parsed, list):
+        return [row for row in parsed if isinstance(row, dict)]
+    if isinstance(parsed, dict):
+        rows = parsed.get("rows")
+        if isinstance(rows, list):
+            return [row for row in rows if isinstance(row, dict)]
     rows: List[Dict[str, Any]] = []
-    with source.open("r", encoding="utf-8") as handle:
-        for line in handle:
-            try:
-                parsed = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            if isinstance(parsed, dict):
-                rows.append(parsed)
+    for line in text.splitlines():
+        if not line.strip():
+            continue
+        try:
+            parsed_line = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(parsed_line, dict):
+            rows.append(parsed_line)
     return rows
 
 
-__all__ = ["SCHEMA_VERSION", "build_weather_lp_manual_order_sheet", "load_json", "load_jsonl", "write_csv", "write_json", "write_jsonl"]
+__all__ = [
+    "SCHEMA_VERSION",
+    "build_weather_lp_manual_order_sheet",
+    "load_json",
+    "load_jsonl",
+    "select_manual_payout_audit_quotes",
+    "write_csv",
+    "write_json",
+    "write_jsonl",
+]

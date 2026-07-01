@@ -38,6 +38,9 @@ def build_weather_lp_tiny_live_gap_report(
     manual_order_sheet_report: Dict[str, Any] | None = None,
     impact_simulator_report: Dict[str, Any] | None = None,
     manual_kill_switch_checklist: Dict[str, Any] | None = None,
+    manual_payout_audit_plan_report: Dict[str, Any] | None = None,
+    selected_audit_quotes_report: Dict[str, Any] | None = None,
+    manual_payout_audit_result: Dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
     position_sizing_report = position_sizing_report or {}
     kill_switch_policy_report = kill_switch_policy_report or {}
@@ -45,6 +48,9 @@ def build_weather_lp_tiny_live_gap_report(
     manual_order_sheet_report = manual_order_sheet_report or {}
     impact_simulator_report = impact_simulator_report or {}
     manual_kill_switch_checklist = manual_kill_switch_checklist or {}
+    manual_payout_audit_plan_report = manual_payout_audit_plan_report or {}
+    selected_audit_quotes_report = selected_audit_quotes_report or {}
+    manual_payout_audit_result = manual_payout_audit_result or {}
     scenario_status = profitability_simulation_report.get("scenario_status") or {}
     markout_ready = {
         horizon: _count_horizon(reward_risk_report, horizon) > 0
@@ -101,14 +107,25 @@ def build_weather_lp_tiny_live_gap_report(
         remaining_blockers.append("manual_kill_switch_not_ready")
     if reward_payout_status != "payout_observed":
         remaining_blockers.append("actual_reward_payout_not_observed")
+    manual_plan_ready = manual_payout_audit_plan_report.get("plan_status") == "ready_for_user_manual_audit"
+    selected_audit_quote_count = int(selected_audit_quotes_report.get("selected_quote_count") or 0)
+    manual_audit_result_status = manual_payout_audit_result.get("audit_status")
+    if manual_plan_ready and selected_audit_quote_count > 0 and manual_audit_result_status != "manual_audit_ingested":
+        remaining_blockers.append("actual_reward_payout_not_verified")
     tiny_live_not_allowed_reason = "paper_only_no_live_review_authorization"
     if remaining_blockers:
-        tiny_live_not_allowed_reason = ",".join(dict.fromkeys(remaining_blockers))
+        remaining_blockers = list(dict.fromkeys(remaining_blockers))
+        tiny_live_not_allowed_reason = ",".join(remaining_blockers)
     final_status = "paper_only_needs_more_evidence"
     if not remaining_blockers and bool(scenario_status.get("base_positive")):
         final_status = "tiny_live_review_artifacts_ready_but_live_disabled"
+    elif manual_plan_ready and selected_audit_quote_count > 0 and manual_audit_result_status != "manual_audit_ingested":
+        final_status = "manual_payout_audit_plan_ready_but_not_executed"
     elif manual_order_ready and impact_ready and bool(scenario_status.get("base_positive")):
         final_status = "manual_review_artifacts_partial_exact_payout_or_kill_switch_blocked"
+    recommendation = "prepare_manual_review_artifacts_but_keep_live_disabled" if manual_order_ready else "continue_weather_lp_paper_and_collect_exact_reward_allocation"
+    if final_status == "manual_payout_audit_plan_ready_but_not_executed":
+        recommendation = "prepare_manual_payout_audit__do_not_enable_auto_live__wait_for_user_manual_audit_result"
     return {
         "schema_version": SCHEMA_VERSION,
         "current_status": "paper_only",
@@ -128,6 +145,10 @@ def build_weather_lp_tiny_live_gap_report(
         "manual_order_sheet_ready": manual_order_ready,
         "impact_simulation_ready": impact_ready,
         "kill_switch_ready": kill_switch_ready,
+        "manual_payout_audit_plan_ready": manual_plan_ready,
+        "selected_manual_audit_quote_count": selected_audit_quote_count,
+        "selected_manual_audit_capital_at_risk": selected_audit_quotes_report.get("total_selected_capital_at_risk"),
+        "manual_payout_audit_result_status": manual_audit_result_status or "waiting_for_manual_audit",
         "remaining_blockers": list(dict.fromkeys(remaining_blockers)),
         "minimum_next_evidence_needed": {
             "reward_payout": "observe actual reward payout or fill manual payout audit template",
@@ -150,7 +171,9 @@ def build_weather_lp_tiny_live_gap_report(
             "worst_case_stress_pass_target": "base_or_conservative_positive_after_minus_3c_stress",
         },
         "tiny_live_not_allowed_reason": tiny_live_not_allowed_reason,
-        "next_action": "prepare_manual_review_artifacts_but_keep_live_disabled" if manual_order_ready else "continue_weather_lp_paper_and_collect_exact_reward_allocation",
+        "tiny_live_gap_status": final_status,
+        "recommendation": recommendation,
+        "next_action": recommendation,
     }
 
 
