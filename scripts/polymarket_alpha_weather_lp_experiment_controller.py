@@ -65,6 +65,10 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
     tiny_live_gap = _load(getattr(args, "tiny_live_gap_report", "")) if getattr(args, "tiny_live_gap_report", None) else {}
     position_sizing = _load(getattr(args, "position_sizing_report", "")) if getattr(args, "position_sizing_report", None) else {}
     kill_switch = _load(getattr(args, "kill_switch_policy_report", "")) if getattr(args, "kill_switch_policy_report", None) else {}
+    payout_audit = _load(getattr(args, "reward_payout_audit_report", "")) if getattr(args, "reward_payout_audit_report", None) else {}
+    manual_sheet = _load(getattr(args, "manual_order_sheet_report", "")) if getattr(args, "manual_order_sheet_report", None) else {}
+    impact_sim = _load(getattr(args, "impact_simulator_report", "")) if getattr(args, "impact_simulator_report", None) else {}
+    manual_kill = _load(getattr(args, "manual_kill_switch_checklist", "")) if getattr(args, "manual_kill_switch_checklist", None) else {}
     cancellation = _load(args.cancellation_policy_report)
     window = _load(args.reward_window_report)
     holder = _load(args.smart_holder_report)
@@ -148,6 +152,17 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
             recommendation = "continue_weather_lp_paper_prepare_tiny_live_review_artifacts_but_do_not_enable_live"
         elif _safe_float(stress_table.get("minus_3c")) is not None and float(stress_table.get("minus_3c")) < 0:
             recommendation = "tighten_cancellation_and_sizing"
+    manual_quote_count = int(manual_sheet.get("suggested_manual_quote_count") or 0)
+    impact_ready = bool(impact_sim.get("impact_simulation_ready"))
+    kill_ready = bool(manual_kill.get("ready"))
+    exact_missing = not bool(profitability_simulation.get("exact_reward_available") or exact_reward_available)
+    if scenario and bool(scenario_status.get("base_positive")) and manual_quote_count > 0 and impact_ready:
+        parts = ["prepare_manual_tiny_live_review_but_do_not_enable_live"]
+        if exact_missing:
+            parts.append("exact_payout_audit_required")
+        if not kill_ready:
+            parts.append("kill_switch_required")
+        recommendation = "__".join(parts)
     city_rows = reward_risk.get("by_city") or []
     best_city = None
     worst_city = None
@@ -248,6 +263,12 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
         "tiny_live_gap_report_path": str(getattr(args, "tiny_live_gap_report", "")),
         "position_sizing_report_path": str(getattr(args, "position_sizing_report", "")),
         "kill_switch_policy_report_path": str(getattr(args, "kill_switch_policy_report", "")),
+        "reward_payout_audit_path": str(getattr(args, "reward_payout_audit_report", "")),
+        "manual_order_sheet_path": str(getattr(args, "manual_order_sheet_report", "")),
+        "impact_simulator_path": str(getattr(args, "impact_simulator_report", "")),
+        "kill_switch_checklist_path": str(getattr(args, "manual_kill_switch_checklist", "")),
+        "manual_quote_count": manual_quote_count,
+        "total_manual_quote_capital_at_risk": manual_sheet.get("total_capital_at_risk_if_all_manual_quotes_used"),
         "conservative_scenario_net_cents": conservative_net,
         "base_scenario_net_cents": base_net,
         "optimistic_scenario_net_cents": optimistic_net,
@@ -260,7 +281,12 @@ def build_report(args: argparse.Namespace) -> Dict[str, Any]:
             "current_status": tiny_live_gap.get("current_status"),
             "tiny_live_not_allowed_reason": tiny_live_gap.get("tiny_live_not_allowed_reason"),
             "missing_controls": tiny_live_gap.get("missing_controls"),
+            "final_status": tiny_live_gap.get("final_status"),
         },
+        "tiny_live_gap_status": tiny_live_gap.get("final_status"),
+        "reward_payout_audit_status": payout_audit.get("audit_status"),
+        "impact_simulation_ready": impact_ready,
+        "kill_switch_ready": kill_ready,
         "position_sizing_summary": {
             "recommended_total_capital_at_risk": position_sizing.get("recommended_total_capital_at_risk"),
             "recommended_quote_count": position_sizing.get("recommended_quote_count"),
@@ -318,6 +344,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--tiny-live-gap-report", default="evidence/weather_lp_rewards/weather_lp_tiny_live_gap_report.json")
     parser.add_argument("--position-sizing-report", default="evidence/weather_lp_rewards/position_sizing_report.json")
     parser.add_argument("--kill-switch-policy-report", default="evidence/weather_lp_rewards/kill_switch_policy_report.json")
+    parser.add_argument("--reward-payout-audit-report", default="evidence/weather_lp_rewards/reward_payout_audit_report.json")
+    parser.add_argument("--manual-order-sheet-report", default="evidence/weather_lp_rewards/manual_tiny_live_order_sheet_report.json")
+    parser.add_argument("--impact-simulator-report", default="evidence/weather_lp_rewards/tiny_live_impact_simulator_report.json")
+    parser.add_argument("--manual-kill-switch-checklist", default="evidence/weather_lp_rewards/manual_kill_switch_checklist.json")
     parser.add_argument("--cancellation-policy-report", default="evidence/weather_lp_rewards/cancellation_policy_report.json")
     parser.add_argument("--quote-optimizer-report", default="evidence/weather_lp_rewards/quote_optimizer_report.json")
     parser.add_argument("--quote-updates", default="evidence/weather_lp_rewards/paper_quote_updates.jsonl")

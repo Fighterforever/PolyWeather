@@ -24,6 +24,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--reward-risk-report", default="evidence/weather_lp_rewards/reward_vs_risk_report.json")
     parser.add_argument("--position-sizing-report", default="evidence/weather_lp_rewards/position_sizing_report.json")
     parser.add_argument("--kill-switch-policy-report", default="evidence/weather_lp_rewards/kill_switch_policy_report.json")
+    parser.add_argument("--reward-payout-audit-report", default="evidence/weather_lp_rewards/reward_payout_audit_report.json")
+    parser.add_argument("--manual-order-sheet-report", default="evidence/weather_lp_rewards/manual_tiny_live_order_sheet_report.json")
+    parser.add_argument("--impact-simulator-report", default="evidence/weather_lp_rewards/tiny_live_impact_simulator_report.json")
+    parser.add_argument("--manual-kill-switch-checklist", default="evidence/weather_lp_rewards/manual_kill_switch_checklist.json")
     parser.add_argument("--summary-output", default="evidence/weather_lp_rewards/weather_lp_tiny_live_gap_report.json")
     return parser.parse_args(argv)
 
@@ -36,6 +40,10 @@ def main(argv: list[str] | None = None) -> None:
         reward_risk_report=load_json(args.reward_risk_report),
         position_sizing_report=load_json(args.position_sizing_report),
         kill_switch_policy_report=load_json(args.kill_switch_policy_report),
+        reward_payout_audit_report=load_json(args.reward_payout_audit_report),
+        manual_order_sheet_report=load_json(args.manual_order_sheet_report),
+        impact_simulator_report=load_json(args.impact_simulator_report),
+        manual_kill_switch_checklist=load_json(args.manual_kill_switch_checklist),
     )
     write_json(args.summary_output, report)
     print(json.dumps({"current_status": report["current_status"], "reason": report["tiny_live_not_allowed_reason"], "live_order_path": False}, indent=2, sort_keys=True))

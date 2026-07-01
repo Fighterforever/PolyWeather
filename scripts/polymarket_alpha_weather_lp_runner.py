@@ -97,6 +97,10 @@ def main(argv: list[str] | None = None) -> None:
         [args.python_path, "scripts/polymarket_alpha_weather_lp_profitability_simulation_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_position_sizing_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_kill_switch_policy_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_payout_audit_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_manual_kill_switch_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_manual_order_sheet_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_live_impact_simulator_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_tiny_live_gap_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_profitability_dashboard.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_window_report.py"],
@@ -119,6 +123,10 @@ def main(argv: list[str] | None = None) -> None:
     tiny_live_gap = _load("evidence/weather_lp_rewards/weather_lp_tiny_live_gap_report.json")
     position_sizing = _load("evidence/weather_lp_rewards/position_sizing_report.json")
     kill_switch = _load("evidence/weather_lp_rewards/kill_switch_policy_report.json")
+    payout_audit = _load("evidence/weather_lp_rewards/reward_payout_audit_report.json")
+    manual_sheet = _load("evidence/weather_lp_rewards/manual_tiny_live_order_sheet_report.json")
+    impact_sim = _load("evidence/weather_lp_rewards/tiny_live_impact_simulator_report.json")
+    manual_kill = _load("evidence/weather_lp_rewards/manual_kill_switch_checklist.json")
     safety = _write_safety_status(generated_at=generated_at)
     report = {
         "schema_version": "polyweather_polymarket_alpha_weather_lp_runner.v1",
@@ -164,6 +172,7 @@ def main(argv: list[str] | None = None) -> None:
             "current_status": tiny_live_gap.get("current_status"),
             "tiny_live_not_allowed_reason": tiny_live_gap.get("tiny_live_not_allowed_reason"),
             "missing_controls": tiny_live_gap.get("missing_controls"),
+            "final_status": tiny_live_gap.get("final_status"),
         },
         "position_sizing_summary": {
             "recommended_total_capital_at_risk": position_sizing.get("recommended_total_capital_at_risk"),
@@ -174,6 +183,11 @@ def main(argv: list[str] | None = None) -> None:
             "recommended_action": kill_switch.get("recommended_action"),
             "missing_controls": kill_switch.get("missing_controls"),
         },
+        "reward_payout_audit_status": payout_audit.get("audit_status"),
+        "manual_quote_count": manual_sheet.get("suggested_manual_quote_count"),
+        "total_manual_quote_capital_at_risk": manual_sheet.get("total_capital_at_risk_if_all_manual_quotes_used"),
+        "impact_simulation_ready": impact_sim.get("impact_simulation_ready"),
+        "kill_switch_ready": manual_kill.get("ready"),
         "next_expected_5m_markout_time": experiment.get("next_expected_5m_markout_time") or cohort.get("next_expected_5m_markout_time"),
         "next_expected_15m_markout_time": experiment.get("next_expected_15m_markout_time") or cohort.get("next_expected_15m_markout_time"),
         "next_expected_1h_markout_time": experiment.get("next_expected_1h_markout_time") or cohort.get("next_expected_1h_markout_time"),
@@ -204,6 +218,10 @@ def main(argv: list[str] | None = None) -> None:
             "tiny_live_gap": "evidence/weather_lp_rewards/weather_lp_tiny_live_gap_report.json",
             "position_sizing": "evidence/weather_lp_rewards/position_sizing_report.json",
             "kill_switch_policy": "evidence/weather_lp_rewards/kill_switch_policy_report.json",
+            "reward_payout_audit": "evidence/weather_lp_rewards/reward_payout_audit_report.json",
+            "manual_order_sheet": "evidence/weather_lp_rewards/manual_tiny_live_order_sheet_report.json",
+            "impact_simulator": "evidence/weather_lp_rewards/tiny_live_impact_simulator_report.json",
+            "manual_kill_switch": "evidence/weather_lp_rewards/manual_kill_switch_checklist.json",
             "profitability_dashboard": "evidence/weather_lp_rewards/weather_lp_profitability_dashboard.json",
             "reward_allocation_audit": "evidence/weather_lp_rewards/reward_allocation_audit_report.json",
             "reward_window": "evidence/weather_lp_rewards/reward_window_report.json",

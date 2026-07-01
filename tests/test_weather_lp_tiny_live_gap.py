@@ -35,5 +35,6 @@ def test_tiny_live_gap_accepts_base_positive_but_still_blocks_live():
         kill_switch_policy_report={"daily_stop_loss_ready": True, "manual_kill_switch_ready": True, "cancellation_policy_ready": True},
     )
 
-    assert report["tiny_live_not_allowed_reason"] == "paper_only_no_live_review_authorization"
+    assert "manual_order_sheet_not_ready" in report["tiny_live_not_allowed_reason"]
+    assert report["final_status"] == "paper_only_needs_more_evidence"
     assert report["live_order_path"] is False
