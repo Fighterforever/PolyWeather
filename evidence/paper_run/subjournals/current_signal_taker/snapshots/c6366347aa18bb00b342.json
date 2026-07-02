@@ -1,0 +1,290 @@
+{
+  "profile": "paper-cycle-current-signal-taker",
+  "recorded_at": "2026-06-27T16:18:52Z",
+  "report": {
+    "candidates": [],
+    "config": {
+      "allowed_bucket_types": [
+        "ge",
+        "le"
+      ],
+      "allowed_quarantine_reasons": [],
+      "max_items": 20,
+      "max_spread": 0.03,
+      "min_edge_percent": 5.0
+    },
+    "counts_for_live_gate": false,
+    "current_signal_taker_id": "f897e0778329c4183ce5",
+    "generated_at": "2026-06-27T16:18:52Z",
+    "hard_conclusion": "current_signal_taker_no_rows_after_filters",
+    "live_authorization_pct": 0,
+    "live_gate": false,
+    "paper_only": true,
+    "quarantine": [],
+    "rejected_probe_rows": [
+      {
+        "bucket_type": "eq",
+        "edge_percent": 35.6,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-ankara-on-june-28-2026-28c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "19860256942789892325524223667478122410431211185746054164970187455587113739541"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 27.5,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-moscow-on-june-28-2026-24c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "114800417260714712446809053050652149766055735863955543807368517827512902110523"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 27.2128,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-29c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "14862525137748529285936568841818773962143208095814228975315823537301616556636"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 25.7246,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-paris-on-june-28-2026-31c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.02,
+        "token_id": "90601725197657860327610472499749136289794593302375664582239435953473169622857"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 24.7133,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-seoul-on-june-28-2026-28c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "99062343338111894870422019972773183719923865871193248314904593125974617537740"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 23.8252,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-26c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "53206794094168584303718422216410802420308751744232093269836774413771047528568"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 22.1,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-ankara-on-june-29-2026-31c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "84336410956561711193352282007900918859055683909096630103755899147720544501501"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 21.7,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-moscow-on-june-28-2026-23c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "72186739260101377480043658052681126892709499368697485996677005153747756032283"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 18.8,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-ankara-on-june-29-2026-30c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "67139153632168844856162631874784465530664663619527862358583031695395484843114"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 18.0,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-ankara-on-june-28-2026-29c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "12694488286333681207982474411517450418204442999661197680385035370105214367757"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 17.2108,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-seoul-on-june-28-2026-29c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "107272167856278161634742319166841584051344789755005947681251871142772875519783"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 16.0339,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-london-on-june-29-2026-25c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.02,
+        "token_id": "40059724066966106721385410088959160224320010500414864124080678822696823454458"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 15.013,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-paris-on-june-29-2026-28c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "55945278046501365316862509165589717659526000788586637994665182704179803563667"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 13.2188,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-london-on-june-28-2026-26c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "106705757421607057002848051276799043447811643992398538052655495351201415873639"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 12.8192,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-london-on-june-28-2026-25c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "53482091316472656467540715346097568313752088720456753795083238508652896333340"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 11.9222,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-paris-on-june-28-2026-32c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "85491806212185140459088162078278562782880513223223476944107147972442301442830"
+      },
+      {
+        "bucket_type": "ge",
+        "edge_percent": 11.5,
+        "failure_reasons": [
+          "spread_above_probe_max"
+        ],
+        "market_slug": "highest-temperature-in-moscow-on-june-29-2026-23corhigher",
+        "quarantine_reason": "single_non_risk_blocker:spread",
+        "side": "no",
+        "spread": 0.04,
+        "token_id": "37558803415910171580264743940982364976255246575423901696378057384864203714268"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 11.0379,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-london-on-june-29-2026-24c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.01,
+        "token_id": "70140155935150902924413673366800826774949694332035933578150172638464182883146"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 8.6248,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-paris-on-june-28-2026-30c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "no",
+        "spread": 0.02,
+        "token_id": "78965711350895966603121622041216025314610387757794909377225250651431026661336"
+      },
+      {
+        "bucket_type": "eq",
+        "edge_percent": 6.99,
+        "failure_reasons": [
+          "bucket_type_not_allowed"
+        ],
+        "market_slug": "highest-temperature-in-london-on-june-28-2026-23c",
+        "quarantine_reason": "single_non_risk_blocker:bucket_type",
+        "side": "yes",
+        "spread": 0.017,
+        "token_id": "108539178438935473333380675352511125756178346025748227212019610303685694838419"
+      }
+    ],
+    "schema_version": "polyweather_weather_current_signal_taker.v1",
+    "source": "polymarket_readonly",
+    "source_snapshot_id": "polymarket-readonly-2026-06-27T16:18:52Z",
+    "source_status": "ready",
+    "summary": {
+      "bucket_type_counts": [],
+      "candidate_count": 0,
+      "current_signal_taker_count": 0,
+      "live_authorization_pct": 0,
+      "live_blockers": [
+        "current_signal_taker_paper_only",
+        "taker_execution_forward_evidence_unproven",
+        "live_permission_false"
+      ],
+      "live_gate": false,
+      "quarantine_count": 0,
+      "reason_counts": [],
+      "rejected_probe_count": 20,
+      "watch_count": 0
+    },
+    "watch": []
+  },
+  "run_id": "c6366347aa18bb00b342",
+  "schema_version": "polyweather_weather_paper_journal.v1"
+}

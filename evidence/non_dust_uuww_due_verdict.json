@@ -1,0 +1,34 @@
+{
+  "after_due_summary_exists": false,
+  "after_due_summary_path": "evidence/due_pipeline_non_dust_uuww_after_due.json",
+  "alpha_conclusion": "non_dust_threshold_cdf_waiting_resolution",
+  "closed_backfill_executed": false,
+  "counts_for_live_gate": false,
+  "due_reached": false,
+  "generated_at": "2026-06-28T14:06:45Z",
+  "live_order_path": false,
+  "matched_closed_archived_token_count": null,
+  "paper_only": true,
+  "pending_summary_exists": true,
+  "pending_summary_path": "evidence/due_pipeline_non_dust_uuww_pending.json",
+  "price_bucket": "price_ge_0_03",
+  "run_after_utc": "2026-06-30T03:05:00Z",
+  "schema_version": "polyweather_non_dust_uuww_due_verdict.v1",
+  "seconds_until_run": 133095,
+  "settlement_calibration": {
+    "probability_score_sample_count": null,
+    "resolved_pnl_sample_count": null
+  },
+  "settlement_source": "metar",
+  "station_code": "UUWW",
+  "status": "waiting_due",
+  "strict_replay": {
+    "brier_score": null,
+    "fill_count": null,
+    "log_loss": null,
+    "resolved_fill_count": null,
+    "resolved_pnl_cents": null
+  },
+  "target_market_slug": "highest-temperature-in-moscow-on-june-29-2026-23corhigher",
+  "unresolved_pnl_semantics": "resolved_pnl_cents_null_until_resolved"
+}

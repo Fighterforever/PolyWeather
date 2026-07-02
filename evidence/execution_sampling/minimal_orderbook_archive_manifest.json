@@ -1,0 +1,25 @@
+{
+  "archived_row_count": 19,
+  "counts_for_live_gate": false,
+  "exclude_dust_execution_sampling": true,
+  "generated_at": "2026-06-28T04:57:36Z",
+  "live_order_path": false,
+  "max_execution_sampling_tokens": 20,
+  "paper_only": true,
+  "reject_counts": [
+    {
+      "count": 198,
+      "reason": "not_threshold_bucket"
+    },
+    {
+      "count": 47,
+      "reason": "dust_price"
+    },
+    {
+      "count": 44,
+      "reason": "not_near_due_48h"
+    }
+  ],
+  "schema_version": "polyweather_minimal_execution_sampling_manifest.v1",
+  "source_row_count": 240
+}

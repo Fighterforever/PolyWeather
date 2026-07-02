@@ -1,0 +1,96 @@
+{
+  "active_eq_row_count": 198,
+  "active_supported_metar_station_count": 3,
+  "active_supported_official_station_count": 4,
+  "adapter_by_source": {
+    "metar": "aviationweather_metar_recent_72h",
+    "noaa": "aviationweather_noaa_station_recent_72h"
+  },
+  "collected_station_count": 4,
+  "collection_gap_by_station": [],
+  "counts_for_live_gate": false,
+  "legacy_metar_only_unsupported_eq_rows_by_source": [
+    {
+      "row_count": 54,
+      "settlement_source": "noaa"
+    }
+  ],
+  "legacy_metar_station_codes": [
+    "EGLC",
+    "LTAC",
+    "UUWW"
+  ],
+  "live_order_path": false,
+  "paper_only": true,
+  "requested_station_codes": [
+    "EGLC",
+    "LTAC",
+    "LTFM",
+    "UUWW"
+  ],
+  "rows_by_settlement_source": [
+    {
+      "row_count": 144,
+      "settlement_source": "metar"
+    },
+    {
+      "row_count": 54,
+      "settlement_source": "noaa"
+    }
+  ],
+  "rows_by_station": [
+    {
+      "row_count": 36,
+      "station_code": "EGLC"
+    },
+    {
+      "row_count": 54,
+      "station_code": "LTAC"
+    },
+    {
+      "row_count": 54,
+      "station_code": "UUWW"
+    }
+  ],
+  "rows_by_supported_official_station": [
+    {
+      "row_count": 36,
+      "station_code": "EGLC"
+    },
+    {
+      "row_count": 54,
+      "station_code": "LTAC"
+    },
+    {
+      "row_count": 54,
+      "station_code": "LTFM"
+    },
+    {
+      "row_count": 54,
+      "station_code": "UUWW"
+    }
+  ],
+  "schema_version": "polyweather_active_supported_metar_station_manifest.v1",
+  "station_codes": [
+    "EGLC",
+    "LTAC",
+    "UUWW"
+  ],
+  "station_codes_by_source": {
+    "metar": [
+      "EGLC",
+      "LTAC",
+      "UUWW"
+    ],
+    "noaa": [
+      "LTFM"
+    ]
+  },
+  "supported_official_station_codes": [
+    "EGLC",
+    "LTAC",
+    "LTFM",
+    "UUWW"
+  ],
+  "unsupported_eq_rows_by_source": []
+}

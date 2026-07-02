@@ -1,0 +1,186 @@
+{
+  "counts_for_live_gate": false,
+  "live_order_path": false,
+  "missing_outcome_by_market_status": [
+    {
+      "count": 4518,
+      "reason": "active_or_unresolved"
+    },
+    {
+      "count": 36,
+      "reason": "closed_but_no_resolution"
+    },
+    {
+      "count": 567,
+      "reason": "missing_payout"
+    }
+  ],
+  "missing_outcome_count": 5121,
+  "paper_only": true,
+  "repair_attempted_count": 567,
+  "repair_success_count": 0,
+  "resolved_snapshot_count": 29,
+  "sample_rows_by_reason": {
+    "active_or_unresolved": [
+      {
+        "category": "science",
+        "condition_id": "0x16df76a155e148ef925c2a808204d5f2e2ac68d9585363616b82a6c6df765e84",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "active_or_unresolved",
+        "market_id": "897844",
+        "market_slug": "10pt0-or-above-earthquake-before-2027",
+        "outcome_label": "Yes",
+        "token_id": "14657620875674906884624195454632482429719111899155632370720506398333067833005"
+      },
+      {
+        "category": "science",
+        "condition_id": "0x16df76a155e148ef925c2a808204d5f2e2ac68d9585363616b82a6c6df765e84",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "active_or_unresolved",
+        "market_id": "897844",
+        "market_slug": "10pt0-or-above-earthquake-before-2027",
+        "outcome_label": "No",
+        "token_id": "104132822313945994667694798237261745912174886711958619988608099629798778147916"
+      },
+      {
+        "category": "politics",
+        "condition_id": "0x16c63b7cc37f012b9f59ee164ec03877914c701d06d48291ae8d6fc08a088b0d",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "active_or_unresolved",
+        "market_id": "562828",
+        "market_slug": "2026-balance-of-power-d-senate-d-house-949",
+        "outcome_label": "Yes",
+        "token_id": "34722410608062854697106861099776685947172185964394483545370684749662285977831"
+      },
+      {
+        "category": "politics",
+        "condition_id": "0x16c63b7cc37f012b9f59ee164ec03877914c701d06d48291ae8d6fc08a088b0d",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "active_or_unresolved",
+        "market_id": "562828",
+        "market_slug": "2026-balance-of-power-d-senate-d-house-949",
+        "outcome_label": "No",
+        "token_id": "24483563228660028121020430722896740519524131851526579619586176931221901842798"
+      },
+      {
+        "category": "politics",
+        "condition_id": "0x0808de4f0cfd47947f2d1be51f9a9c52ea0fec76f73a75cfbe79ddec98d8a908",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "active_or_unresolved",
+        "market_id": "562829",
+        "market_slug": "2026-balance-of-power-d-senate-r-house-692",
+        "outcome_label": "Yes",
+        "token_id": "70997927349469817841862065582625658840347600365813612622959588796331622340305"
+      }
+    ],
+    "closed_but_no_resolution": [
+      {
+        "category": "pop-culture",
+        "condition_id": "0x66cc37d12d40676b03defb1483742c9bcd221d58403ab165453c1786c63f9f15",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "closed_but_no_resolution",
+        "market_id": "227254",
+        "market_slug": "how-many-album-unit-sales-will-billie-eilishs-happier-than-ever-generate-in-its-first-week",
+        "outcome_label": "Long",
+        "token_id": "79554121395782634258896504278662748714864305510664314587494796322780962912462"
+      },
+      {
+        "category": "pop-culture",
+        "condition_id": "0x66cc37d12d40676b03defb1483742c9bcd221d58403ab165453c1786c63f9f15",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "closed_but_no_resolution",
+        "market_id": "227254",
+        "market_slug": "how-many-album-unit-sales-will-billie-eilishs-happier-than-ever-generate-in-its-first-week",
+        "outcome_label": "Short",
+        "token_id": "47605314165317137862382785208954948706928361676405302985788447173818701053739"
+      },
+      {
+        "category": "us-current-affairs",
+        "condition_id": "0x67a0cce00585d84d7f6f34a23af51aad741182406cc547d8c16730088b353a22",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "closed_but_no_resolution",
+        "market_id": "224446",
+        "market_slug": "how-many-new-us-residential-sales-will-the-u-s-census-bureau-report-for-june-1",
+        "outcome_label": "Long",
+        "token_id": "65088655533898453690397169380566811862724603342121124326647728269250880862102"
+      },
+      {
+        "category": "us-current-affairs",
+        "condition_id": "0x67a0cce00585d84d7f6f34a23af51aad741182406cc547d8c16730088b353a22",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "closed_but_no_resolution",
+        "market_id": "224446",
+        "market_slug": "how-many-new-us-residential-sales-will-the-u-s-census-bureau-report-for-june-1",
+        "outcome_label": "Short",
+        "token_id": "45657802482312807370598162614573481727074077957590617970177357991445635010059"
+      },
+      {
+        "category": "sports",
+        "condition_id": "0x46eb6c4e7d7ca22ff67bcbbb36f4a61d11ee9c224511565521c0e256e2664ddb",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "closed_but_no_resolution",
+        "market_id": "239189",
+        "market_slug": "nba-will-the-hornets-beat-the-cavaliers-by-more-than-4pt5-points-in-their-november-1st-matchup",
+        "outcome_label": "Yes",
+        "token_id": "72385012580317953935784050717401614831146554205115531933541606375612408103484"
+      }
+    ],
+    "missing_payout": [
+      {
+        "category": "chess",
+        "condition_id": "0x9749f460b3ba6edb376b662d03c2c7cc377a7e2d1f47c347cc1ef20d36c99e2a",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "missing_payout",
+        "market_id": "245948",
+        "market_slug": "2022-norway-chess-will-magnus-carlsen-lose-any-game",
+        "outcome_label": "Yes",
+        "token_id": "14012265925647669877591977103718830099051198839505111362705707867123290439143"
+      },
+      {
+        "category": "chess",
+        "condition_id": "0x9749f460b3ba6edb376b662d03c2c7cc377a7e2d1f47c347cc1ef20d36c99e2a",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "missing_payout",
+        "market_id": "245948",
+        "market_slug": "2022-norway-chess-will-magnus-carlsen-lose-any-game",
+        "outcome_label": "No",
+        "token_id": "59421126419471951887398187959856789380245174929200341371526664271515491640913"
+      },
+      {
+        "category": "nfts",
+        "condition_id": "0xd5e462d30fb25ba68f6ad590d1e2a0a0d051c0bf5a9d1e15d795e6a84c2090a8",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "missing_payout",
+        "market_id": "244161",
+        "market_slug": "bayc-metaverse-will-the-floor-price-of-otherdeed-be-above-3pt5-eth-on-may-9",
+        "outcome_label": "Yes",
+        "token_id": "20074941855131502595706133405323278298847995285788621730195321842987443850488"
+      },
+      {
+        "category": "nfts",
+        "condition_id": "0xd5e462d30fb25ba68f6ad590d1e2a0a0d051c0bf5a9d1e15d795e6a84c2090a8",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "missing_payout",
+        "market_id": "244161",
+        "market_slug": "bayc-metaverse-will-the-floor-price-of-otherdeed-be-above-3pt5-eth-on-may-9",
+        "outcome_label": "No",
+        "token_id": "53469466472122919534593039871036190965390634242799075856979239033733749045265"
+      },
+      {
+        "category": "sports",
+        "condition_id": "0x1d033afe0abf5170f2cf5d35bf84e8f02c49162e3ade05ac48b2b091f40789ee",
+        "decision_time": "2026-06-29T00:00:00Z",
+        "gap_reason": "missing_payout",
+        "market_id": "238725",
+        "market_slug": "broncos-3-v-giants-spread",
+        "outcome_label": "Broncos",
+        "token_id": "11146372150441629583330012011865233422582349242479614024873244947045484792714"
+      }
+    ]
+  },
+  "schema_version": "polyweather_polymarket_alpha_resolved_join_audit.v1",
+  "scope": "polymarket_only",
+  "snapshot_row_count": 5150,
+  "unique_event_family_count": 797,
+  "unique_resolved_event_family_count": 8
+}

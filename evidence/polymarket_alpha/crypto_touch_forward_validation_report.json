@@ -1,0 +1,449 @@
+{
+  "artifact_paths": {
+    "followup_coverage_report": "evidence/polymarket_alpha/crypto_touch_followup_snapshot_coverage_report.json",
+    "formal_fills": "evidence/polymarket_alpha/probability_edge_paper/fills.jsonl",
+    "formal_markouts": "evidence/polymarket_alpha/probability_edge_paper/markouts.jsonl",
+    "near_miss_markouts": "evidence/polymarket_alpha/crypto_touch_near_miss_markouts.jsonl",
+    "near_miss_watch": "evidence/polymarket_alpha/crypto_touch_near_miss_watch.jsonl",
+    "sensitivity_report": "evidence/polymarket_alpha/crypto_touch_sensitivity_report.json",
+    "surface_report": "evidence/polymarket_alpha/crypto_touch_surface_report.json"
+  },
+  "counts_for_live_gate": false,
+  "formal_fills": {
+    "available_markout_count": 9,
+    "by_asset": [
+      {
+        "available_markout_count": 6,
+        "bucket": "BTC",
+        "mean_markout_cents": -1.5
+      },
+      {
+        "available_markout_count": 3,
+        "bucket": "ETH",
+        "mean_markout_cents": -2.0
+      }
+    ],
+    "by_horizon": {
+      "1h": -1.66666667,
+      "6h": -1.66666667,
+      "current": -1.66666667
+    },
+    "by_sensitivity_fragile": [
+      {
+        "available_markout_count": 9,
+        "bucket": "sensitivity_fragile_True",
+        "mean_markout_cents": -1.66666667
+      }
+    ],
+    "by_spread": [
+      {
+        "available_markout_count": 9,
+        "bucket": "missing",
+        "mean_markout_cents": -1.66666667
+      }
+    ],
+    "by_surface_support": [
+      {
+        "available_markout_count": 9,
+        "bucket": "surface_support_False",
+        "mean_markout_cents": -1.66666667
+      }
+    ],
+    "by_threshold_distance": [
+      {
+        "available_markout_count": 6,
+        "bucket": "far_gt_15pct",
+        "mean_markout_cents": -1.66666667
+      },
+      {
+        "available_markout_count": 3,
+        "bucket": "within_15pct",
+        "mean_markout_cents": -1.66666667
+      }
+    ],
+    "classification_counts": {
+      "downgraded_surface_invalid": 3
+    },
+    "fill_count": 3,
+    "fills": [
+      {
+        "EV_safe": 0.01784649,
+        "annual_vol": 0.7,
+        "asset": "ETH",
+        "barrier_already_touched": false,
+        "best_ask": 0.25,
+        "can_generate_official_candidate": true,
+        "can_generate_shadow_watch": true,
+        "category": "ethereum",
+        "confidence": 0.35,
+        "cost": 0.01,
+        "counts_for_live_gate": false,
+        "creation_time_proxy": false,
+        "creation_time_source": "createdAt",
+        "current_model_semantics": "touch_barrier",
+        "direction": "above",
+        "entry_time": "2026-06-29T05:51:39Z",
+        "fill_id": "685d79f9abc0eef4ed2016ab",
+        "final_classification": "downgraded_surface_invalid",
+        "generated_at": "2026-06-29T05:51:39Z",
+        "high_since_start_gap_reason": null,
+        "high_since_start_kline_count": 30441,
+        "high_since_start_verified": true,
+        "historical_high_since_start": 1849.54,
+        "implied_touch_vol": 0.56480041,
+        "live_order_path": false,
+        "market_creation_time": "2026-06-08T02:30:32Z",
+        "market_price": 0.24,
+        "market_slug": "will-ethereum-reach-2500-by-december-31-2026-from-june-8",
+        "max_high_at": "2026-06-15T15:54:00Z",
+        "max_high_since_start": 1849.54,
+        "model_source": "crypto_lognormal_threshold_model",
+        "orderbook_snapshot_id": "08393eead58d96e3c8873851",
+        "p_lcb": 0.27784649,
+        "p_model": 0.35784649,
+        "p_no_lcb": 0.56215351,
+        "p_no_model": 0.64215351,
+        "p_no_touch": 0.64215351,
+        "p_no_ucb": 0.72215351,
+        "p_trade_lcb": 0.27784649,
+        "p_trade_model": 0.35784649,
+        "p_trade_ucb": 0.43784649,
+        "p_ucb": 0.43784649,
+        "p_yes_lcb": 0.27784649,
+        "p_yes_model": 0.35784649,
+        "p_yes_terminal": 0.12114109,
+        "p_yes_touch": 0.35784649,
+        "p_yes_ucb": 0.43784649,
+        "paper_only": true,
+        "parsed_start_time": "2026-06-08T02:30:32Z",
+        "priority_rank": 1,
+        "probability_semantics": "touch_barrier",
+        "q_effective": 0.25,
+        "schema_version": "polyweather_polymarket_alpha_probability_edge_journal.v1.fill",
+        "semantics_type": "touch_barrier",
+        "sensitivity_fragile": true,
+        "side": "YES",
+        "spot": 1579.13,
+        "surface_group_member_count": 3,
+        "surface_support": false,
+        "surface_valid": false,
+        "target_time": "2027-01-01T05:00:00Z",
+        "threshold": 2500.0,
+        "timestamp": "2026-06-29T05:51:39Z",
+        "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754",
+        "vol_support_reason": "sensitivity_fragile,model_vol_above_implied_vol",
+        "vol_supports_trade": false
+      },
+      {
+        "EV_safe": 0.0138645,
+        "annual_vol": 0.55,
+        "asset": "BTC",
+        "barrier_already_touched": false,
+        "best_ask": 0.27,
+        "can_generate_official_candidate": true,
+        "can_generate_shadow_watch": true,
+        "category": "bitcoin",
+        "confidence": 0.35,
+        "cost": 0.01,
+        "counts_for_live_gate": false,
+        "creation_time_proxy": false,
+        "creation_time_source": "createdAt",
+        "current_model_semantics": "touch_barrier",
+        "direction": "above",
+        "entry_time": "2026-06-29T05:51:39Z",
+        "fill_id": "ddf21d973c3a025fee33b7eb",
+        "final_classification": "downgraded_surface_invalid",
+        "generated_at": "2026-06-29T05:51:39Z",
+        "high_since_start_gap_reason": null,
+        "high_since_start_kline_count": 30483,
+        "high_since_start_verified": true,
+        "historical_high_since_start": 67292.15,
+        "implied_touch_vol": 0.44546384,
+        "live_order_path": false,
+        "market_creation_time": "2026-06-08T01:48:16Z",
+        "market_price": 0.26,
+        "market_slug": "will-bitcoin-reach-85000-by-december-31-2026-from-june-8",
+        "max_high_at": "2026-06-15T15:59:00Z",
+        "max_high_since_start": 67292.15,
+        "model_source": "crypto_lognormal_threshold_model",
+        "orderbook_snapshot_id": "aa59c445f9af12fa08ff2899",
+        "p_lcb": 0.2938645,
+        "p_model": 0.3738645,
+        "p_no_lcb": 0.5461355,
+        "p_no_model": 0.6261355,
+        "p_no_touch": 0.6261355,
+        "p_no_ucb": 0.7061355,
+        "p_trade_lcb": 0.2938645,
+        "p_trade_model": 0.3738645,
+        "p_trade_ucb": 0.4538645,
+        "p_ucb": 0.4538645,
+        "p_yes_lcb": 0.2938645,
+        "p_yes_model": 0.3738645,
+        "p_yes_terminal": 0.13883927,
+        "p_yes_touch": 0.3738645,
+        "p_yes_ucb": 0.4538645,
+        "paper_only": true,
+        "parsed_start_time": "2026-06-08T01:48:16Z",
+        "priority_rank": 1,
+        "probability_semantics": "touch_barrier",
+        "q_effective": 0.27,
+        "schema_version": "polyweather_polymarket_alpha_probability_edge_journal.v1.fill",
+        "semantics_type": "touch_barrier",
+        "sensitivity_fragile": true,
+        "side": "YES",
+        "spot": 59952.0,
+        "surface_group_member_count": 3,
+        "surface_support": false,
+        "surface_valid": false,
+        "target_time": "2027-01-01T05:00:00Z",
+        "threshold": 85000.0,
+        "timestamp": "2026-06-29T05:51:39Z",
+        "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466",
+        "vol_support_reason": "sensitivity_fragile,model_vol_above_implied_vol",
+        "vol_supports_trade": false
+      },
+      {
+        "EV_safe": 0.01073717,
+        "annual_vol": 0.55,
+        "asset": "BTC",
+        "barrier_already_touched": false,
+        "best_ask": 0.2,
+        "can_generate_official_candidate": true,
+        "can_generate_shadow_watch": true,
+        "category": "bitcoin",
+        "confidence": 0.35,
+        "cost": 0.01,
+        "counts_for_live_gate": false,
+        "creation_time_proxy": false,
+        "creation_time_source": "createdAt",
+        "current_model_semantics": "touch_barrier",
+        "direction": "above",
+        "entry_time": "2026-06-29T05:51:39Z",
+        "fill_id": "7c202dbe8f2e13ebcc8f308b",
+        "final_classification": "downgraded_surface_invalid",
+        "generated_at": "2026-06-29T05:51:39Z",
+        "high_since_start_gap_reason": null,
+        "high_since_start_kline_count": 205327,
+        "high_since_start_verified": true,
+        "historical_high_since_start": 82850.0,
+        "implied_touch_vol": 0.44594799,
+        "live_order_path": false,
+        "market_creation_time": "2026-02-06T15:44:31Z",
+        "market_price": 0.195,
+        "market_slug": "will-bitcoin-reach-90000-by-december-31-2026-113-862-581-343",
+        "max_high_at": "2026-05-06T11:22:00Z",
+        "max_high_since_start": 82850.0,
+        "model_source": "crypto_lognormal_threshold_model",
+        "orderbook_snapshot_id": "2b7af64c8ca8406e7067a360",
+        "p_lcb": 0.22073717,
+        "p_model": 0.30073717,
+        "p_no_lcb": 0.61926283,
+        "p_no_model": 0.69926283,
+        "p_no_touch": 0.69926283,
+        "p_no_ucb": 0.77926283,
+        "p_trade_lcb": 0.22073717,
+        "p_trade_model": 0.30073717,
+        "p_trade_ucb": 0.38073717,
+        "p_ucb": 0.38073717,
+        "p_yes_lcb": 0.22073717,
+        "p_yes_model": 0.30073717,
+        "p_yes_terminal": 0.10913431,
+        "p_yes_touch": 0.30073717,
+        "p_yes_ucb": 0.38073717,
+        "paper_only": true,
+        "parsed_start_time": "2026-02-06T15:44:31Z",
+        "priority_rank": 1,
+        "probability_semantics": "touch_barrier",
+        "q_effective": 0.2,
+        "schema_version": "polyweather_polymarket_alpha_probability_edge_journal.v1.fill",
+        "semantics_type": "touch_barrier",
+        "sensitivity_fragile": true,
+        "side": "YES",
+        "spot": 59952.0,
+        "surface_group_member_count": 1,
+        "surface_support": false,
+        "surface_valid": false,
+        "target_time": "2027-01-01T05:00:00Z",
+        "threshold": 90000.0,
+        "timestamp": "2026-06-29T05:51:39Z",
+        "token_id": "89384721767526056909881321094852287855436067743554155484781205764118128944311",
+        "vol_support_reason": "sensitivity_fragile,model_vol_above_implied_vol",
+        "vol_supports_trade": false
+      }
+    ],
+    "mean_15m_markout": null,
+    "mean_1h_markout": -1.66666667,
+    "mean_24h_markout": null,
+    "mean_5m_markout": null,
+    "mean_6h_markout": -1.66666667,
+    "mean_EV_safe": 0.01414939,
+    "negative_markout_count": 3,
+    "sensitivity_fragile_count": 3,
+    "surface_supported_count": 0,
+    "vol_supported_count": 0
+  },
+  "formal_horizon_coverage": {
+    "15m": {
+      "covered_fill_count": 0,
+      "eligible_elapsed_fill_count": 3,
+      "gap_reason_counts": {
+        "watcher_started_after_horizon_tolerance": 3
+      },
+      "matched_rows": [],
+      "missing_fill_count": 3
+    },
+    "1h": {
+      "covered_fill_count": 3,
+      "eligible_elapsed_fill_count": 3,
+      "gap_reason_counts": {},
+      "matched_rows": [
+        {
+          "fill_id": "685d79f9abc0eef4ed2016ab",
+          "match_lag_seconds": 425.0,
+          "matched_snapshot_time": "2026-06-29T06:58:44Z",
+          "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
+        },
+        {
+          "fill_id": "ddf21d973c3a025fee33b7eb",
+          "match_lag_seconds": 425.0,
+          "matched_snapshot_time": "2026-06-29T06:58:44Z",
+          "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
+        },
+        {
+          "fill_id": "7c202dbe8f2e13ebcc8f308b",
+          "match_lag_seconds": 425.0,
+          "matched_snapshot_time": "2026-06-29T06:58:44Z",
+          "token_id": "89384721767526056909881321094852287855436067743554155484781205764118128944311"
+        }
+      ],
+      "missing_fill_count": 0
+    },
+    "24h": {
+      "covered_fill_count": 0,
+      "eligible_elapsed_fill_count": 0,
+      "gap_reason_counts": {
+        "horizon_not_reached_by_latest_snapshot": 3
+      },
+      "matched_rows": [],
+      "missing_fill_count": 3
+    },
+    "5m": {
+      "covered_fill_count": 0,
+      "eligible_elapsed_fill_count": 3,
+      "gap_reason_counts": {
+        "watcher_started_after_horizon_tolerance": 3
+      },
+      "matched_rows": [],
+      "missing_fill_count": 3
+    },
+    "60s": {
+      "covered_fill_count": 0,
+      "eligible_elapsed_fill_count": 3,
+      "gap_reason_counts": {
+        "watcher_started_after_horizon_tolerance": 3
+      },
+      "matched_rows": [],
+      "missing_fill_count": 3
+    },
+    "6h": {
+      "covered_fill_count": 3,
+      "eligible_elapsed_fill_count": 3,
+      "gap_reason_counts": {},
+      "matched_rows": [
+        {
+          "fill_id": "685d79f9abc0eef4ed2016ab",
+          "match_lag_seconds": -315.0,
+          "matched_snapshot_time": "2026-06-29T11:46:24Z",
+          "token_id": "85285514049513279807596213021270459875110890683409085617564203053672886708754"
+        },
+        {
+          "fill_id": "ddf21d973c3a025fee33b7eb",
+          "match_lag_seconds": -315.0,
+          "matched_snapshot_time": "2026-06-29T11:46:24Z",
+          "token_id": "27201221676173593121678787264361008606480627771007041356248031697735484721466"
+        },
+        {
+          "fill_id": "7c202dbe8f2e13ebcc8f308b",
+          "match_lag_seconds": -315.0,
+          "matched_snapshot_time": "2026-06-29T11:46:24Z",
+          "token_id": "89384721767526056909881321094852287855436067743554155484781205764118128944311"
+        }
+      ],
+      "missing_fill_count": 0
+    }
+  },
+  "horizon_markout_validity": {
+    "15m": {
+      "missing_snapshot_for_horizon": 3
+    },
+    "1h": {
+      "within_tolerance": 3
+    },
+    "24h": {
+      "missing_snapshot_for_horizon": 3
+    },
+    "5m": {
+      "missing_snapshot_for_horizon": 3
+    },
+    "60s": {
+      "missing_snapshot_for_horizon": 3
+    },
+    "6h": {
+      "within_tolerance": 3
+    },
+    "current": {
+      "current_latest": 3
+    }
+  },
+  "invalidated_old_fills": {
+    "invalidated_count": 0,
+    "reason_counts": []
+  },
+  "live_order_path": false,
+  "near_miss_watch": {
+    "available_markout_count": 305,
+    "by_asset": [
+      {
+        "available_markout_count": 192,
+        "bucket": "BTC",
+        "mean_markout_cents": -2.32291667
+      },
+      {
+        "available_markout_count": 113,
+        "bucket": "ETH",
+        "mean_markout_cents": -1.0
+      }
+    ],
+    "by_horizon": {
+      "15m": -1.84848485,
+      "1h": -1.84848485,
+      "5m": -1.81188119,
+      "6h": -1.66666667
+    },
+    "mean_15m_markout": -1.84848485,
+    "mean_1h_markout": -1.84848485,
+    "mean_24h_markout": null,
+    "mean_5m_markout": -1.81188119,
+    "mean_6h_markout": -1.66666667,
+    "mean_EV_safe": 0.00359504,
+    "watch_count": 107
+  },
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_crypto_touch_forward_validation.v1",
+  "scope": "polymarket_only",
+  "sensitivity_fragile_count": 3,
+  "surface_support_count": 0,
+  "verdict": {
+    "continue_crypto_touch_sampling": false,
+    "continue_sampling": false,
+    "crypto_touch_status": "shadow_only_pending_recalibration",
+    "do_not_create_new_formal_fills": true,
+    "do_not_lower_threshold": true,
+    "keep_min_edge_threshold": true,
+    "paper_only_review_required": true,
+    "pause_if_next_20_negative": true,
+    "reduce_priority_if_negative_markout": false,
+    "status": "shadow_only_pending_recalibration"
+  },
+  "vol_supported_count": 0
+}

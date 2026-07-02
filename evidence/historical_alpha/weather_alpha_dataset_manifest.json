@@ -1,0 +1,15 @@
+{
+  "counts_for_live_gate": false,
+  "live_order_path": false,
+  "missing_field_counts": {
+    "forecast": 31,
+    "intraday": 1309,
+    "price": 1284,
+    "station_code": 31,
+    "target_date": 31
+  },
+  "output_path": "evidence/historical_alpha/weather_alpha_dataset.jsonl",
+  "paper_only": true,
+  "row_count": 1373,
+  "schema_version": "polyweather_historical_alpha_dataset_manifest.v1"
+}

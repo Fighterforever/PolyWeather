@@ -1,0 +1,58 @@
+{
+  "ask_depth_sufficient_rows": 0,
+  "blocker_counts": [
+    {
+      "blocker": "ask_depth_too_low",
+      "count": 198
+    },
+    {
+      "blocker": "missing_no_ask",
+      "count": 198
+    },
+    {
+      "blocker": "missing_no_book",
+      "count": 198
+    },
+    {
+      "blocker": "not_breached",
+      "count": 198
+    },
+    {
+      "blocker": "missing_intraday",
+      "count": 144
+    },
+    {
+      "blocker": "price_too_high",
+      "count": 54
+    },
+    {
+      "blocker": "unsupported_source",
+      "count": 54
+    },
+    {
+      "blocker": "not_eq",
+      "count": 42
+    },
+    {
+      "blocker": "dust_price",
+      "count": 20
+    }
+  ],
+  "breached_eq_rows": 0,
+  "counts_for_live_gate": false,
+  "direct_no_book_rows": 0,
+  "exact_bucket_rows": 198,
+  "executable_candidate_rows": 0,
+  "generated_at": "2026-06-28T08:45:53Z",
+  "intraday_available_rows": 54,
+  "live_order_path": false,
+  "no_ask_available_rows": 0,
+  "non_dust_rows": 0,
+  "paper_fill_rows": 0,
+  "paper_only": true,
+  "price_le_0_95_rows": 0,
+  "schema_version": "polyweather_eq_dead_no_opportunity_funnel.v1",
+  "supported_source_rows": 144,
+  "temperature_rows": 240,
+  "total_active_rows": 240
+}

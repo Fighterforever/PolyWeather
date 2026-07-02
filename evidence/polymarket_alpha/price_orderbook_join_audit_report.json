@@ -1,0 +1,53 @@
+{
+  "active_orderbook_join": {
+    "active_token_count": 4516,
+    "best_bid_ask_available_count": 276,
+    "missing_orderbook_by_reason": [
+      {
+        "count": 5,
+        "reason": "no_ask_depth"
+      },
+      {
+        "count": 5,
+        "reason": "no_bid_depth"
+      },
+      {
+        "count": 4230,
+        "reason": "token_not_found_or_orderbook_missing"
+      }
+    ],
+    "orderbook_fetch_attempt_count": 200,
+    "orderbook_fetch_success_count": 200
+  },
+  "counts_for_live_gate": false,
+  "crypto_specific_diagnostics": {
+    "crypto_missing_executable_price_samples": [],
+    "crypto_no_best_ask_available_count": 39,
+    "crypto_orderbook_fetch_success_count": 76,
+    "crypto_token_count": 78,
+    "crypto_yes_best_ask_available_count": 39,
+    "model_ready_count": 39,
+    "parsed_crypto_market_count": 39
+  },
+  "historical_price_join": {
+    "CLOB_price_history_error_count": 0,
+    "missing_price_by_reason": [
+      {
+        "count": 5039,
+        "reason": "timestamp_window_miss_or_active_snapshot_fallback"
+      },
+      {
+        "count": 5121,
+        "reason": "token_id_mismatch_or_missing_history"
+      }
+    ],
+    "price_history_found_count": 21,
+    "requested_price_history_count": 5142,
+    "timestamp_window_miss_count": 5039,
+    "token_id_mismatch_count": 5121
+  },
+  "live_order_path": false,
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_price_orderbook_join_audit.v1",
+  "scope": "polymarket_only"
+}

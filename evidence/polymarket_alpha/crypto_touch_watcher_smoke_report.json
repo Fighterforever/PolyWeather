@@ -1,0 +1,102 @@
+{
+  "artifact_paths": {
+    "active_probability_edge_report": "evidence/polymarket_alpha/active_probability_edge_report.json",
+    "crypto_probability_edge_report": "evidence/polymarket_alpha/crypto_probability_edge_report.json",
+    "crypto_touch_forward_validation_report": "evidence/polymarket_alpha/crypto_touch_forward_validation_report.json",
+    "crypto_touch_near_miss_markout_report": "evidence/polymarket_alpha/crypto_touch_near_miss_markout_report.json",
+    "crypto_touch_near_miss_orderbook_snapshots": "evidence/polymarket_alpha/crypto_touch_near_miss_orderbook_snapshots.jsonl",
+    "crypto_touch_near_miss_watch": "evidence/polymarket_alpha/crypto_touch_near_miss_watch.jsonl",
+    "probability_edge_fill_followup_orderbook_snapshots": "evidence/polymarket_alpha/probability_edge_paper/fill_followup_orderbook_snapshots.jsonl",
+    "probability_edge_fills": "evidence/polymarket_alpha/probability_edge_paper/fills.jsonl",
+    "probability_edge_markout_report": "evidence/polymarket_alpha/probability_edge_paper/markout_report.json"
+  },
+  "commands": [
+    {
+      "command": [
+        "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+        "scripts/polymarket_alpha_market_discovery_report.py",
+        "--active-limit",
+        "50",
+        "--closed-limit",
+        "0",
+        "--include-order-books",
+        "--max-orderbook-markets",
+        "10",
+        "--generated-at",
+        "2026-06-29T07:03:51Z"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"active_market_count\": 1046,\n  \"closed_market_count\": 0,\n  \"live_order_path\": false,\n  \"orderbook_available_count\": 3,\n  \"top_categories\": [\n    \"soccer\",\n    \"world_elections\",\n    \"politics\",\n    \"world\",\n    \"brazil\"\n  ]\n}\n"
+    },
+    {
+      "command": [
+        "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+        "scripts/polymarket_alpha_crypto_edge_report.py",
+        "--fetch-gamma-metadata",
+        "--fetch-binance-spot",
+        "--fetch-orderbooks",
+        "--max-orderbook-tokens",
+        "20",
+        "--min-edge",
+        "0.01",
+        "--cost",
+        "0.01",
+        "--generated-at",
+        "2026-06-29T07:03:51Z"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"candidate_count\": 0,\n  \"executable_price_available_count\": 1,\n  \"live_order_path\": false,\n  \"model_ready_count\": 2,\n  \"parsed_crypto_market_count\": 2\n}\n"
+    },
+    {
+      "command": [
+        "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+        "scripts/polymarket_alpha_active_probability_edge_report.py",
+        "--min-edge",
+        "0.01",
+        "--cost",
+        "0.01",
+        "--generated-at",
+        "2026-06-29T07:03:51Z"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"candidate_count\": 0,\n  \"focus_categories\": [],\n  \"live_order_path\": false,\n  \"model_ready_count\": 2,\n  \"paper_fill_count\": 0,\n  \"scanned_active_market_count\": 8812\n}\n"
+    },
+    {
+      "command": [
+        "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+        "scripts/polymarket_alpha_probability_edge_markout_report.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"available_markout_count\": 0,\n  \"fill_count\": 0,\n  \"live_order_path\": false,\n  \"markout_count\": 0,\n  \"markout_status\": \"ready_waiting_for_valid_crypto_fills\",\n  \"mean_markout\": null,\n  \"mean_markout_cents\": null\n}\n"
+    },
+    {
+      "command": [
+        "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+        "scripts/polymarket_alpha_crypto_touch_watch_markout_report.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"available_markout_count\": 39,\n  \"live_order_path\": false,\n  \"markout_status\": \"markout_available\",\n  \"mean_markout_cents\": -1.53846154,\n  \"watch_count\": 29\n}\n"
+    },
+    {
+      "command": [
+        "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+        "scripts/polymarket_alpha_crypto_touch_forward_validation_report.py"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\n  \"do_not_lower_threshold\": true,\n  \"formal_available_markout_count\": 0,\n  \"formal_fill_count\": 0,\n  \"live_order_path\": false,\n  \"near_miss_available_markout_count\": 39,\n  \"verdict\": \"continue_crypto_touch_sampling_insufficient_forward_fills\"\n}\n"
+    }
+  ],
+  "counts_for_live_gate": false,
+  "generated_at": "2026-06-29T07:03:51Z",
+  "live_order_path": false,
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_crypto_touch_watcher.v1",
+  "scope": "polymarket_only",
+  "success": true
+}

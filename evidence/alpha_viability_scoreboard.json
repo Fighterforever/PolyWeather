@@ -1,0 +1,556 @@
+{
+  "counts_for_live_gate": false,
+  "generated_at": "2026-06-28T14:09:08Z",
+  "historical_trade_proxy_guidance": {
+    "guidance_reason": "no_historical_trade_proxy_edge",
+    "prioritized_station_codes": [
+      "EGLC",
+      "LTAC",
+      "UUWW"
+    ],
+    "prioritized_time_to_close_windows": [
+      "0-1m",
+      "1-3m",
+      "15-30m",
+      "3-5m",
+      "5-15m"
+    ],
+    "sampler_mode": "reduced"
+  },
+  "live_order_path": false,
+  "paper_only": true,
+  "rows": [
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "maker_inferred_fills_are_diagnostic_only",
+      "next_action": "collect_30_plus_inferred_fills_and_markouts_paper_only",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "platform": "polymarket",
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 0,
+      "status": "active_shadow_testing",
+      "strategy_id": "maker_shadow_v2",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "no_current_station_confusion_candidate",
+      "next_action": "collect_station_confusion_forward_fills_paper_only",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "platform": "polymarket",
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 0,
+      "status": "active_research",
+      "strategy_id": "station_confusion_edge",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "no_current_buy_all_yes_basket_edge",
+      "next_action": "monitor_at_low_frequency_only",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "platform": "polymarket",
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 9,
+      "status": "low_frequency_monitor_no_current_edge",
+      "strategy_id": "bucket_family_buy_all_yes",
+      "trade_proxy_pnl_cents": 0.0
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "no_current_buy_all_no_basket_edge",
+      "next_action": "monitor_at_low_frequency_only",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "platform": "polymarket",
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 9,
+      "status": "low_frequency_monitor_no_current_edge",
+      "strategy_id": "bucket_family_buy_all_no",
+      "trade_proxy_pnl_cents": 0.0
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "no_current_monotonic_pair_edge",
+      "next_action": "monitor_at_low_frequency_only",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "platform": "polymarket",
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 0,
+      "status": "low_frequency_monitor_no_current_edge",
+      "strategy_id": "monotonic_threshold_pair",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "no_current_payoff_matrix_edge",
+      "next_action": "monitor_at_low_frequency_only",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "platform": "polymarket",
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 8,
+      "status": "low_frequency_monitor_no_current_edge",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "awaiting_non_dust_due_resolution",
+      "next_action": "wait_for_scheduled_non_dust_due_runner",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "platform": "polymarket",
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 0,
+      "status": "waiting_due",
+      "strategy_id": "non_dust_threshold_cdf",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "active_breached_eq_count": 0,
+      "active_eq_station_count": 5,
+      "active_supported_station_count_after": 5,
+      "active_supported_station_count_before": 4,
+      "conservative_proxy_candidate_count": 1,
+      "conservative_proxy_pnl_cents": 47.481386,
+      "conservative_proxy_pnl_without_top_1": 0.0,
+      "eq_dead_no_current_status": "monitoring_only_not_robust",
+      "eq_dead_no_forward_paper_fill_count": 0,
+      "eq_dead_no_proxy_robustness": false,
+      "executable_proxy_count": 1,
+      "expanded_unique_market_count": 1,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "proxy_not_positive_after_outlier_removal",
+      "next_action": "keep_monitoring_only_no_frequency_increase",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "platform": "polymarket",
+      "pnl_without_top_market": 0.0,
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 55,
+      "status": "monitoring_only_not_robust",
+      "strategy_id": "eq_dead_no_lock",
+      "trade_proxy_pnl_cents": 47.481386
+    },
+    {
+      "executable_proxy_count": 17,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "collapsed_into_eq_dead_no_filter",
+      "next_action": "do_not_expand_separately",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "platform": "polymarket",
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 105,
+      "status": "collapsed_into_eq_dead_no_or_paused",
+      "strategy_id": "observation_lock_trade_proxy",
+      "trade_proxy_pnl_cents": 94.002355
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "no_current_candidate",
+      "next_action": "reduced_frequency_sampling_only",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "platform": "polymarket",
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 9,
+      "status": "paused",
+      "strategy_id": "threshold_latency",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "market_already_reflected_observation",
+      "next_action": "do_not_continue",
+      "non_dust_only": true,
+      "official_truth_coverage": null,
+      "platform": "polymarket",
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 0,
+      "status": "killed",
+      "strategy_id": "post_lock_ge_le",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "negative_or_dust_only_evidence",
+      "next_action": "do_not_use_as_tiny_live_evidence",
+      "non_dust_only": false,
+      "official_truth_coverage": null,
+      "platform": "polymarket",
+      "resolved_fill_count": 8,
+      "resolved_pnl_cents": null,
+      "signal_count": 28,
+      "status": "killed",
+      "strategy_id": "dust_tail_near_lock",
+      "trade_proxy_pnl_cents": null
+    },
+    {
+      "executable_proxy_count": 0,
+      "forward_paper_fill_count": 0,
+      "live_eligible": false,
+      "live_order_path": false,
+      "main_blocker": "inferred_fill_not_real_execution_evidence",
+      "next_action": "do_not_continue_without_quote_lifecycle",
+      "non_dust_only": false,
+      "official_truth_coverage": null,
+      "platform": "polymarket",
+      "resolved_fill_count": 0,
+      "resolved_pnl_cents": null,
+      "signal_count": 0,
+      "status": "killed",
+      "strategy_id": "maker_inferred",
+      "trade_proxy_pnl_cents": null
+    }
+  ],
+  "schema_version": "polyweather_alpha_viability_scoreboard.v1",
+  "scope": "polymarket_only",
+  "summary": {
+    "active_breached_eq_count": 0,
+    "active_eq_station_count": 5,
+    "active_supported_station_count_after": 5,
+    "active_supported_station_count_before": 4,
+    "alpha_viability_final_verdict": "waiting_for_non_dust_due_and_eq_dead_no_not_robust",
+    "bucket_family_payoff_matrix_arbitrage": {
+      "best_lp_edge_cents": null,
+      "lp_basket_paper_fill_count": 0,
+      "lp_candidate_count": 0,
+      "lp_family_count": 8,
+      "lp_near_miss_count": 8
+    },
+    "bucket_family_structural_arbitrage": {
+      "basket_paper_fill_count": 0,
+      "best_edge_cents": null,
+      "buy_all_no_candidate_count": 0,
+      "buy_all_yes_candidate_count": 0,
+      "candidate_count": 0,
+      "family_count": 9,
+      "historical_approximate_edge_candidate_count": 0,
+      "historical_executable_depth_available_count": 0,
+      "monotonic_pair_candidate_count": 0,
+      "partition_family_count": 8
+    },
+    "continue_research_strategy_ids": [
+      "maker_shadow_v2",
+      "station_confusion_edge"
+    ],
+    "continue_strategy_ids": [],
+    "counts_for_live_gate": false,
+    "eq_dead_no_current_status": "monitoring_only_not_robust",
+    "eq_dead_no_forward_paper_fill_count": 0,
+    "eq_dead_no_proxy_robustness": {
+      "conservative_proxy_candidate_count": 1,
+      "conservative_proxy_pnl_cents": 47.481386,
+      "conservative_proxy_pnl_without_top_1": 0.0,
+      "conservative_proxy_positive_after_outlier_removal": false,
+      "direction_confidence_filtered_pnl_cents": 93.902355,
+      "pnl_without_top_market": 0.0
+    },
+    "kill_strategy_ids": [
+      "post_lock_ge_le",
+      "dust_tail_near_lock",
+      "maker_inferred"
+    ],
+    "killed_strategy_ids": [
+      "post_lock_ge_le",
+      "dust_tail_near_lock",
+      "maker_inferred"
+    ],
+    "live_order_path": false,
+    "live_push_status": "wait_non_dust_due_and_collect_polymarket_only_shadow_evidence",
+    "live_push_verdict": "wait_non_dust_due_only",
+    "live_should_pause": true,
+    "low_frequency_monitor_strategy_ids": [
+      "bucket_family_buy_all_no",
+      "bucket_family_buy_all_yes",
+      "bucket_family_payoff_matrix_arbitrage",
+      "eq_dead_no_lock",
+      "monotonic_threshold_pair"
+    ],
+    "maker_shadow_v2": {
+      "adverse_selection_count": 0,
+      "funnel_actual_window_minutes": 0.0,
+      "funnel_opportunity_status": "maker_shadow_current_snapshot_no_quote",
+      "funnel_rolling_window_sufficient": false,
+      "funnel_total_inferred_fill_count": 0,
+      "funnel_total_quote_count": 0,
+      "inferred_fill_count": 0,
+      "markout_count": 0,
+      "mean_markout_with_rebate": null,
+      "mean_markout_without_rebate": null,
+      "quote_count": 0
+    },
+    "next_go_no_go_trigger": "non_dust_uuww_due_verdict_or_maker_station_forward_evidence",
+    "non_dust_threshold_cdf_status": "waiting_due",
+    "pause_strategy_ids": [
+      "eq_dead_no_lock",
+      "observation_lock_trade_proxy",
+      "threshold_latency"
+    ],
+    "reason": "waiting_for_non_dust_due_and_eq_dead_no_not_robust",
+    "scope": "polymarket_only",
+    "station_confusion_edge": {
+      "active_candidate_count": 0,
+      "alpha_conclusion": "station_confusion_data_unavailable_reduce_priority",
+      "candidate_count": 0,
+      "min_required_sample_count": 10,
+      "station_bias_sample_count": 4,
+      "station_confusion_status": "research_only_insufficient_bias_samples",
+      "station_level_gap_reasons": [
+        {
+          "city": "ankara",
+          "gap_reason": "bias_sample_too_small",
+          "sample_count": 1,
+          "settlement_source": "metar",
+          "source_coverage": {
+            "city_grid_sample_count": 3,
+            "paired_sample_count": 1,
+            "station_sample_count": 4
+          },
+          "station_code": "LTAC"
+        },
+        {
+          "city": "istanbul",
+          "gap_reason": "missing_station_history",
+          "sample_count": 0,
+          "settlement_source": "noaa",
+          "source_coverage": {
+            "city_grid_sample_count": 3,
+            "paired_sample_count": 0,
+            "station_sample_count": 0
+          },
+          "station_code": "LTFM"
+        },
+        {
+          "city": "london",
+          "gap_reason": "bias_sample_too_small",
+          "sample_count": 1,
+          "settlement_source": "metar",
+          "source_coverage": {
+            "city_grid_sample_count": 3,
+            "paired_sample_count": 1,
+            "station_sample_count": 4
+          },
+          "station_code": "EGLC"
+        },
+        {
+          "city": "moscow",
+          "gap_reason": "bias_sample_too_small",
+          "sample_count": 1,
+          "settlement_source": "metar",
+          "source_coverage": {
+            "city_grid_sample_count": 3,
+            "paired_sample_count": 1,
+            "station_sample_count": 4
+          },
+          "station_code": "UUWW"
+        },
+        {
+          "city": "paris",
+          "gap_reason": "missing_station_history",
+          "sample_count": 0,
+          "settlement_source": "aeroweb",
+          "source_coverage": {
+            "city_grid_sample_count": 4,
+            "paired_sample_count": 0,
+            "station_sample_count": 0
+          },
+          "station_code": "LFPB"
+        },
+        {
+          "city": "seoul",
+          "gap_reason": "bias_sample_too_small",
+          "sample_count": 1,
+          "settlement_source": "metar",
+          "source_coverage": {
+            "city_grid_sample_count": 4,
+            "paired_sample_count": 1,
+            "station_sample_count": 3
+          },
+          "station_code": "RKSI"
+        }
+      ],
+      "top_station_biases": [
+        {
+          "absolute_bias_mean": 5.2,
+          "bias_direction": "station_hotter",
+          "city": "seoul",
+          "city_grid_high_mean": 22.8,
+          "gap_reason": null,
+          "historical_bias_mean": 5.2,
+          "historical_bias_std": null,
+          "latest_sample_date": "2026-06-27",
+          "sample_count": 1,
+          "settlement_source": "metar",
+          "source_coverage": {
+            "city_grid_sample_count": 1,
+            "paired_sample_count": 1,
+            "station_sample_count": 1
+          },
+          "station_code": "RKSI",
+          "station_high_mean": 28.0,
+          "station_minus_city_bias_mean": 5.2,
+          "station_minus_city_bias_std": null
+        },
+        {
+          "absolute_bias_mean": 1.9,
+          "bias_direction": "station_hotter",
+          "city": "ankara",
+          "city_grid_high_mean": 26.1,
+          "gap_reason": null,
+          "historical_bias_mean": 1.9,
+          "historical_bias_std": null,
+          "latest_sample_date": "2026-06-27",
+          "sample_count": 1,
+          "settlement_source": "metar",
+          "source_coverage": {
+            "city_grid_sample_count": 1,
+            "paired_sample_count": 1,
+            "station_sample_count": 1
+          },
+          "station_code": "LTAC",
+          "station_high_mean": 28.0,
+          "station_minus_city_bias_mean": 1.9,
+          "station_minus_city_bias_std": null
+        },
+        {
+          "absolute_bias_mean": 1.3,
+          "bias_direction": "station_colder",
+          "city": "london",
+          "city_grid_high_mean": 32.3,
+          "gap_reason": null,
+          "historical_bias_mean": -1.3,
+          "historical_bias_std": null,
+          "latest_sample_date": "2026-06-27",
+          "sample_count": 1,
+          "settlement_source": "metar",
+          "source_coverage": {
+            "city_grid_sample_count": 1,
+            "paired_sample_count": 1,
+            "station_sample_count": 1
+          },
+          "station_code": "EGLC",
+          "station_high_mean": 31.0,
+          "station_minus_city_bias_mean": -1.3,
+          "station_minus_city_bias_std": null
+        },
+        {
+          "absolute_bias_mean": 0.6,
+          "bias_direction": "station_hotter",
+          "city": "moscow",
+          "city_grid_high_mean": 20.4,
+          "gap_reason": null,
+          "historical_bias_mean": 0.6,
+          "historical_bias_std": null,
+          "latest_sample_date": "2026-06-27",
+          "sample_count": 1,
+          "settlement_source": "metar",
+          "source_coverage": {
+            "city_grid_sample_count": 1,
+            "paired_sample_count": 1,
+            "station_sample_count": 1
+          },
+          "station_code": "UUWW",
+          "station_high_mean": 21.0,
+          "station_minus_city_bias_mean": 0.6,
+          "station_minus_city_bias_std": null
+        },
+        {
+          "bias_direction": null,
+          "city": "istanbul",
+          "city_grid_high_mean": null,
+          "gap_reason": "missing_station_history",
+          "latest_sample_date": null,
+          "sample_count": 0,
+          "settlement_source": "noaa",
+          "source_coverage": {
+            "city_grid_sample_count": 3,
+            "paired_sample_count": 0,
+            "station_sample_count": 0
+          },
+          "station_code": "LTFM",
+          "station_high_mean": null,
+          "station_minus_city_bias_mean": null,
+          "station_minus_city_bias_std": null
+        },
+        {
+          "bias_direction": null,
+          "city": "paris",
+          "city_grid_high_mean": null,
+          "gap_reason": "missing_station_history",
+          "latest_sample_date": null,
+          "sample_count": 0,
+          "settlement_source": "aeroweb",
+          "source_coverage": {
+            "city_grid_sample_count": 4,
+            "paired_sample_count": 0,
+            "station_sample_count": 0
+          },
+          "station_code": "LFPB",
+          "station_high_mean": null,
+          "station_minus_city_bias_mean": null,
+          "station_minus_city_bias_std": null
+        }
+      ]
+    },
+    "strategy_count": 13,
+    "wait_strategy_ids": [
+      "bucket_family_buy_all_yes",
+      "bucket_family_buy_all_no",
+      "monotonic_threshold_pair",
+      "bucket_family_payoff_matrix_arbitrage",
+      "non_dust_threshold_cdf"
+    ]
+  }
+}

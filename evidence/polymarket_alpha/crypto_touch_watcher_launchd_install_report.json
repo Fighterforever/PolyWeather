@@ -1,0 +1,76 @@
+{
+  "artifact_paths": {
+    "install_report": "evidence/polymarket_alpha/crypto_touch_watcher_launchd_install_report.json",
+    "near_miss_orderbook_snapshots": "evidence/polymarket_alpha/crypto_touch_near_miss_orderbook_snapshots.jsonl",
+    "near_miss_watch": "evidence/polymarket_alpha/crypto_touch_near_miss_watch.jsonl",
+    "watcher_summary": "evidence/polymarket_alpha/crypto_touch_watcher_run_report.json"
+  },
+  "commands": [
+    {
+      "command": [
+        "launchctl",
+        "bootstrap",
+        "gui/501",
+        "/Users/leeyoma/Library/LaunchAgents/com.polyweather.crypto-touch-near-miss-watcher.plist"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "launchctl",
+        "enable",
+        "gui/501/com.polyweather.crypto-touch-near-miss-watcher"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "launchctl",
+        "kickstart",
+        "-k",
+        "gui/501/com.polyweather.crypto-touch-near-miss-watcher"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "counts_for_live_gate": false,
+  "installed": true,
+  "label": "com.polyweather.crypto-touch-near-miss-watcher",
+  "launchctl_status_check_command": "launchctl print gui/501/com.polyweather.crypto-touch-near-miss-watcher",
+  "live_order_path": false,
+  "log_paths": {
+    "stderr": "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/evidence/polymarket_alpha/logs/crypto_touch_watcher.err.log",
+    "stdout": "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/evidence/polymarket_alpha/logs/crypto_touch_watcher.out.log"
+  },
+  "paper_only": true,
+  "plist_path": "/Users/leeyoma/Library/LaunchAgents/com.polyweather.crypto-touch-near-miss-watcher.plist",
+  "program_arguments": [
+    "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+    "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/scripts/polymarket_alpha_crypto_touch_watcher_report.py",
+    "--python-path",
+    "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+    "--active-limit",
+    "3000",
+    "--closed-limit",
+    "0",
+    "--max-orderbook-markets",
+    "80",
+    "--max-orderbook-tokens",
+    "120",
+    "--min-edge",
+    "0.01",
+    "--cost",
+    "0.01",
+    "--summary-output",
+    "evidence/polymarket_alpha/crypto_touch_watcher_run_report.json"
+  ],
+  "schema_version": "polyweather_polymarket_alpha_crypto_touch_watcher_launchd_install.v1",
+  "scope": "polymarket_only",
+  "start_interval_seconds": 60
+}

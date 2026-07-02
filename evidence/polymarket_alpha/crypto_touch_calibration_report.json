@@ -1,0 +1,26 @@
+{
+  "EV_proxy_after_ask_if_available": null,
+  "artifact_paths": {
+    "rows": "evidence/polymarket_alpha/crypto_touch_calibration_rows.jsonl"
+  },
+  "brier_market": null,
+  "brier_model": null,
+  "calibration_by_probability_bucket": [],
+  "counts_for_live_gate": false,
+  "gap_reason_counts": [
+    {
+      "count": 1,
+      "reason": "decision_time_after_market_end"
+    }
+  ],
+  "live_order_path": false,
+  "logloss_market": null,
+  "logloss_model": null,
+  "no_lookahead_violation_count": 1,
+  "paper_only": true,
+  "sample_count": 0,
+  "schema_version": "polyweather_polymarket_alpha_crypto_touch_historical_calibration.v1",
+  "scope": "polymarket_only",
+  "status": "insufficient_crypto_touch_calibration_samples",
+  "unique_market_count": 0
+}

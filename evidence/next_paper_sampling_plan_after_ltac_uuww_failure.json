@@ -1,0 +1,45 @@
+{
+  "candidate_required_fields": [
+    "settlement_spec",
+    "q_effective",
+    "p_lcb",
+    "ev_safe",
+    "price_bucket",
+    "settlement_due_time"
+  ],
+  "context": "after_ltac_uuww_dust_only_negative_resolved_subset",
+  "counts_for_live_gate": false,
+  "do_not_sample_as_alpha_evidence": [
+    "price_lt_0_005",
+    "eq_exact_live_evidence",
+    "maker_inferred_fill_live_evidence"
+  ],
+  "live_order_path": false,
+  "paper_only": true,
+  "priority_sampling": [
+    "price_ge_0_03",
+    "price_0_005_to_0_03_when_depth_is_sufficient",
+    "le_ge_threshold_buckets",
+    "station_source_supported",
+    "settlement_due_within_next_24_to_48h",
+    "official_source_supported",
+    "ask_depth_sufficient"
+  ],
+  "recommended_next_paper_cycle_command": "PYTHONPATH=src .venv/bin/python scripts/weather_market_paper_cycle.py --production-profile --paper-journal-dir evidence/paper_run --current-signal-report-dir evidence/current_signal_reports --strict-gate-queue-dir evidence/strict_gate_queues --orderbook-archive-dir evidence/orderbook_archive --backfill-dir evidence/weather_backfill_local --strict-gate-queue-max-records-per-queue 12 --strict-gate-queue-max-dust-records-per-queue 2",
+  "schema_version": "polyweather_next_paper_sampling_plan.v1",
+  "strict_gate_queue_policy": {
+    "dust_bucket_counts_for_live_gate": false,
+    "max_dust_queue_records_per_cycle": 2,
+    "min_queue_price_for_alpha_evidence": 0.03,
+    "price_priority": [
+      "price_ge_0_03",
+      "price_0_005_to_0_03",
+      "price_lt_0_005"
+    ]
+  },
+  "validation_after_cycle": [
+    "strict_gate_queue_journal.queue_by_price_bucket contains price_ge_0_03 when available",
+    "price_lt_0_005 does not dominate alpha evidence queue",
+    "live_order_path remains false"
+  ]
+}

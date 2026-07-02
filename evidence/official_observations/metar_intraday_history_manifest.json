@@ -1,0 +1,90 @@
+{
+  "counts_for_live_gate": false,
+  "date_coverage": [
+    {
+      "observation_count": 25,
+      "station_code": "EGLC",
+      "target_date": "2026-06-25"
+    },
+    {
+      "observation_count": 48,
+      "station_code": "EGLC",
+      "target_date": "2026-06-26"
+    },
+    {
+      "observation_count": 48,
+      "station_code": "EGLC",
+      "target_date": "2026-06-27"
+    },
+    {
+      "observation_count": 10,
+      "station_code": "EGLC",
+      "target_date": "2026-06-28"
+    },
+    {
+      "observation_count": 19,
+      "station_code": "LTAC",
+      "target_date": "2026-06-25"
+    },
+    {
+      "observation_count": 48,
+      "station_code": "LTAC",
+      "target_date": "2026-06-26"
+    },
+    {
+      "observation_count": 48,
+      "station_code": "LTAC",
+      "target_date": "2026-06-27"
+    },
+    {
+      "observation_count": 16,
+      "station_code": "LTAC",
+      "target_date": "2026-06-28"
+    },
+    {
+      "observation_count": 21,
+      "station_code": "UUWW",
+      "target_date": "2026-06-25"
+    },
+    {
+      "observation_count": 51,
+      "station_code": "UUWW",
+      "target_date": "2026-06-26"
+    },
+    {
+      "observation_count": 50,
+      "station_code": "UUWW",
+      "target_date": "2026-06-27"
+    },
+    {
+      "observation_count": 16,
+      "station_code": "UUWW",
+      "target_date": "2026-06-28"
+    }
+  ],
+  "end_date": "2026-06-28",
+  "fetched_at": "2026-06-28T04:49:38Z",
+  "gap_count": 0,
+  "gap_report_path": "evidence/official_observations/metar_intraday_gap_report.json",
+  "latest_observation_at_by_station": {
+    "EGLC": "2026-06-28T04:20:00Z",
+    "LTAC": "2026-06-28T04:20:00Z",
+    "UUWW": "2026-06-28T04:30:00Z"
+  },
+  "live_order_path": false,
+  "manifest_path": "evidence/official_observations/metar_intraday_history_manifest.json",
+  "observation_count": 400,
+  "output_path": "evidence/official_observations/metar_intraday_history.jsonl",
+  "paper_only": true,
+  "requested_hours": 342,
+  "schema_version": "polyweather_metar_intraday_history_manifest.v1",
+  "source": "aviationweather_metar_history",
+  "start_date": "2026-06-14",
+  "station_codes": [
+    "EGLC",
+    "LTAC",
+    "UUWW"
+  ],
+  "station_count": 3,
+  "written_count": 400
+}

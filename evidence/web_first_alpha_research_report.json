@@ -1,0 +1,589 @@
+{
+  "blockers": [
+    "current ge/le locked market already reflected: locked-side bid is high, ask is absent, and dead-side bid is absent",
+    "dead-side bid capture remains diagnostic-only until CTF split/merge execution is implemented and validated",
+    "historical ge/le triage is approximate only, not executable depth",
+    "non-dust threshold path still waits for due runner resolution"
+  ],
+  "counts_for_live_gate": false,
+  "data_source_coverage": {
+    "closed_polymarket_markets": {
+      "closed_temperature_market_count": 1343,
+      "closed_weather_market_count": 1373,
+      "replay_supported_market_count": 836,
+      "rows": 1373
+    },
+    "historical_alpha_dataset": {
+      "missing_field_counts": {
+        "forecast": 31,
+        "intraday": 1309,
+        "price": 1284,
+        "station_code": 31,
+        "target_date": 31
+      },
+      "row_count": 1373,
+      "rows": 1373
+    },
+    "historical_forecasts": {
+      "forecast_count": 124,
+      "gap_count": 0,
+      "rows": 124
+    },
+    "metar_history": {
+      "date_coverage_count": 12,
+      "gap_count": 33,
+      "observation_count": 400,
+      "rows": 400,
+      "station_count": 3
+    },
+    "price_history": {
+      "executable_depth_available": false,
+      "gap_count": 161,
+      "price_row_count": 5735,
+      "rows": 5735
+    }
+  },
+  "execution_sampling": {
+    "active_sampler_installed": true,
+    "active_sampler_last_run_status": "market_already_reflected_currently_no_edge",
+    "counts_for_live_gate": false,
+    "direct_locked_side_book_count": 2,
+    "executable_candidate_count": 0,
+    "ge_le_locked_count": 2,
+    "live_order_path": false,
+    "non_dust_uuww_due_runner_status": "pending_due",
+    "observation_lock_sampler_report": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
+    "paper_fill_count": 0,
+    "status": "installed_running",
+    "top_current_blocker": "market_already_reflected_lock=2",
+    "direct_locked_side_taker_candidate_count": 0,
+    "direct_locked_side_missing_ask_count": 2,
+    "dead_side_bid_available_count": 0,
+    "dead_side_capture_candidate_count": 0,
+    "dead_side_capture_diagnostic_fill_count": 0,
+    "market_already_reflected_lock_count": 2,
+    "observation_lock_execution_mode_breakdown": [
+      {
+        "count": 240,
+        "execution_mode": "none"
+      }
+    ]
+  },
+  "final_conclusion": "threshold_latency_active_forward_paper_sampling",
+  "historical_non_dust_threshold_replay": "pending_non_dust_uuww_due_runner",
+  "non_dust_uuww_due_runner_status": "pending_due",
+  "historical_observation_lock_alpha": "historical_locked_signal_tradability_triage_complete",
+  "historical_observation_lock_ge_le_tradability": {
+    "approx_positive_edge_count": 1,
+    "counts_for_live_gate": false,
+    "live_order_path": false,
+    "locked_signal_count": 50,
+    "missing_price_count": 0,
+    "price_available_count": 50,
+    "report_path": "evidence/historical_replay/observation_lock_ge_le_tradability_report.json",
+    "status": "complete",
+    "top_ge_le_approx_positive_locked_signals": [
+      {
+        "approximate_edge": 0.016,
+        "approximate_price": 0.979,
+        "bucket_type": "le",
+        "can_compute_real_pnl": false,
+        "can_count_as_pnl": false,
+        "counts_for_live_gate": false,
+        "data_gap_reason": [
+          "historical_price_not_executable_depth"
+        ],
+        "dust_price": false,
+        "evidence_type": "approximate_price_only",
+        "executable_depth_available": false,
+        "ge_le_triage_rank": 1,
+        "historical_price_available": true,
+        "historical_price_source": "polymarket_clob_prices_history",
+        "historical_price_timestamp": "2026-06-27T05:00:05Z",
+        "live_order_path": false,
+        "lock_state": "le_yes_dead_no_locked",
+        "locked_side": "NO",
+        "market_slug": "highest-temperature-in-moscow-on-june-27-2026-17corbelow",
+        "official_current_high": 18.0,
+        "outcome": 0.0,
+        "paper_only": true,
+        "payout": 1.0,
+        "price_bucket": "price_ge_0_03",
+        "replay_time": "2026-06-27T05:36:07Z",
+        "schema_version": "polyweather_observation_lock_tradability.v1.locked_signal",
+        "station_code": "UUWW",
+        "target_date": "2026-06-27",
+        "threshold": 17.0,
+        "time_to_close": 383.883,
+        "time_to_close_bucket": "gt_2h",
+        "token_id": "45216753547761882030203911510849899472552844747999172882006780508001418763973",
+        "triage_rank": 7
+      }
+    ]
+  },
+  "historical_observation_lock_replay": {
+    "brier_score": null,
+    "by_bucket_type": [
+      {
+        "bucket_type": "eq",
+        "count": 1254
+      },
+      {
+        "bucket_type": "range",
+        "count": 209
+      },
+      {
+        "bucket_type": "ge",
+        "count": 165
+      },
+      {
+        "bucket_type": "le",
+        "count": 165
+      }
+    ],
+    "by_price_bucket": [],
+    "by_station": [
+      {
+        "count": 385,
+        "station_code": "UUWW"
+      },
+      {
+        "count": 361,
+        "station_code": "LTAC"
+      },
+      {
+        "count": 300,
+        "station_code": "EGLC"
+      },
+      {
+        "count": 44,
+        "station_code": "RKSI"
+      },
+      {
+        "count": 33,
+        "station_code": "CYYZ"
+      },
+      {
+        "count": 33,
+        "station_code": "EDDM"
+      },
+      {
+        "count": 33,
+        "station_code": "EPWA"
+      },
+      {
+        "count": 33,
+        "station_code": "LEMD"
+      },
+      {
+        "count": 33,
+        "station_code": "LIMC"
+      },
+      {
+        "count": 33,
+        "station_code": "SBGR"
+      },
+      {
+        "count": 33,
+        "station_code": "VILK"
+      },
+      {
+        "count": 29,
+        "station_code": "SAEZ"
+      },
+      {
+        "count": 25,
+        "station_code": "KLGA"
+      },
+      {
+        "count": 22,
+        "station_code": "KATL"
+      },
+      {
+        "count": 22,
+        "station_code": "KAUS"
+      },
+      {
+        "count": 22,
+        "station_code": "KBKF"
+      },
+      {
+        "count": 22,
+        "station_code": "KDAL"
+      },
+      {
+        "count": 22,
+        "station_code": "KHOU"
+      },
+      {
+        "count": 22,
+        "station_code": "KLAX"
+      },
+      {
+        "count": 22,
+        "station_code": "KMIA"
+      },
+      {
+        "count": 22,
+        "station_code": "KORD"
+      },
+      {
+        "count": 22,
+        "station_code": "KSEA"
+      },
+      {
+        "count": 22,
+        "station_code": "KSFO"
+      },
+      {
+        "count": 22,
+        "station_code": "MMMX"
+      },
+      {
+        "count": 22,
+        "station_code": "NZWN"
+      },
+      {
+        "count": 22,
+        "station_code": "RJTT"
+      },
+      {
+        "count": 22,
+        "station_code": "WSSS"
+      },
+      {
+        "count": 22,
+        "station_code": "ZBAA"
+      },
+      {
+        "count": 22,
+        "station_code": "ZHHH"
+      },
+      {
+        "count": 22,
+        "station_code": "ZSPD"
+      },
+      {
+        "count": 22,
+        "station_code": "ZUCK"
+      },
+      {
+        "count": 22,
+        "station_code": "ZUUU"
+      }
+    ],
+    "by_time_to_close": [
+      {
+        "count": 858,
+        "time_to_close_bucket": "lt_30m"
+      },
+      {
+        "count": 814,
+        "time_to_close_bucket": "gt_2h"
+      },
+      {
+        "count": 121,
+        "time_to_close_bucket": "30m_to_2h"
+      }
+    ],
+    "candidate_count": 0,
+    "counts_for_live_gate": false,
+    "fill_count": 0,
+    "gap_count": 0,
+    "gap_samples": [],
+    "generated_at": "2026-06-28T04:55:56Z",
+    "live_order_path": false,
+    "locked_signal_count": 105,
+    "log_loss": null,
+    "missing_historical_executable_price": true,
+    "missing_historical_price_count": 105,
+    "missing_intraday_count": 803,
+    "no_lookahead_violation_count": 0,
+    "paper_only": true,
+    "replay_market_count": 836,
+    "replay_signal_count": 1793,
+    "resolved_fill_count": 0,
+    "resolved_pnl_cents": null,
+    "schema_version": "polyweather_observation_lock_historical_replay.v1.summary"
+  },
+  "historical_observation_lock_tradability": {
+    "approximate_negative_edge_count": 96,
+    "approximate_positive_edge_count": 9,
+    "counts_for_live_gate": false,
+    "executable_depth_available_count": 0,
+    "live_order_path": false,
+    "locked_signal_count": 105,
+    "missing_price_count": 0,
+    "pnl_semantics": "approximate_price_only; no real taker PnL unless executable_depth_available_count > 0",
+    "price_available_count": 105,
+    "report_path": "evidence/historical_replay/observation_lock_tradability_report.json",
+    "status": "complete",
+    "triage_rows_path": "evidence/historical_replay/observation_lock_locked_signal_triage.jsonl"
+  },
+  "live_order_path": false,
+  "next_action": "let 60-second paper-only threshold-latency sampler collect forward evidence around fresh METAR updates",
+  "observation_lock_active_sampler": {
+    "collect_intraday_before_scan": true,
+    "direct_locked_side_book_count": 2,
+    "executable_candidate_count": 0,
+    "ge_le_locked_count": 2,
+    "ge_le_locked_reject_reason_counts": [
+      {
+        "count": 2,
+        "reason": "ask_depth_too_low"
+      },
+      {
+        "count": 2,
+        "reason": "executable_edge_not_positive"
+      },
+      {
+        "count": 2,
+        "reason": "locked_side_ask_depth_too_low"
+      },
+      {
+        "count": 2,
+        "reason": "missing_executable_price"
+      },
+      {
+        "count": 2,
+        "reason": "missing_spread"
+      },
+      {
+        "count": 1,
+        "reason": "not_locked_side_token_row"
+      }
+    ],
+    "launchd_install_report_path": "evidence/observation_lock_sampler_launchd_install_report.json",
+    "live_order_path": false,
+    "locked_watch_orderbook_snapshot_count": 1,
+    "missing_locked_side_orderbook_count": 0,
+    "non_dust_uuww_due_runner_status": "pending_due",
+    "observation_lock_active_sampler_status": "installed_running",
+    "paper_fill_count": 0,
+    "runner_label": "com.polyweather.observation-lock-execution-sampler",
+    "sampler_report_path": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
+    "stale_blocker_count": 22,
+    "stale_warning_count": 0,
+    "status": "active_execution_sampling",
+    "synthetic_locked_side_price_count": 0,
+    "top_current_blocker": "market_already_reflected_lock=2",
+    "final_conclusion": "observation_lock_market_already_reflected_currently_no_edge",
+    "historical_ge_le_approx_positive_count": 1,
+    "locked_signal_count": 105,
+    "resolved_pnl_cents": null,
+    "direct_locked_side_taker_candidate_count": 0,
+    "direct_locked_side_missing_ask_count": 2,
+    "dead_side_bid_available_count": 0,
+    "dead_side_capture_candidate_count": 0,
+    "dead_side_capture_positive_edge_count": 0,
+    "dead_side_capture_total_bid_depth": 0.0,
+    "dead_side_capture_diagnostic_fill_count": 0,
+    "dead_side_capture_sampler_report_path": "evidence/observation_lock_execution/dead_side_capture_sampler_report.json",
+    "dead_side_capture_watch_rows_path": "evidence/observation_lock_execution/dead_side_capture_watch_rows.jsonl",
+    "dead_side_capture_diagnostic_fills_path": "evidence/observation_lock_execution/dead_side_capture_diagnostic_fills.jsonl",
+    "market_already_reflected_lock_count": 2,
+    "observation_lock_execution_mode_breakdown": [
+      {
+        "count": 240,
+        "execution_mode": "none"
+      }
+    ],
+    "execution_mode_status": "diagnostic_only_until_ctf_split_merge_supported",
+    "next_action": "continue METAR-first observation-lock sampler; current ge/le lock is already reflected by market, wait for dead-side bid or direct locked-side ask before paper evidence"
+  },
+  "observation_lock_execution_sampler": {
+    "counts_for_live_gate": false,
+    "executable_candidate_count": 0,
+    "generated_at": "2026-06-28T06:57:56Z",
+    "install_report_path": "evidence/observation_lock_sampler_launchd_install_report.json",
+    "last_run_status": "market_already_reflected_currently_no_edge",
+    "live_order_path": false,
+    "locked_count": 66,
+    "metar_freshness_status": "fresh_candidates_required",
+    "missing_intraday_observation_count": 174,
+    "paper_fill_count": 0,
+    "reject_reason_counts": [
+      {
+        "count": 239,
+        "reason": "not_locked_side_token_row"
+      },
+      {
+        "count": 238,
+        "reason": "missing_locked_side_ask_depth"
+      },
+      {
+        "count": 238,
+        "reason": "missing_locked_side_orderbook"
+      },
+      {
+        "count": 238,
+        "reason": "not_observation_locked"
+      },
+      {
+        "count": 238,
+        "reason": "observation_not_locked"
+      },
+      {
+        "count": 198,
+        "reason": "bucket_type_not_sampled"
+      },
+      {
+        "count": 198,
+        "reason": "eq_exact_not_alpha"
+      },
+      {
+        "count": 174,
+        "reason": "missing_intraday_available_at"
+      },
+      {
+        "count": 174,
+        "reason": "missing_intraday_observation"
+      },
+      {
+        "count": 66,
+        "reason": "unsupported_official_source_not_alpha"
+      },
+      {
+        "count": 40,
+        "reason": "spread_too_wide"
+      },
+      {
+        "count": 31,
+        "reason": "dust_price"
+      },
+      {
+        "count": 31,
+        "reason": "dust_price_bucket_not_alpha"
+      },
+      {
+        "count": 26,
+        "reason": "missing_spread"
+      },
+      {
+        "count": 22,
+        "reason": "stale_intraday_observation"
+      },
+      {
+        "count": 2,
+        "reason": "ask_depth_too_low"
+      },
+      {
+        "count": 2,
+        "reason": "executable_edge_not_positive"
+      },
+      {
+        "count": 2,
+        "reason": "locked_side_ask_depth_too_low"
+      },
+      {
+        "count": 2,
+        "reason": "missing_executable_price"
+      }
+    ],
+    "remaining_blocker": "current ge/le lock has no direct locked-side ask and no dead-side bid; market_already_reflected_lock=2",
+    "report_path": "evidence/observation_lock_execution/observation_lock_execution_sampler_report.json",
+    "runner_label": "com.polyweather.observation-lock-execution-sampler",
+    "scanned_row_count": 240,
+    "stale_intraday_observation_count": 66,
+    "start_interval_seconds": 300,
+    "status": "installed_running",
+    "ge_le_locked_count": 2,
+    "stale_warning_count": 0,
+    "stale_blocker_count": 22,
+    "direct_locked_side_book_count": 2,
+    "synthetic_locked_side_price_count": 0,
+    "missing_locked_side_orderbook_count": 0,
+    "locked_watch_orderbook_snapshot_count": 1,
+    "ge_le_locked_reject_reason_counts": [
+      {
+        "count": 2,
+        "reason": "ask_depth_too_low"
+      },
+      {
+        "count": 2,
+        "reason": "executable_edge_not_positive"
+      },
+      {
+        "count": 2,
+        "reason": "locked_side_ask_depth_too_low"
+      },
+      {
+        "count": 2,
+        "reason": "missing_executable_price"
+      },
+      {
+        "count": 2,
+        "reason": "missing_spread"
+      },
+      {
+        "count": 1,
+        "reason": "not_locked_side_token_row"
+      }
+    ],
+    "collect_intraday_before_scan": true,
+    "direct_locked_side_taker_candidate_count": 0,
+    "direct_locked_side_missing_ask_count": 2,
+    "dead_side_bid_available_count": 0,
+    "dead_side_capture_candidate_count": 0,
+    "dead_side_capture_positive_edge_count": 0,
+    "dead_side_capture_total_bid_depth": 0.0,
+    "dead_side_capture_diagnostic_fill_count": 0,
+    "dead_side_capture_sampler_report_path": "evidence/observation_lock_execution/dead_side_capture_sampler_report.json",
+    "dead_side_capture_watch_rows_path": "evidence/observation_lock_execution/dead_side_capture_watch_rows.jsonl",
+    "dead_side_capture_diagnostic_fills_path": "evidence/observation_lock_execution/dead_side_capture_diagnostic_fills.jsonl",
+    "market_already_reflected_lock_count": 2,
+    "observation_lock_execution_mode_breakdown": [
+      {
+        "count": 240,
+        "execution_mode": "none"
+      }
+    ],
+    "execution_mode_status": "diagnostic_only_until_ctf_split_merge_supported",
+    "historical_ge_le_approx_positive_count": 1,
+    "launchd_install_report_path": "evidence/observation_lock_sampler_launchd_install_report.json",
+    "locked_signal_count": 105,
+    "non_dust_uuww_due_runner_status": "pending_due",
+    "observation_lock_active_sampler_status": "installed_running",
+    "resolved_pnl_cents": null,
+    "top_current_blocker": "market_already_reflected_lock=2",
+    "dead_side_capture_blocker_counts": [
+      {
+        "blocker": "dead_side_bid_depth_too_low",
+        "count": 2
+      },
+      {
+        "blocker": "dead_side_bid_missing_or_zero",
+        "count": 2
+      },
+      {
+        "blocker": "dead_side_capture_edge_not_positive",
+        "count": 2
+      }
+    ]
+  },
+  "paper_only": true,
+  "schema_version": "polyweather_web_first_alpha_research_report.v1",
+  "self_sampling_still_required": [
+    "active pre-resolution executable orderbook depth",
+    "paper fill markout and missed-fill measurement",
+    "resolved settlement calibration for non-dust observation-lock fills"
+  ],
+  "web_api_backfill_sources": [
+    "aviationweather_metar_history",
+    "polymarket_gamma_closed_events",
+    "polymarket_clob_prices_history",
+    "open_meteo_historical_forecast",
+    "kalshi_public_market_reference"
+  ],
+  "threshold_latency": {
+    "status": "active_forward_paper_sampling",
+    "live_order_path": false,
+    "generated_at": "2026-06-28T07:19:01Z",
+    "candidate_count": 0,
+    "paper_fill_count": 0,
+    "near_cross_count": 2,
+    "just_crossed_count": 0,
+    "sampler_report_path": "evidence/threshold_latency/threshold_latency_execution_sampler_report.json",
+    "signal_report_path": "evidence/threshold_latency/threshold_latency_signal_report.json"
+  }
+}

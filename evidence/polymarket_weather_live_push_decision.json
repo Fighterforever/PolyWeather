@@ -1,0 +1,139 @@
+{
+  "bucket_family_payoff_matrix_arbitrage": {
+    "best_lp_edge_cents": null,
+    "lp_candidate_count": 0
+  },
+  "bucket_family_structural_arbitrage": {
+    "best_edge_cents": null,
+    "candidate_count": 0
+  },
+  "continue_research_strategy_ids": [
+    "maker_shadow_v2",
+    "station_confusion_edge"
+  ],
+  "counts_for_live_gate": false,
+  "final_reason": "non_dust_uuww_due_not_reached",
+  "generated_at": "2026-06-28T14:08:14Z",
+  "killed_strategy_ids": [
+    "dust_tail",
+    "post_lock_ge_le",
+    "threshold_latency",
+    "dead_side_capture",
+    "eq_dead_no_lock"
+  ],
+  "live_order_path": false,
+  "live_push_status": "wait_non_dust_due_and_collect_polymarket_only_shadow_evidence",
+  "low_frequency_monitor_strategy_ids": [
+    "bucket_family_payoff_matrix_arbitrage"
+  ],
+  "maker_shadow_v2": {
+    "actual_window_minutes": 0.0,
+    "blocker_counts": {
+      "bucket_not_ge_le": 198,
+      "dust_price": 8,
+      "missing_orderbook": 3,
+      "spread_below_min": 29,
+      "station_anomaly": 2
+    },
+    "conclusion": "maker_shadow_current_snapshot_no_quote",
+    "inferred_fill_count": 0,
+    "mean_markout_without_rebate": null,
+    "quote_count": 0,
+    "run_count": 1
+  },
+  "non_dust_uuww": {
+    "alpha_conclusion": "non_dust_threshold_cdf_waiting_resolution",
+    "due_reached": false,
+    "probability_score_sample_count": 0,
+    "resolved_fill_count": 0,
+    "resolved_pnl_cents": null,
+    "resolved_pnl_sample_count": 0,
+    "status": "waiting_due"
+  },
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_weather_live_push_decision.v1",
+  "scope": "polymarket_only",
+  "station_confusion": {
+    "candidate_count": 0,
+    "min_required_sample_count": 10,
+    "station_bias_sample_count": 4,
+    "station_confusion_status": "research_only_insufficient_bias_samples",
+    "station_level_gap_reasons": [
+      {
+        "city": "ankara",
+        "gap_reason": "bias_sample_too_small",
+        "sample_count": 1,
+        "settlement_source": "metar",
+        "source_coverage": {
+          "city_grid_sample_count": 3,
+          "paired_sample_count": 1,
+          "station_sample_count": 4
+        },
+        "station_code": "LTAC"
+      },
+      {
+        "city": "istanbul",
+        "gap_reason": "missing_station_history",
+        "sample_count": 0,
+        "settlement_source": "noaa",
+        "source_coverage": {
+          "city_grid_sample_count": 3,
+          "paired_sample_count": 0,
+          "station_sample_count": 0
+        },
+        "station_code": "LTFM"
+      },
+      {
+        "city": "london",
+        "gap_reason": "bias_sample_too_small",
+        "sample_count": 1,
+        "settlement_source": "metar",
+        "source_coverage": {
+          "city_grid_sample_count": 3,
+          "paired_sample_count": 1,
+          "station_sample_count": 4
+        },
+        "station_code": "EGLC"
+      },
+      {
+        "city": "moscow",
+        "gap_reason": "bias_sample_too_small",
+        "sample_count": 1,
+        "settlement_source": "metar",
+        "source_coverage": {
+          "city_grid_sample_count": 3,
+          "paired_sample_count": 1,
+          "station_sample_count": 4
+        },
+        "station_code": "UUWW"
+      },
+      {
+        "city": "paris",
+        "gap_reason": "missing_station_history",
+        "sample_count": 0,
+        "settlement_source": "aeroweb",
+        "source_coverage": {
+          "city_grid_sample_count": 4,
+          "paired_sample_count": 0,
+          "station_sample_count": 0
+        },
+        "station_code": "LFPB"
+      },
+      {
+        "city": "seoul",
+        "gap_reason": "bias_sample_too_small",
+        "sample_count": 1,
+        "settlement_source": "metar",
+        "source_coverage": {
+          "city_grid_sample_count": 4,
+          "paired_sample_count": 1,
+          "station_sample_count": 3
+        },
+        "station_code": "RKSI"
+      }
+    ]
+  },
+  "wait_strategy_ids": [
+    "non_dust_threshold_cdf"
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "commands": [
+    {
+      "command": [
+        "launchctl",
+        "bootstrap",
+        "gui/501",
+        "/Users/leeyoma/Library/LaunchAgents/com.polyweather.non-dust-uuww-due-pipeline.plist"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "launchctl",
+        "enable",
+        "gui/501/com.polyweather.non-dust-uuww-due-pipeline"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "launchctl",
+        "kickstart",
+        "-k",
+        "gui/501/com.polyweather.non-dust-uuww-due-pipeline"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "done_file": "evidence/.due_pipeline_non_dust_uuww.done",
+  "installed": true,
+  "label": "com.polyweather.non-dust-uuww-due-pipeline",
+  "launchctl_status_check_command": "launchctl print gui/501/com.polyweather.non-dust-uuww-due-pipeline",
+  "live_order_path": false,
+  "lock_file": "evidence/.due_pipeline_non_dust_uuww.lock",
+  "log_paths": {
+    "stderr": "evidence/logs/non_dust_uuww_due_pipeline.err.log",
+    "stdout": "evidence/logs/non_dust_uuww_due_pipeline.out.log"
+  },
+  "paper_only": true,
+  "plist_path": "/Users/leeyoma/Library/LaunchAgents/com.polyweather.non-dust-uuww-due-pipeline.plist",
+  "program_arguments": [
+    "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+    "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/scripts/weather_guarded_due_pipeline_runner.py",
+    "--run-after-utc",
+    "2026-06-30T03:05:00Z",
+    "--paper-journal-dir",
+    "evidence/paper_run",
+    "--strict-gate-queue-dir",
+    "evidence/strict_gate_queues",
+    "--orderbook-archive-dir",
+    "evidence/orderbook_archive",
+    "--backfill-dir",
+    "evidence/weather_backfill_local",
+    "--summary-output",
+    "evidence/due_pipeline_non_dust_uuww_after_due.json",
+    "--lock-file",
+    "evidence/.due_pipeline_non_dust_uuww.lock",
+    "--done-file",
+    "evidence/.due_pipeline_non_dust_uuww.done",
+    "--confirm",
+    "PAPER_ONLY_ARCHIVED_ORDERBOOK_REFRESH",
+    "--include-settlement-source",
+    "metar",
+    "--include-station-code",
+    "UUWW",
+    "--include-market-slug",
+    "highest-temperature-in-moscow-on-june-29-2026-23corhigher",
+    "--allow-partial-official-truth",
+    "--fetch-external-official-values"
+  ],
+  "run_after_utc": "2026-06-30T03:05:00Z",
+  "schema_version": "polyweather_due_pipeline_launchd_install.v1",
+  "start_interval_seconds": 300
+}

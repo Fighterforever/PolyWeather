@@ -1,0 +1,12 @@
+{
+  "archive_dir": "evidence/orderbook_archive",
+  "counts_for_live_gate": false,
+  "paper_only": true,
+  "recorded_at": "2026-06-27T16:18:52Z",
+  "rows_seen": 240,
+  "schema_version": "polyweather_polymarket_orderbook_archive.v1",
+  "snapshot_count": 240,
+  "source": "polymarket_readonly",
+  "source_snapshot_id": "polymarket-readonly-2026-06-27T16:18:52Z",
+  "written_count": 240
+}

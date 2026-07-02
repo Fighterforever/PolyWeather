@@ -1,0 +1,217 @@
+{
+  "candidate_count": 0,
+  "candidate_samples": [],
+  "counts_for_live_gate": false,
+  "generated_at": "2026-06-28T07:19:01Z",
+  "just_crossed_count": 0,
+  "live_order_path": false,
+  "metar_update_event_count": 11,
+  "near_cross_count": 2,
+  "orderbook_snapshot_count": 0,
+  "orderbook_snapshot_written_count": 0,
+  "paper_fill_count": 0,
+  "paper_fill_written_count": 0,
+  "paper_only": true,
+  "paths": {
+    "orderbook_snapshots": "evidence/threshold_latency/orderbook_snapshots.jsonl",
+    "paper_fills": "evidence/threshold_latency/paper_fills.jsonl",
+    "signal_report": "evidence/threshold_latency/threshold_latency_signal_report.json",
+    "watch_rows": "evidence/threshold_latency/watch_rows.jsonl"
+  },
+  "reject_reason_counts": [
+    {
+      "count": 240,
+      "reason": "latency_edge_not_positive"
+    },
+    {
+      "count": 240,
+      "reason": "missing_direct_ask"
+    },
+    {
+      "count": 240,
+      "reason": "missing_spread"
+    },
+    {
+      "count": 240,
+      "reason": "stale_metar_update"
+    },
+    {
+      "count": 238,
+      "reason": "missing_ask_depth"
+    },
+    {
+      "count": 238,
+      "reason": "no_threshold_latency_signal"
+    },
+    {
+      "count": 198,
+      "reason": "bucket_type_not_alpha"
+    },
+    {
+      "count": 174,
+      "reason": "missing_current_high"
+    },
+    {
+      "count": 174,
+      "reason": "missing_previous_high"
+    },
+    {
+      "count": 66,
+      "reason": "unsupported_official_source_not_alpha"
+    },
+    {
+      "count": 2,
+      "reason": "ask_depth_too_low"
+    }
+  ],
+  "scanned_row_count": 240,
+  "schema_version": "polyweather_threshold_latency_execution_sampler.v1",
+  "top_watch_samples": [
+    {
+      "anomaly_flags": [],
+      "ask_depth": 0.0,
+      "best_ask": null,
+      "blockers": [
+        "ask_depth_too_low",
+        "latency_edge_not_positive",
+        "missing_direct_ask",
+        "missing_spread",
+        "stale_metar_update"
+      ],
+      "bucket_type": "le",
+      "counts_for_live_gate": false,
+      "current_available_at": "2026-06-28T07:08:30Z",
+      "current_high": 19.0,
+      "current_observation_at": "2026-06-28T07:00:00Z",
+      "decision": "watch",
+      "expected_locked_side_if_crossed": "NO",
+      "fair_probability": 0.65,
+      "latency_edge_estimate": null,
+      "live_order_path": false,
+      "market_side_pair_complete": true,
+      "market_slug": "highest-temperature-in-moscow-on-june-28-2026-19corbelow",
+      "no_lookahead": true,
+      "paper_only": true,
+      "previous_high": 19.0,
+      "previous_observation_at": "2026-06-28T07:00:00Z",
+      "price_bucket": "price_unknown",
+      "q_effective": null,
+      "schema_version": "polyweather_threshold_latency_signal.v1",
+      "settlement_source": "metar",
+      "settlement_spec": {
+        "bucket_type": "le",
+        "city": "moscow",
+        "city_display_name": "Moscow",
+        "end_time": "2026-06-28T12:00:00Z",
+        "event_slug": "highest-temperature-in-moscow-on-june-28-2026",
+        "market_close_time": "2026-06-28T12:00:00Z",
+        "market_family": "temperature",
+        "market_id": "2688333",
+        "market_slug": "highest-temperature-in-moscow-on-june-28-2026-19corbelow",
+        "metric": "daily_high_temperature",
+        "observation_window_end_time": "2026-06-28T20:59:59Z",
+        "platform": "polymarket",
+        "question": "Will the highest temperature in Moscow be 19°C or below on June 28?",
+        "rounding": "integer_nearest",
+        "rule_hash": "261621d034a18b8e9890",
+        "rule_text": "Will the highest temperature in Moscow be 19°C or below on June 28? Settlement station: Vnukovo International Airport (Moscow).",
+        "schema_version": "polyweather_weather_settlement_spec.v1",
+        "settlement_due_time": "2026-06-29T02:59:59Z",
+        "settlement_grace_hours": 6.0,
+        "settlement_source": "metar",
+        "settlement_url": null,
+        "station_code": "UUWW",
+        "station_label": "Vnukovo International Airport",
+        "status": "supported",
+        "target_date": "2026-06-28",
+        "threshold": 19.0,
+        "timezone": "UTC+03:00",
+        "unit": "C",
+        "unsupported_reasons": [],
+        "upper_threshold": null
+      },
+      "side_to_buy": "NO",
+      "signal_type": "le_near_break",
+      "spread": null,
+      "station_code": "UUWW",
+      "target_date": "2026-06-28",
+      "threshold": 19.0,
+      "time_since_available_seconds": 631,
+      "token_id": "60009179142760251717162832021671225008114514261612627079702728579390858189213"
+    },
+    {
+      "anomaly_flags": [],
+      "ask_depth": 0.0,
+      "best_ask": null,
+      "blockers": [
+        "ask_depth_too_low",
+        "latency_edge_not_positive",
+        "missing_direct_ask",
+        "missing_spread",
+        "stale_metar_update"
+      ],
+      "bucket_type": "le",
+      "counts_for_live_gate": false,
+      "current_available_at": "2026-06-28T07:08:30Z",
+      "current_high": 19.0,
+      "current_observation_at": "2026-06-28T07:00:00Z",
+      "decision": "watch",
+      "expected_locked_side_if_crossed": "NO",
+      "fair_probability": 0.65,
+      "latency_edge_estimate": null,
+      "live_order_path": false,
+      "market_side_pair_complete": true,
+      "market_slug": "highest-temperature-in-moscow-on-june-28-2026-19corbelow",
+      "no_lookahead": true,
+      "paper_only": true,
+      "previous_high": 19.0,
+      "previous_observation_at": "2026-06-28T07:00:00Z",
+      "price_bucket": "price_unknown",
+      "q_effective": null,
+      "schema_version": "polyweather_threshold_latency_signal.v1",
+      "settlement_source": "metar",
+      "settlement_spec": {
+        "bucket_type": "le",
+        "city": "moscow",
+        "city_display_name": "Moscow",
+        "end_time": "2026-06-28T12:00:00Z",
+        "event_slug": "highest-temperature-in-moscow-on-june-28-2026",
+        "market_close_time": "2026-06-28T12:00:00Z",
+        "market_family": "temperature",
+        "market_id": "2688333",
+        "market_slug": "highest-temperature-in-moscow-on-june-28-2026-19corbelow",
+        "metric": "daily_high_temperature",
+        "observation_window_end_time": "2026-06-28T20:59:59Z",
+        "platform": "polymarket",
+        "question": "Will the highest temperature in Moscow be 19°C or below on June 28?",
+        "rounding": "integer_nearest",
+        "rule_hash": "261621d034a18b8e9890",
+        "rule_text": "Will the highest temperature in Moscow be 19°C or below on June 28? Settlement station: Vnukovo International Airport (Moscow).",
+        "schema_version": "polyweather_weather_settlement_spec.v1",
+        "settlement_due_time": "2026-06-29T02:59:59Z",
+        "settlement_grace_hours": 6.0,
+        "settlement_source": "metar",
+        "settlement_url": null,
+        "station_code": "UUWW",
+        "station_label": "Vnukovo International Airport",
+        "status": "supported",
+        "target_date": "2026-06-28",
+        "threshold": 19.0,
+        "timezone": "UTC+03:00",
+        "unit": "C",
+        "unsupported_reasons": [],
+        "upper_threshold": null
+      },
+      "side_to_buy": "NO",
+      "signal_type": "le_near_break",
+      "spread": null,
+      "station_code": "UUWW",
+      "target_date": "2026-06-28",
+      "threshold": 19.0,
+      "time_since_available_seconds": 631,
+      "token_id": "60009179142760251717162832021671225008114514261612627079702728579390858189213"
+    }
+  ],
+  "watch_count": 2,
+  "watch_rows_written_count": 2
+}

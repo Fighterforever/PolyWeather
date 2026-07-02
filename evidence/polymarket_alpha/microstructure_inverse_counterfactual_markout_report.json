@@ -1,0 +1,65 @@
+{
+  "artifact_paths": {
+    "markouts": "evidence/polymarket_alpha/microstructure_inverse_counterfactual_markouts.jsonl",
+    "policy_candidates_v2": "evidence/polymarket_alpha/microstructure_policy_candidates_v2.jsonl"
+  },
+  "by_category": [
+    {
+      "bucket": "courts",
+      "mean_markout_cents": -2.66285714,
+      "sample_count": 35
+    },
+    {
+      "bucket": "india",
+      "mean_markout_cents": -2.0,
+      "sample_count": 108
+    },
+    {
+      "bucket": "music",
+      "mean_markout_cents": -5.0,
+      "sample_count": 54
+    },
+    {
+      "bucket": "politics",
+      "mean_markout_cents": -3.33333333,
+      "sample_count": 6
+    },
+    {
+      "bucket": "starmer",
+      "mean_markout_cents": -5.55084746,
+      "sample_count": 118
+    },
+    {
+      "bucket": "tech",
+      "mean_markout_cents": -8.0,
+      "sample_count": 43
+    },
+    {
+      "bucket": "world",
+      "mean_markout_cents": -2.58947368,
+      "sample_count": 95
+    },
+    {
+      "bucket": "world_affairs",
+      "mean_markout_cents": -7.8,
+      "sample_count": 15
+    }
+  ],
+  "by_depth_imbalance_bucket": [],
+  "compare_to_follow": {
+    "delta": 0.00474844,
+    "follow_mean_5m": -4.36321839,
+    "inverse_mean_5m": -4.35846995
+  },
+  "counts_for_live_gate": false,
+  "decision": "pause_taker_microstructure_entirely",
+  "inverse_available_markout_count": 474,
+  "inverse_candidate_count": 214,
+  "inverse_mean_15m_markout": -4.11728395,
+  "inverse_mean_1h_markout": -3.8496124,
+  "inverse_mean_5m_markout": -4.35846995,
+  "live_order_path": false,
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_microstructure_inverse_counterfactual.v1",
+  "scope": "polymarket_only"
+}

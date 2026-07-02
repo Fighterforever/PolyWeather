@@ -1,0 +1,43 @@
+{
+  "by_market_slug": [
+    {
+      "count": 1,
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-23corhigher"
+    }
+  ],
+  "by_station": [
+    {
+      "count": 1,
+      "station": "UUWW"
+    }
+  ],
+  "by_strategy_bucket": [
+    {
+      "count": 1,
+      "strategy_bucket": "tail_threshold|ge"
+    }
+  ],
+  "counts_for_live_gate": false,
+  "live_order_path": false,
+  "next_non_dust_due_time": "2026-06-30T02:59:59Z",
+  "paper_only": true,
+  "recommended_command": "PYTHONPATH=src .venv/bin/python scripts/weather_run_due_evidence_pipeline.py \\\n  --paper-journal-dir evidence/paper_run \\\n  --strict-gate-queue-dir evidence/strict_gate_queues \\\n  --orderbook-archive-dir evidence/orderbook_archive \\\n  --backfill-dir evidence/weather_backfill_local \\\n  --include-settlement-source metar \\\n  --include-station-code UUWW \\\n  --allow-partial-official-truth \\\n  --fetch-external-official-values \\\n  --execute-closed-backfill \\\n  --confirm PAPER_ONLY_ARCHIVED_ORDERBOOK_REFRESH \\\n  --summary-output evidence/due_pipeline_non_dust_unresolved_after_due.json",
+  "rows": [
+    {
+      "entry_price": 0.62,
+      "ev_safe": 0.119,
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-23corhigher",
+      "next_backfill_check_after": "2026-06-30T02:59:59Z",
+      "next_market_close_time": "2026-06-29T12:00:00Z",
+      "observation_window_end_time": "2026-06-29T20:59:59Z",
+      "price_bucket": "price_ge_0_03",
+      "settlement_due_time": "2026-06-30T02:59:59Z",
+      "settlement_source": "metar",
+      "station": "UUWW",
+      "strategy_bucket": "tail_threshold|ge",
+      "token_id": "37558803415910171580264743940982364976255246575423901696378057384864203714268"
+    }
+  ],
+  "schema_version": "polyweather_non_dust_unresolved_due_plan.v1",
+  "unresolved_non_dust_count": 1
+}

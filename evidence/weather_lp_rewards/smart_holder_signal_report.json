@@ -1,0 +1,12 @@
+{
+  "artifact_paths": {
+    "smart_holder_signals": "evidence/weather_lp_rewards/smart_holder_signals.jsonl"
+  },
+  "counts_for_live_gate": false,
+  "gap_count": 89,
+  "live_order_path": false,
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_weather_smart_holder_signal.v1",
+  "signal_count": 89,
+  "smart_holder_signal_count": 0
+}

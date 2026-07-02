@@ -1,0 +1,28 @@
+{
+  "artifact_paths": {
+    "maker_quotes": "evidence/polymarket_alpha/microstructure_maker_quotes.jsonl",
+    "markout_report": "evidence/polymarket_alpha/microstructure_markout_report.json",
+    "policy_sweep_report": "evidence/polymarket_alpha/microstructure_policy_sweep_report.json",
+    "taker_fills": "evidence/polymarket_alpha/microstructure_paper_fills.jsonl",
+    "watch_rows": "evidence/polymarket_alpha/microstructure_watch_rows.jsonl"
+  },
+  "counts_for_live_gate": false,
+  "experiment_start": "2026-06-29T14:02:16Z",
+  "generated_at": "2026-06-29T14:02:16Z",
+  "live_order_path": false,
+  "maker_inferred_fill_count": 0,
+  "maker_quote_count": 21,
+  "mean_15m_markout": null,
+  "mean_1h_markout": null,
+  "mean_5m_markout": null,
+  "paper_only": true,
+  "policy_candidate_count": 31,
+  "recommendation": "continue_collecting",
+  "run_count": 1,
+  "schema_version": "polyweather_polymarket_alpha_microstructure_experiment.v1",
+  "scope": "polymarket_only",
+  "taker_fill_count": 10,
+  "top_policy": "maker_spread_capture",
+  "valid_markout_count": 0,
+  "watch_count": 21
+}

@@ -1,0 +1,492 @@
+{
+  "artifact_paths": {
+    "fetched_price_history": "evidence/polymarket_alpha/probability_price_history.jsonl",
+    "probability_dataset": "evidence/polymarket_alpha/probability_dataset.jsonl"
+  },
+  "category_counts": [
+    {
+      "category": "ai",
+      "count": 50
+    },
+    {
+      "category": "airdrops",
+      "count": 4
+    },
+    {
+      "category": "all",
+      "count": 4
+    },
+    {
+      "category": "argentina",
+      "count": 4
+    },
+    {
+      "category": "art",
+      "count": 16
+    },
+    {
+      "category": "awards",
+      "count": 40
+    },
+    {
+      "category": "bernie_sanders",
+      "count": 12
+    },
+    {
+      "category": "big_tech",
+      "count": 96
+    },
+    {
+      "category": "bitcoin",
+      "count": 70
+    },
+    {
+      "category": "bnb",
+      "count": 22
+    },
+    {
+      "category": "books",
+      "count": 2
+    },
+    {
+      "category": "brazil",
+      "count": 36
+    },
+    {
+      "category": "business",
+      "count": 84
+    },
+    {
+      "category": "canada",
+      "count": 2
+    },
+    {
+      "category": "chess",
+      "count": 30
+    },
+    {
+      "category": "china",
+      "count": 2
+    },
+    {
+      "category": "consensys",
+      "count": 6
+    },
+    {
+      "category": "coronavirus",
+      "count": 44
+    },
+    {
+      "category": "courts",
+      "count": 12
+    },
+    {
+      "category": "crypto",
+      "count": 412
+    },
+    {
+      "category": "crypto_prices",
+      "count": 14
+    },
+    {
+      "category": "culture",
+      "count": 70
+    },
+    {
+      "category": "dogecoin",
+      "count": 24
+    },
+    {
+      "category": "economic_policy",
+      "count": 2
+    },
+    {
+      "category": "economy",
+      "count": 56
+    },
+    {
+      "category": "elections",
+      "count": 276
+    },
+    {
+      "category": "elon_musk",
+      "count": 2
+    },
+    {
+      "category": "epstein",
+      "count": 2
+    },
+    {
+      "category": "esports",
+      "count": 4
+    },
+    {
+      "category": "ethereum",
+      "count": 408
+    },
+    {
+      "category": "exchange",
+      "count": 2
+    },
+    {
+      "category": "football",
+      "count": 2
+    },
+    {
+      "category": "foreign_policy",
+      "count": 20
+    },
+    {
+      "category": "formula_1",
+      "count": 22
+    },
+    {
+      "category": "france",
+      "count": 8
+    },
+    {
+      "category": "fraud",
+      "count": 2
+    },
+    {
+      "category": "games",
+      "count": 4
+    },
+    {
+      "category": "gaza",
+      "count": 2
+    },
+    {
+      "category": "geopolitics",
+      "count": 98
+    },
+    {
+      "category": "global_elections",
+      "count": 34
+    },
+    {
+      "category": "global_politics",
+      "count": 10
+    },
+    {
+      "category": "hamas",
+      "count": 2
+    },
+    {
+      "category": "hit_price",
+      "count": 14
+    },
+    {
+      "category": "hyperliquid",
+      "count": 160
+    },
+    {
+      "category": "india",
+      "count": 2
+    },
+    {
+      "category": "inflation",
+      "count": 632
+    },
+    {
+      "category": "ipo",
+      "count": 50
+    },
+    {
+      "category": "ipos",
+      "count": 790
+    },
+    {
+      "category": "israel",
+      "count": 74
+    },
+    {
+      "category": "japan",
+      "count": 2
+    },
+    {
+      "category": "jerome_powell",
+      "count": 52
+    },
+    {
+      "category": "league_of_legends",
+      "count": 30
+    },
+    {
+      "category": "lol",
+      "count": 20
+    },
+    {
+      "category": "mamdani",
+      "count": 8
+    },
+    {
+      "category": "mayor",
+      "count": 22
+    },
+    {
+      "category": "middle_east",
+      "count": 32
+    },
+    {
+      "category": "midterms",
+      "count": 156
+    },
+    {
+      "category": "movies",
+      "count": 266
+    },
+    {
+      "category": "music",
+      "count": 12
+    },
+    {
+      "category": "nba",
+      "count": 2
+    },
+    {
+      "category": "nba_playoffs",
+      "count": 22
+    },
+    {
+      "category": "nfts",
+      "count": 14
+    },
+    {
+      "category": "nuclear",
+      "count": 2
+    },
+    {
+      "category": "obama",
+      "count": 4
+    },
+    {
+      "category": "olympics",
+      "count": 8
+    },
+    {
+      "category": "openai",
+      "count": 10
+    },
+    {
+      "category": "pandemics",
+      "count": 398
+    },
+    {
+      "category": "pierre",
+      "count": 2
+    },
+    {
+      "category": "poker",
+      "count": 4
+    },
+    {
+      "category": "poland",
+      "count": 2
+    },
+    {
+      "category": "politics",
+      "count": 1086
+    },
+    {
+      "category": "pop-culture",
+      "count": 41
+    },
+    {
+      "category": "pre-market",
+      "count": 48
+    },
+    {
+      "category": "primaries",
+      "count": 56
+    },
+    {
+      "category": "putin",
+      "count": 6
+    },
+    {
+      "category": "russia",
+      "count": 4
+    },
+    {
+      "category": "rwa",
+      "count": 2
+    },
+    {
+      "category": "science",
+      "count": 28
+    },
+    {
+      "category": "senate",
+      "count": 2
+    },
+    {
+      "category": "soccer",
+      "count": 3533
+    },
+    {
+      "category": "south_korea",
+      "count": 4
+    },
+    {
+      "category": "sports",
+      "count": 2998
+    },
+    {
+      "category": "stablecoins",
+      "count": 2
+    },
+    {
+      "category": "starmer",
+      "count": 6
+    },
+    {
+      "category": "syria",
+      "count": 2
+    },
+    {
+      "category": "taxes",
+      "count": 4
+    },
+    {
+      "category": "taylor_swift",
+      "count": 2
+    },
+    {
+      "category": "tech",
+      "count": 138
+    },
+    {
+      "category": "tiktok",
+      "count": 12
+    },
+    {
+      "category": "trump",
+      "count": 168
+    },
+    {
+      "category": "trump-putin",
+      "count": 4
+    },
+    {
+      "category": "trump-zelenskyy",
+      "count": 2
+    },
+    {
+      "category": "trump_presidency",
+      "count": 8
+    },
+    {
+      "category": "trump_x_al-sharaa",
+      "count": 2
+    },
+    {
+      "category": "ukraine",
+      "count": 36
+    },
+    {
+      "category": "ukraine_&_russia",
+      "count": 10
+    },
+    {
+      "category": "ukraine_map",
+      "count": 4
+    },
+    {
+      "category": "us-current-affairs",
+      "count": 56
+    },
+    {
+      "category": "us_election",
+      "count": 82
+    },
+    {
+      "category": "ventuals",
+      "count": 14
+    },
+    {
+      "category": "weather",
+      "count": 16
+    },
+    {
+      "category": "world",
+      "count": 166
+    },
+    {
+      "category": "world_affairs",
+      "count": 4
+    },
+    {
+      "category": "world_elections",
+      "count": 164
+    },
+    {
+      "category": "xrp",
+      "count": 30
+    },
+    {
+      "category": "yearly",
+      "count": 64
+    },
+    {
+      "category": "youtube",
+      "count": 8
+    },
+    {
+      "category": "zelenskyy",
+      "count": 4
+    }
+  ],
+  "category_resolved_counts": [
+    {
+      "category": "ethereum",
+      "count": 360
+    },
+    {
+      "category": "hyperliquid",
+      "count": 140
+    },
+    {
+      "category": "inflation",
+      "count": 620
+    },
+    {
+      "category": "ipos",
+      "count": 722
+    },
+    {
+      "category": "movies",
+      "count": 222
+    },
+    {
+      "category": "pandemics",
+      "count": 386
+    },
+    {
+      "category": "soccer",
+      "count": 3419
+    },
+    {
+      "category": "sports",
+      "count": 2628
+    }
+  ],
+  "counts_for_live_gate": false,
+  "gap_counts": [
+    {
+      "count": 5246,
+      "reason": "missing_active_orderbook_price"
+    }
+  ],
+  "generated_at": "2026-06-28T15:30:00Z",
+  "live_order_path": false,
+  "missing_outcome_count": 5121,
+  "missing_price_count": 5246,
+  "no_lookahead_blocked_after_close_count": 0,
+  "no_lookahead_violation_count": 0,
+  "paper_only": true,
+  "resolved_row_count": 8497,
+  "row_count": 13618,
+  "schema_version": "polyweather_polymarket_alpha_probability_dataset.v1.manifest",
+  "scope": "polymarket_only"
+}

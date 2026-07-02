@@ -1,0 +1,3067 @@
+{
+  "artifact_paths": {
+    "candidates_output": "evidence/bucket_family/lp_arbitrage_candidates.jsonl",
+    "near_misses_output": "evidence/bucket_family/lp_arbitrage_near_misses.jsonl",
+    "summary_output": "evidence/bucket_family/lp_arbitrage_report.json"
+  },
+  "best_lp_edge_cents": null,
+  "candidate_count": 0,
+  "candidates": [],
+  "catalog_path": "evidence/bucket_family/weather_bucket_family_catalog.json",
+  "counts_for_live_gate": false,
+  "family_count": 9,
+  "family_rows": [
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.3,
+      "event_slug": "highest-temperature-in-ankara-on-june-28-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 17.04858,
+          "best_ask": 0.004,
+          "bucket_type": "eq",
+          "leg_cost": 0.004,
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-30c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.003,
+          "threshold": 30.0,
+          "token_id": "76731949775578802911705829111593600488097422403909869746304800841450153872012"
+        },
+        {
+          "ask_depth": 547.66179,
+          "best_ask": 0.999,
+          "bucket_type": "eq",
+          "leg_cost": 0.999,
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-30c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.003,
+          "threshold": 30.0,
+          "token_id": "21481871908430589251177238216341224157724195114909275330423719746097152576734"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 17.04858,
+      "missing_leg_count": 5,
+      "missing_reason_counts": {
+        "depth_below_min": 5,
+        "missing_ask": 5
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 23°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-23corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 23.0
+        },
+        {
+          "bucket_label": "= 24°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-24c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 24.0
+        },
+        {
+          "bucket_label": "= 25°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-25c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-26c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-27c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-28c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-29c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-30c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-31c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": "= 32°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-32c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 32.0
+        },
+        {
+          "bucket_label": ">= 33°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-33corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 33.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.003,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "metar",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 19931,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 21128008,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_buy_all_yes",
+          "structured_same_market_yes_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 22
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "LTAC",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-28",
+      "total_cost": 1.003,
+      "tradable_leg_count": 17,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.4,
+      "event_slug": "highest-temperature-in-ankara-on-june-29-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 10.67658,
+          "best_ask": 0.006,
+          "bucket_type": "eq",
+          "leg_cost": 0.006,
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-26c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.004,
+          "threshold": 26.0,
+          "token_id": "40214243593920205425918035694230846037502012531515599073057294986269249295069"
+        },
+        {
+          "ask_depth": 225.73894,
+          "best_ask": 0.998,
+          "bucket_type": "eq",
+          "leg_cost": 0.998,
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-26c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.004,
+          "threshold": 26.0,
+          "token_id": "108057005778668336548429136581280668430448197560217307119402671613623390594363"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 10.67658,
+      "missing_leg_count": 3,
+      "missing_reason_counts": {
+        "depth_below_min": 3,
+        "missing_ask": 2
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 25°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-25corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-26c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-27c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-28c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-29c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-30c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-31c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": "= 32°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-32c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 32.0
+        },
+        {
+          "bucket_label": "= 33°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-33c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 33.0
+        },
+        {
+          "bucket_label": "= 34°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-34c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 34.0
+        },
+        {
+          "bucket_label": ">= 35°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-35corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 35.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.004,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "metar",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 19698,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 54382218,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_same_market_yes_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 44
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "LTAC",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-29",
+      "total_cost": 1.004,
+      "tradable_leg_count": 19,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.1,
+      "event_slug": "highest-temperature-in-ankara-on-june-30-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 14.80822,
+          "best_ask": 0.011,
+          "bucket_type": "eq",
+          "leg_cost": 0.011,
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-28c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.001,
+          "threshold": 28.0,
+          "token_id": "20816771373655593061517675044173552563477930601029571418219142001442239722364"
+        },
+        {
+          "ask_depth": 522.21218,
+          "best_ask": 0.99,
+          "bucket_type": "eq",
+          "leg_cost": 0.99,
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-28c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.001,
+          "threshold": 28.0,
+          "token_id": "25258026980729242359890079469295484936157596513058718865513063772603169010430"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 14.80822,
+      "missing_leg_count": 1,
+      "missing_reason_counts": {
+        "depth_below_min": 1
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 26°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-26corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-27c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-28c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-29c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-30c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-31c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": "= 32°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-32c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 32.0
+        },
+        {
+          "bucket_label": "= 33°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-33c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 33.0
+        },
+        {
+          "bucket_label": "= 34°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-34c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 34.0
+        },
+        {
+          "bucket_label": "= 35°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-35c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 35.0
+        },
+        {
+          "bucket_label": ">= 36°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-36corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 36.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.001,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "metar",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 19055,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 128793248,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_same_market_yes_no",
+          "structured_scaled_buy_all_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 66
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "LTAC",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-30",
+      "total_cost": 1.001,
+      "tradable_leg_count": 21,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": 0.5,
+      "event_slug": "highest-temperature-in-istanbul-on-june-28-2026",
+      "leg_count": 3,
+      "legs": [
+        {
+          "ask_depth": 42.0654,
+          "best_ask": 0.42,
+          "bucket_type": "eq",
+          "leg_cost": 0.21,
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-26c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 0.5,
+          "side": "NO",
+          "spread": 0.02,
+          "threshold": 26.0,
+          "token_id": "53206794094168584303718422216410802420308751744232093269836774413771047528568"
+        },
+        {
+          "ask_depth": 298.5317,
+          "best_ask": 0.62,
+          "bucket_type": "eq",
+          "leg_cost": 0.31,
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-27c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 0.5,
+          "side": "NO",
+          "spread": 0.01,
+          "threshold": 27.0,
+          "token_id": "74339329331316340266619341208208261914995684722246815289072942277135446491394"
+        },
+        {
+          "ask_depth": 716.1347,
+          "best_ask": 0.95,
+          "bucket_type": "eq",
+          "leg_cost": 0.475,
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-28c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 0.5,
+          "side": "NO",
+          "spread": 0.03,
+          "threshold": 28.0,
+          "token_id": "18909832945106968858042806807721033058630728687014273641289933106792961833850"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 42.0654,
+      "missing_leg_count": 5,
+      "missing_reason_counts": {
+        "depth_below_min": 5,
+        "missing_ask": 5
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 22°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-22corbelow",
+          "outcome_index": 0,
+          "payout": 1.5,
+          "threshold": 22.0
+        },
+        {
+          "bucket_label": "= 23°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-23c",
+          "outcome_index": 1,
+          "payout": 1.5,
+          "threshold": 23.0
+        },
+        {
+          "bucket_label": "= 24°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-24c",
+          "outcome_index": 2,
+          "payout": 1.5,
+          "threshold": 24.0
+        },
+        {
+          "bucket_label": "= 25°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-25c",
+          "outcome_index": 3,
+          "payout": 1.5,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-26c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-27c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-28c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-29c",
+          "outcome_index": 7,
+          "payout": 1.5,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-30c",
+          "outcome_index": 8,
+          "payout": 1.5,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-31c",
+          "outcome_index": 9,
+          "payout": 1.5,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": ">= 32°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-32corhigher",
+          "outcome_index": 10,
+          "payout": 1.5,
+          "threshold": 32.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 0.995,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "noaa",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 19931,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 21128008,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_buy_all_yes",
+          "structured_same_market_yes_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 22
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "LTFM",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-28",
+      "total_cost": 0.995,
+      "tradable_leg_count": 17,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.1,
+      "event_slug": "highest-temperature-in-istanbul-on-june-29-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 26.27424,
+          "best_ask": 0.002,
+          "bucket_type": "eq",
+          "leg_cost": 0.002,
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-34c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.001,
+          "threshold": 34.0,
+          "token_id": "89151024185831583433040128424341569698313284150250011958053738294010146716838"
+        },
+        {
+          "ask_depth": 148.851,
+          "best_ask": 0.999,
+          "bucket_type": "eq",
+          "leg_cost": 0.999,
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-34c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.001,
+          "threshold": 34.0,
+          "token_id": "67979179567753453255463552515194624138033212766509680483691288458722394311185"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 26.27424,
+      "missing_leg_count": 1,
+      "missing_reason_counts": {
+        "depth_below_min": 1,
+        "missing_ask": 1
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 25°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-25corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-26c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-27c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-28c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-29c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-30c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-31c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": "= 32°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-32c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 32.0
+        },
+        {
+          "bucket_label": "= 33°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-33c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 33.0
+        },
+        {
+          "bucket_label": "= 34°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-34c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 34.0
+        },
+        {
+          "bucket_label": ">= 35°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-35corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 35.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.001,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "noaa",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 17381,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 128793248,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_buy_all_yes",
+          "structured_same_market_yes_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 56
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "LTFM",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-29",
+      "total_cost": 1.001,
+      "tradable_leg_count": 21,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.2,
+      "event_slug": "highest-temperature-in-istanbul-on-june-30-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 20.67691,
+          "best_ask": 0.004,
+          "bucket_type": "ge",
+          "leg_cost": 0.004,
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-33corhigher",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.002,
+          "threshold": 33.0,
+          "token_id": "113185838522541760182077365779392045978093524820441942680461650304697346706645"
+        },
+        {
+          "ask_depth": 393.61274,
+          "best_ask": 0.998,
+          "bucket_type": "ge",
+          "leg_cost": 0.998,
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-33corhigher",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.002,
+          "threshold": 33.0,
+          "token_id": "90795035287692092704867971954031843201353056493247415380219443952548683695865"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 20.67691,
+      "missing_leg_count": 0,
+      "missing_reason_counts": {},
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 23°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-23corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 23.0
+        },
+        {
+          "bucket_label": "= 24°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-24c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 24.0
+        },
+        {
+          "bucket_label": "= 25°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-25c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-26c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-27c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-28c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-29c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-30c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-31c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": "= 32°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-32c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 32.0
+        },
+        {
+          "bucket_label": ">= 33°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-33corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 33.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.002,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "noaa",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 2321,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 193523772,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_buy_all_yes",
+          "structured_same_market_yes_no",
+          "structured_scaled_buy_all_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 68
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "LTFM",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-30",
+      "total_cost": 1.002,
+      "tradable_leg_count": 22,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.9,
+      "event_slug": "highest-temperature-in-moscow-on-june-28-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 5.98974,
+          "best_ask": 0.01,
+          "bucket_type": "eq",
+          "leg_cost": 0.01,
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-26c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.009,
+          "threshold": 26.0,
+          "token_id": "88563005639624369606219190931574382737430301961832834999778654529288765502459"
+        },
+        {
+          "ask_depth": 19.98,
+          "best_ask": 0.999,
+          "bucket_type": "eq",
+          "leg_cost": 0.999,
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-26c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.009,
+          "threshold": 26.0,
+          "token_id": "67006691854736569524700586214090352093176680513198792313577081457463013913121"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 5.98974,
+      "missing_leg_count": 6,
+      "missing_reason_counts": {
+        "depth_below_min": 6,
+        "missing_ask": 5
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 19°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-19corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 19.0
+        },
+        {
+          "bucket_label": "= 20°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-20c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 20.0
+        },
+        {
+          "bucket_label": "= 21°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-21c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 21.0
+        },
+        {
+          "bucket_label": "= 22°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-22c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 22.0
+        },
+        {
+          "bucket_label": "= 23°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-23c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 23.0
+        },
+        {
+          "bucket_label": "= 24°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-24c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 24.0
+        },
+        {
+          "bucket_label": "= 25°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-25c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-26c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-27c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-28c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": ">= 29°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-29corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 29.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.009,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "metar",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 12488,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 12846262,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_same_market_yes_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 20
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "UUWW",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-28",
+      "total_cost": 1.009,
+      "tradable_leg_count": 16,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 1,
+      "candidate": false,
+      "counts_for_live_gate": false,
+      "event_slug": "highest-temperature-in-moscow-on-june-29-2026",
+      "live_order_path": false,
+      "missing_leg_count": 0,
+      "no_candidate_reason": "incomplete_partition",
+      "paper_only": true,
+      "partition_gap_reasons": [
+        "missing_or_multiple_lower_tail",
+        "missing_or_multiple_upper_tail"
+      ],
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_family.v1",
+      "settlement_source": "metar",
+      "solver_method": "not_run_incomplete_partition",
+      "station_code": "UUWW",
+      "target_date": "2026-06-29"
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.3,
+      "event_slug": "highest-temperature-in-moscow-on-june-30-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 3.22818,
+          "best_ask": 0.006,
+          "bucket_type": "le",
+          "leg_cost": 0.006,
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-22corbelow",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.003,
+          "threshold": 22.0,
+          "token_id": "48807594403383546106697669081573233592044844746578543450280990281969662919989"
+        },
+        {
+          "ask_depth": 558.05612,
+          "best_ask": 0.997,
+          "bucket_type": "le",
+          "leg_cost": 0.997,
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-22corbelow",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.002,
+          "threshold": 22.0,
+          "token_id": "46211618049809236294107805933819958249340829053135605106446184809935396421837"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 3.22818,
+      "missing_leg_count": 1,
+      "missing_reason_counts": {
+        "depth_below_min": 1
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 22°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-22corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 22.0
+        },
+        {
+          "bucket_label": "= 23°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-23c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 23.0
+        },
+        {
+          "bucket_label": "= 24°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-24c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 24.0
+        },
+        {
+          "bucket_label": "= 25°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-25c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-26c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-27c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-28c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-29c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-30c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-31c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": ">= 32°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-32corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 32.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.003,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "metar",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 19055,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 128793248,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_same_market_yes_no",
+          "structured_scaled_buy_all_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 66
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "UUWW",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-30",
+      "total_cost": 1.003,
+      "tradable_leg_count": 21,
+      "worst_case_payout": 1.0
+    }
+  ],
+  "generated_at": "2026-06-28T10:35:43Z",
+  "live_order_path": false,
+  "lp_basket_paper_fill_count": 0,
+  "lp_candidate_count": 0,
+  "lp_family_count": 8,
+  "lp_near_miss_count": 8,
+  "missing_leg_count": 22,
+  "near_misses": [
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": 0.5,
+      "event_slug": "highest-temperature-in-istanbul-on-june-28-2026",
+      "leg_count": 3,
+      "legs": [
+        {
+          "ask_depth": 42.0654,
+          "best_ask": 0.42,
+          "bucket_type": "eq",
+          "leg_cost": 0.21,
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-26c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 0.5,
+          "side": "NO",
+          "spread": 0.02,
+          "threshold": 26.0,
+          "token_id": "53206794094168584303718422216410802420308751744232093269836774413771047528568"
+        },
+        {
+          "ask_depth": 298.5317,
+          "best_ask": 0.62,
+          "bucket_type": "eq",
+          "leg_cost": 0.31,
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-27c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 0.5,
+          "side": "NO",
+          "spread": 0.01,
+          "threshold": 27.0,
+          "token_id": "74339329331316340266619341208208261914995684722246815289072942277135446491394"
+        },
+        {
+          "ask_depth": 716.1347,
+          "best_ask": 0.95,
+          "bucket_type": "eq",
+          "leg_cost": 0.475,
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-28c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 0.5,
+          "side": "NO",
+          "spread": 0.03,
+          "threshold": 28.0,
+          "token_id": "18909832945106968858042806807721033058630728687014273641289933106792961833850"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 42.0654,
+      "missing_leg_count": 5,
+      "missing_reason_counts": {
+        "depth_below_min": 5,
+        "missing_ask": 5
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 22°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-22corbelow",
+          "outcome_index": 0,
+          "payout": 1.5,
+          "threshold": 22.0
+        },
+        {
+          "bucket_label": "= 23°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-23c",
+          "outcome_index": 1,
+          "payout": 1.5,
+          "threshold": 23.0
+        },
+        {
+          "bucket_label": "= 24°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-24c",
+          "outcome_index": 2,
+          "payout": 1.5,
+          "threshold": 24.0
+        },
+        {
+          "bucket_label": "= 25°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-25c",
+          "outcome_index": 3,
+          "payout": 1.5,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-26c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-27c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-28c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-29c",
+          "outcome_index": 7,
+          "payout": 1.5,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-30c",
+          "outcome_index": 8,
+          "payout": 1.5,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-31c",
+          "outcome_index": 9,
+          "payout": 1.5,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": ">= 32°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-istanbul-on-june-28-2026-32corhigher",
+          "outcome_index": 10,
+          "payout": 1.5,
+          "threshold": 32.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 0.995,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "noaa",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 19931,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 21128008,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_buy_all_yes",
+          "structured_same_market_yes_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 22
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "LTFM",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-28",
+      "total_cost": 0.995,
+      "tradable_leg_count": 17,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.1,
+      "event_slug": "highest-temperature-in-ankara-on-june-30-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 14.80822,
+          "best_ask": 0.011,
+          "bucket_type": "eq",
+          "leg_cost": 0.011,
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-28c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.001,
+          "threshold": 28.0,
+          "token_id": "20816771373655593061517675044173552563477930601029571418219142001442239722364"
+        },
+        {
+          "ask_depth": 522.21218,
+          "best_ask": 0.99,
+          "bucket_type": "eq",
+          "leg_cost": 0.99,
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-28c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.001,
+          "threshold": 28.0,
+          "token_id": "25258026980729242359890079469295484936157596513058718865513063772603169010430"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 14.80822,
+      "missing_leg_count": 1,
+      "missing_reason_counts": {
+        "depth_below_min": 1
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 26°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-26corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-27c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-28c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-29c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-30c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-31c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": "= 32°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-32c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 32.0
+        },
+        {
+          "bucket_label": "= 33°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-33c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 33.0
+        },
+        {
+          "bucket_label": "= 34°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-34c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 34.0
+        },
+        {
+          "bucket_label": "= 35°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-35c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 35.0
+        },
+        {
+          "bucket_label": ">= 36°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-ankara-on-june-30-2026-36corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 36.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.001,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "metar",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 19055,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 128793248,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_same_market_yes_no",
+          "structured_scaled_buy_all_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 66
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "LTAC",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-30",
+      "total_cost": 1.001,
+      "tradable_leg_count": 21,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.1,
+      "event_slug": "highest-temperature-in-istanbul-on-june-29-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 26.27424,
+          "best_ask": 0.002,
+          "bucket_type": "eq",
+          "leg_cost": 0.002,
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-34c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.001,
+          "threshold": 34.0,
+          "token_id": "89151024185831583433040128424341569698313284150250011958053738294010146716838"
+        },
+        {
+          "ask_depth": 148.851,
+          "best_ask": 0.999,
+          "bucket_type": "eq",
+          "leg_cost": 0.999,
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-34c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.001,
+          "threshold": 34.0,
+          "token_id": "67979179567753453255463552515194624138033212766509680483691288458722394311185"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 26.27424,
+      "missing_leg_count": 1,
+      "missing_reason_counts": {
+        "depth_below_min": 1,
+        "missing_ask": 1
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 25°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-25corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-26c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-27c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-28c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-29c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-30c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-31c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": "= 32°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-32c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 32.0
+        },
+        {
+          "bucket_label": "= 33°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-33c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 33.0
+        },
+        {
+          "bucket_label": "= 34°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-34c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 34.0
+        },
+        {
+          "bucket_label": ">= 35°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-35corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 35.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.001,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "noaa",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 17381,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 128793248,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_buy_all_yes",
+          "structured_same_market_yes_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 56
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "LTFM",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-29",
+      "total_cost": 1.001,
+      "tradable_leg_count": 21,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.2,
+      "event_slug": "highest-temperature-in-istanbul-on-june-30-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 20.67691,
+          "best_ask": 0.004,
+          "bucket_type": "ge",
+          "leg_cost": 0.004,
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-33corhigher",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.002,
+          "threshold": 33.0,
+          "token_id": "113185838522541760182077365779392045978093524820441942680461650304697346706645"
+        },
+        {
+          "ask_depth": 393.61274,
+          "best_ask": 0.998,
+          "bucket_type": "ge",
+          "leg_cost": 0.998,
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-33corhigher",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.002,
+          "threshold": 33.0,
+          "token_id": "90795035287692092704867971954031843201353056493247415380219443952548683695865"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 20.67691,
+      "missing_leg_count": 0,
+      "missing_reason_counts": {},
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 23°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-23corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 23.0
+        },
+        {
+          "bucket_label": "= 24°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-24c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 24.0
+        },
+        {
+          "bucket_label": "= 25°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-25c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-26c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-27c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-28c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-29c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-30c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-31c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": "= 32°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-32c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 32.0
+        },
+        {
+          "bucket_label": ">= 33°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-istanbul-on-june-30-2026-33corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 33.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.002,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "noaa",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 2321,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 193523772,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_buy_all_yes",
+          "structured_same_market_yes_no",
+          "structured_scaled_buy_all_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 68
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "LTFM",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-30",
+      "total_cost": 1.002,
+      "tradable_leg_count": 22,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.3,
+      "event_slug": "highest-temperature-in-ankara-on-june-28-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 17.04858,
+          "best_ask": 0.004,
+          "bucket_type": "eq",
+          "leg_cost": 0.004,
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-30c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.003,
+          "threshold": 30.0,
+          "token_id": "76731949775578802911705829111593600488097422403909869746304800841450153872012"
+        },
+        {
+          "ask_depth": 547.66179,
+          "best_ask": 0.999,
+          "bucket_type": "eq",
+          "leg_cost": 0.999,
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-30c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.003,
+          "threshold": 30.0,
+          "token_id": "21481871908430589251177238216341224157724195114909275330423719746097152576734"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 17.04858,
+      "missing_leg_count": 5,
+      "missing_reason_counts": {
+        "depth_below_min": 5,
+        "missing_ask": 5
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 23°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-23corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 23.0
+        },
+        {
+          "bucket_label": "= 24°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-24c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 24.0
+        },
+        {
+          "bucket_label": "= 25°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-25c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-26c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-27c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-28c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-29c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-30c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-31c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": "= 32°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-32c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 32.0
+        },
+        {
+          "bucket_label": ">= 33°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-ankara-on-june-28-2026-33corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 33.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.003,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "metar",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 19931,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 21128008,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_buy_all_yes",
+          "structured_same_market_yes_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 22
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "LTAC",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-28",
+      "total_cost": 1.003,
+      "tradable_leg_count": 17,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.3,
+      "event_slug": "highest-temperature-in-moscow-on-june-30-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 3.22818,
+          "best_ask": 0.006,
+          "bucket_type": "le",
+          "leg_cost": 0.006,
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-22corbelow",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.003,
+          "threshold": 22.0,
+          "token_id": "48807594403383546106697669081573233592044844746578543450280990281969662919989"
+        },
+        {
+          "ask_depth": 558.05612,
+          "best_ask": 0.997,
+          "bucket_type": "le",
+          "leg_cost": 0.997,
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-22corbelow",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.002,
+          "threshold": 22.0,
+          "token_id": "46211618049809236294107805933819958249340829053135605106446184809935396421837"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 3.22818,
+      "missing_leg_count": 1,
+      "missing_reason_counts": {
+        "depth_below_min": 1
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 22°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-22corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 22.0
+        },
+        {
+          "bucket_label": "= 23°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-23c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 23.0
+        },
+        {
+          "bucket_label": "= 24°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-24c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 24.0
+        },
+        {
+          "bucket_label": "= 25°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-25c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-26c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-27c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-28c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-29c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-30c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-31c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": ">= 32°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-moscow-on-june-30-2026-32corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 32.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.003,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "metar",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 19055,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 128793248,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_same_market_yes_no",
+          "structured_scaled_buy_all_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 66
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "UUWW",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-30",
+      "total_cost": 1.003,
+      "tradable_leg_count": 21,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.4,
+      "event_slug": "highest-temperature-in-ankara-on-june-29-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 10.67658,
+          "best_ask": 0.006,
+          "bucket_type": "eq",
+          "leg_cost": 0.006,
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-26c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.004,
+          "threshold": 26.0,
+          "token_id": "40214243593920205425918035694230846037502012531515599073057294986269249295069"
+        },
+        {
+          "ask_depth": 225.73894,
+          "best_ask": 0.998,
+          "bucket_type": "eq",
+          "leg_cost": 0.998,
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-26c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.004,
+          "threshold": 26.0,
+          "token_id": "108057005778668336548429136581280668430448197560217307119402671613623390594363"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 10.67658,
+      "missing_leg_count": 3,
+      "missing_reason_counts": {
+        "depth_below_min": 3,
+        "missing_ask": 2
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 25°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-25corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-26c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-27c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-28c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": "= 29°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-29c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 29.0
+        },
+        {
+          "bucket_label": "= 30°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-30c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 30.0
+        },
+        {
+          "bucket_label": "= 31°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-31c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 31.0
+        },
+        {
+          "bucket_label": "= 32°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-32c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 32.0
+        },
+        {
+          "bucket_label": "= 33°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-33c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 33.0
+        },
+        {
+          "bucket_label": "= 34°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-34c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 34.0
+        },
+        {
+          "bucket_label": ">= 35°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-ankara-on-june-29-2026-35corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 35.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.004,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "metar",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 19698,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 54382218,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_same_market_yes_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 44
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "LTAC",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-29",
+      "total_cost": 1.004,
+      "tradable_leg_count": 19,
+      "worst_case_payout": 1.0
+    },
+    {
+      "bucket_count": 11,
+      "candidate": false,
+      "cost_cents": 0.0,
+      "counts_for_live_gate": false,
+      "edge_cents": -0.9,
+      "event_slug": "highest-temperature-in-moscow-on-june-28-2026",
+      "leg_count": 2,
+      "legs": [
+        {
+          "ask_depth": 5.98974,
+          "best_ask": 0.01,
+          "bucket_type": "eq",
+          "leg_cost": 0.01,
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-26c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "quantity": 1.0,
+          "side": "YES",
+          "spread": 0.009,
+          "threshold": 26.0,
+          "token_id": "88563005639624369606219190931574382737430301961832834999778654529288765502459"
+        },
+        {
+          "ask_depth": 19.98,
+          "best_ask": 0.999,
+          "bucket_type": "eq",
+          "leg_cost": 0.999,
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-26c",
+          "orderbook_snapshot_id": null,
+          "payoff_vector": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "quantity": 1.0,
+          "side": "NO",
+          "spread": 0.009,
+          "threshold": 26.0,
+          "token_id": "67006691854736569524700586214090352093176680513198792313577081457463013913121"
+        }
+      ],
+      "live_order_path": false,
+      "min_edge_cents": 1.0,
+      "min_leg_depth": 5.98974,
+      "missing_leg_count": 6,
+      "missing_reason_counts": {
+        "depth_below_min": 6,
+        "missing_ask": 5
+      },
+      "no_candidate_reason": "edge_below_min",
+      "outcome_payoff_vector": [
+        {
+          "bucket_label": "<= 19°C",
+          "bucket_type": "le",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-19corbelow",
+          "outcome_index": 0,
+          "payout": 1.0,
+          "threshold": 19.0
+        },
+        {
+          "bucket_label": "= 20°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-20c",
+          "outcome_index": 1,
+          "payout": 1.0,
+          "threshold": 20.0
+        },
+        {
+          "bucket_label": "= 21°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-21c",
+          "outcome_index": 2,
+          "payout": 1.0,
+          "threshold": 21.0
+        },
+        {
+          "bucket_label": "= 22°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-22c",
+          "outcome_index": 3,
+          "payout": 1.0,
+          "threshold": 22.0
+        },
+        {
+          "bucket_label": "= 23°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-23c",
+          "outcome_index": 4,
+          "payout": 1.0,
+          "threshold": 23.0
+        },
+        {
+          "bucket_label": "= 24°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-24c",
+          "outcome_index": 5,
+          "payout": 1.0,
+          "threshold": 24.0
+        },
+        {
+          "bucket_label": "= 25°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-25c",
+          "outcome_index": 6,
+          "payout": 1.0,
+          "threshold": 25.0
+        },
+        {
+          "bucket_label": "= 26°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-26c",
+          "outcome_index": 7,
+          "payout": 1.0,
+          "threshold": 26.0
+        },
+        {
+          "bucket_label": "= 27°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-27c",
+          "outcome_index": 8,
+          "payout": 1.0,
+          "threshold": 27.0
+        },
+        {
+          "bucket_label": "= 28°C",
+          "bucket_type": "eq",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-28c",
+          "outcome_index": 9,
+          "payout": 1.0,
+          "threshold": 28.0
+        },
+        {
+          "bucket_label": ">= 29°C",
+          "bucket_type": "ge",
+          "market_slug": "highest-temperature-in-moscow-on-june-28-2026-29corhigher",
+          "outcome_index": 10,
+          "payout": 1.0,
+          "threshold": 29.0
+        }
+      ],
+      "paper_only": true,
+      "raw_total_cost": 1.009,
+      "schema_version": "polyweather_bucket_family_lp_arbitrage_solution.v1",
+      "settlement_source": "metar",
+      "solver_diagnostics": {
+        "active_set_enumerated_count": 12488,
+        "active_set_max_enumerations": 250000,
+        "active_set_skipped_estimate_count": 12846262,
+        "solver_methods_considered": [
+          "active_set_bruteforce",
+          "structured_same_market_yes_no",
+          "structured_two_no_cover"
+        ],
+        "structured_fallback_solution_count": 20
+      },
+      "solver_method": "active_set_bruteforce",
+      "station_code": "UUWW",
+      "strategy_id": "bucket_family_payoff_matrix_arbitrage",
+      "target_date": "2026-06-28",
+      "total_cost": 1.009,
+      "tradable_leg_count": 16,
+      "worst_case_payout": 1.0
+    }
+  ],
+  "no_candidate_reason_counts": [
+    {
+      "count": 8,
+      "reason": "edge_below_min"
+    },
+    {
+      "count": 1,
+      "reason": "incomplete_partition"
+    }
+  ],
+  "paper_journal": {
+    "fills_path": "evidence/bucket_family/lp_basket_paper/fills.jsonl",
+    "manifest_path": "evidence/bucket_family/lp_basket_paper/manifest.jsonl",
+    "written_count": 0
+  },
+  "paper_only": true,
+  "partition_family_count": 8,
+  "schema_version": "polyweather_weather_bucket_family_lp_arbitrage.v1",
+  "thresholds": {
+    "cost_cents": 0.0,
+    "max_candidates": 20,
+    "min_edge_cents": 1.0,
+    "min_leg_depth": 1.0
+  }
+}

@@ -1,0 +1,463 @@
+{
+  "after_token_overlap": {
+    "closed_backfill_due_token_count": 0,
+    "matched_closed_archived_token_count": 0,
+    "pending_awaiting_observation_window_end_token_count": 44,
+    "pending_awaiting_settlement_due_time_token_count": 0,
+    "pending_closed_backfill_due_token_count": 0,
+    "wrong_due_prevented_count": 44
+  },
+  "alpha_conclusion": "inconclusive_waiting_for_resolution_or_backfill",
+  "artifact_paths": {},
+  "backfill_dir": "evidence/weather_backfill_local",
+  "before_token_overlap": {
+    "closed_backfill_due_token_count": 0,
+    "matched_closed_archived_token_count": 0,
+    "pending_awaiting_observation_window_end_token_count": 44,
+    "pending_awaiting_settlement_due_time_token_count": 0,
+    "pending_closed_backfill_due_token_count": 0,
+    "wrong_due_prevented_count": 44
+  },
+  "closed_backfill_executed": false,
+  "counts_for_live_gate": false,
+  "diagnostic_only": true,
+  "due_status": "waiting_for_observation_window_end",
+  "execution_groups": [
+    {
+      "group_id": "due_at_2026_06_28T025959Z_supported_metar",
+      "market_count": 22,
+      "market_slug_samples": [
+        "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+        "highest-temperature-in-moscow-on-june-27-2026-22c",
+        "highest-temperature-in-moscow-on-june-27-2026-23c",
+        "highest-temperature-in-ankara-on-june-27-2026-28c",
+        "highest-temperature-in-ankara-on-june-27-2026-34corhigher"
+      ],
+      "next_action": "execute_targeted_closed_backfill_when_due",
+      "pending_status_counts": [
+        {
+          "count": 22,
+          "status": "awaiting_observation_window_end"
+        }
+      ],
+      "settlement_due_time": "2026-06-28T02:59:59Z",
+      "settlement_source": "metar",
+      "station_code": "LTAC+UUWW",
+      "station_codes": [
+        "LTAC",
+        "UUWW"
+      ],
+      "supported_official_source": true,
+      "token_count": 22
+    },
+    {
+      "group_id": "unsupported_noaa_adapter",
+      "market_count": 11,
+      "market_slug_samples": [
+        "highest-temperature-in-istanbul-on-june-27-2026-23corbelow",
+        "highest-temperature-in-istanbul-on-june-27-2026-25c",
+        "highest-temperature-in-istanbul-on-june-27-2026-24c",
+        "highest-temperature-in-istanbul-on-june-27-2026-33corhigher",
+        "highest-temperature-in-istanbul-on-june-27-2026-29c"
+      ],
+      "next_action": "skip_until_official_source_adapter_exists",
+      "pending_status_counts": [
+        {
+          "count": 11,
+          "status": "awaiting_observation_window_end"
+        }
+      ],
+      "settlement_due_time": "2026-06-28T02:59:59Z",
+      "settlement_source": "noaa",
+      "station_code": "LTFM",
+      "station_codes": [
+        "LTFM"
+      ],
+      "supported_official_source": false,
+      "token_count": 11
+    },
+    {
+      "group_id": "due_at_2026_06_28T055959Z_supported_metar",
+      "market_count": 11,
+      "market_slug_samples": [
+        "highest-temperature-in-london-on-june-27-2026-32c",
+        "highest-temperature-in-london-on-june-27-2026-35corhigher",
+        "highest-temperature-in-london-on-june-27-2026-27c",
+        "highest-temperature-in-london-on-june-27-2026-29c",
+        "highest-temperature-in-london-on-june-27-2026-28c"
+      ],
+      "next_action": "execute_targeted_closed_backfill_when_due",
+      "pending_status_counts": [
+        {
+          "count": 11,
+          "status": "awaiting_observation_window_end"
+        }
+      ],
+      "settlement_due_time": "2026-06-28T05:59:59Z",
+      "settlement_source": "metar",
+      "station_code": "EGLC",
+      "station_codes": [
+        "EGLC"
+      ],
+      "supported_official_source": true,
+      "token_count": 11
+    }
+  ],
+  "filtered_execution_groups": [
+    {
+      "group_id": "due_at_2026_06_28T025959Z_supported_metar",
+      "market_count": 22,
+      "market_slug_samples": [
+        "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+        "highest-temperature-in-moscow-on-june-27-2026-22c",
+        "highest-temperature-in-moscow-on-june-27-2026-23c",
+        "highest-temperature-in-ankara-on-june-27-2026-28c",
+        "highest-temperature-in-ankara-on-june-27-2026-34corhigher"
+      ],
+      "next_action": "execute_targeted_closed_backfill_when_due",
+      "pending_status_counts": [
+        {
+          "count": 22,
+          "status": "awaiting_observation_window_end"
+        }
+      ],
+      "settlement_due_time": "2026-06-28T02:59:59Z",
+      "settlement_source": "metar",
+      "station_code": "LTAC+UUWW",
+      "station_codes": [
+        "LTAC",
+        "UUWW"
+      ],
+      "supported_official_source": true,
+      "token_count": 22
+    },
+    {
+      "group_id": "unsupported_noaa_adapter",
+      "market_count": 11,
+      "market_slug_samples": [
+        "highest-temperature-in-istanbul-on-june-27-2026-23corbelow",
+        "highest-temperature-in-istanbul-on-june-27-2026-25c",
+        "highest-temperature-in-istanbul-on-june-27-2026-24c",
+        "highest-temperature-in-istanbul-on-june-27-2026-33corhigher",
+        "highest-temperature-in-istanbul-on-june-27-2026-29c"
+      ],
+      "next_action": "skip_until_official_source_adapter_exists",
+      "pending_status_counts": [
+        {
+          "count": 11,
+          "status": "awaiting_observation_window_end"
+        }
+      ],
+      "settlement_due_time": "2026-06-28T02:59:59Z",
+      "settlement_source": "noaa",
+      "station_code": "LTFM",
+      "station_codes": [
+        "LTFM"
+      ],
+      "supported_official_source": false,
+      "token_count": 11
+    },
+    {
+      "group_id": "due_at_2026_06_28T055959Z_supported_metar",
+      "market_count": 11,
+      "market_slug_samples": [
+        "highest-temperature-in-london-on-june-27-2026-32c",
+        "highest-temperature-in-london-on-june-27-2026-35corhigher",
+        "highest-temperature-in-london-on-june-27-2026-27c",
+        "highest-temperature-in-london-on-june-27-2026-29c",
+        "highest-temperature-in-london-on-june-27-2026-28c"
+      ],
+      "next_action": "execute_targeted_closed_backfill_when_due",
+      "pending_status_counts": [
+        {
+          "count": 11,
+          "status": "awaiting_observation_window_end"
+        }
+      ],
+      "settlement_due_time": "2026-06-28T05:59:59Z",
+      "settlement_source": "metar",
+      "station_code": "EGLC",
+      "station_codes": [
+        "EGLC"
+      ],
+      "supported_official_source": true,
+      "token_count": 11
+    }
+  ],
+  "filters": {
+    "allow_partial_official_truth": false,
+    "exclude_settlement_source": [],
+    "exclude_station_code": [],
+    "include_settlement_source": [],
+    "include_station_code": []
+  },
+  "generated_at": "2026-06-27T16:13:23Z",
+  "hard_conclusion": "paper_only_inconclusive_waiting_for_resolution_or_backfill",
+  "live_order_path": false,
+  "next_execution_time_utc": "2026-06-28T02:59:59Z",
+  "next_polymarket_resolution_check_after": null,
+  "official_truth": {
+    "archive_observation_request_plan": {
+      "by_settlement_source": [
+        {
+          "count": 3,
+          "settlement_source": "metar"
+        },
+        {
+          "count": 1,
+          "settlement_source": "noaa"
+        }
+      ],
+      "by_station": [
+        {
+          "count": 1,
+          "station_code": "EGLC"
+        },
+        {
+          "count": 1,
+          "station_code": "LTAC"
+        },
+        {
+          "count": 1,
+          "station_code": "LTFM"
+        },
+        {
+          "count": 1,
+          "station_code": "UUWW"
+        }
+      ],
+      "by_station_source_date": [
+        {
+          "calibration_excluded_reason": null,
+          "counts_for_live_gate": true,
+          "gap_reason": null,
+          "group_state": "official_source_supported",
+          "market_count": 11,
+          "settlement_source": "metar",
+          "station_code": "EGLC",
+          "supported": true,
+          "target_date": "2026-06-27"
+        },
+        {
+          "calibration_excluded_reason": null,
+          "counts_for_live_gate": true,
+          "gap_reason": null,
+          "group_state": "official_source_supported",
+          "market_count": 11,
+          "settlement_source": "metar",
+          "station_code": "LTAC",
+          "supported": true,
+          "target_date": "2026-06-27"
+        },
+        {
+          "calibration_excluded_reason": null,
+          "counts_for_live_gate": true,
+          "gap_reason": null,
+          "group_state": "official_source_supported",
+          "market_count": 11,
+          "settlement_source": "metar",
+          "station_code": "UUWW",
+          "supported": true,
+          "target_date": "2026-06-27"
+        },
+        {
+          "calibration_excluded_reason": "unsupported_official_source_adapter",
+          "counts_for_live_gate": false,
+          "gap_reason": "unsupported_source_adapter",
+          "group_state": "official_source_unsupported",
+          "market_count": 11,
+          "settlement_source": "noaa",
+          "station_code": "LTFM",
+          "supported": false,
+          "target_date": "2026-06-27"
+        }
+      ],
+      "by_target_date": [
+        {
+          "count": 4,
+          "target_date": "2026-06-27"
+        }
+      ],
+      "counts_for_live_gate": false,
+      "diagnostic_only": true,
+      "expected_reuse_market_count": 44,
+      "input_record_count": 44,
+      "paper_only": true,
+      "request_count": 4,
+      "requests": [
+        {
+          "calibration_excluded_reason": null,
+          "cities": [
+            "london"
+          ],
+          "counts_for_live_gate": true,
+          "gap_reason": null,
+          "group_state": "official_source_supported",
+          "market_count": 11,
+          "market_slug_samples": [
+            "highest-temperature-in-london-on-june-27-2026-32c",
+            "highest-temperature-in-london-on-june-27-2026-35corhigher",
+            "highest-temperature-in-london-on-june-27-2026-27c",
+            "highest-temperature-in-london-on-june-27-2026-29c",
+            "highest-temperature-in-london-on-june-27-2026-28c"
+          ],
+          "next_action": "Fetch this supported external official source, then persist the station/date observation before settlement calibration.",
+          "settlement_source": "metar",
+          "station_code": "EGLC",
+          "supported": true,
+          "supported_external_method": "aviationweather_metar_recent_72h",
+          "target_date": "2026-06-27",
+          "token_count": 11,
+          "unit": "C"
+        },
+        {
+          "calibration_excluded_reason": null,
+          "cities": [
+            "ankara"
+          ],
+          "counts_for_live_gate": true,
+          "gap_reason": null,
+          "group_state": "official_source_supported",
+          "market_count": 11,
+          "market_slug_samples": [
+            "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+            "highest-temperature-in-ankara-on-june-27-2026-28c",
+            "highest-temperature-in-ankara-on-june-27-2026-34corhigher",
+            "highest-temperature-in-ankara-on-june-27-2026-31c",
+            "highest-temperature-in-ankara-on-june-27-2026-33c"
+          ],
+          "next_action": "Fetch this supported external official source, then persist the station/date observation before settlement calibration.",
+          "settlement_source": "metar",
+          "station_code": "LTAC",
+          "supported": true,
+          "supported_external_method": "aviationweather_metar_recent_72h",
+          "target_date": "2026-06-27",
+          "token_count": 11,
+          "unit": "C"
+        },
+        {
+          "calibration_excluded_reason": null,
+          "cities": [
+            "moscow"
+          ],
+          "counts_for_live_gate": true,
+          "gap_reason": null,
+          "group_state": "official_source_supported",
+          "market_count": 11,
+          "market_slug_samples": [
+            "highest-temperature-in-moscow-on-june-27-2026-22c",
+            "highest-temperature-in-moscow-on-june-27-2026-23c",
+            "highest-temperature-in-moscow-on-june-27-2026-20c",
+            "highest-temperature-in-moscow-on-june-27-2026-26c",
+            "highest-temperature-in-moscow-on-june-27-2026-18c"
+          ],
+          "next_action": "Fetch this supported external official source, then persist the station/date observation before settlement calibration.",
+          "settlement_source": "metar",
+          "station_code": "UUWW",
+          "supported": true,
+          "supported_external_method": "aviationweather_metar_recent_72h",
+          "target_date": "2026-06-27",
+          "token_count": 11,
+          "unit": "C"
+        },
+        {
+          "calibration_excluded_reason": "unsupported_official_source_adapter",
+          "cities": [
+            "istanbul"
+          ],
+          "counts_for_live_gate": false,
+          "gap_reason": "unsupported_source_adapter",
+          "group_state": "official_source_unsupported",
+          "market_count": 11,
+          "market_slug_samples": [
+            "highest-temperature-in-istanbul-on-june-27-2026-23corbelow",
+            "highest-temperature-in-istanbul-on-june-27-2026-25c",
+            "highest-temperature-in-istanbul-on-june-27-2026-24c",
+            "highest-temperature-in-istanbul-on-june-27-2026-33corhigher",
+            "highest-temperature-in-istanbul-on-june-27-2026-29c"
+          ],
+          "next_action": "Add or populate this official source adapter/store before using these markets for settlement calibration.",
+          "settlement_source": "noaa",
+          "station_code": "LTFM",
+          "supported": false,
+          "supported_external_method": null,
+          "target_date": "2026-06-27",
+          "token_count": 11,
+          "unit": "C"
+        }
+      ],
+      "returned_request_count": 4,
+      "schema_version": "polyweather_official_observation_request_plan.v1",
+      "skipped_record_count": 0,
+      "supported_request_count": 3,
+      "truncated": false,
+      "unsupported_request_count": 1
+    },
+    "archived_yes_token_count": 164,
+    "gap_count": 0,
+    "official_truth_sample_count": 0,
+    "overlap_record_count": 0,
+    "ready_count": 0,
+    "request_plan": {
+      "by_gap_reason": [],
+      "by_settlement_source": [],
+      "counts_for_live_gate": false,
+      "diagnostic_only": true,
+      "paper_only": true,
+      "records_covered_count": 0,
+      "request_count": 0,
+      "requests": [],
+      "returned_request_count": 0,
+      "schema_version": "polyweather_official_observation_backfill_plan.v1",
+      "skipped_gap_count": 0,
+      "truncated": false
+    },
+    "target_scope": "closed_archive_overlap"
+  },
+  "orderbook_archive_dir": "evidence/orderbook_archive",
+  "paper_journal_dir": "evidence/paper_run",
+  "paper_only": true,
+  "readiness_report_compact": {
+    "evidence_gate_passed": false,
+    "hard_conclusion": "只能继续 paper",
+    "hard_gate_failures": null,
+    "live_gate": false,
+    "live_order_path_available": false,
+    "paper_only": null,
+    "schema_version": "polyweather_weather_live_readiness.v1"
+  },
+  "replay_time": "2026-06-27T16:13:23Z",
+  "resolved_pnl_unavailable_reason": null,
+  "schema_version": "polyweather_weather_due_evidence_pipeline.v1",
+  "settlement_calibration": {
+    "hard_conclusion": "insufficient_official_truth_samples_0_of_30",
+    "historical_evidence_no_lookahead": true,
+    "official_truth_sample_count": 0,
+    "probability_score_sample_count": 0,
+    "resolved_pnl_sample_count": 0
+  },
+  "settlement_truth_audit": {
+    "audited_with_official_count": 0,
+    "gap_count": 257,
+    "hard_conclusion": "settlement_truth_audit_has_gaps",
+    "mismatch_count": 0
+  },
+  "strict_replay": {
+    "brier_score": null,
+    "by_price_bucket": [],
+    "by_strategy_bucket": [],
+    "fill_count": 0,
+    "log_loss": null,
+    "missed_fill_count": 0,
+    "missing_resolution_count": 0,
+    "resolved_fill_count": 0,
+    "resolved_pnl_cents": null
+  },
+  "targeted_closed_backfill": {
+    "attempted": false,
+    "closed_market_slug_count": 0,
+    "open_market_slug_count": 0,
+    "payload_status": null
+  },
+  "unresolved_tokens": []
+}

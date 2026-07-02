@@ -1,0 +1,26 @@
+{
+  "after_archive_row_count": 480,
+  "after_archived_unique_token_count": 328,
+  "archive_row_count_delta": 240,
+  "archived_unique_token_count_delta": 88,
+  "before_archive_row_count": 240,
+  "before_archived_unique_token_count": 240,
+  "counts_for_live_gate": false,
+  "no_new_token_reason": null,
+  "orderbook_archive_manifest": {
+    "archive_dir": "evidence/orderbook_archive",
+    "counts_for_live_gate": false,
+    "paper_only": true,
+    "recorded_at": "2026-06-27T15:35:32Z",
+    "rows_seen": 240,
+    "schema_version": "polyweather_polymarket_orderbook_archive.v1",
+    "snapshot_count": 240,
+    "source": "polymarket_readonly",
+    "source_snapshot_id": "polymarket-readonly-2026-06-27T15:35:32Z",
+    "written_count": 240
+  },
+  "paper_cycle_generated_at": "2026-06-27T15:35:32Z",
+  "paper_cycle_status": null,
+  "paper_only": true,
+  "schema_version": "polyweather_orderbook_archive_extra_manifest.v1"
+}

@@ -1,0 +1,78 @@
+{
+  "artifact_paths": {
+    "candidates_output": "evidence/bucket_family/basket_arbitrage_candidates.jsonl",
+    "paper_fill_dir": "evidence/bucket_family/basket_paper",
+    "summary_output": "evidence/bucket_family/latest_arbitrage_report.json",
+    "watch_output": "evidence/bucket_family/basket_arbitrage_watch_rows.jsonl"
+  },
+  "commands": [
+    {
+      "command": [
+        "launchctl",
+        "bootstrap",
+        "gui/501",
+        "/Users/leeyoma/Library/LaunchAgents/com.polyweather.bucket-family-arbitrage-sampler.plist"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "launchctl",
+        "enable",
+        "gui/501/com.polyweather.bucket-family-arbitrage-sampler"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "launchctl",
+        "kickstart",
+        "-k",
+        "gui/501/com.polyweather.bucket-family-arbitrage-sampler"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "counts_for_live_gate": false,
+  "installed": true,
+  "label": "com.polyweather.bucket-family-arbitrage-sampler",
+  "launchctl_status_check_command": "launchctl print gui/501/com.polyweather.bucket-family-arbitrage-sampler",
+  "live_order_path": false,
+  "log_paths": {
+    "stderr": "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/evidence/bucket_family/logs/arbitrage_sampler.err.log",
+    "stdout": "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/evidence/bucket_family/logs/arbitrage_sampler.out.log"
+  },
+  "paper_only": true,
+  "plist_path": "/Users/leeyoma/Library/LaunchAgents/com.polyweather.bucket-family-arbitrage-sampler.plist",
+  "program_arguments": [
+    "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+    "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/scripts/weather_bucket_family_arbitrage_report.py",
+    "--paper-only",
+    "--orderbook-archive-dir",
+    "evidence/bucket_family/orderbook_archive",
+    "--paper-fill-dir",
+    "evidence/bucket_family/basket_paper",
+    "--min-edge-cents",
+    "1.0",
+    "--min-leg-depth",
+    "1.0",
+    "--max-candidates",
+    "20",
+    "--summary-output",
+    "evidence/bucket_family/latest_arbitrage_report.json",
+    "--candidates-output",
+    "evidence/bucket_family/basket_arbitrage_candidates.jsonl",
+    "--watch-output",
+    "evidence/bucket_family/basket_arbitrage_watch_rows.jsonl",
+    "--monotonic-candidates-output",
+    "evidence/bucket_family/monotonic_arbitrage_candidates.jsonl"
+  ],
+  "schema_version": "polyweather_bucket_family_arbitrage_launchd_install.v1",
+  "start_interval_seconds": 60
+}

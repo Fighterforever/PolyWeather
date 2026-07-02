@@ -1,0 +1,21 @@
+{
+  "artifact_paths": {
+    "city_regime_table": "evidence/weather_lp_rewards/city_regime_table.jsonl"
+  },
+  "city_profile_count": 6,
+  "counts_for_live_gate": false,
+  "gap_counts": [
+    {
+      "count": 2,
+      "reason": "insufficient_station_history"
+    },
+    {
+      "count": 4,
+      "reason": "none"
+    }
+  ],
+  "live_order_path": false,
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_weather_city_regime.v1",
+  "sufficient_profile_count": 4
+}

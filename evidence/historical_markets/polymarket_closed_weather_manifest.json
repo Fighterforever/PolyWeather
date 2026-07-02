@@ -1,0 +1,16 @@
+{
+  "closed_temperature_market_count": 1343,
+  "closed_weather_market_count": 1373,
+  "counts_for_live_gate": false,
+  "error_count": 0,
+  "gap_report_path": "evidence/historical_markets/polymarket_closed_weather_gap_report.json",
+  "generated_at": "2026-06-28T04:50:11Z",
+  "live_order_path": false,
+  "manifest_path": "evidence/historical_markets/polymarket_closed_weather_manifest.json",
+  "output_path": "evidence/historical_markets/polymarket_closed_weather_markets.jsonl",
+  "paper_only": true,
+  "replay_supported_market_count": 836,
+  "schema_version": "polyweather_closed_weather_market_bulk_manifest.v1",
+  "station_date_source_joinable_count": 1342,
+  "written_count": 1373
+}

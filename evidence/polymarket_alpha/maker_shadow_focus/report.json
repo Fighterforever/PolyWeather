@@ -1,0 +1,22 @@
+{
+  "artifact_paths": {
+    "inferred_fills": "evidence/polymarket_alpha/maker_shadow_focus/inferred_fills.jsonl",
+    "markouts": "evidence/polymarket_alpha/maker_shadow_focus/markouts.jsonl",
+    "quotes": "evidence/polymarket_alpha/maker_shadow_focus/quotes.jsonl"
+  },
+  "blocker_counts": {
+    "category_not_focus_forward_paper": 5339
+  },
+  "counts_for_live_gate": false,
+  "inferred_fill_count": 0,
+  "live_order_path": false,
+  "markout_count": 0,
+  "mean_markout_with_rebate": null,
+  "mean_markout_without_rebate": null,
+  "paper_only": true,
+  "quote_count": 0,
+  "schema_version": "polyweather_polymarket_alpha_maker_shadow.v1.focus",
+  "scope": "polymarket_only",
+  "strategy_id": "polymarket_alpha_maker_shadow_focus",
+  "top_focus_categories": []
+}

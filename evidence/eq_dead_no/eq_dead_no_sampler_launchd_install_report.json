@@ -1,0 +1,112 @@
+{
+  "auto_active_supported_stations": true,
+  "collect_intraday_before_scan": true,
+  "commands": [
+    {
+      "command": [
+        "launchctl",
+        "bootstrap",
+        "gui/501",
+        "/Users/leeyoma/Library/LaunchAgents/com.polyweather.eq-dead-no-sampler.plist"
+      ],
+      "returncode": 5,
+      "stderr": "Bootstrap failed: 5: Input/output error\nTry re-running the command as root for richer errors.\n",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "launchctl",
+        "bootout",
+        "gui/501",
+        "/Users/leeyoma/Library/LaunchAgents/com.polyweather.eq-dead-no-sampler.plist"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "launchctl",
+        "bootstrap",
+        "gui/501",
+        "/Users/leeyoma/Library/LaunchAgents/com.polyweather.eq-dead-no-sampler.plist"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "launchctl",
+        "enable",
+        "gui/501/com.polyweather.eq-dead-no-sampler"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "launchctl",
+        "kickstart",
+        "-k",
+        "gui/501/com.polyweather.eq-dead-no-sampler"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "counts_for_live_gate": false,
+  "explicit_station_codes_fallback": [
+    "LTAC",
+    "UUWW",
+    "EGLC"
+  ],
+  "installed": true,
+  "label": "com.polyweather.eq-dead-no-sampler",
+  "launchctl_status_check_command": "launchctl print gui/501/com.polyweather.eq-dead-no-sampler",
+  "live_order_path": false,
+  "log_paths": {
+    "stderr": "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/evidence/logs/eq_dead_no_sampler.err.log",
+    "stdout": "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/evidence/logs/eq_dead_no_sampler.out.log"
+  },
+  "paper_only": true,
+  "plist_path": "/Users/leeyoma/Library/LaunchAgents/com.polyweather.eq-dead-no-sampler.plist",
+  "program_arguments": [
+    "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/.venv/bin/python",
+    "/Users/leeyoma/Downloads/waveking_weather_bot/PolyWeather/scripts/weather_eq_dead_no_execution_sampler.py",
+    "--paper-only",
+    "--collect-intraday-before-scan",
+    "--auto-active-supported-stations",
+    "--intraday-observation-path",
+    "evidence/official_observations/intraday_observations.jsonl",
+    "--intraday-manifest-path",
+    "evidence/official_observations/manifest.json",
+    "--orderbook-archive-dir",
+    "evidence/eq_dead_no",
+    "--paper-fill-dir",
+    "evidence/eq_dead_no",
+    "--max-candidates",
+    "20",
+    "--max-entry-price",
+    "0.95",
+    "--min-ask-depth",
+    "1.0",
+    "--exclude-dust",
+    "--station-code",
+    "LTAC",
+    "--station-code",
+    "UUWW",
+    "--station-code",
+    "EGLC"
+  ],
+  "sampler_output_path": "evidence/eq_dead_no/eq_dead_no_execution_sampler_report.json",
+  "schema_version": "polyweather_eq_dead_no_sampler_launchd_install.v1",
+  "start_interval_seconds": 60,
+  "station_codes": [
+    "LTAC",
+    "UUWW",
+    "EGLC"
+  ]
+}

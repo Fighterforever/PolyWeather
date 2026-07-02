@@ -1,0 +1,10 @@
+{
+  "counts_for_live_gate": false,
+  "gap_count": 0,
+  "gap_counts": [],
+  "gaps": [],
+  "generated_at": "2026-06-28T08:00:00Z",
+  "live_order_path": false,
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_trade_tape.v1.gap_report"
+}

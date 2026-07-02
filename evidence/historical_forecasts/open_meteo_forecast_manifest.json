@@ -1,0 +1,11 @@
+{
+  "counts_for_live_gate": false,
+  "forecast_count": 124,
+  "gap_count": 0,
+  "gaps": [],
+  "live_order_path": false,
+  "output_path": "evidence/historical_forecasts/open_meteo_forecasts.jsonl",
+  "paper_only": true,
+  "schema_version": "polyweather_open_meteo_historical_forecast_manifest.v1",
+  "station_count": 49
+}

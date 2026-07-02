@@ -1,0 +1,51 @@
+{
+  "40_to_51_minute_support_count": 0,
+  "by_minute_of_hour": [
+    {
+      "minute": 10,
+      "observation_count": 2,
+      "reward_metadata_available_count": 0,
+      "reward_qualified_quote_count": 0
+    },
+    {
+      "minute": 20,
+      "observation_count": 3,
+      "reward_metadata_available_count": 267,
+      "reward_qualified_quote_count": 40
+    },
+    {
+      "minute": 55,
+      "observation_count": 2,
+      "reward_metadata_available_count": 0,
+      "reward_qualified_quote_count": 0
+    }
+  ],
+  "candidate_reward_window": null,
+  "confidence": "insufficient_observations",
+  "counts_for_live_gate": false,
+  "hour_boundary_cancel_recommendation": "unvalidated_cancel_at_hour_boundary",
+  "live_order_path": false,
+  "observation_count": 7,
+  "observations_count": 7,
+  "outside_window_support_count": 3,
+  "paper_only": true,
+  "recommendation": "insufficient_observations",
+  "reward_by_minute_of_hour": [
+    {
+      "minute": 10,
+      "reward_available_count": 0
+    },
+    {
+      "minute": 20,
+      "reward_available_count": 267
+    },
+    {
+      "minute": 55,
+      "reward_available_count": 0
+    }
+  ],
+  "reward_metadata_available_observation_total": 267,
+  "reward_qualified_quote_observation_total": 40,
+  "schema_version": "polyweather_polymarket_alpha_weather_lp_reward_window.v1",
+  "window_confidence": "insufficient_observations"
+}

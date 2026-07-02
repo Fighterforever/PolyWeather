@@ -1,0 +1,122 @@
+{
+  "artifact_paths": {
+    "probability_edge_candidates_historical": "evidence/polymarket_alpha/probability_edge_candidates_historical.jsonl",
+    "probability_edge_oos_predictions": "evidence/polymarket_alpha/probability_edge_oos_predictions.jsonl"
+  },
+  "bucket_model_group_count": 10,
+  "by_category": [],
+  "by_price_bucket": [],
+  "by_time_to_close": [],
+  "candidate_count": 0,
+  "counts_for_live_gate": false,
+  "hard_conclusion": "no_probability_edge_yet_need_at_least_two_event_families_for_leave_family_out",
+  "input_resolved_row_count": 29,
+  "input_row_count": 5150,
+  "live_order_path": false,
+  "logistic_model_ready": false,
+  "mid_price_training_row_count": 4,
+  "model": {
+    "bins": {
+      "global|*|*|*": {
+        "p": 0.5,
+        "p_lcb": 0.010000000000000009,
+        "p_ucb": 0.99,
+        "sample_count": 4
+      },
+      "global|0_15_0_35|*|*": {
+        "p": 0.0,
+        "p_lcb": 0.0,
+        "p_ucb": 6.198064213930024e-05,
+        "sample_count": 1
+      },
+      "global|0_15_0_35|1d_7d|*": {
+        "p": 0.0,
+        "p_lcb": 0.0,
+        "p_ucb": 6.198064213930024e-05,
+        "sample_count": 1
+      },
+      "global|0_15_0_35|1d_7d|missing": {
+        "p": 0.0,
+        "p_lcb": 0.0,
+        "p_ucb": 6.198064213930024e-05,
+        "sample_count": 1
+      },
+      "global|0_35_0_65|*|*": {
+        "p": 0.5,
+        "p_lcb": 0.0,
+        "p_ucb": 1.0,
+        "sample_count": 2
+      },
+      "global|0_35_0_65|7d_30d|*": {
+        "p": 0.5,
+        "p_lcb": 0.0,
+        "p_ucb": 1.0,
+        "sample_count": 2
+      },
+      "global|0_35_0_65|7d_30d|missing": {
+        "p": 0.5,
+        "p_lcb": 0.0,
+        "p_ucb": 1.0,
+        "sample_count": 2
+      },
+      "global|0_65_0_85|*|*": {
+        "p": 1.0,
+        "p_lcb": 0.9999380193578608,
+        "p_ucb": 1.0,
+        "sample_count": 1
+      },
+      "global|0_65_0_85|1d_7d|*": {
+        "p": 1.0,
+        "p_lcb": 0.9999380193578608,
+        "p_ucb": 1.0,
+        "sample_count": 1
+      },
+      "global|0_65_0_85|1d_7d|missing": {
+        "p": 1.0,
+        "p_lcb": 0.9999380193578608,
+        "p_ucb": 1.0,
+        "sample_count": 1
+      }
+    },
+    "logistic": {
+      "ready": false,
+      "reason": "not_enough_rows_for_pure_python_logistic",
+      "weights": []
+    }
+  },
+  "model_sources": [
+    "market_price_baseline",
+    "global_empirical_calibration",
+    "global_logistic_pure_python",
+    "category_shrinkage_when_family_count_sufficient"
+  ],
+  "oos_blocker_reason": "need_at_least_two_event_families_for_leave_family_out",
+  "oos_prediction_count": 0,
+  "oos_predictions": [],
+  "overall": {
+    "brier_improvement": null,
+    "brier_market": null,
+    "brier_model": null,
+    "log_loss_improvement": null,
+    "log_loss_market": null,
+    "log_loss_model": null,
+    "sample_count": 0
+  },
+  "paper_only": true,
+  "positive_net_ev_after_cost": false,
+  "resolved_candidate_count": 0,
+  "resolved_candidate_pnl_proxy": null,
+  "schema_version": "polyweather_polymarket_alpha_probability_edge_model.v2",
+  "scope": "polymarket_only",
+  "sklearn_available": false,
+  "split": {
+    "family_count": 1,
+    "reason": "need_at_least_two_event_families_for_leave_family_out",
+    "status": "blocked"
+  },
+  "top_ev_candidate_rate_categories": [],
+  "top_oos_brier_improvement_categories": [],
+  "train_row_count": 4,
+  "unique_resolved_event_family_count": 8,
+  "validate_row_count": 0
+}

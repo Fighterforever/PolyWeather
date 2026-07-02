@@ -15,7 +15,9 @@ data/logs/
 data/historical/
 data/cache/
 data/models/
+data/trading/
 logs/
+tmp/
 artifacts/probability_calibration/auto_retrain_report.json
 artifacts/probability_calibration/candidates/
 artifacts/probability_calibration/default.backup-*.json

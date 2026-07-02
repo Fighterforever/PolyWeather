@@ -1,0 +1,16 @@
+{
+  "artifact_paths": {
+    "empirical_calibration_table": "evidence/polymarket_alpha/empirical_calibration_table.jsonl"
+  },
+  "counts_for_live_gate": false,
+  "eligible_group_count": 0,
+  "group_count": 86,
+  "input_row_count": 5150,
+  "live_order_path": false,
+  "min_sample_count": 50,
+  "paper_only": true,
+  "resolved_input_row_count": 29,
+  "schema_version": "polyweather_polymarket_alpha_empirical_calibration.v1",
+  "scope": "polymarket_only",
+  "top_miscalibrated_groups": []
+}

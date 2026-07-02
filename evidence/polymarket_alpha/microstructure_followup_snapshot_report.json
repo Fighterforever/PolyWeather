@@ -1,0 +1,12 @@
+{
+  "artifact_paths": {
+    "microstructure_followup_orderbook_snapshots": "evidence/polymarket_alpha/microstructure_followup_orderbook_snapshots.jsonl"
+  },
+  "counts_for_live_gate": false,
+  "live_order_path": false,
+  "paper_only": true,
+  "schema_version": "polyweather_polymarket_alpha_microstructure_policy_sweep.v1.followup_snapshot_report",
+  "skipped": [],
+  "skipped_count": 0,
+  "snapshot_count": 52
+}

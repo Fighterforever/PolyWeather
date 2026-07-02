@@ -1,0 +1,129 @@
+{
+  "bootstrap_confidence_interval_cents": {
+    "lower": null,
+    "status": "insufficient_sample",
+    "upper": null
+  },
+  "closed_scope": {
+    "closed_scope_not_seen_in_trade_proxy_count": 26,
+    "sample_closed_scope_not_seen": [
+      {
+        "market_slug": "highest-temperature-in-ankara-on-june-27-2026-25c",
+        "station_code": "LTAC",
+        "target_date": "2026-06-27"
+      },
+      {
+        "market_slug": "highest-temperature-in-ankara-on-june-27-2026-26c",
+        "station_code": "LTAC",
+        "target_date": "2026-06-27"
+      },
+      {
+        "market_slug": "highest-temperature-in-ankara-on-june-27-2026-27c",
+        "station_code": "LTAC",
+        "target_date": "2026-06-27"
+      },
+      {
+        "market_slug": "highest-temperature-in-ankara-on-june-27-2026-28c",
+        "station_code": "LTAC",
+        "target_date": "2026-06-27"
+      },
+      {
+        "market_slug": "highest-temperature-in-ankara-on-june-27-2026-29c",
+        "station_code": "LTAC",
+        "target_date": "2026-06-27"
+      },
+      {
+        "market_slug": "highest-temperature-in-ankara-on-june-27-2026-30c",
+        "station_code": "LTAC",
+        "target_date": "2026-06-27"
+      },
+      {
+        "market_slug": "highest-temperature-in-ankara-on-june-27-2026-31c",
+        "station_code": "LTAC",
+        "target_date": "2026-06-27"
+      },
+      {
+        "market_slug": "highest-temperature-in-ankara-on-june-27-2026-32c",
+        "station_code": "LTAC",
+        "target_date": "2026-06-27"
+      },
+      {
+        "market_slug": "highest-temperature-in-ankara-on-june-27-2026-33c",
+        "station_code": "LTAC",
+        "target_date": "2026-06-27"
+      },
+      {
+        "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-24c",
+        "station_code": "LTFM",
+        "target_date": "2026-06-27"
+      }
+    ],
+    "supported_official_source_closed_exact_market_count": 27,
+    "unique_closed_scope_count": 27
+  },
+  "conservative_proxy_pnl_cents": 47.481386,
+  "counts_for_live_gate": false,
+  "filter_definition": {
+    "bucket_type": "eq",
+    "dedupe": "first_window_per_market_token_replay_time",
+    "direction_confidence": [
+      "high",
+      "reported_by_polymarket_data_api"
+    ],
+    "lock_state": "eq_yes_dead_no_locked",
+    "locked_side": "NO",
+    "same_token_trade_required": true,
+    "trade_source_trade_id_required": true
+  },
+  "live_order_path": false,
+  "paper_only": true,
+  "pnl_without_top_1": 0.0,
+  "pnl_without_top_market": 0.0,
+  "sample_count": 1,
+  "sample_rows": [
+    {
+      "approximate_hit_price": 0.5251861422533078,
+      "best_trade_price_for_locked_side": 0.5251861422533078,
+      "bucket_type": "eq",
+      "can_count_as_real_pnl": false,
+      "can_count_as_trade_proxy": true,
+      "conservative_proxy": true,
+      "counts_for_live_gate": false,
+      "edge_after_cost": 0.469814,
+      "entry_price_band": "price_le_0_80",
+      "first_trade_at": "2026-06-27T09:13:23Z",
+      "live_order_path": false,
+      "lock_state": "eq_yes_dead_no_locked",
+      "locked_side": "NO",
+      "market_slug": "highest-temperature-in-moscow-on-june-27-2026-20c",
+      "max_entry_price_for_locked_side": 0.615,
+      "paper_only": true,
+      "payout": 1.0,
+      "reason": "ok",
+      "replay_time": "2026-06-27T09:13:21Z",
+      "schema_version": "polyweather_observation_lock_trade_replay.v1.row",
+      "size_at_or_better": 113.884338,
+      "source_signal_token_id": "23592996659921994101076541986058036319254453983950438890583641358650955268830",
+      "station_code": "UUWW",
+      "strategy_id": "eq_dead_no_lock",
+      "target_date": "2026-06-27",
+      "threshold": 20.0,
+      "time_to_close_bucket": "gt_2h",
+      "token_id": "101193019850003178861251943963391974720803629432743570382532906306222697738626",
+      "trade_count": 13,
+      "trade_direction_confidence": "reported_by_polymarket_data_api",
+      "trade_replay_pnl_cents": 47.481386,
+      "trade_source_trade_id": "0x7fba2036824a44436623ac7e80b08f350b4f38eb20b5b9155e0a5f8c2040de51",
+      "window": "0-1m",
+      "worst_trade_price_for_locked_side": 0.94
+    }
+  ],
+  "schema_version": "polyweather_eq_dead_no_expanded_proxy_robustness.v1",
+  "status": "eq_dead_no_proxy_not_robust_keep_monitoring_only",
+  "top_1_contribution_cents": 47.481386,
+  "top_market_contribution_cents": 47.481386,
+  "top_market_slug": "highest-temperature-in-moscow-on-june-27-2026-20c",
+  "unique_day_count": 1,
+  "unique_market_count": 1,
+  "unique_station_count": 1
+}

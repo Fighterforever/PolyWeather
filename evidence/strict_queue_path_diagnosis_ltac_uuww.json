@@ -1,0 +1,362 @@
+{
+  "conclusion": "due_pipeline_default_queue_path_wrong_explicit_queue_has_scoped_matches",
+  "default_queue_matching_scoped_market_slug_count": 0,
+  "default_queue_matching_scoped_token_count": 0,
+  "default_queue_path_exists": false,
+  "default_queue_record_count": 0,
+  "default_queue_with_token_count": 0,
+  "expected_default_queue_path": "evidence/paper_run/strict_gate_queues/strict_gate_queue.jsonl",
+  "explicit_queue_matching_scoped_market_slug_count": 4,
+  "explicit_queue_matching_scoped_token_count": 8,
+  "explicit_queue_path": "evidence/strict_gate_queues/strict_gate_queue.jsonl",
+  "explicit_queue_path_exists": true,
+  "explicit_queue_record_count": 72,
+  "explicit_queue_source_counts": {
+    "ev_calibration": 30,
+    "execution_depth_price": 30,
+    "risk_rule_review": 12
+  },
+  "explicit_queue_source_settlement_counts": {
+    "aeroweb": 8,
+    "metar": 49,
+    "noaa": 15
+  },
+  "explicit_queue_station_counts": {
+    "EGLC": 17,
+    "LFPB": 8,
+    "LTAC": 14,
+    "LTFM": 15,
+    "RKSI": 4,
+    "UUWW": 14
+  },
+  "explicit_queue_with_token_count": 72,
+  "generated_at": "2026-06-28T03:15:00Z",
+  "sample_explicit_queue_matches": [
+    {
+      "ask": 0.001,
+      "bucket_label": "<= 24°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+      "outcome": "Yes",
+      "price": 0.001,
+      "queue_name": "ev_calibration",
+      "settlement_source": "metar",
+      "settlement_station_code": "LTAC",
+      "side": "yes",
+      "strategy_id": "near_lock",
+      "token_id": "106409007486307815566410424879516752167053337910197610378693734956599808355389"
+    },
+    {
+      "ask": 0.001,
+      "bucket_label": ">= 34°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-34corhigher",
+      "outcome": "Yes",
+      "price": 0.001,
+      "queue_name": "ev_calibration",
+      "settlement_source": "metar",
+      "settlement_station_code": "LTAC",
+      "side": "yes",
+      "strategy_id": "near_lock",
+      "token_id": "19506259096847115218574739888336467947191621679675340211255267195855482528833"
+    },
+    {
+      "ask": 0.001,
+      "bucket_label": "<= 17°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-moscow-on-june-27-2026-17corbelow",
+      "outcome": "Yes",
+      "price": 0.001,
+      "queue_name": "ev_calibration",
+      "settlement_source": "metar",
+      "settlement_station_code": "UUWW",
+      "side": "yes",
+      "strategy_id": "near_lock",
+      "token_id": "45216753547761882030203911510849899472552844747999172882006780508001418763973"
+    },
+    {
+      "ask": 0.001,
+      "bucket_label": ">= 27°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-moscow-on-june-27-2026-27corhigher",
+      "outcome": "Yes",
+      "price": 0.001,
+      "queue_name": "ev_calibration",
+      "settlement_source": "metar",
+      "settlement_station_code": "UUWW",
+      "side": "yes",
+      "strategy_id": "near_lock",
+      "token_id": "99427098251499038639030844361699805106414879369982520349329331014249063585473"
+    },
+    {
+      "ask": 0.001,
+      "bucket_label": "<= 24°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-24corbelow",
+      "outcome": "Yes",
+      "price": 0.001,
+      "queue_name": "execution_depth_price",
+      "settlement_source": "metar",
+      "settlement_station_code": "LTAC",
+      "side": "yes",
+      "strategy_id": "near_lock",
+      "token_id": "106409007486307815566410424879516752167053337910197610378693734956599808355389"
+    },
+    {
+      "ask": 0.001,
+      "bucket_label": ">= 34°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-34corhigher",
+      "outcome": "Yes",
+      "price": 0.001,
+      "queue_name": "execution_depth_price",
+      "settlement_source": "metar",
+      "settlement_station_code": "LTAC",
+      "side": "yes",
+      "strategy_id": "near_lock",
+      "token_id": "19506259096847115218574739888336467947191621679675340211255267195855482528833"
+    },
+    {
+      "ask": 0.001,
+      "bucket_label": "<= 17°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-moscow-on-june-27-2026-17corbelow",
+      "outcome": "Yes",
+      "price": 0.001,
+      "queue_name": "execution_depth_price",
+      "settlement_source": "metar",
+      "settlement_station_code": "UUWW",
+      "side": "yes",
+      "strategy_id": "near_lock",
+      "token_id": "45216753547761882030203911510849899472552844747999172882006780508001418763973"
+    },
+    {
+      "ask": 0.001,
+      "bucket_label": ">= 27°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-moscow-on-june-27-2026-27corhigher",
+      "outcome": "Yes",
+      "price": 0.001,
+      "queue_name": "execution_depth_price",
+      "settlement_source": "metar",
+      "settlement_station_code": "UUWW",
+      "side": "yes",
+      "strategy_id": "near_lock",
+      "token_id": "99427098251499038639030844361699805106414879369982520349329331014249063585473"
+    }
+  ],
+  "sample_queue_tokens_without_closed_overlap": [
+    {
+      "ask": 0.001,
+      "bucket_label": "<= 23°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-23corbelow",
+      "outcome": "Yes",
+      "price": 0.001,
+      "queue_name": "ev_calibration",
+      "settlement_source": "noaa",
+      "settlement_station_code": "LTFM",
+      "side": "yes",
+      "strategy_id": "near_lock",
+      "token_id": "110512798852296621353340625088904419512170051573283330416890293436180924449456"
+    },
+    {
+      "ask": 0.001,
+      "bucket_label": "<= 25°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-london-on-june-27-2026-25corbelow",
+      "outcome": "Yes",
+      "price": 0.001,
+      "queue_name": "ev_calibration",
+      "settlement_source": "metar",
+      "settlement_station_code": "EGLC",
+      "side": "yes",
+      "strategy_id": "near_lock",
+      "token_id": "415617859026418984653837337258777047411846303955029716978809976676063136389"
+    },
+    {
+      "ask": 0.002,
+      "bucket_label": ">= 35°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-35corhigher",
+      "outcome": "Yes",
+      "price": 0.002,
+      "queue_name": "ev_calibration",
+      "settlement_source": "noaa",
+      "settlement_station_code": "LTFM",
+      "side": "yes",
+      "strategy_id": "tail_threshold",
+      "token_id": "4921535153338105046284693801747741764374684797373902131423702839247635664711"
+    },
+    {
+      "ask": 0.002,
+      "bucket_label": ">= 33°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-istanbul-on-june-27-2026-33corhigher",
+      "outcome": "Yes",
+      "price": 0.002,
+      "queue_name": "ev_calibration",
+      "settlement_source": "noaa",
+      "settlement_station_code": "LTFM",
+      "side": "yes",
+      "strategy_id": "near_lock",
+      "token_id": "31781777613072427179798869456111106149787178158615006291391628331429099581744"
+    },
+    {
+      "ask": 0.003,
+      "bucket_label": "<= 23°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-ankara-on-june-28-2026-23corbelow",
+      "outcome": "Yes",
+      "price": 0.003,
+      "queue_name": "ev_calibration",
+      "settlement_source": "metar",
+      "settlement_station_code": "LTAC",
+      "side": "yes",
+      "strategy_id": "tail_threshold",
+      "token_id": "96815517925234348634449081953755717849811020272269928439424202508096603733560"
+    },
+    {
+      "ask": 0.003,
+      "bucket_label": "<= 13°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-moscow-on-june-29-2026-13corbelow",
+      "outcome": "Yes",
+      "price": 0.003,
+      "queue_name": "ev_calibration",
+      "settlement_source": "metar",
+      "settlement_station_code": "UUWW",
+      "side": "yes",
+      "strategy_id": "tail_threshold",
+      "token_id": "68243365954839771715226581463341191443639064511876179732397797747210675965651"
+    },
+    {
+      "ask": 0.009,
+      "bucket_label": "<= 25°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-istanbul-on-june-29-2026-25corbelow",
+      "outcome": "Yes",
+      "price": 0.009,
+      "queue_name": "execution_depth_price",
+      "settlement_source": "noaa",
+      "settlement_station_code": "LTFM",
+      "side": "yes",
+      "strategy_id": "tail_threshold",
+      "token_id": "115752524054092285887990383272784040787094047050260094242417544330639463301218"
+    },
+    {
+      "ask": 0.003,
+      "bucket_label": ">= 35°C",
+      "generated_at": "2026-06-27T11:42:32Z",
+      "market_slug": "highest-temperature-in-london-on-june-27-2026-35corhigher",
+      "outcome": "Yes",
+      "price": 0.003,
+      "queue_name": "execution_depth_price",
+      "settlement_source": "metar",
+      "settlement_station_code": "EGLC",
+      "side": "yes",
+      "strategy_id": "near_lock",
+      "token_id": "12556017835672786191940541189209131730982054663888590854011927593594582954017"
+    }
+  ],
+  "sample_scoped_closed_tokens_without_queue": [
+    {
+      "market_slug": "highest-temperature-in-moscow-on-june-27-2026-22c",
+      "settlement_source": "metar",
+      "station": "UUWW",
+      "tokens": [
+        "69190863259892446023755821436574317561866576899828335814211733927319468620704",
+        "113873944769716480086555848975371658658142863209484848266065958984782520488215"
+      ]
+    },
+    {
+      "market_slug": "highest-temperature-in-moscow-on-june-27-2026-23c",
+      "settlement_source": "metar",
+      "station": "UUWW",
+      "tokens": [
+        "10925511148175108228869115510865233403904008606094117149437418945700867190279",
+        "16226560356873900207640337281140676035284171064995335762315963437533328054112"
+      ]
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-28c",
+      "settlement_source": "metar",
+      "station": "LTAC",
+      "tokens": [
+        "15762328329362658766276764296069614114025454717137238495964321851630504414492",
+        "19047088119718562621256438702367953088260212953386233382164505800478749143587"
+      ]
+    },
+    {
+      "market_slug": "highest-temperature-in-moscow-on-june-27-2026-20c",
+      "settlement_source": "metar",
+      "station": "UUWW",
+      "tokens": [
+        "101193019850003178861251943963391974720803629432743570382532906306222697738626",
+        "23592996659921994101076541986058036319254453983950438890583641358650955268830"
+      ]
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-31c",
+      "settlement_source": "metar",
+      "station": "LTAC",
+      "tokens": [
+        "17666022665795578573274669630958319858695538466187430362090852801594543871417",
+        "2902400200465448399688662615563815405032810685351652960994095252819741399842"
+      ]
+    },
+    {
+      "market_slug": "highest-temperature-in-ankara-on-june-27-2026-33c",
+      "settlement_source": "metar",
+      "station": "LTAC",
+      "tokens": [
+        "38042781746361830798595409209928156466514880468408833243633244964723232891088",
+        "35626682011854267383056262524873453206240522884999533645794524625963416810697"
+      ]
+    },
+    {
+      "market_slug": "highest-temperature-in-moscow-on-june-27-2026-26c",
+      "settlement_source": "metar",
+      "station": "UUWW",
+      "tokens": [
+        "104646039916656876418784715064792522053073634965557986121810688429035683912419",
+        "39619830140205293665989975993263754424726234378011663709043691090837820045562"
+      ]
+    },
+    {
+      "market_slug": "highest-temperature-in-moscow-on-june-27-2026-18c",
+      "settlement_source": "metar",
+      "station": "UUWW",
+      "tokens": [
+        "43039306397290857583805689677622484954583980111982005824370661990990688927846",
+        "42753979169830031755367133734916710630274401401819523226956243723405905393687"
+      ]
+    }
+  ],
+  "sample_scoped_overlap_tokens": [
+    "101193019850003178861251943963391974720803629432743570382532906306222697738626",
+    "104646039916656876418784715064792522053073634965557986121810688429035683912419",
+    "106409007486307815566410424879516752167053337910197610378693734956599808355389",
+    "107618791896569559162605370334577371856233109303589570323688495310063921721369",
+    "10925511148175108228869115510865233403904008606094117149437418945700867190279",
+    "109945758117353429710808215317914184769362277471693168567520916777582319826932",
+    "112009405199416361311806097890287963467057098184468553744608304249497125538182",
+    "113873944769716480086555848975371658658142863209484848266065958984782520488215",
+    "13218266393582822529836956910026809969891410988660668768280027560011791516065",
+    "15762328329362658766276764296069614114025454717137238495964321851630504414492",
+    "16226560356873900207640337281140676035284171064995335762315963437533328054112",
+    "16617666799727151967108757299055364325117701119235127812703017701478903281023"
+  ],
+  "schema_version": "polyweather_strict_queue_path_diagnosis.v1",
+  "scoped_archived_row_count": 308,
+  "scoped_archived_token_count": 132,
+  "scoped_closed_archived_market_slug_overlap_count": 22,
+  "scoped_closed_archived_token_overlap_count": 44,
+  "scoped_closed_market_count": 22,
+  "scoped_closed_token_count": 44,
+  "scoped_settlement_source": "metar",
+  "scoped_station_codes": [
+    "LTAC",
+    "UUWW"
+  ]
+}
