@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
+from src.trading.polymarket_alpha.live_safety import credentials_present, load_live_safety_config
 from src.trading.polymarket_alpha.probability_dataset import write_json
 
 
@@ -185,4 +187,84 @@ def load_json(path: str | Path) -> Dict[str, Any]:
     return parsed if isinstance(parsed, dict) else {}
 
 
-__all__ = ["SCHEMA_VERSION", "build_weather_lp_tiny_live_gap_report", "load_json", "write_json"]
+def build_weather_lp_tiny_live_readiness_report(
+    *,
+    weather_lp_experiment_report: Dict[str, Any],
+    tiny_live_selected_orders_report: Dict[str, Any],
+    tiny_live_runner_report: Dict[str, Any] | None = None,
+    tiny_live_systemd_install_report: Dict[str, Any] | None = None,
+    env: Dict[str, str] | None = None,
+) -> Dict[str, Any]:
+    tiny_live_runner_report = tiny_live_runner_report or {}
+    tiny_live_systemd_install_report = tiny_live_systemd_install_report or {}
+    env = env or dict(os.environ)
+    config = load_live_safety_config(env)
+    creds = credentials_present(env)
+    selected_count = int(tiny_live_selected_orders_report.get("selected_order_count") or 0)
+    selected_capital = _safe_float(tiny_live_selected_orders_report.get("selected_total_capital_at_risk")) or 0.0
+    base_net = _safe_float(weather_lp_experiment_report.get("base_scenario_net_cents"))
+    conservative_net = _safe_float(weather_lp_experiment_report.get("conservative_scenario_net_cents"))
+    exact_reward_available = bool(weather_lp_experiment_report.get("exact_reward_available"))
+    kill_switch_ready = bool(weather_lp_experiment_report.get("kill_switch_ready") or weather_lp_experiment_report.get("manual_kill_switch_ready"))
+    live_runner_installed = bool(tiny_live_systemd_install_report.get("service_installed") or tiny_live_runner_report)
+    live_runner_enabled = bool(tiny_live_systemd_install_report.get("timer_enabled"))
+    blockers: List[str] = []
+    if selected_count <= 0:
+        blockers.append("selected_orders_required")
+    if not kill_switch_ready:
+        blockers.append("kill_switch_required")
+    if not creds:
+        blockers.append("credentials_required")
+    if not config["global_live_enabled"] or not config["strategy_live_enabled"]:
+        blockers.append("enable_flags_required")
+    if live_runner_enabled:
+        blockers.append("unexpected_live_timer_enabled")
+    recommendation_parts: List[str] = []
+    if live_runner_installed and not live_runner_enabled and selected_count > 0 and kill_switch_ready:
+        recommendation_parts.append("ready_for_user_manual_enable_tiny_live_audit")
+    else:
+        recommendation_parts.append("not_ready_for_tiny_live_audit")
+    if not creds:
+        recommendation_parts.append("credentials_required")
+    if not config["global_live_enabled"] or not config["strategy_live_enabled"]:
+        recommendation_parts.append("enable_flags_required")
+    if not exact_reward_available:
+        recommendation_parts.append("exact_reward_still_unverified")
+    return {
+        "schema_version": f"{SCHEMA_VERSION}.readiness.v1",
+        "paper_evidence_summary": {
+            "paper_quote_count": weather_lp_experiment_report.get("paper_quote_count"),
+            "quote_update_count": weather_lp_experiment_report.get("quote_update_count"),
+            "base_scenario_net_cents": base_net,
+            "conservative_scenario_net_cents": conservative_net,
+            "exact_reward_available": exact_reward_available,
+        },
+        "selected_order_count": selected_count,
+        "selected_total_capital_at_risk": selected_capital,
+        "base_scenario_positive": bool(base_net is not None and base_net > 0),
+        "conservative_scenario_negative": bool(conservative_net is not None and conservative_net < 0),
+        "exact_reward_available": exact_reward_available,
+        "kill_switch_ready": kill_switch_ready,
+        "live_safety_gates_ready": selected_count > 0 and selected_capital <= float(config["max_total_capital_usd"]),
+        "live_runner_installed": live_runner_installed,
+        "live_runner_enabled": live_runner_enabled,
+        "credentials_present": creds,
+        "global_live_enabled": config["global_live_enabled"],
+        "strategy_live_enabled": config["strategy_live_enabled"],
+        "max_total_capital": config["max_total_capital_usd"],
+        "remaining_blockers": list(dict.fromkeys(blockers)),
+        "recommendation": "__".join(recommendation_parts),
+        "paper_only_reference": True,
+        "counts_for_live_gate": False,
+        "live_order_path": bool(tiny_live_runner_report.get("live_order_path") is True),
+        "live_order_path_default": False,
+    }
+
+
+__all__ = [
+    "SCHEMA_VERSION",
+    "build_weather_lp_tiny_live_gap_report",
+    "build_weather_lp_tiny_live_readiness_report",
+    "load_json",
+    "write_json",
+]

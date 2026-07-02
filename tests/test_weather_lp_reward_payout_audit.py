@@ -11,6 +11,10 @@ from src.trading.polymarket_alpha.weather_lp_reward_payout_audit import (
     write_empty_manual_payout_audit_template_v2,
     write_manual_template,
 )
+from src.trading.polymarket_alpha.weather_lp_tiny_live_audit import (
+    build_weather_lp_tiny_live_audit_report,
+    write_tiny_live_payout_manual_template,
+)
 
 
 def test_payout_audit_outputs_manual_required_without_wallet(tmp_path: Path):
@@ -91,3 +95,24 @@ def test_manual_payout_audit_ingest_compares_expected_actual():
     assert report["actual_vs_expected_ratio"] == 1.25
     assert report["fill_count"] == 1
     assert report["live_order_path"] is False
+
+
+def test_tiny_live_audit_reports_manual_template_when_no_reward_api(tmp_path: Path):
+    orders = [
+        {
+            "client_order_id": "c1",
+            "market_slug": "m1",
+            "token_id": "t1",
+            "placed": True,
+            "expected_reward_base": 10,
+        }
+    ]
+    report = build_weather_lp_tiny_live_audit_report(order_rows=orders, update_rows=[], cancellation_rows=[], payout_rows=[])
+
+    assert report["placed_order_count"] == 1
+    assert report["payout_observed"] is False
+    assert report["payout_gap_reason"] == "manual_payout_audit_required"
+    assert report["live_order_path"] is True
+    count = write_tiny_live_payout_manual_template(tmp_path / "tiny_template.csv", orders)
+    assert count == 1
+    assert "actual_reward_received" in (tmp_path / "tiny_template.csv").read_text(encoding="utf-8")

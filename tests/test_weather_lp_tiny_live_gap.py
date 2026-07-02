@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from src.trading.polymarket_alpha.weather_lp_tiny_live_gap import build_weather_lp_tiny_live_gap_report
+from src.trading.polymarket_alpha.weather_lp_tiny_live_gap import build_weather_lp_tiny_live_gap_report, build_weather_lp_tiny_live_readiness_report
 
 
 def test_tiny_live_gap_never_enables_live_and_lists_gaps():
@@ -93,3 +93,25 @@ def test_tiny_live_gap_marks_manual_payout_audit_plan_ready():
     assert "actual_reward_payout_not_verified" in report["remaining_blockers"]
     assert report["recommendation"] == "prepare_manual_payout_audit__do_not_enable_auto_live__wait_for_user_manual_audit_result"
     assert report["live_order_path"] is False
+
+
+def test_tiny_live_readiness_reports_disabled_runner_and_credentials_gap():
+    report = build_weather_lp_tiny_live_readiness_report(
+        weather_lp_experiment_report={
+            "paper_quote_count": 26,
+            "quote_update_count": 7000,
+            "base_scenario_net_cents": 100,
+            "conservative_scenario_net_cents": -50,
+            "kill_switch_ready": True,
+        },
+        tiny_live_selected_orders_report={"selected_order_count": 3, "selected_total_capital_at_risk": 10.5},
+        tiny_live_runner_report={"live_order_path": False},
+        tiny_live_systemd_install_report={"service_installed": True, "timer_enabled": False},
+        env={},
+    )
+
+    assert report["live_runner_installed"] is True
+    assert report["live_runner_enabled"] is False
+    assert report["credentials_present"] is False
+    assert "credentials_required" in report["recommendation"]
+    assert report["live_order_path_default"] is False

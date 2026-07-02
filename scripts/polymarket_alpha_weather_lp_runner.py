@@ -102,10 +102,12 @@ def main(argv: list[str] | None = None) -> None:
         [args.python_path, "scripts/polymarket_alpha_weather_lp_manual_order_sheet_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_live_impact_simulator_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_manual_audit_quote_selector.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_tiny_live_selected_orders_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_manual_payout_audit_plan.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_manual_execution_checklist.py"],
         [args.python_path, "scripts/polymarket_alpha_ingest_manual_payout_audit.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_tiny_live_gap_report.py"],
+        [args.python_path, "scripts/polymarket_alpha_weather_lp_tiny_live_readiness_report.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_manual_review_packet.py", "--generated-at", generated_at],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_profitability_dashboard.py"],
         [args.python_path, "scripts/polymarket_alpha_weather_lp_reward_window_report.py"],
@@ -134,6 +136,8 @@ def main(argv: list[str] | None = None) -> None:
     manual_kill = _load("evidence/weather_lp_rewards/manual_kill_switch_checklist.json")
     manual_review_packet = _load("evidence/weather_lp_rewards/manual_tiny_live_review_packet.json")
     selected_audit_quotes = _load("evidence/weather_lp_rewards/manual_audit_selected_quotes.json")
+    tiny_live_selected_orders = _load("evidence/weather_lp_rewards/tiny_live_selected_orders.json")
+    tiny_live_readiness = _load("evidence/weather_lp_rewards/weather_lp_tiny_live_readiness_report.json")
     manual_payout_plan = _load("evidence/weather_lp_rewards/manual_tiny_live_payout_audit_plan.json")
     manual_payout_result = _load("evidence/weather_lp_rewards/manual_payout_audit_result.json")
     safety = _write_safety_status(generated_at=generated_at)
@@ -202,6 +206,10 @@ def main(argv: list[str] | None = None) -> None:
         "manual_review_remaining_blockers": manual_review_packet.get("remaining_blockers"),
         "selected_manual_audit_quote_count": selected_audit_quotes.get("selected_quote_count"),
         "selected_manual_audit_capital_at_risk": selected_audit_quotes.get("total_selected_capital_at_risk"),
+        "tiny_live_selected_order_count": tiny_live_selected_orders.get("selected_order_count"),
+        "tiny_live_selected_total_capital_at_risk": tiny_live_selected_orders.get("selected_total_capital_at_risk"),
+        "tiny_live_readiness_recommendation": tiny_live_readiness.get("recommendation"),
+        "tiny_live_credentials_present": tiny_live_readiness.get("credentials_present"),
         "manual_payout_audit_plan_ready": manual_payout_plan.get("plan_status") == "ready_for_user_manual_audit",
         "manual_payout_audit_result_status": manual_payout_result.get("audit_status"),
         "next_expected_5m_markout_time": experiment.get("next_expected_5m_markout_time") or cohort.get("next_expected_5m_markout_time"),
